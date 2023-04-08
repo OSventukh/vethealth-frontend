@@ -29,9 +29,6 @@ export default function Header({ open, handleDrawerToggle }: NavigationProps) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
-          </Typography>
         </Toolbar>
       </AppBar>
   )
