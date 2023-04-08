@@ -3,16 +3,12 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Typography from '@mui/material/Typography';
-import { Divider } from '@mui/material';
 import { AppBar } from '@/components/admin/drawer';
 import { useTheme } from '@mui/material/styles';
+import type { NavigationProps } from '@/types/props-types';
 
-interface HeaderProps {
-  open: boolean;
-  handleDrawerToggle: () => void;
-}
 
-export default function Header({ open, handleDrawerToggle }: HeaderProps) {
+export default function Header({ open, handleDrawerToggle }: NavigationProps) {
   const theme = useTheme();
   return (
     <AppBar position="fixed" open={open}>
@@ -29,8 +25,6 @@ export default function Header({ open, handleDrawerToggle }: HeaderProps) {
               borderRadius: '10px',
               p:'5px',
               marginLeft: 5
-              
-              // ...(open && { display: 'none' }),
             }}
           >
             <MenuIcon />

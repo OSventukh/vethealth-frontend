@@ -1,6 +1,4 @@
-import { Theme } from '@mui/material/styles';
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -8,18 +6,9 @@ import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import Link from 'next/link';
 import { Drawer, DrawerHeader } from '@/components/admin/drawer';
+import type { NavigationProps } from '@/types/props-types';
 
-interface NavigationProps {
-  open: boolean;
-  handleDrawerToggle: () => void;
-  theme: Theme;
-}
-
-export default function Navigation({
-  open,
-  handleDrawerToggle,
-  theme,
-}: NavigationProps) {
+export default function Navigation({ open }: NavigationProps) {
   return (
     <Drawer variant="permanent" open={open}>
       <DrawerHeader />

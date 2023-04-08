@@ -5,13 +5,9 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Header from './Header';
 import Navigation from './Navigation';
-import { DrawerHeader } from './drawer';
+import type { ChildrenProps } from '@/types/props-types';
 
-interface LayoutProps {
-  children: ReactElement;
-}
-
-export default function AdminPanelLayout(props: LayoutProps) {
+export default function AdminPanelLayout(props: ChildrenProps) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -26,7 +22,6 @@ export default function AdminPanelLayout(props: LayoutProps) {
       <Navigation
         open={open}
         handleDrawerToggle={handleDrawerToggle}
-        theme={theme}
       />
 
       <Box
