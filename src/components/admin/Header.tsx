@@ -4,7 +4,8 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Typography from '@mui/material/Typography';
 import { Divider } from '@mui/material';
-import { AppBar } from '@/theme/drawer';
+import { AppBar } from '@/components/admin/drawer';
+import { useTheme } from '@mui/material/styles';
 
 interface HeaderProps {
   open: boolean;
@@ -12,10 +13,11 @@ interface HeaderProps {
 }
 
 export default function Header({ open, handleDrawerToggle }: HeaderProps) {
+  const theme = useTheme();
   return (
     <AppBar position="fixed" open={open}>
         <Toolbar>
-          <Typography variant='h5' color='#000'>VETHEALTH</Typography>
+          <Typography variant='h5' color='text'>VETHEALTH</Typography>
           <IconButton
             color="inherit"
             aria-label="toggle drawer"
@@ -23,7 +25,7 @@ export default function Header({ open, handleDrawerToggle }: HeaderProps) {
             edge="start"
             sx={{
               marginRight: 5,
-              background: '#9abbdc',
+              background: (theme.palette.primary as any).main,
               borderRadius: '10px',
               p:'5px',
               marginLeft: 5

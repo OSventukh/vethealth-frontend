@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Header from './Header';
 import Navigation from './Navigation';
+import { DrawerHeader } from './drawer';
 
 interface LayoutProps {
   children: ReactElement;
@@ -19,8 +20,8 @@ export default function AdminPanelLayout(props: LayoutProps) {
   };
 
   return (
-    <Box sx={{ display: 'flex', background: '#fff', minHeight: '100vh' }}>
-      <CssBaseline />
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <CssBaseline enableColorScheme />
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Navigation
         open={open}
@@ -34,8 +35,9 @@ export default function AdminPanelLayout(props: LayoutProps) {
           flexGrow: 1,
           p: 3,
           marginTop: '65px',
-          background: '#eef2f6',
-          borderRadius: '10px',
+          marginRight: '1vw',
+          background: theme.palette.background.content,
+          borderRadius: '10px 10px 0 0',
           border: '1px solid rgba(0, 0, 0, 0.12)',
         }}
       >

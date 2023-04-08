@@ -7,7 +7,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import Link from 'next/link';
-import { Drawer, DrawerHeader } from '@/theme/drawer';
+import { Drawer, DrawerHeader } from '@/components/admin/drawer';
 
 interface NavigationProps {
   open: boolean;
@@ -25,8 +25,8 @@ export default function Navigation({
       <DrawerHeader />
 
       <List>
-        <Link href="/admin">
-          <ListItem key={'Home'} disablePadding sx={{ display: 'block' }}>
+        <ListItem key={'Home'} disablePadding sx={{ display: 'block' }}>
+          <Link href="/admin">
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -45,8 +45,8 @@ export default function Navigation({
               </ListItemIcon>
               <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
-          </ListItem>
-        </Link>
+          </Link>
+        </ListItem>
       </List>
     </Drawer>
   );

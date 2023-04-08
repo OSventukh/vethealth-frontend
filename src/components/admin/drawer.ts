@@ -12,6 +12,8 @@ export const openedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
+  borderRight: 'none',
+
 });
 
 export const closedMixin = (theme: Theme): CSSObject => ({
@@ -20,6 +22,7 @@ export const closedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
+  borderRight: 'none',
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -43,8 +46,8 @@ export const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  background: '#fff',
   boxShadow: 'none',
+  background: theme.palette.background.paper,
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -64,6 +67,7 @@ export const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
+    background: theme.palette.background.paper,
     boxSizing: 'border-box',
     ...(open && {
       ...openedMixin(theme),
