@@ -7,8 +7,9 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   const isAdminPanel = router.pathname.startsWith('/admin');
+  const authPage = router.pathname.startsWith('/admin/auth');
 
-  if (isAdminPanel) {
+  if (isAdminPanel && !authPage) {
     return <Theme><AdminPanelLayout><Component {...pageProps} /></AdminPanelLayout></Theme>
   }
   return <Component {...pageProps} />

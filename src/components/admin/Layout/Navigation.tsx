@@ -11,7 +11,7 @@ import {
   Group,
 } from '@mui/icons-material';
 import Collapse from '@mui/material/Collapse';
-import { Drawer, DrawerHeader } from '@/components/admin/drawer';
+import { Drawer, DrawerHeader } from '@/components/admin/Layout/drawer';
 import type { NavigationProps } from '@/types/props-types';
 import NavItem from './NavItem';
 

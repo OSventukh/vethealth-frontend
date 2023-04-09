@@ -3,7 +3,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Typography from '@mui/material/Typography';
-import { AppBar } from '@/components/admin/drawer';
+import { AppBar } from '@/components/admin/Layout/drawer';
 import { useTheme } from '@mui/material/styles';
 import type { NavigationProps } from '@/types/props-types';
 
