@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { FormEvent, useState, useRef, useContext } from 'react';
 import {
   Paper,
   Typography,
@@ -10,14 +10,45 @@ import {
   IconButton,
   InputAdornment,
   Input,
+  Alert,
 } from '@mui/material';
+import AuthContext from '@/context/auth-context';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
+import { fetchData } from '@/utils/fetch';
 
-export default function Signup() {
+export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const emailRef = useRef<HTMLInputElement>();
+  const passwordRef = useRef<HTMLInputElement>();
+  const { login } = useContext(AuthContext);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
+  const loginSubmitHandler = async (event: FormEvent) => {
+    event.preventDefault();
+  
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
+    try {
+      setError(null);
+      const response = await fetchData('login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          email,
+          password,
+        })
+      })
+      login(response.accessToken, response.user);
+      
+    } catch (error) {
+      error instanceof Error && setError(error.message);
+    }
+  }
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -26,36 +57,21 @@ export default function Signup() {
   return (
     <Paper sx={{ display: 'flex' }}>
       <Box
+        onSubmit={loginSubmitHandler}
         component="form"
         sx={{
           display: 'flex',
           flexDirection: 'column',
           gap: '1rem',
           p: '2rem',
-          width: '30rem',
+          width: '20rem',
           maxWidth: '80vw',
         }}
       >
         <Box>
-          <Typography variant="h5">CREATE FIRST USER</Typography>
+          <Typography variant="h5">LOGIN</Typography>
         </Box>
-        <FormControl sx={{ m: 1, w: 'inherit' }}>
-          <TextField
-            required
-            label="First name"
-            name="firstname"
-            autoComplete="given-name"
-            variant="standard"
-          />
-        </FormControl>
-        <FormControl sx={{ m: 1 }}>
-          <TextField
-            label="Last name"
-            name="firstname"
-            autoComplete="family-name"
-            variant="standard"
-          />
-        </FormControl>
+        {error && <Alert severity="error">{error}</Alert>}
         <FormControl sx={{ m: 1 }}>
           <TextField
             required
@@ -63,6 +79,7 @@ export default function Signup() {
             name="email"
             autoComplete="email"
             variant="standard"
+            inputRef={emailRef}
           />
         </FormControl>
         <FormControl sx={{ m: 1 }} variant="standard">
@@ -72,8 +89,9 @@ export default function Signup() {
           <Input
             required
             id="standard-adornment-password"
-            autoComplete="new-password"
+            autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
+            inputRef={passwordRef}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
@@ -88,7 +106,7 @@ export default function Signup() {
           />
         </FormControl>
         <Button type="submit" variant="contained">
-          Create
+          Login
         </Button>
       </Box>
     </Paper>

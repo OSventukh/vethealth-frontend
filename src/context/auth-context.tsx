@@ -31,48 +31,40 @@ export function AuthContextProvider(props: ChildrenProps) {
     null
   );
   const [userData, setUserData] = useState<UserData | null>(null);
-  const loginTimeout = useRef<ReturnType<typeof setTimeout>>();
-
   const login = useCallback((token: Token, user: UserData) => {
     setAccessToken(token.token);
-    setAccessTokenExpiresIn(token.expiresIn);
+    setAccessTokenExpiresIn(token.expirationDate);
     setUserData(user);
     localStorage.setItem('token', JSON.stringify(token));
-    const tokenExipirationDate = new Date(token.expiresIn);
-    const timeUntilExpiration =
-      tokenExipirationDate.getTime() - new Date().getTime();
-
-    loginTimeout.current = setTimeout(() => {
-      setAccessToken(null);
-      setUserData(null);
-      setAccessTokenExpiresIn(null);
-    }, timeUntilExpiration);
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
     setAccessToken(null);
     setUserData(null);
-    if (loginTimeout.current) clearTimeout(loginTimeout.current);
   }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      setAccessToken(token);
+      const parsedToken = JSON.parse(token);
+      setAccessToken(parsedToken.token);
+      setAccessTokenExpiresIn(parsedToken.expiresIn);
     }
   }, []);
 
   useEffect(() => {
-    if (accessTokenExpiresIn && accessTokenExpiresIn < new Date()) {
+    if (accessTokenExpiresIn && accessTokenExpiresIn <= new Date()) {
       const fetching = async() => {
         try {
-          const response = await fetchData('/refreshTokens', {
-            method: 'GET'
-          })
+          const response = await fetchData('login/refreshtoken', {
+            method: 'GET',
+            credentials: 'include',
+          });
           if (response) {
             setAccessToken(response.token);
             setAccessTokenExpiresIn(response.expiresIn);
+            localStorage.setItem('token', JSON.stringify(response.token));
           }
         } catch (error) {
           logout();

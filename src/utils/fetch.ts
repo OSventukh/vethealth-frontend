@@ -1,8 +1,13 @@
 const api = 'http://localhost:5000';
 
-export async function fetchData(url: string, options: RequestInit) {
+export async function fetchData(url: string, options?: RequestInit ) {
   try {
-    const response = await fetch(`api/${url}`, options);
+    const response = await fetch(
+      `${api}/${url}`,
+      options || {
+        method: 'GET',
+      }
+    );
 
     const result = await response.json();
 

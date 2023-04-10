@@ -17,6 +17,6 @@ export interface Auth {
 
 export interface Token {
   token: string;
-  expiresIn: Date;
+  expirationDate: Date;
 }
 
