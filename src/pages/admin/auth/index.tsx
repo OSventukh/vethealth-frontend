@@ -1,31 +1,24 @@
-import { useEffect, useState, useContext } from 'react';
+import { useContext } from 'react';
+import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic'
-import { Box } from '@mui/material';
-import { fetchData } from '@/utils/fetch';
-
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import useData from '@/hooks/data-hook';
 import AuthContext from '@/context/auth-context';
 
 const Signup = dynamic(() => import('@/components/admin/Auth/Signup'));
 const Login = dynamic (() => import('@/components/admin/Auth/Login'));
 
 export default function Auth() {
-  const [authType, setAuthType] = useState<'login' | 'signup' >('login');
   const { isAuth } = useContext(AuthContext);
+  const router = useRouter();
+  const { data, error, isLoading } = useData('auth');
 
-  useEffect(() => {
-    const fetching = async () => {
-      try {
-        const response = await fetchData('auth');
-
-        if (response.action) {
-          setAuthType(response.action);
-        }
-      } catch (error) {
-
-      }
-    };
-    fetching();
-  }, []);
+ 
+  if (error) {
+    router.push('/500');
+    return null;
+  }
 
   return (
     <Box
@@ -39,8 +32,9 @@ export default function Auth() {
         background: '#f5f5f5',
       }}
     >
-      { authType === 'login' && !isAuth && <Login /> }
-      { authType === 'signup' && !isAuth && <Signup /> }
+      { isLoading && <CircularProgress /> }
+      { !isLoading && data.action === 'login' && !isAuth && !isLoading && <Login /> }
+      { !isLoading && data.action === 'signup' && !isAuth && <Signup /> }
     </Box>
   );
 }
