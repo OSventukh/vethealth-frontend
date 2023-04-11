@@ -54,12 +54,15 @@ export function AuthContextProvider(props: ChildrenProps) {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     if (accessTokenExpiresIn && accessTokenExpiresIn <= new Date()) {
       const fetching = async() => {
         try {
           const response = await fetchData('login/refreshtoken', {
             method: 'GET',
             credentials: 'include',
+            signal
           });
           if (response) {
             setAccessToken(response.token);
@@ -72,6 +75,7 @@ export function AuthContextProvider(props: ChildrenProps) {
       }
       fetching();
     }
+    () => controller.abort()
   }, [accessTokenExpiresIn, logout]);
 
   const store = useMemo<Auth>(

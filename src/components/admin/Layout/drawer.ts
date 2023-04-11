@@ -72,6 +72,7 @@ export const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 
     ...(open && {
       ...openedMixin(theme),
       '& .MuiDrawer-paper': openedMixin(theme),
+      
     }),
     ...(!open && {
       ...closedMixin(theme),

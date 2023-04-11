@@ -1,9 +1,12 @@
 import { useEffect, useState, useContext } from 'react';
+import dynamic from 'next/dynamic'
 import { Box } from '@mui/material';
 import { fetchData } from '@/utils/fetch';
-import Signup from '@/components/admin/Auth/Signup';
-import Login from '@/components/admin/Auth/Login';
+
 import AuthContext from '@/context/auth-context';
+
+const Signup = dynamic(() => import('@/components/admin/Auth/Signup'));
+const Login = dynamic (() => import('@/components/admin/Auth/Login'));
 
 export default function Auth() {
   const [authType, setAuthType] = useState<'login' | 'signup' >('login');
