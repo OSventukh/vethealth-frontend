@@ -10,7 +10,7 @@ export async function fetchData(url: string, options?: RequestInit ) {
     );
 
     const result = await response.json();
-
+    
     if (!response.ok) {
       throw new Error(result?.message || 'Somethin went wrong');
     }

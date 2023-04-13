@@ -10,8 +10,9 @@ export interface UserData {
 export interface Auth {
   accessToken: string | null;
   isAuth: boolean;
+  isLoading: boolean;
   user: UserData | null;
-  login: (token: Token, user: UserData) => void;
+  login: ({ user: UserData, accessToken: Token}) => void;
   logout: () => void;
 }
 

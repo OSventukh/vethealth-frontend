@@ -1,18 +1,19 @@
 import {
-  useEffect,
-  useState,
   createContext,
   useMemo,
   useCallback,
-  useRef,
+  useEffect
 } from 'react';
+import { useRouter } from 'next/router';
 import { fetchData } from '@/utils/fetch';
 import type { ChildrenProps } from '@/types/props-types';
 import type { UserData, Auth, Token } from '@/types/auth-types';
+import { useData } from '@/hooks/data-hook';
 
 const AuthContext = createContext<Auth>({
   accessToken: '',
   isAuth: false,
+  isLoading: false,
   user: {
     id: null,
     firstname: null,
@@ -26,67 +27,35 @@ const AuthContext = createContext<Auth>({
 });
 
 export function AuthContextProvider(props: ChildrenProps) {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [accessTokenExpiresIn, setAccessTokenExpiresIn] = useState<Date | null>(
-    null
-  );
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const login = useCallback((token: Token, user: UserData) => {
-    setAccessToken(token.token);
-    setAccessTokenExpiresIn(token.expirationDate);
-    setUserData(user);
-    localStorage.setItem('token', JSON.stringify(token));
-  }, []);
+  const { data, isLoading, error, mutate } = useData('login/refreshtoken', { credentials: 'include'}, false);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('token');
-    setAccessToken(null);
-    setUserData(null);
-  }, []);
+  const login = useCallback((data: { user: UserData, accessToken: Token }) => {
+    mutate({...data})
+  }, [mutate]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const parsedToken = JSON.parse(token);
-      setAccessToken(parsedToken.token);
-      setAccessTokenExpiresIn(parsedToken.expiresIn);
-    }
-  }, []);
+  const logout = useCallback(async () => {
+    await fetchData('logout', {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer ' + data.accessToken.token,
+      },
+      credentials: 'include',
+      
+    })
+    mutate(null)
+  }, [data?.accessToken?.token, mutate]);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    if (accessTokenExpiresIn && accessTokenExpiresIn <= new Date()) {
-      const fetching = async() => {
-        try {
-          const response = await fetchData('login/refreshtoken', {
-            method: 'GET',
-            credentials: 'include',
-            signal
-          });
-          if (response) {
-            setAccessToken(response.token);
-            setAccessTokenExpiresIn(response.expiresIn);
-            localStorage.setItem('token', JSON.stringify(response.token));
-          }
-        } catch (error) {
-          logout();
-        }
-      }
-      fetching();
-    }
-    () => controller.abort()
-  }, [accessTokenExpiresIn, logout]);
 
   const store = useMemo<Auth>(
     () => ({
-      accessToken,
-      isAuth: !!accessToken,
-      user: userData,
+      accessToken: data && data.accessToken.token,
+      isAuth: data && !!data.accessToken.token,
+      isLoading: isLoading,
+      user: data && data.user,
       login,
       logout,
     }),
-    [accessToken, userData, login, logout]
+    [ data, login, logout, isLoading]
   );
   return (
     <AuthContext.Provider value={store}>{props.children}</AuthContext.Provider>

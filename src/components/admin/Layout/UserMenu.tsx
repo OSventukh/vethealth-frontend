@@ -1,16 +1,15 @@
 import { useState, useContext } from 'react';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import AuthContext from '@/context/auth-context';
 
 
 export default function UserMenu() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { logout } = useContext(AuthContext);
+  const { logout, user } = useContext(AuthContext);
   const clickMenuHandler = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   }
-
   const clickMenuCloseHandler = () => {
     setAnchorEl(null);
   };
@@ -42,7 +41,8 @@ export default function UserMenu() {
         open={Boolean(anchorEl)}
         onClose={clickMenuCloseHandler}
       >
-        <MenuItem onClick={clickMenuCloseHandler}>Profile</MenuItem>
+        
+        <MenuItem onClick={clickMenuCloseHandler}><Typography variant='h6'>{user?.firstname} {user?.lastname}</Typography></MenuItem>
         <MenuItem onClick={logout}>Exit</MenuItem>
       </Menu>
     </div>

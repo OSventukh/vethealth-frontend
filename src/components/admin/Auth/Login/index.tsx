@@ -43,7 +43,7 @@ export default function Login() {
           password,
         })
       })
-      login(response.accessToken, response.user);
+      login(response);
       
     } catch (error) {
       error instanceof Error && setError(error.message);
