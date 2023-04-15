@@ -1,4 +1,4 @@
-const api = 'http://localhost:5000';
+export const api = 'http://localhost:5000';
 
 export async function fetchData(url: string, options?: RequestInit ) {
   try {
@@ -12,7 +12,7 @@ export async function fetchData(url: string, options?: RequestInit ) {
     const result = await response.json();
     
     if (!response.ok) {
-      throw new Error(result?.message || 'Somethin went wrong');
+      throw new Error(result?.message || 'Something went wrong');
     }
 
     return result;

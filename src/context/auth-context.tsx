@@ -4,7 +4,6 @@ import {
   useCallback,
   useEffect
 } from 'react';
-import { useRouter } from 'next/router';
 import { fetchData } from '@/utils/fetch';
 import type { ChildrenProps } from '@/types/props-types';
 import type { UserData, Auth, Token } from '@/types/auth-types';
@@ -45,6 +44,17 @@ export function AuthContextProvider(props: ChildrenProps) {
     mutate(null)
   }, [data?.accessToken?.token, mutate]);
 
+  useEffect(() => {
+    if (data && data.accessToken.expirationDate) {
+      const expirationTime = new Date(data.accessToken.expirationDate).getTime();
+      const currentTime = Date.now();
+      const timeout = expirationTime - currentTime;
+      const timerId = setTimeout(() => {
+        mutate();
+      }, timeout);
+      return () => clearTimeout(timerId);
+    }
+  }, [data, mutate]);
 
   const store = useMemo<Auth>(
     () => ({

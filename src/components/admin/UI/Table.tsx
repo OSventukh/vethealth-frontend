@@ -1,4 +1,5 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
+import Image from 'next/image';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -16,64 +17,22 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-
-interface Data {
-  id: number;
-  title: string;
-  description?: string;
-  createdAt?: Date;
-  slug?: string;
-  excerpt?: string;
-}
-
-interface HeadCell {
-  disablePadding: boolean;
-  id: string;
-  label: string;
-  numeric: boolean;
-}
-
-const createHeadCells = (data: Data[]): HeadCell[] => {
-  const createLabel = (label: string) => {
-    let newLabel = label;
-    if (label === 'createdAt') {
-      newLabel = 'Created';
-    }
-    if (label === 'updatedAt') {
-      newLabel = 'Updated';
-    }
-    return newLabel.toUpperCase();
-  };
-  return Object.keys(data[0])
-    .filter((item) => item !== 'id')
-    .map((item) => {
-      return {
-        id: item,
-        numeric: false,
-        disablePadding: false,
-        label: createLabel(item),
-      };
-    });
-};
-
-interface EnhancedTableHeadProps {
-  data: Data[];
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    newOrderBy: keyof HeadCell
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: 'asc' | 'desc';
-  orderBy: string;
-  rowCount: number;
-}
+import { api } from '@/utils/fetch';
+import Modal from './Modal';
+import type {
+  Data,
+  HeadCell,
+  EnhancedTableHeadProps,
+  EnhancedTableProps,
+  EnhancedTableToolbarProps,
+} from '@/types/table-types';
 
 function EnhancedTableHead(props: EnhancedTableHeadProps) {
   const {
-    data,
+    header,
     onSelectAllClick,
     order,
     orderBy,
@@ -86,8 +45,6 @@ function EnhancedTableHead(props: EnhancedTableHeadProps) {
     (newOrderBy: keyof HeadCell) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, newOrderBy);
     };
-
-  const headCells = createHeadCells(data);
 
   return (
     <TableHead>
@@ -103,7 +60,7 @@ function EnhancedTableHead(props: EnhancedTableHeadProps) {
             }}
           />
         </TableCell>
-        {headCells.map((headCell) => (
+        {header.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
@@ -129,13 +86,19 @@ function EnhancedTableHead(props: EnhancedTableHeadProps) {
   );
 }
 
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-  title: string;
-}
-
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, title } = props;
+  const { numSelected, title, onDelete } = props;
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const selectedItemsDeleteHandler = useCallback(() => {
+    setShowModal(true);
+  },[]);
+
+  const deleteAgreeHandler = useCallback(() => {
+    setShowModal(false);
+    onDelete();
+  }, [onDelete])
+
   return (
     <Toolbar
       sx={{
@@ -170,11 +133,19 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </Typography>
       )}
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Modal open={showModal} setOpen={setShowModal} title="Delete" content={`Are you sure you want to delete ${numSelected} items?`}  onAgree={deleteAgreeHandler} />
+          <Tooltip title="Edit">
+            <IconButton>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton onClick={selectedItemsDeleteHandler}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
       ) : (
         <Tooltip title="Filter list">
           <IconButton>
@@ -186,22 +157,10 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 
-interface EnhancedTableProps {
-  data: Data[];
-  title: string;
-  page: number;
-  size: number;
-  order: 'asc' | 'desc';
-  orderBy: string;
-  count: number;
-  onSort: (newOrderBy: string) => void;
-  onSize: (size: number) => void;
-  onPage: (page: number) => void;
-}
-
 export default function EnhancedTable({
   title,
   data,
+  header,
   onSort,
   onPage,
   onSize,
@@ -210,9 +169,11 @@ export default function EnhancedTable({
   size,
   page,
   count,
+  onItemsDelete
 }: EnhancedTableProps) {
-  const [selected, setSelected] = React.useState<readonly number[]>([]);
-  const handleRequestSort = React.useCallback(
+  const [selected, setSelected] = useState<readonly number[]>([]);
+
+  const handleRequestSort = useCallback(
     (event: React.MouseEvent<unknown>, newOrderBy: keyof HeadCell) => {
       onSort(newOrderBy);
     },
@@ -248,25 +209,36 @@ export default function EnhancedTable({
     setSelected(newSelected);
   };
 
-  const handleChangePage = React.useCallback(
+  const itemsDeleteHander = useCallback(() => {
+    onItemsDelete(selected);
+  }, [onItemsDelete, selected])
+
+  const handleChangePage = useCallback(
     (event: unknown, newPage: number) => {
       onPage(newPage + 1);
     },
     [onPage]
   );
 
-  const handleChangeRowsPerPage = React.useCallback(
+  const handleChangeRowsPerPage = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const updatedRowsPerPage = parseInt(event.target.value, 10);
+
+      // check max possible page
+      const maxPage = Math.ceil(count / updatedRowsPerPage);
+      // Change page if current page bigger than maximum possible
+      if (page > maxPage) {
+        onPage(maxPage);
+      }
       onSize(updatedRowsPerPage);
     },
-    [onSize]
+    [onSize, count, page, onPage]
   );
 
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
-      <EnhancedTableToolbar title={title} numSelected={selected.length} />
+      <EnhancedTableToolbar title={title} numSelected={selected.length} onDelete={itemsDeleteHander} />
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -274,7 +246,7 @@ export default function EnhancedTable({
           size={'medium'}
         >
           <EnhancedTableHead
-            data={data}
+            header={header}
             numSelected={selected.length}
             order={order}
             orderBy={orderBy}
@@ -314,6 +286,25 @@ export default function EnhancedTable({
                             return (
                               <TableCell key={i} align="left">
                                 {new Date(value).toLocaleString()}
+                              </TableCell>
+                            );
+                          }
+                          if (key === 'image') {
+                            return (
+                              <TableCell
+                                key={i}
+                                align="left"
+                                sx={{ position: 'relative' }}
+                              >
+                                {value && (
+                                  <Image
+                                    src={`${api}/${value}`}
+                                    alt={title}
+                                    height={40}
+                                    width={40}
+                                    style={{ objectFit: 'contain' }}
+                                  />
+                                )}
                               </TableCell>
                             );
                           }

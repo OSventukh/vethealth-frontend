@@ -17,12 +17,19 @@ import NavItem from './NavItem';
 
 export default function Navigation({ open }: NavigationProps) {
   const [openPostMenu, setOpenPostMenu] = useState(false);
+  const [openTopicMenu, setOpenTopicMenu] = useState(false);
+
   const [selectedMenu, setSelectedMenu] = useState(0);
 
   const postMenuClickHandler = (event: React.MouseEvent, item: number) => {
     setOpenPostMenu((prevState) => !prevState);
     setSelectedMenu(item);
   };
+
+  const topicMenuClickHandler = (event: React.MouseEvent, item: number) => {
+    setOpenTopicMenu((prevState) => !prevState);
+    setSelectedMenu(item)
+  }
 
   const menuSelectHandler = (event: React.MouseEvent, item: number) => {
     setSelectedMenu(item);
@@ -46,12 +53,32 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin/topics"
           open={open}
           icon={<ViewComfyAlt />}
-          onClick={(event) => menuSelectHandler(event, 1)}
+          onClick={(event) => topicMenuClickHandler(event, 1)}
+          expandIcon={openTopicMenu ? <ExpandLess /> : <ExpandMore />}
           selected={selectedMenu === 1}
-
         >
           Topics
         </NavItem>
+        <Collapse in={open && openTopicMenu} timeout="auto" unmountOnExit>
+          <List disablePadding sx={{ pl: '1rem' }}>
+            <NavItem
+              link="/admin/topics"
+              open={open}
+              onClick={(event) => menuSelectHandler(event, 1.1)}
+              selected={selectedMenu === 1.1}
+            >
+              All topics
+            </NavItem>
+            <NavItem
+              link="/admin/topics/new"
+              open={open}
+              onClick={(event) => menuSelectHandler(event, 1.2)}
+              selected={selectedMenu === 1.2}
+            >
+              New Topic
+            </NavItem>
+          </List>
+        </Collapse>
         <NavItem
           link="/admin/posts"
           open={open}
@@ -59,7 +86,6 @@ export default function Navigation({ open }: NavigationProps) {
           expandIcon={openPostMenu ? <ExpandLess /> : <ExpandMore />}
           onClick={(event: React.MouseEvent) => postMenuClickHandler(event, 2)}
           selected={selectedMenu === 2}
-
         >
           Posts
         </NavItem>
@@ -70,7 +96,6 @@ export default function Navigation({ open }: NavigationProps) {
               open={open}
               onClick={(event) => menuSelectHandler(event, 3)}
               selected={selectedMenu === 3}
-
             >
               All posts
             </NavItem>
@@ -78,8 +103,7 @@ export default function Navigation({ open }: NavigationProps) {
               link="/admin/posts/categories"
               open={open}
               onClick={(event) => menuSelectHandler(event, 4)}
-          selected={selectedMenu === 4}
-
+              selected={selectedMenu === 4}
             >
               Categories
             </NavItem>
@@ -91,7 +115,6 @@ export default function Navigation({ open }: NavigationProps) {
           icon={<Web />}
           onClick={(event) => menuSelectHandler(event, 5)}
           selected={selectedMenu === 5}
-
         >
           Pages
         </NavItem>
@@ -101,7 +124,6 @@ export default function Navigation({ open }: NavigationProps) {
           icon={<Group />}
           onClick={(event) => menuSelectHandler(event, 6)}
           selected={selectedMenu === 6}
-
         >
           Users
         </NavItem>
@@ -111,7 +133,6 @@ export default function Navigation({ open }: NavigationProps) {
           icon={<Settings />}
           onClick={(event) => menuSelectHandler(event, 7)}
           selected={selectedMenu === 7}
-
         >
           Settings
         </NavItem>
