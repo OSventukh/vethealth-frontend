@@ -9,4 +9,20 @@ export const dark = createTheme({
       default: '#3d3d3d'
     }
   },
+  components: {
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'transparent'
+        }
+      }
+    },
+    MuiInput: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'transparent'
+        }
+      }
+    }
+  }
 });

@@ -48,3 +48,13 @@ export interface EnhancedTableProps {
   onPage: (page: number) => void;
   onItemsDelete: (selected: readonly number[]) => void;
 }
+
+interface ModalProps {
+  open: boolean;
+  title?: string;
+  content: string | ReactElement;
+  onAgree: () => void;
+  agreeButton?: string;
+  disagreeButton?: string;
+  setOpen: (arg: boolean) => void;
+}

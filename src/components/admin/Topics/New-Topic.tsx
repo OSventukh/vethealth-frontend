@@ -1,5 +1,5 @@
 import { FormEvent, useContext, useState, ChangeEvent } from 'react';
-import { fetchData } from '@/utils/fetch';
+
 import {
   Paper,
   Box,
@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import AuthContext from '@/context/auth-context';
 import ImageUpload from '../UI/ImageUpload';
+import { usePostData } from '@/hooks/data-hook';
 
 export default function NewTopic() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -19,7 +20,7 @@ export default function NewTopic() {
   const [slug, setSlug] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [image, setImage] = useState<File | null>(null);
-
+  const { trigger } = usePostData('topics')
   const { accessToken } = useContext(AuthContext);
 
   const titleChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -63,12 +64,10 @@ export default function NewTopic() {
     description && formData.append('descritption', description);
     image && formData.append('topic-image', image);
     try {
-      const response = await fetchData('topics', {
+      const response = await trigger({
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: formData,
+        data: formData,
+        token: accessToken
       });
       setSuccessMessage(response.message);
       setImage(null);
@@ -136,7 +135,7 @@ export default function NewTopic() {
             />
           </Grid>
           <Grid item>
-            <ImageUpload onImage={imageHandler} value={image} />
+            <ImageUpload onImage={setImage} value={image} />
           </Grid>
         </Grid>
         <Grid container justifyContent="center" sx={{ mt: 3 }}>

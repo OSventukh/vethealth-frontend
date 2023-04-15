@@ -1,13 +1,5 @@
-import {
-  createContext,
-  useMemo,
-  useCallback,
-  useEffect
-} from 'react';
-import { fetchData } from '@/utils/fetch';
-import type { ChildrenProps } from '@/types/props-types';
-import type { UserData, Auth, Token } from '@/types/auth-types';
-import { useData } from '@/hooks/data-hook';
+import { createContext } from 'react';
+import type { Auth } from '@/types/auth-types';
 
 const AuthContext = createContext<Auth>({
   accessToken: '',
@@ -24,52 +16,5 @@ const AuthContext = createContext<Auth>({
   login: () => {},
   logout: () => {},
 });
-
-export function AuthContextProvider(props: ChildrenProps) {
-  const { data, isLoading, error, mutate } = useData('login/refreshtoken', { credentials: 'include'}, false);
-
-  const login = useCallback((data: { user: UserData, accessToken: Token }) => {
-    mutate({...data})
-  }, [mutate]);
-
-  const logout = useCallback(async () => {
-    await fetchData('logout', {
-      method: 'POST',
-      headers: {
-        authorization: 'Bearer ' + data.accessToken.token,
-      },
-      credentials: 'include',
-      
-    })
-    mutate(null)
-  }, [data?.accessToken?.token, mutate]);
-
-  useEffect(() => {
-    if (data && data.accessToken.expirationDate) {
-      const expirationTime = new Date(data.accessToken.expirationDate).getTime();
-      const currentTime = Date.now();
-      const timeout = expirationTime - currentTime;
-      const timerId = setTimeout(() => {
-        mutate();
-      }, timeout);
-      return () => clearTimeout(timerId);
-    }
-  }, [data, mutate]);
-
-  const store = useMemo<Auth>(
-    () => ({
-      accessToken: data && data.accessToken.token,
-      isAuth: data && !!data.accessToken.token,
-      isLoading: isLoading,
-      user: data && data.user,
-      login,
-      logout,
-    }),
-    [ data, login, logout, isLoading]
-  );
-  return (
-    <AuthContext.Provider value={store}>{props.children}</AuthContext.Provider>
-  );
-}
 
 export default AuthContext;

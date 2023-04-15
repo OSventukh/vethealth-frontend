@@ -20,7 +20,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-import { api } from '@/utils/fetch';
+import { api } from '@/hooks/data-hook';
 import Modal from './Modal';
 import type {
   Data,
@@ -28,7 +28,7 @@ import type {
   EnhancedTableHeadProps,
   EnhancedTableProps,
   EnhancedTableToolbarProps,
-} from '@/types/table-types';
+} from '@/types/ui-types';
 
 function EnhancedTableHead(props: EnhancedTableHeadProps) {
   const {

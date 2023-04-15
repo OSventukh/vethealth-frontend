@@ -3,16 +3,14 @@ import Box from '@mui/material/Box';
 import { CircularProgress } from '@mui/material';
 import EnhancedTable from '@/components/admin/UI/Table';
 
-import { useData } from '@/hooks/data-hook';
+import { useGetData } from '@/hooks/data-hook';
 export default function TopicsPage() {
   const [sortBy, setSortBy] = useState('');
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(5);
 
-  const { data, isLoading, error } = useData(
-    `topics?order=${sortBy}:${sort}&page=${page}&size=${size}`
-  );
+  const { data, isLoading, error } = useGetData(`topics?order=${sortBy}:${sort}&page=${page}&size=${size}`);
   const onSortHandler = useCallback((sortBy: string) => {
     setSortBy(sortBy);
     setSort((sort) => {

@@ -1,57 +1,74 @@
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
-import type { UseData } from '@/types/fetch-types';
+import { useContext } from 'react';
+import AuthContext from '@/context/auth-context';
+import type { ArgData } from '@/types/fetch-types';
 
-const api = 'http://localhost:5000';
+export const api = 'http://localhost:5000';
 
-const fetcher = async (
-  url: string,
-  token?: string,
-  credentials?: RequestCredentials
-) => {
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'Content-type': 'application/json',
-        ...(token && { authorization: `Bearer ${token}` }),
-      },
-      ...(credentials && { credentials}),
-    });
 
-    if (!response.ok && response.status === 401) {
-      throw new Error('ПОмилка');
-    }
-
-    if (!response.ok) {
-      const error = new Error('An error occurred while fetching the data.');
-      // Attach extra info to the error object.
-      throw error;
-    }
-    return await response.json();
-  } catch (error) {
-    throw error;
+async function getFetch(url: string, { token = '' }: {token?: string | null } = {}) {
+  const response = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      ...(token && { authorization: `Bearer ${token}` }),
+      'Content-Type': 'application/json' 
+    },
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result?.message || 'Something went wrong');
   }
+  
+  return result;
 };
 
-export function useData(
+async function postFetch(url: string, { arg }: { arg?: ArgData } = {}) {
+  const response = await fetch(url, {
+    method: arg?.method,
+    credentials: 'include',
+    headers: {
+      ...(arg?.token && { authorization: `Bearer ${arg?.token}` }),
+      ...(arg?.data instanceof FormData
+        ? {}
+        : { 'Content-Type': 'application/json' }),
+    },
+    ...(arg?.method !== 'GET' &&
+      arg?.data && {
+        body:
+          arg?.data instanceof FormData ? arg?.data : JSON.stringify(arg?.data),
+      }),
+  });
+
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result?.message || 'Something went wrong');
+  }
+
+  return result;
+}
+
+export function usePostData(url: string) {
+  return useSWRMutation(`${api}/${url}`, postFetch);
+}
+
+export function useGetData(
   url: string,
-  { token, credentials }: UseData = {},
-  revalidation: boolean = true
+  {
+    revalidation = true,
+    shouldRetryOnError = true,
+  }: { revalidation?: boolean; shouldRetryOnError?: boolean } = {}
 ) {
-  const { data, error, isLoading, mutate } = useSWR(
+  const { accessToken } = useContext(AuthContext);
+  return useSWR(
     `${api}/${url}`,
-    () => fetcher(`${api}/${url}`, token, credentials),
+    () => getFetch(`${api}/${url}`, { token: accessToken }),
     {
       revalidateIfStale: revalidation,
       revalidateOnFocus: revalidation,
-      revalidateOnReconnect: revalidation,  
-      shouldRetryOnError: false,    
+      revalidateOnReconnect: revalidation,
+      shouldRetryOnError: shouldRetryOnError,
     }
   );
-  return {
-    data,
-    error,
-    isLoading,
-    mutate,
-  };
 }

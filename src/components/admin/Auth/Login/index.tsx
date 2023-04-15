@@ -14,7 +14,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
 
 import AuthContext from '@/context/auth-context';
-import { fetchData } from '@/utils/fetch';
+import { usePostData } from '@/hooks/data-hook';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,32 +23,31 @@ export default function Login() {
   const passwordRef = useRef<HTMLInputElement>();
   const { login } = useContext(AuthContext);
 
+  const { trigger, isMutating } = usePostData('login');
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const loginSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
-  
+
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
     try {
-      setError(null);
-      const response = await fetchData('login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
+      const result = await trigger({
+        data: {
           email,
           password,
-        })
-      })
-      login(response);
-      
+        },
+        method: 'POST',
+      });
+      login(result);
     } catch (error) {
-      error instanceof Error && setError(error.message);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Something went wrong');
+      }
     }
-  }
+  };
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -72,7 +71,6 @@ export default function Login() {
           <Typography variant="h5">LOGIN</Typography>
         </Box>
         {error && <Alert severity="error">{error}</Alert>}
-        <FormControl sx={{ m: 1 }}>
           <TextField
             required
             label="Email"
@@ -80,8 +78,11 @@ export default function Login() {
             autoComplete="email"
             variant="standard"
             inputRef={emailRef}
+            sx={{
+              m: 1,
+            }}
           />
-        </FormControl>
+
         <FormControl sx={{ m: 1 }} variant="standard">
           <InputLabel htmlFor="standard-adornment-password">
             Password

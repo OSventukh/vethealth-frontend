@@ -12,25 +12,25 @@ interface ImageUploadProps {
 }
 
 export default function ImageUpload({ width, height, onImage, value }: ImageUploadProps) {
-  const [image, setImage] = useState<File | null>(value);
   const [imageURL, setImageURL] = useState<string | null>(null);
   const theme = useTheme();
 
   useEffect(() => {
-    if (!image) return;
-    setImageURL(URL.createObjectURL(image));
-  }, [image]);
+    if (!value) {
+      setImageURL(null);
+    } else {
+      setImageURL(URL.createObjectURL(value));
+    }
+  }, [value]);
 
   const imageChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const enteredImage = event.target.files;
     if (!enteredImage || enteredImage.length === 0) return;
     onImage(enteredImage[0])
-    setImage(enteredImage[0]);
   };
 
   const imageDeleteHandler = () => {
     onImage(null);
-    setImage(null);
     setImageURL(null);
   };
 

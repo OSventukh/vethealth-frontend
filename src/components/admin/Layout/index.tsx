@@ -17,7 +17,6 @@ export default function AdminPanelLayout(props: ChildrenProps) {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <CssBaseline enableColorScheme />
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Navigation open={open} handleDrawerToggle={handleDrawerToggle} />
       <Box

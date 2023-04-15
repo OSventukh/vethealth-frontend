@@ -1,13 +1,14 @@
 import '@/styles/globals.css';
 import { useRouter } from 'next/router';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
+import { CssBaseline } from '@mui/material';
 import type { AppProps } from 'next/app';
 import AdminPanelLayout from '@/components/admin/Layout';
 import Theme from '@/theme/themeProvider';
-import AuthContext, { AuthContextProvider } from '@/context/auth-context';
-import AdminRouteGuard from '@/components/admin/Auth/AdminRouteGuard';
+import AuthContextProvider from '@/providers/auth-provider';
+import AdminRouteGuard from '@/providers/admin-route-guard-provider';
+
 export default function App({ Component, pageProps }: AppProps) {
-  const { isAuth } = useContext(AuthContext);
   const router = useRouter();
 
   const isAdminPanel = useMemo(
@@ -21,17 +22,18 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <AuthContextProvider>
-      <AdminRouteGuard>
-        {isAdminPanel && !authPage ? (
-          <Theme>
+      <Theme>
+        <AdminRouteGuard>
+          <CssBaseline />
+          {isAdminPanel && !authPage ? (
             <AdminPanelLayout>
               <Component {...pageProps} />
             </AdminPanelLayout>
-          </Theme>
-        ) : (
-          <Component {...pageProps} />
-        )}
-      </AdminRouteGuard>
+          ) : (
+            <Component {...pageProps} />
+          )}
+        </AdminRouteGuard>
+      </Theme>
     </AuthContextProvider>
   );
 }

@@ -5,16 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
-interface ModalProps {
-  open: boolean;
-  title?: string;
-  content: string | ReactElement;
-  onAgree: () => void;
-  agreeButton?: string;
-  disagreeButton?: string;
-  setOpen: (arg: boolean) => void;
-}
+import type { ModalProps } from '@/types/ui-types';
 
 export default function Modal({
   open = false,
