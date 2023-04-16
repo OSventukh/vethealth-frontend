@@ -211,6 +211,7 @@ export default function EnhancedTable({
 
   const itemsDeleteHander = useCallback(() => {
     onItemsDelete(selected);
+    setSelected([]);
   }, [onItemsDelete, selected])
 
   const handleChangePage = useCallback(
