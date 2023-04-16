@@ -9,4 +9,9 @@ export const light = createTheme({
       content: '#eef2f6'
     }
   },
+  mixins: {
+    toolbar: {
+      minHeight: 80,
+    }
+  }
 })

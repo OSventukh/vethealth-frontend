@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { NavIconProps } from '@/types/props-types';
 
 
-export default function NavItem({ open, link, icon, children, onClick, expandIcon, selected }: NavIconProps) {
+export default function NavItem({ open, link, icon, children, onClick, expandIcon, selected, nested }: NavIconProps) {
   return (
     <ListItem key={children} disablePadding sx={{ display: 'block' }}>
          
@@ -19,6 +19,10 @@ export default function NavItem({ open, link, icon, children, onClick, expandIco
                 minHeight: 48,
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
+                ...(nested && {'&.Mui-selected': {
+                  color: 'primary.dark',
+                  background: 'none',
+                }})
               }}
             >
               <ListItemIcon

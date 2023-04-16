@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import List from '@mui/material/List';
 import {
   Home,
@@ -15,25 +16,35 @@ import { Drawer, DrawerHeader } from '@/components/admin/Layout/drawer';
 import type { NavigationProps } from '@/types/props-types';
 import NavItem from './NavItem';
 
-export default function Navigation({ open }: NavigationProps) {
-  const [openPostMenu, setOpenPostMenu] = useState(false);
-  const [openTopicMenu, setOpenTopicMenu] = useState(false);
-
-  const [selectedMenu, setSelectedMenu] = useState(0);
-
-  const postMenuClickHandler = (event: React.MouseEvent, item: number) => {
-    setOpenPostMenu((prevState) => !prevState);
-    setSelectedMenu(item);
-  };
-
-  const topicMenuClickHandler = (event: React.MouseEvent, item: number) => {
-    setOpenTopicMenu((prevState) => !prevState);
-    setSelectedMenu(item)
+const links = {
+  home: '/admin',
+  topics: {
+    all: '/admin/topics',
+    new: '/admin/topics/new'
+  },
+  posts: {
+    all: '/admin/posts',
+    categories: '/admin/posts/categories'
+  },
+  pages: {
+    all: '/admin/pages',
+  },
+  users: {
+    all: '/admin/users'
+  },
+  settings: {
+    home: '/admin/settings',
   }
+}
+export default function Navigation({ open }: NavigationProps) {
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [openTopicMenu, setOpenTopicMenu] = useState(false);
+  const router = useRouter();
 
-  const menuSelectHandler = (event: React.MouseEvent, item: number) => {
-    setSelectedMenu(item);
+  const menuClickHandler = (event: React.MouseEvent, item: string) => {
+    setOpenMenu((prevState) => prevState !== item ? item : null);
   };
+
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -44,8 +55,7 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin"
           open={open}
           icon={<Home />}
-          onClick={(event) => menuSelectHandler(event, 0)}
-          selected={selectedMenu === 0}
+          selected={router.pathname === links.home}
         >
           Home
         </NavItem>
@@ -53,27 +63,27 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin/topics"
           open={open}
           icon={<ViewComfyAlt />}
-          onClick={(event) => topicMenuClickHandler(event, 1)}
-          expandIcon={openTopicMenu ? <ExpandLess /> : <ExpandMore />}
-          selected={selectedMenu === 1}
+          onClick={(event) => menuClickHandler(event, links.topics.all)}
+          expandIcon={openMenu === links.topics.all ? <ExpandLess /> : <ExpandMore />}
+          selected={router.pathname.startsWith(links.topics.all)}
         >
           Topics
         </NavItem>
-        <Collapse in={open && openTopicMenu} timeout="auto" unmountOnExit>
+        <Collapse in={open && openMenu === links.topics.all} timeout="auto" unmountOnExit>
           <List disablePadding sx={{ pl: '1rem' }}>
             <NavItem
               link="/admin/topics"
               open={open}
-              onClick={(event) => menuSelectHandler(event, 1.1)}
-              selected={selectedMenu === 1.1}
+              nested
+              selected={router.pathname === links.topics.all}
             >
               All topics
             </NavItem>
             <NavItem
               link="/admin/topics/new"
               open={open}
-              onClick={(event) => menuSelectHandler(event, 1.2)}
-              selected={selectedMenu === 1.2}
+              nested
+              selected={router.pathname === links.topics.new}
             >
               New Topic
             </NavItem>
@@ -83,27 +93,27 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin/posts"
           open={open}
           icon={<Article />}
-          expandIcon={openPostMenu ? <ExpandLess /> : <ExpandMore />}
-          onClick={(event: React.MouseEvent) => postMenuClickHandler(event, 2)}
-          selected={selectedMenu === 2}
+          expandIcon={openMenu ? <ExpandLess /> : <ExpandMore />}
+          onClick={(event: React.MouseEvent) => menuClickHandler(event, links.posts.all)}
+          selected={router.pathname.startsWith(links.posts.all)}
         >
           Posts
         </NavItem>
-        <Collapse in={open && openPostMenu} timeout="auto" unmountOnExit>
+        <Collapse in={open && openMenu === links.posts.all} timeout="auto" unmountOnExit>
           <List disablePadding sx={{ pl: '1rem' }}>
             <NavItem
               link="/admin/posts"
               open={open}
-              onClick={(event) => menuSelectHandler(event, 3)}
-              selected={selectedMenu === 3}
+              nested
+              selected={router.pathname === links.posts.all}
             >
               All posts
             </NavItem>
             <NavItem
               link="/admin/posts/categories"
               open={open}
-              onClick={(event) => menuSelectHandler(event, 4)}
-              selected={selectedMenu === 4}
+              nested
+              selected={router.pathname === links.posts.categories}
             >
               Categories
             </NavItem>
@@ -113,8 +123,7 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin/pages"
           open={open}
           icon={<Web />}
-          onClick={(event) => menuSelectHandler(event, 5)}
-          selected={selectedMenu === 5}
+          selected={router.pathname.startsWith(links.pages.all)}
         >
           Pages
         </NavItem>
@@ -122,8 +131,7 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin/users"
           open={open}
           icon={<Group />}
-          onClick={(event) => menuSelectHandler(event, 6)}
-          selected={selectedMenu === 6}
+          selected={router.pathname.startsWith(links.users.all)}
         >
           Users
         </NavItem>
@@ -131,8 +139,7 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin/settings"
           open={open}
           icon={<Settings />}
-          onClick={(event) => menuSelectHandler(event, 7)}
-          selected={selectedMenu === 7}
+          selected={router.pathname.startsWith(links.settings.home)}
         >
           Settings
         </NavItem>

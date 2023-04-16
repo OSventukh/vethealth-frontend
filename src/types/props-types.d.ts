@@ -15,4 +15,5 @@ export interface NavIconProps {
   children: string;
   expandIcon?: ReactElement;
   selected?: boolean;
+  nested?: boolean
 }

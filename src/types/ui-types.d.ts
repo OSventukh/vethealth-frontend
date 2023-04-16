@@ -14,7 +14,6 @@ export interface HeadCell {
   numeric: boolean;
 }
 
-
 export interface EnhancedTableHeadProps {
   header: HeadCell[];
   numSelected: number;
@@ -39,7 +38,7 @@ export interface EnhancedTableProps {
   title: string;
   page: number;
   size: number;
-  header: HeadCell[]
+  header: HeadCell[];
   order: 'asc' | 'desc';
   orderBy: string;
   count: number;
@@ -57,4 +56,14 @@ interface ModalProps {
   agreeButton?: string;
   disagreeButton?: string;
   setOpen: (arg: boolean) => void;
+}
+
+export interface SwitchButtonProps {
+  checked: boolean;
+  onChange: () => void;
+}
+
+export interface ThemeContext {
+  toggleColorMode: () => void;
+  mode: string;
 }

@@ -22,7 +22,6 @@ export default function UserMenu() {
         aria-controls="menu-appbar"
         aria-haspopup="true"
         onClick={clickMenuHandler}
-        color="inherit"
       >
         <AccountCircle />
       </IconButton>
