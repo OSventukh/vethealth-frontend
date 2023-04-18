@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -87,24 +89,24 @@ function EnhancedTableHead(props: EnhancedTableHeadProps) {
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, title, onDelete } = props;
+  const { selected, title, onDelete } = props;
   const [showModal, setShowModal] = useState<boolean>(false);
-
+  const router = useRouter();
   const selectedItemsDeleteHandler = useCallback(() => {
     setShowModal(true);
-  },[]);
+  }, []);
 
   const deleteAgreeHandler = useCallback(() => {
     setShowModal(false);
     onDelete();
-  }, [onDelete])
+  }, [onDelete]);
 
   return (
     <Toolbar
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
+        ...(selected.length > 0 && {
           bgcolor: (theme) =>
             alpha(
               (theme.palette.primary as any).main,
@@ -113,14 +115,14 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         }),
       }}
     >
-      {numSelected > 0 ? (
+      {selected.length > 0 ? (
         <Typography
           sx={{ flex: '1 1 100%' }}
           color="inherit"
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          {selected.length} selected
         </Typography>
       ) : (
         <Typography
@@ -132,14 +134,27 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           {title}
         </Typography>
       )}
-      {numSelected > 0 ? (
+      {selected.length > 0 ? (
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Modal open={showModal} setOpen={setShowModal} title="Delete" content={`Are you sure you want to delete ${numSelected} items?`}  onAgree={deleteAgreeHandler} />
-          <Tooltip title="Edit">
-            <IconButton>
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
+          <Modal
+            open={showModal}
+            setOpen={setShowModal}
+            title="Delete"
+            content={`Are you sure you want to delete ${selected.length} ${
+              selected.length === 1 ? 'item' : 'items'
+            }?`}
+            onAgree={deleteAgreeHandler}
+          />
+          {selected.length === 1 && (
+            <Tooltip title="Edit">
+              <IconButton
+                component={Link}
+                href={`${router.pathname}/${selected[0].toString()}`}
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          )}
           <Tooltip title="Delete">
             <IconButton onClick={selectedItemsDeleteHandler}>
               <DeleteIcon />
@@ -169,7 +184,7 @@ export default function EnhancedTable({
   size,
   page,
   count,
-  onItemsDelete
+  onItemsDelete,
 }: EnhancedTableProps) {
   const [selected, setSelected] = useState<readonly number[]>([]);
 
@@ -212,7 +227,7 @@ export default function EnhancedTable({
   const itemsDeleteHander = useCallback(() => {
     onItemsDelete(selected);
     setSelected([]);
-  }, [onItemsDelete, selected])
+  }, [onItemsDelete, selected]);
 
   const handleChangePage = useCallback(
     (event: unknown, newPage: number) => {
@@ -224,22 +239,19 @@ export default function EnhancedTable({
   const handleChangeRowsPerPage = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const updatedRowsPerPage = parseInt(event.target.value, 10);
-
-      // check max possible page
-      const maxPage = Math.ceil(count / updatedRowsPerPage);
-      // Change page if current page bigger than maximum possible
-      if (page > maxPage) {
-        onPage(maxPage);
-      }
       onSize(updatedRowsPerPage);
     },
-    [onSize, count, page, onPage]
+    [onSize]
   );
 
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
-      <EnhancedTableToolbar title={title} numSelected={selected.length} onDelete={itemsDeleteHander} />
+      <EnhancedTableToolbar
+        title={title}
+        selected={selected}
+        onDelete={itemsDeleteHander}
+      />
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -299,7 +311,7 @@ export default function EnhancedTable({
                               >
                                 {value && (
                                   <Image
-                                    src={`${api}/${value}`}
+                                    src={`${api}/${value}#${new Date().getTime()}`}
                                     alt={title}
                                     height={40}
                                     width={40}

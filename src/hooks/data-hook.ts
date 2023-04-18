@@ -54,20 +54,23 @@ export function usePostData(url: string) {
 }
 
 export function useGetData(
-  url: string,
+  url: string | object,
   {
     revalidation = true,
     shouldRetryOnError = true,
-  }: { revalidation?: boolean; shouldRetryOnError?: boolean } = {}
+    revalidateOnMount = true,
+  }: { revalidation?: boolean; shouldRetryOnError?: boolean, revalidateOnMount?: boolean } = {}
 ) {
   const { accessToken } = useContext(AuthContext);
+  if (typeof url === 'object') {}
   return useSWR(
-    `${api}/${url}`,
-    () => getFetch(`${api}/${url}`, { token: accessToken }),
+    typeof url === 'string' ? `${api}/${url}` : url,
+    typeof url === 'string' ? () => getFetch(`${api}/${url}`, { token: accessToken }) : ({ path }: { path: string}) => getFetch(`${api}/${path}`, { token: accessToken }),
     {
       revalidateIfStale: revalidation,
       revalidateOnFocus: revalidation,
       revalidateOnReconnect: revalidation,
+      revalidateOnMount: revalidateOnMount,
       shouldRetryOnError: shouldRetryOnError,
     }
   );

@@ -3,12 +3,13 @@ import { Box, Button, useTheme } from '@mui/material';
 import LandscapeIcon from '@mui/icons-material/Landscape';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Image from 'next/image';
+import { api } from '@/hooks/data-hook';
 
 interface ImageUploadProps {
   width?: string | number;
   height?: string | number;
-  onImage: (image: File | null) => void;
-  value: File | null;
+  onImage: (image: File | null | '') => void;
+  value: File | null | string;
 }
 
 export default function ImageUpload({ width, height, onImage, value }: ImageUploadProps) {
@@ -18,8 +19,10 @@ export default function ImageUpload({ width, height, onImage, value }: ImageUplo
   useEffect(() => {
     if (!value) {
       setImageURL(null);
+    } else if (typeof value === 'string') {
+      setImageURL(`${api}/${value}#${new Date().getTime().toString()}`);
     } else {
-      setImageURL(URL.createObjectURL(value));
+      setImageURL(URL.createObjectURL(value) + '#' + new Date().getTime().toString());
     }
   }, [value]);
 
@@ -30,7 +33,7 @@ export default function ImageUpload({ width, height, onImage, value }: ImageUplo
   };
 
   const imageDeleteHandler = () => {
-    onImage(null);
+    onImage('');
     setImageURL(null);
   };
 
@@ -73,12 +76,14 @@ export default function ImageUpload({ width, height, onImage, value }: ImageUplo
               }}
             >
               <LandscapeIcon fontSize="large" />
-              ChANGE IMAGE
+              CHANGE IMAGE
             </Box>
             <Image
               src={imageURL}
-              alt="entered image"
+              alt="preview"
+              priority
               fill
+              sizes='100%'
               style={{ objectFit: 'contain' }}
             />
           </Box>

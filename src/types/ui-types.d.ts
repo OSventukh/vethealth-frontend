@@ -28,7 +28,7 @@ export interface EnhancedTableHeadProps {
 }
 
 export interface EnhancedTableToolbarProps {
-  numSelected: number;
+  selected: readonly number[];
   title: string;
   onDelete: () => void;
 }

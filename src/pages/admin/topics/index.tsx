@@ -1,4 +1,5 @@
-import { useState, useCallback, useContext } from 'react';
+import { useState, useCallback, useContext, useEffect } from 'react';
+import { useSWRConfig } from 'swr';
 import AuthContext from '@/context/auth-context';
 import Box from '@mui/material/Box';
 import { CircularProgress } from '@mui/material';
@@ -59,9 +60,10 @@ export default function TopicsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { accessToken } = useContext(AuthContext);
-  const { data, isLoading, mutate } = useGetData(
-    `topics?order=${sortBy}:${sort}&page=${page}&size=${size}`
-  );
+  const { data, isLoading, mutate, isValidating } = useGetData({
+    key: '#topics',
+    path: `topics?order=${sortBy}:${sort}&page=${page}&size=${size}`,
+  });
   const { trigger } = usePostData('topics');
   const onSortHandler = useCallback((sortBy: string) => {
     setSortBy(sortBy);
@@ -71,13 +73,18 @@ export default function TopicsPage() {
     });
   }, []);
 
-  const onPageHandler = useCallback((page: number) => {
-    setPage(page);
-  }, []);
-
   const onSizeHandler = useCallback((size: number) => {
     setSize(size);
   }, []);
+
+  useEffect(() => {
+    if (data && !isLoading && !isValidating) {
+      const maxPage = Math.ceil(data.count / size);
+      if (page > maxPage) {
+        setPage((prevState) => (prevState !== maxPage ? maxPage : prevState));
+      }
+    }
+  }, [data, isLoading, page, size, isValidating]);
 
   const itemsDeleteHandler = useCallback(
     async (items: readonly number[]) => {
@@ -134,7 +141,7 @@ export default function TopicsPage() {
           onSort={onSortHandler}
           order={sort}
           orderBy={sortBy}
-          onPage={onPageHandler}
+          onPage={setPage}
           page={page}
           onSize={onSizeHandler}
           size={size}
