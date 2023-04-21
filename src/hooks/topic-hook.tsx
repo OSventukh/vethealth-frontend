@@ -69,6 +69,7 @@ export default function useTopic({
     setDescription('');
     setSlug('');
     setActiveStatus(false);
+    setImage(null);
   }, []);
 
   const value = useMemo(

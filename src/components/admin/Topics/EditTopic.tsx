@@ -28,6 +28,7 @@ interface EditTopicProps {
   successMessage?: string | null;
   errorMessage?: string | null;
   buttonText?: string;
+  edit?: boolean;
 }
 
 export default function EditTopic({
@@ -44,7 +45,7 @@ export default function EditTopic({
   topicSubmitHandler,
   errorMessage,
   successMessage,
-  buttonText = 'Create',
+  edit,
 }: EditTopicProps) {
   return (
     <Paper sx={{ p: 2 }}>
@@ -53,7 +54,7 @@ export default function EditTopic({
         component="h2"
         sx={{ mb: 5, textAlign: 'center', padding: 2 }}
       >
-        New topic
+       { edit ? 'Edit Topic' : 'New Topic'}
       </Typography>
       <Box component="form" onSubmit={topicSubmitHandler}>
         <Grid
@@ -112,7 +113,7 @@ export default function EditTopic({
           </Grid>
         </Grid>
         <Grid container justifyContent="center" sx={{ mt: 3 }}>
-          <Button type="submit">{buttonText}</Button>
+          <Button type="submit">{ edit ? 'Update' : 'Create' }</Button>
         </Grid>
       </Box>
     </Paper>

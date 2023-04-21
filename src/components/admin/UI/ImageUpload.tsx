@@ -80,6 +80,7 @@ export default function ImageUpload({ width, height, onImage, value }: ImageUplo
             </Box>
             <Image
               src={imageURL}
+              unoptimized
               alt="preview"
               priority
               fill

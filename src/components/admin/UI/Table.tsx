@@ -313,6 +313,7 @@ export default function EnhancedTable({
                                   <Image
                                     src={`${api}/${value}#${new Date().getTime()}`}
                                     alt={title}
+                                    unoptimized
                                     height={40}
                                     width={40}
                                     style={{ objectFit: 'contain' }}

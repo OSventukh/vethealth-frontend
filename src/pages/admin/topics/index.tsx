@@ -1,5 +1,4 @@
 import { useState, useCallback, useContext, useEffect } from 'react';
-import { useSWRConfig } from 'swr';
 import AuthContext from '@/context/auth-context';
 import Box from '@mui/material/Box';
 import { CircularProgress } from '@mui/material';
@@ -12,12 +11,6 @@ const header = [
     disablePadding: false,
     id: 'title',
     label: 'Title',
-    numeric: false,
-  },
-  {
-    disablePadding: false,
-    id: 'slug',
-    label: 'Slug',
     numeric: false,
   },
   {
@@ -36,6 +29,12 @@ const header = [
     disablePadding: false,
     id: 'status',
     label: 'Status',
+    numeric: false,
+  },
+  {
+    disablePadding: false,
+    id: 'slug',
+    label: 'Slug',
     numeric: false,
   },
   {
@@ -132,7 +131,7 @@ export default function TopicsPage() {
         />
       )}
       {isLoading && !data && <CircularProgress />}
-      {data && (
+      {data && data.topics.length > 0 ?  (
         <EnhancedTable
           header={header}
           title="Topics"
@@ -147,7 +146,8 @@ export default function TopicsPage() {
           size={size}
           onItemsDelete={itemsDeleteHandler}
         />
-      )}
+      ) : <div>No Content</div>
+      }
     </Box>
   );
 }

@@ -82,7 +82,7 @@ export default function EditTopicPage() {
         setImage={setImage}
         errorMessage={errorMessage}
         successMessage={successMessage}
-        buttonText='update'
+        edit
       />
     </>
   );

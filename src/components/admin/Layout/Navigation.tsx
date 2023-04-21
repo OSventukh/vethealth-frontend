@@ -24,6 +24,7 @@ const links = {
   },
   posts: {
     all: '/admin/posts',
+    new: '/admin/posts/new',
     categories: '/admin/posts/categories'
   },
   pages: {
@@ -108,6 +109,14 @@ export default function Navigation({ open }: NavigationProps) {
               selected={router.pathname === links.posts.all}
             >
               All posts
+            </NavItem>
+            <NavItem
+              link="/admin/posts/new"
+              open={open}
+              nested
+              selected={router.pathname === links.posts.new}
+            >
+              New Post
             </NavItem>
             <NavItem
               link="/admin/posts/categories"

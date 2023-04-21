@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import { Toolbar, IconButton, Typography } from '@mui/material/';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
@@ -8,7 +8,8 @@ import UserMenu from './UserMenu';
 import { Box } from '@mui/material';
 import { ColorModeSwitch } from '../UI/Switch';
 import ColorModeContext from '@/context/theme-context';
-
+import Link from 'next/link';
+import Logo from './Logo';
 export default function Header({ open, handleDrawerToggle }: NavigationProps) {
   const theme = useTheme();
   const { toggleColorMode, mode } = useContext(ColorModeContext);
@@ -19,9 +20,11 @@ export default function Header({ open, handleDrawerToggle }: NavigationProps) {
         <Box
           sx={{ display: 'flex', justifyContent: 'space-between', gap: '2rem' }}
         >
-          <Typography variant="h4" component="h1" color="text.primary">
-            VETHEALTH
-          </Typography>
+          <Link href="/admin">
+            <Typography variant="h4" component="h1" color="text.primary" sx={{p: 0}}>
+              <Logo color="currentColor" />
+            </Typography>
+          </Link>
           <IconButton
             color="primary"
             aria-label="toggle drawer"
@@ -30,7 +33,8 @@ export default function Header({ open, handleDrawerToggle }: NavigationProps) {
             sx={{
               borderRadius: '10px',
               background: theme.palette.background.content,
-              padding: '0.5rem',
+              // padding: '0.5rem',
+              height: '2.7rem',
             }}
           >
             <MenuIcon />
