@@ -31,9 +31,9 @@ export default function Editor({ onSave, initValue }: EditorProps) {
         onCategories={setCategories}
         onTopics={setTopics}
         onSlug={setSlug}
-        initTopics={initValue?.topics}
-        initCategories={initValue?.categories}
-        initSlug={initValue?.slug}
+        initTopics={initValue?.topics || topics }
+        initCategories={initValue?.categories || categories }
+        initSlug={initValue?.slug || slug }
       />
       <Paper>
         <EditorCore
@@ -41,7 +41,7 @@ export default function Editor({ onSave, initValue }: EditorProps) {
             const data = editor.getData();
             setContent(data);
           }}
-          data={initValue?.content}
+          data={initValue?.content || content }
         />
       </Paper>
     </Box>

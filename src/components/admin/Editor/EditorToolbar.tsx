@@ -5,45 +5,13 @@ import {
   Box,
   TextField,
   Autocomplete,
+  CircularProgress,
 } from '@mui/material';
-import {
-  useState,
-  ChangeEvent,
-  SyntheticEvent,
-} from 'react';
+import { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { useGetData } from '@/hooks/data-hook';
 
 import { EditorToolbarProps } from '@/types/editor-types';
-
-const topics = [
-  {
-    id: 1,
-    title: 'Собаки',
-  },
-  {
-    id: 2,
-    title: 'Коти',
-  },
-  {
-    id: 3,
-    title: 'Фармакологічний довідник',
-  },
-];
-
-const categories = [
-  {
-    id: 1,
-    title: 'Лікування',
-  },
-  {
-    id: 2,
-    title: 'Догляд',
-  },
-  {
-    id: 3,
-    title: 'Інфекційні хвороби',
-  },
-];
 
 export default function EditorToolbar({
   onSave,
@@ -56,20 +24,39 @@ export default function EditorToolbar({
   initSlug,
 }: EditorToolbarProps) {
   const [openOption, setOpenOption] = useState(false);
+  const [openTopic, setOpenTopic] = useState(false);
+  const [openCategory, setOpenCategory] = useState(false);
 
-  const changeTopicsHandler = (
-    event: SyntheticEvent,
-    value: { id: number }[]
-  ) => {
-    const topicsIds = value.map((item) => item.id);
+  const {
+    data: topicData,
+    isLoading: isTopicLoading,
+    mutate: mutateTopic,
+  } = useGetData('topics', {
+    revalidateOnMount: false,
+    revalidation: false,
+  });
+
+  const {
+    data: categoryData,
+    isLoading: isCategoryLoading,
+    mutate: mutateCategory,
+  } = useGetData('topics', {
+    revalidateOnMount: false,
+    revalidation: false,
+  });
+
+  useEffect(() => {
+    openTopic && mutateTopic();
+    openCategory && mutateCategory();
+  }, [openTopic, mutateTopic, openCategory, mutateCategory]);
+
+  const changeTopicsHandler = (event: SyntheticEvent, value: any) => {
+    const topicsIds = value.map((item: { id: number }) => item.id);
     onTopics(topicsIds);
   };
 
-  const changeCategoriesHandler = (
-    event: SyntheticEvent,
-    value: { id: number }[]
-  ) => {
-    const categoriesIds = value.map((item) => item.id);
+  const changeCategoriesHandler = (event: SyntheticEvent, value: any) => {
+    const categoriesIds = value.map((item: { id: number }) => item.id);
     onCategories(categoriesIds);
   };
 
@@ -98,44 +85,72 @@ export default function EditorToolbar({
         unmountOnExit
         sx={{ mt: '1rem' }}
       >
-        <Autocomplete
-          onChange={changeTopicsHandler}
-          multiple
-          id="tags-standard"
-          options={topics}
-          getOptionLabel={(option) => option?.title}
-          defaultValue={[]}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="standard"
-              label="Topic"
-              placeholder="Select topics"
-            />
-          )}
-        />
-        <Autocomplete
-          multiple
-          id="tags-standard"
-          onChange={changeCategoriesHandler}
-          options={categories}
-          getOptionLabel={(option) => option?.title}
-          defaultValue={[]}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="standard"
-              label="Category"
-              placeholder="Select categories"
-            />
-          )}
-        />
-        <TextField
-          id="standard-basic"
-          label="Slug"
-          variant="standard"
-          onChange={slugChangeHandler}
-        />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
+          }}
+        >
+          <Autocomplete
+            onChange={changeTopicsHandler}
+            onOpen={() => {
+              setOpenTopic(true);
+            }}
+            onClose={() => {
+              setOpenTopic(false);
+            }}
+            multiple
+            id="tags-standard"
+            options={topicData?.topics ?? []}
+            getOptionLabel={(option: { title: string }) => option.title}
+            defaultValue={[]}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="standard"
+                label="Topic"
+                placeholder="Select topics"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {isTopicLoading ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+          />
+          <Autocomplete
+            multiple
+            id="tags-standard"
+            onChange={changeCategoriesHandler}
+            options={categoryData?.categories ?? []}
+            getOptionLabel={(option: { title: string }) => option.title}
+            defaultValue={[]}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="standard"
+                label="Category"
+                placeholder="Select categories"
+              />
+            )}
+          />
+          <TextField
+            id="standard-basic"
+            label="Slug"
+            variant="standard"
+            onChange={slugChangeHandler}
+            sx={{
+              width: '100%',
+            }}
+          />
+        </Box>
       </Collapse>
     </Paper>
   );

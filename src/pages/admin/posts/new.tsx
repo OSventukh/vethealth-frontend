@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { usePostData } from '@/hooks/data-hook';
@@ -6,17 +6,18 @@ import type { EditorValue } from '@/types/editor-types';
 import AuthContext from '@/context/auth-context';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 
+const Editor = dynamic(() => import('@/components/admin/Editor/Index'), {
+  ssr: false,
+});
 export default function NewPostPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { accessToken } = useContext(AuthContext);
-  const Editor = dynamic(() => import('@/components/admin/Editor/Index'), {
-    ssr: false,
-  });
+
 
   const { trigger } = usePostData('posts');
 
-  const editorSaveHandler = async (value: EditorValue) => {
+  const editorSaveHandler = useCallback(async (value: EditorValue) => {
     try {
       const response = await trigger({
         method: 'POST',
@@ -30,12 +31,13 @@ export default function NewPostPage() {
         },
       });
       setSuccessMessage(response?.message ?? 'Post saved successfully');
+      console.log('reg');
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : 'Saving post failed'
       );
     }
-  };
+  }, [trigger, accessToken]);
 
   return (
     <>
@@ -43,21 +45,19 @@ export default function NewPostPage() {
         <title>Create Post</title>
       </Head>
       <>
-        {errorMessage && (
-          <SnackError
-            open={true}
-            onClose={() => setErrorMessage(null)}
-            content={errorMessage}
-          />
-        )}
-        {successMessage && (
-          <SnackSuccess
-            open={true}
-            onClose={() => setSuccessMessage(null)}
-            content={successMessage}
-          />
-        )}
         <Editor onSave={editorSaveHandler} />
+
+        <SnackError
+          open={!!errorMessage}
+          onClose={() => setErrorMessage(null)}
+          content={errorMessage}
+        />
+
+        <SnackSuccess
+          open={!!successMessage}
+          onClose={() => setSuccessMessage(null)}
+          content={successMessage}
+        />
       </>
     </>
   );
