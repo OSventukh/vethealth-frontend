@@ -71,17 +71,18 @@ export default function Login() {
           <Typography variant="h5">LOGIN</Typography>
         </Box>
         {error && <Alert severity="error">{error}</Alert>}
-          <TextField
-            required
-            label="Email"
-            name="email"
-            autoComplete="email"
-            variant="standard"
-            inputRef={emailRef}
-            sx={{
-              m: 1,
-            }}
-          />
+        <TextField
+          required
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          variant="standard"
+          inputRef={emailRef}
+          sx={{
+            m: 1,
+          }}
+        />
 
         <FormControl sx={{ m: 1 }} variant="standard">
           <InputLabel htmlFor="standard-adornment-password">

@@ -61,6 +61,7 @@ export default function Signup() {
             required
             label="Email"
             name="email"
+            type="email"
             autoComplete="email"
             variant="standard"
           />

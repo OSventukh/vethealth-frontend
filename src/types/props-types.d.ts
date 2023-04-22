@@ -1,3 +1,5 @@
+import { HeadCell } from "./ui-types";
+
 export interface ChildrenProps {
   children: ReactElement,
 }
@@ -16,4 +18,10 @@ export interface NavIconProps {
   expandIcon?: ReactElement;
   selected?: boolean;
   nested?: boolean
+}
+
+export interface ItemsTableProps {
+  url: string;
+  title: string;
+  header: HeadCell[]
 }

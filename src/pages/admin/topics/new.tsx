@@ -4,8 +4,9 @@ import AuthContext from '@/context/auth-context';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData } from '@/hooks/data-hook';
 import { useSWRConfig } from 'swr';
+
 export default function NewTopicPage() {
-  const { cache, mutate } = useSWRConfig();
+  const { mutate } = useSWRConfig();
   const { trigger } = usePostData('topics');
   const { accessToken } = useContext(AuthContext);
   const {
