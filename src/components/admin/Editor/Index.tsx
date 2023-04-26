@@ -5,18 +5,25 @@ import EditorCore from './Editor';
 import styles from './editor.module.css';
 import type { EditorProps } from '@/types/editor-types';
 
-export default function Editor({ onSave, initValue }: EditorProps) {
-  const [content, setContent] = useState<string>('');
-  const [slug, setSlug] = useState<string>('');
-  const [topics, setTopics] = useState<number[]>([]);
-  const [categories, setCategories] = useState<number[]>([]);
-
+export default function Editor({
+  onSave,
+  content,
+  slug,
+  categories,
+  topics,
+  contentChangeHandler,
+  slugChangeHandler,
+  categoriesChangeHandler,
+  topicsChangeHandler,
+}: EditorProps) {
   const saveHandler = () => {
-    onSave({ content, slug, categories, topics, status: 'published' });
+    const status = 'published';
+    onSave(status);
   };
 
   const saveDraftHandler = () => {
-    onSave({ content, slug, categories, topics, status: 'draft' });
+    const status = 'draft';
+    onSave(status);
   };
 
   return (
@@ -28,20 +35,20 @@ export default function Editor({ onSave, initValue }: EditorProps) {
       <EditorToolbar
         onSave={saveHandler}
         onSaveDraft={saveDraftHandler}
-        onCategories={setCategories}
-        onTopics={setTopics}
-        onSlug={setSlug}
-        initTopics={initValue?.topics || topics }
-        initCategories={initValue?.categories || categories }
-        initSlug={initValue?.slug || slug }
+        onCategories={categoriesChangeHandler}
+        onTopics={topicsChangeHandler}
+        onSlug={slugChangeHandler}
+        initTopics={topics}
+        initCategories={categories}
+        initSlug={slug}
       />
       <Paper>
         <EditorCore
           onChange={(event: Event, editor: any) => {
             const data = editor.getData();
-            setContent(data);
+            contentChangeHandler(data);
           }}
-          data={initValue?.content || content }
+          data={content}
         />
       </Paper>
     </Box>

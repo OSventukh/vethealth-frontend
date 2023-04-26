@@ -6,7 +6,6 @@ import EnhancedTable from '@/components/admin/UI/Table';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import { useGetData, usePostData } from '@/hooks/data-hook';
 import type { ItemsTableProps } from '@/types/props-types';
-import TableUI from '../UI/NewTable';
 
 export default function ItemsTable({url, title, header, query}: ItemsTableProps) {
   const [sortBy, setSortBy] = useState('');
@@ -93,7 +92,7 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
         />
       )}
       {isLoading && !data && <CircularProgress />}
-      {data && data[url].length > 0 ?  (
+      {data && data[url].length > 0 && (
         <EnhancedTable
           header={header}
           title={title}
@@ -108,8 +107,8 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
           size={size}
           onItemsDelete={itemsDeleteHandler}
         />
-      ) : <div>No Content</div>
-      }
+      )}
+      {!isLoading && !data && <p>No data</p>}
     </Box>
   );
 }

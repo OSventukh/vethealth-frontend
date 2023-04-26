@@ -1,8 +1,9 @@
-import { useContext, useCallback } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import { usePostData } from '@/hooks/data-hook';
+import { usePostData, useGetData } from '@/hooks/data-hook';
+import type { EditorValue } from '@/types/editor-types';
 import AuthContext from '@/context/auth-context';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import usePost from '@/hooks/post-hook';
@@ -10,9 +11,14 @@ const Editor = dynamic(() => import('@/components/admin/Editor/Index'), {
   ssr: false,
 });
 
-export default function NewPostPage() {
+export default function EditPostPage() {
   const { accessToken } = useContext(AuthContext);
-  const router = useRouter()
+  const router = useRouter();
+  const postId = router.query.postId;
+
+  const { data, isLoading } = useGetData(
+    `posts/${postId}?include=categories,topics`
+  );
   const {
     content,
     slug,
@@ -26,7 +32,12 @@ export default function NewPostPage() {
     setErrorMessage,
     successMessage,
     setSuccessMessage,
-  } = usePost();
+  } = usePost({
+    initCategories: data?.posts[0]?.categories,
+    initTopics: data?.posts[0]?.topics,
+    initContent: data?.posts[0]?.title && `<h1>${data?.posts[0]?.title}</h1>${data?.posts[0]?.content}`,
+    initSlug: data?.posts[0]?.slug,
+  });
 
   const { trigger } = usePostData('posts');
 
@@ -41,15 +52,16 @@ export default function NewPostPage() {
       }
 
       if (!categories || categories.length === 0) {
-        setErrorMessage('Please іудусе a post category')
+        setErrorMessage('Please select a post category')
         return;
       }
 
       try {
         const response = await trigger({
-          method: 'POST',
+          method: 'PATCH',
           token: accessToken,
           data: {
+            id: postId,
             rawContent: content,
             slug: slug,
             categoryId: categories?.map((category) => category.id),
@@ -58,24 +70,19 @@ export default function NewPostPage() {
           },
         });
         setSuccessMessage(response?.message ?? 'Post saved successfully');
-        setTimeout(() => {
-          router.push(`/admin/posts/[postId]`, `/admin/posts/${response.post.id}`, {
-            shallow: true,
-          })
-        }, 2000)
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : 'Saving post failed'
         );
       }
     },
-    [trigger, accessToken, content, slug, categories, topics, setErrorMessage, setSuccessMessage]
+    [trigger, categories, topics, content, slug, accessToken, postId, setErrorMessage, setSuccessMessage]
   );
 
   return (
     <>
       <Head>
-        <title>Create Post</title>
+        <title>Update Post</title>
       </Head>
       <>
         <Editor

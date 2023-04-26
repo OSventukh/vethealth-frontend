@@ -40,7 +40,7 @@ export default function EditorToolbar({
     data: categoryData,
     isLoading: isCategoryLoading,
     mutate: mutateCategory,
-  } = useGetData('topics', {
+  } = useGetData('categories', {
     revalidateOnMount: false,
     revalidation: false,
   });
@@ -51,13 +51,11 @@ export default function EditorToolbar({
   }, [openTopic, mutateTopic, openCategory, mutateCategory]);
 
   const changeTopicsHandler = (event: SyntheticEvent, value: any) => {
-    const topicsIds = value.map((item: { id: number }) => item.id);
-    onTopics(topicsIds);
+    onTopics(value);
   };
 
   const changeCategoriesHandler = (event: SyntheticEvent, value: any) => {
-    const categoriesIds = value.map((item: { id: number }) => item.id);
-    onCategories(categoriesIds);
+    onCategories(value);
   };
 
   const slugChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +91,7 @@ export default function EditorToolbar({
           }}
         >
           <Autocomplete
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={changeTopicsHandler}
             onOpen={() => {
               setOpenTopic(true);
@@ -103,8 +102,9 @@ export default function EditorToolbar({
             multiple
             id="tags-standard"
             options={topicData?.topics ?? []}
-            getOptionLabel={(option: { title: string }) => option.title}
+            getOptionLabel={(option: { title: string, id: number }) => option.title}
             defaultValue={[]}
+            value={initTopics ?? []}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -126,18 +126,37 @@ export default function EditorToolbar({
             )}
           />
           <Autocomplete
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             multiple
+            onOpen={() => {
+              setOpenCategory(true);
+            }}
+            onClose={() => {
+              setOpenCategory(false);
+            }}
             id="tags-standard"
             onChange={changeCategoriesHandler}
             options={categoryData?.categories ?? []}
-            getOptionLabel={(option: { title: string }) => option.title}
+            getOptionLabel={(option: { name: string, id: number }) => option.name}
             defaultValue={[]}
+            value={initCategories ?? []}
             renderInput={(params) => (
               <TextField
-                {...params}
-                variant="standard"
-                label="Category"
-                placeholder="Select categories"
+              {...params}
+              variant="standard"
+              label="Category"
+              placeholder="Select categories"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {isCategoryLoading ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
               />
             )}
           />
@@ -146,6 +165,7 @@ export default function EditorToolbar({
             label="Slug"
             variant="standard"
             onChange={slugChangeHandler}
+            value={initSlug}
             sx={{
               width: '100%',
             }}
