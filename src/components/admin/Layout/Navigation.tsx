@@ -25,7 +25,8 @@ const links = {
   posts: {
     all: '/admin/posts',
     new: '/admin/posts/new',
-    categories: '/admin/posts/categories'
+    categories: '/admin/posts/categories',
+    newCategory: '/admin/posts/categories/new'
   },
   pages: {
     all: '/admin/pages',
@@ -125,6 +126,14 @@ export default function Navigation({ open }: NavigationProps) {
               selected={router.pathname === links.posts.categories}
             >
               Categories
+            </NavItem>
+            <NavItem
+              link="/admin/posts/categories/new"
+              open={open}
+              nested
+              selected={router.pathname === links.posts.newCategory}
+            >
+              New Category
             </NavItem>
           </List>
         </Collapse>

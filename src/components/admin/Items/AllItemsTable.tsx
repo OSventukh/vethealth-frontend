@@ -6,8 +6,9 @@ import EnhancedTable from '@/components/admin/UI/Table';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import { useGetData, usePostData } from '@/hooks/data-hook';
 import type { ItemsTableProps } from '@/types/props-types';
+import TableUI from '../UI/NewTable';
 
-export default function ItemsTable({url, title, header}: ItemsTableProps) {
+export default function ItemsTable({url, title, header, query}: ItemsTableProps) {
   const [sortBy, setSortBy] = useState('');
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
   const [page, setPage] = useState<number>(1);
@@ -18,10 +19,9 @@ export default function ItemsTable({url, title, header}: ItemsTableProps) {
 
   
   const attributes = header.map((item) => item.id).join();
-
   const { data, isLoading, mutate, isValidating } = useGetData({
     key: `#${url}`,
-    path: `${url}?order=${sortBy}:${sort}&page=${page}&size=${size}&columns=${attributes}`,
+    path: `${url}?order=${sortBy}:${sort}&page=${page}&size=${size}&columns=${attributes}&${query}`,
   });
 
   const { trigger } = usePostData(url);

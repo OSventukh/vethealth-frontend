@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, Fragment } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -21,6 +21,9 @@ import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Collapse from '@mui/material/Collapse';
 import { visuallyHidden } from '@mui/utils';
 import { api } from '@/hooks/data-hook';
 import Modal from './Modal';
@@ -51,6 +54,7 @@ function EnhancedTableHead(props: EnhancedTableHeadProps) {
   return (
     <TableHead>
       <TableRow>
+        <TableCell padding="checkbox"></TableCell>
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"
@@ -172,6 +176,111 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 
+interface TableRowTreeProps {
+  handleClick: (event: React.MouseEvent<HTMLTableRowElement, MouseEvent>, rowId: number) => void;
+  row: {id: number, children: []};
+  selected: [];
+  index: number;
+}
+
+export function TableRowTree({ handleClick, row, selected, index }: TableRowTreeProps) {
+  const [open, setOpen] = useState(false);
+
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+
+  const isItemSelected = isSelected(row.id);
+  const labelId = `enhanced-table-checkbox-${index}`;
+
+  const expandTableHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setOpen((prevState) => !prevState);
+  }
+  return (
+    <>
+      <TableRow
+        hover
+        onClick={(event) => handleClick(event, row.id)}
+        role="checkbox"
+        aria-checked={isItemSelected}
+        tabIndex={-1}
+        key={row.id}
+        selected={isItemSelected}
+        sx={{ cursor: 'pointer' }}
+        style={{ minWidth: '100%' }}
+      >
+        <TableCell padding="checkbox">
+          {row?.children && row.children.length > 0 && (
+            <IconButton onClick={expandTableHandle}>
+              {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          )}
+        </TableCell>
+        <TableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            checked={isItemSelected}
+            inputProps={{
+              'aria-labelledby': labelId,
+            }}
+          />
+        </TableCell>
+
+        {Object.entries(row)
+          .filter(
+            ([key, value]) =>
+              key !== 'id' && key !== 'children' && key !== 'parent'
+          )
+          .map(([key, value], i) => {
+            if (key === 'children') {
+              return;
+            }
+            if (key === 'createdAt' || key === 'updatedAt') {
+              return (
+                <TableCell key={i} align="left">
+                  {new Date(value).toLocaleString()}
+                </TableCell>
+              );
+            }
+            if (key === 'image') {
+              return (
+                <TableCell key={i} align="left" sx={{ position: 'relative' }}>
+                  {value && (
+                    <Image
+                      src={`${api}/${value}#${new Date().getTime()}`}
+                      alt={value.toString()}
+                      unoptimized
+                      height={40}
+                      width={40}
+                      style={{ objectFit: 'contain' }}
+                    />
+                  )}
+                </TableCell>
+              );
+            }
+            return (
+              <TableCell key={i} align="left">
+                {value}
+              </TableCell>
+            );
+          })}
+      </TableRow>
+      {row?.children && row.children.length > 0 && (
+        <>
+          {open && row.children.map((item, index) => (
+            <TableRowTree
+              key={item.id}
+              row={item}
+              handleClick={handleClick}
+              selected={selected}
+              index={index}
+            />
+          ))}
+        </>
+      )}
+    </>
+  );
+}
+
 export default function EnhancedTable({
   title,
   data,
@@ -195,6 +304,26 @@ export default function EnhancedTable({
     [onSort]
   );
 
+  function buildItemsTree(
+    items: { id: number; parent: { id: number } }[]
+  ): any[] {
+    const itemMap = new Map();
+    items.forEach((item) => {
+      itemMap.set(item.id, { ...item, children: [] });
+    });
+    const rootItems: any[] = [];
+    items.forEach((item) => {
+      if (item.parent) {
+        const parent = itemMap.get(item.parent['id']);
+        parent.children.push(itemMap.get(item.id));
+      } else {
+        rootItems.push(itemMap.get(item.id));
+      }
+    });
+    return rootItems;
+  }
+
+  const dataTree = buildItemsTree(data);
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelected = data.map((n) => n.id);
@@ -244,7 +373,6 @@ export default function EnhancedTable({
     [onSize]
   );
 
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
       <EnhancedTableToolbar
@@ -254,7 +382,7 @@ export default function EnhancedTable({
       />
       <TableContainer>
         <Table
-          sx={{ minWidth: 750 }}
+          sx={{ minWidth: 750, tableLayout: 'fixed' }}
           aria-labelledby="tableTitle"
           size={'medium'}
         >
@@ -269,68 +397,15 @@ export default function EnhancedTable({
           />
           <TableBody>
             {data
-              ? data.map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id}
-                      selected={isItemSelected}
-                      sx={{ cursor: 'pointer' }}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
-                      </TableCell>
-                      {Object.entries(row)
-                        .filter(([key, value]) => key !== 'id')
-                        .map(([key, value], i) => {
-                          if (key === 'createdAt' || key === 'updatedAt') {
-                            return (
-                              <TableCell key={i} align="left">
-                                {new Date(value).toLocaleString()}
-                              </TableCell>
-                            );
-                          }
-                          if (key === 'image') {
-                            return (
-                              <TableCell
-                                key={i}
-                                align="left"
-                                sx={{ position: 'relative' }}
-                              >
-                                {value && (
-                                  <Image
-                                    src={`${api}/${value}#${new Date().getTime()}`}
-                                    alt={title}
-                                    unoptimized
-                                    height={40}
-                                    width={40}
-                                    style={{ objectFit: 'contain' }}
-                                  />
-                                )}
-                              </TableCell>
-                            );
-                          }
-                          return (
-                            <TableCell key={i} align="left">
-                              {value}
-                            </TableCell>
-                          );
-                        })}
-                    </TableRow>
-                  );
-                })
+              ? dataTree.map((row, index) => (
+                  <TableRowTree
+                    key={row.id}
+                    index={index}
+                    row={row}
+                    handleClick={handleClick}
+                    selected={selected}
+                  />
+                ))
               : null}
           </TableBody>
         </Table>

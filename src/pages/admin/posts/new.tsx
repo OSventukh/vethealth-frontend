@@ -31,7 +31,6 @@ export default function NewPostPage() {
         },
       });
       setSuccessMessage(response?.message ?? 'Post saved successfully');
-      console.log('reg');
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : 'Saving post failed'

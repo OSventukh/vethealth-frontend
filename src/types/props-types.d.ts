@@ -22,6 +22,7 @@ export interface NavIconProps {
 
 export interface ItemsTableProps {
   url: string;
+  query?: string;
   title: string;
   header: HeadCell[]
 }
