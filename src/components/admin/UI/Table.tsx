@@ -184,7 +184,7 @@ interface TableRowTreeProps {
 
 export function TableRowTree({ handleClick, row, selected, index }: TableRowTreeProps) {
   const [open, setOpen] = useState(false);
-
+  
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
   const isItemSelected = isSelected(row.id);
@@ -253,6 +253,13 @@ export function TableRowTree({ handleClick, row, selected, index }: TableRowTree
                       style={{ objectFit: 'contain' }}
                     />
                   )}
+                </TableCell>
+              );
+            }
+            if (key === 'role') {
+              return (
+                <TableCell key={i} align="left" sx={{ position: 'relative' }}>
+                  { (value as any)?.name }
                 </TableCell>
               );
             }

@@ -1,7 +1,46 @@
-import React from 'react'
+import dynamic from 'next/dynamic';
+import CircularProgress from '@mui/material/CircularProgress';
+const ItemsTable = dynamic(
+  () => import('@/components/admin/Items/AllItemsTable'),
+  {
+    loading: () => <CircularProgress />,
+    ssr: false,
+  }
+);
 
-export default function User() {
-  return (
-    <div>User</div>
-  )
+const header = [
+  {
+    disablePadding: false,
+    id: 'firstname',
+    label: 'First Name',
+    numeric: false,
+  },
+  {
+    disablePadding: false,
+    id: 'lastname',
+    label: 'Last Name',
+    numeric: false,
+  },
+  {
+    disablePadding: false,
+    id: 'email',
+    label: 'Email',
+    numeric: false,
+  },
+  {
+    disablePadding: false,
+    id: 'status',
+    label: 'Status',
+    numeric: false,
+  },
+  {
+    disablePadding: false,
+    id: 'role',
+    label: 'Role',
+    numeric: false,
+  },
+];
+
+export default function UserSPage() {
+  return <ItemsTable url="users" title="Users" header={header} query='include=role'/>;
 }

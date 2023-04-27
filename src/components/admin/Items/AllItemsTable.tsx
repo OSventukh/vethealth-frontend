@@ -23,6 +23,7 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
     path: `${url}?order=${sortBy}:${sort}&page=${page}&size=${size}&columns=${attributes}&${query}`,
   });
 
+  console.log('Data', data)
   const { trigger } = usePostData(url);
 
   const onSortHandler = useCallback((sortBy: string) => {
