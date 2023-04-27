@@ -1,5 +1,13 @@
+import dynamic from 'next/dynamic';
+import CircularProgress from '@mui/material/CircularProgress';
+const ItemsTable = dynamic(
+  () => import('@/components/admin/Items/AllItemsTable'),
+  {
+    loading: () => <CircularProgress />,
+    ssr: false,
+  }
+);
 
-import ItemsTable from '@/components/admin/Items/AllItemsTable';
 const header = [
   {
     disablePadding: false,
@@ -34,5 +42,5 @@ const header = [
 ];
 
 export default function TopicsPage() {
-  return <ItemsTable url="topics" title="Topics" header={header} />
+  return <ItemsTable url="topics" title="Topics" header={header} />;
 }

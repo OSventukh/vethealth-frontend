@@ -23,12 +23,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Collapse from '@mui/material/Collapse';
 import { visuallyHidden } from '@mui/utils';
 import { api } from '@/hooks/data-hook';
 import Modal from './Modal';
+import buildItemsTree from '@/utils/buildItemsTree';
 import type {
-  Data,
   HeadCell,
   EnhancedTableHeadProps,
   EnhancedTableProps,
@@ -178,8 +177,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 
 interface TableRowTreeProps {
   handleClick: (event: React.MouseEvent<HTMLTableRowElement, MouseEvent>, rowId: number) => void;
-  row: {id: number, children: []};
-  selected: [];
+  row: {id: number, children: any[]};
+  selected: readonly number[];
   index: number;
 }
 
@@ -237,7 +236,7 @@ export function TableRowTree({ handleClick, row, selected, index }: TableRowTree
             if (key === 'createdAt' || key === 'updatedAt') {
               return (
                 <TableCell key={i} align="left">
-                  {new Date(value).toLocaleString()}
+                  {typeof value === 'string' && new Date(value).toLocaleString()}
                 </TableCell>
               );
             }
@@ -304,26 +303,9 @@ export default function EnhancedTable({
     [onSort]
   );
 
-  function buildItemsTree(
-    items: { id: number; parent: { id: number } }[]
-  ): any[] {
-    const itemMap = new Map();
-    items.forEach((item) => {
-      itemMap.set(item.id, { ...item, children: [] });
-    });
-    const rootItems: any[] = [];
-    items.forEach((item) => {
-      if (item.parent) {
-        const parent = itemMap.get(item.parent['id']);
-        parent.children.push(itemMap.get(item.id));
-      } else {
-        rootItems.push(itemMap.get(item.id));
-      }
-    });
-    return rootItems;
-  }
 
   const dataTree = buildItemsTree(data);
+
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelected = data.map((n) => n.id);

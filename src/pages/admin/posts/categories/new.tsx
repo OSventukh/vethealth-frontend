@@ -1,5 +1,12 @@
 import { FormEvent, useContext } from 'react';
-import EditCategory from '@/components/admin/Category/Index';
+import dynamic from 'next/dynamic';
+import CircularProgress from '@mui/material/CircularProgress';
+
+const EditCategory = dynamic(() => import('@/components/admin/Category'), {
+  loading: () => <CircularProgress />,
+  ssr: false,
+})
+
 import AuthContext from '@/context/auth-context';
 import useCategory from '@/hooks/category-hook';
 import { usePostData } from '@/hooks/data-hook';

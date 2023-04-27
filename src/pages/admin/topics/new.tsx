@@ -1,9 +1,15 @@
 import { FormEvent, useContext } from 'react';
-import EditTopic from '@/components/admin/Topics/EditTopic';
+import dynamic from 'next/dynamic';
+import CircularProgress from '@mui/material/CircularProgress';
 import AuthContext from '@/context/auth-context';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData } from '@/hooks/data-hook';
 import { useSWRConfig } from 'swr';
+
+const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
+  ssr: false,
+  loading: () => <CircularProgress />
+});
 
 export default function NewTopicPage() {
   const { mutate } = useSWRConfig();

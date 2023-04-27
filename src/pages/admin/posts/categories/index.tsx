@@ -1,5 +1,10 @@
 
-import ItemsTable from '@/components/admin/Items/AllItemsTable';
+import dynamic from 'next/dynamic';
+import CircularProgress from '@mui/material/CircularProgress';
+const ItemsTable = dynamic(() => import('@/components/admin/Items/AllItemsTable'), {
+  loading: () => <CircularProgress />,
+  ssr: false,
+})
 
 const header = [
   {
@@ -14,14 +19,9 @@ const header = [
     label: 'Slug',
     numeric: false,
   },
-  // {
-  //   disablePadding: false,
-  //   id: 'parent',
-  //   label: 'Parent',
-  //   numeric: false,
-  // },
 ];
 
 export default function CategoriesPage() {
   return <ItemsTable url="categories" title="Categories" header={header} query='include=parent' />
 }
+

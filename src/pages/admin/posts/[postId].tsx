@@ -1,14 +1,17 @@
-import { useState, useContext, useCallback } from 'react';
+import { useContext, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import CircularProgress from '@mui/material/CircularProgress';
+
 import dynamic from 'next/dynamic';
 import { usePostData, useGetData } from '@/hooks/data-hook';
-import type { EditorValue } from '@/types/editor-types';
 import AuthContext from '@/context/auth-context';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import usePost from '@/hooks/post-hook';
-const Editor = dynamic(() => import('@/components/admin/Editor/Index'), {
+
+const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
+  loading: () => <CircularProgress />
 });
 
 export default function EditPostPage() {

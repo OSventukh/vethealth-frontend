@@ -1,13 +1,15 @@
 import { useContext, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import CircularProgress from '@mui/material/CircularProgress';
 import dynamic from 'next/dynamic';
 import { usePostData } from '@/hooks/data-hook';
 import AuthContext from '@/context/auth-context';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import usePost from '@/hooks/post-hook';
-const Editor = dynamic(() => import('@/components/admin/Editor/Index'), {
+const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
+  loading: () => <CircularProgress />
 });
 
 export default function NewPostPage() {
@@ -69,7 +71,7 @@ export default function NewPostPage() {
         );
       }
     },
-    [trigger, accessToken, content, slug, categories, topics, setErrorMessage, setSuccessMessage]
+    [trigger, accessToken, content, slug, categories, topics, setErrorMessage, setSuccessMessage, router]
   );
 
   return (

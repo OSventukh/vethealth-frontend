@@ -1,10 +1,12 @@
 export interface Data {
   id: number;
-  title: string;
+  title?: string;
+  name?: string;
   description?: string;
   createdAt?: Date;
   slug?: string;
   excerpt?: string;
+  parent?: Data;
 }
 
 export interface HeadCell {

@@ -1,16 +1,22 @@
 import { useRouter } from 'next/router';
 import { FormEvent, useContext } from 'react';
+import dynamic from 'next/dynamic';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useSWRConfig } from 'swr';
-import EditTopic from '@/components/admin/Topics/EditTopic';
 import AuthContext from '@/context/auth-context';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData, useGetData } from '@/hooks/data-hook';
+
+const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
+  ssr: false,
+  loading: () => <CircularProgress />,
+});
 
 export default function EditTopicPage() {
   const router = useRouter();
   const { topicId } = router.query;
   const { data, isLoading } = useGetData(`topics/${topicId}`, {
-    revalidation: false
+    revalidation: false,
   });
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
@@ -29,7 +35,7 @@ export default function EditTopicPage() {
     errorMessage,
     successMessage,
     setErrorMessage,
-    setSuccessMessage
+    setSuccessMessage,
   } = useTopic({
     initTitle: data?.topics[0]?.title,
     initSlug: data?.topics[0]?.slug,
@@ -56,18 +62,24 @@ export default function EditTopicPage() {
         token: accessToken,
       });
       mutate(
-        (key: any) => key && typeof key === 'object' && 'key' in key && key.key === '#topics',
+        (key: any) =>
+          key &&
+          typeof key === 'object' &&
+          'key' in key &&
+          key.key === '#topics',
         undefined,
         { revalidate: false }
       );
       setSuccessMessage(response.message);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Something went wrong');
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Something went wrong'
+      );
     }
   };
   return (
     <>
-    {isLoading && <p>Loading...</p>}
+      {isLoading && <p>Loading...</p>}
       <EditTopic
         topicSubmitHandler={getDataHandler}
         title={title}
