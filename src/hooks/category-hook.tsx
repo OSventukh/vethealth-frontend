@@ -13,9 +13,9 @@ export default function useTopic({
 }: UseCategoryAgr = {}) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [name, setName] = useState<string>(initName || '');
+  const [name, setName] = useState<string>('');
   const [slug, setSlug] = useState<string>('');
-  const [parentCategory, setParentCategory] = useState<{ name: string, id: number } | null>(initParentCategory || null);
+  const [parentCategory, setParentCategory] = useState<{ name: string, id: number } | null>(null);
 
   useEffect(() => {
     initName && setName(initName);
