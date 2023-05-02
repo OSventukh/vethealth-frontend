@@ -59,7 +59,8 @@ export function useGetData(
     revalidation = true,
     shouldRetryOnError = true,
     revalidateOnMount = true,
-  }: { revalidation?: boolean; shouldRetryOnError?: boolean, revalidateOnMount?: boolean } = {}
+    refreshInterval,
+  }: { revalidation?: boolean; shouldRetryOnError?: boolean, revalidateOnMount?: boolean, refreshInterval?: number } = {}
 ) {
   const { accessToken } = useContext(AuthContext);
   if (typeof url === 'object') {}
@@ -72,6 +73,7 @@ export function useGetData(
       revalidateOnReconnect: revalidation,
       revalidateOnMount: revalidateOnMount,
       shouldRetryOnError: shouldRetryOnError,
+      ...refreshInterval && { refreshInterval },
     }
   );
 }

@@ -59,9 +59,7 @@ export default function EditorToolbar({
   };
 
   const slugChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
-      onSlug(event.target.value);
-    }
+    onSlug(event.target.value.trim());
   };
 
   return (

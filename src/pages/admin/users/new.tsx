@@ -30,6 +30,8 @@ export default function NewUserPage() {
   const { accessToken } = useContext(AuthContext);
   const userSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
     try {
       const response = await trigger({
         method: 'POST',

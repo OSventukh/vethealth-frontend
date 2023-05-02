@@ -12,12 +12,24 @@ export interface Auth {
   isAuth: boolean;
   isLoading: boolean;
   user: UserData | null;
-  login: ({ user: UserData, accessToken: Token}) => void;
+  login: () => void;
   logout: () => void;
 }
 
 export interface Token {
   token: string;
   expirationDate: Date;
+}
+
+export interface AuthHandlerArgs {
+  firstname?: string;
+  lastname?: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthComponentsProps {
+  onAuth: (AuthHandlerArgs) => void;
+  authError: string | null;
 }
 

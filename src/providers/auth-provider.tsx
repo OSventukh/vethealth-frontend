@@ -9,11 +9,11 @@ import type { UserData, Auth, Token } from '@/types/auth-types';
 import { useGetData, usePostData } from '@/hooks/data-hook';
 
 export default function AuthContextProvider(props: ChildrenProps) {
-  const { data, isLoading, error, mutate } = useGetData('login/refreshtoken', { revalidation: false, shouldRetryOnError: false });
+  const { data, isLoading, error, mutate } = useGetData('login/refreshtoken', { revalidation: false, shouldRetryOnError: false, refreshInterval: 4 * 60 * 1000 });
   const { trigger } = usePostData('logout')
 
-  const login = useCallback((data: { user: UserData, accessToken: Token }) => {
-    mutate({...data})
+  const login = useCallback(() => {
+    mutate();
   }, [mutate]);
 
   const logout = useCallback(async () => {

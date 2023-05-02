@@ -13,46 +13,30 @@ import Alert from '@mui/material/Alert';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
 
-import AuthContext from '@/context/auth-context';
-import { usePostData } from '@/hooks/data-hook';
+import type { AuthComponentsProps } from '@/types/auth-types';
 
-export default function Login() {
+export default function Login({ onAuth, authError }: AuthComponentsProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
   const emailRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
-  const { login } = useContext(AuthContext);
 
-  const { trigger, isMutating } = usePostData('login');
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const loginSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
 
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
-    try {
-      const result = await trigger({
-        data: {
-          email,
-          password,
-        },
-        method: 'POST',
-      });
-      login(result);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('Something went wrong');
-      }
-    }
+    const email = emailRef.current?.value.trim();
+    const password = passwordRef.current?.value.trim();
+    onAuth({ email, password })
   };
+
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
   };
+
   return (
     <Paper sx={{ display: 'flex' }}>
       <Box
@@ -70,7 +54,7 @@ export default function Login() {
         <Box>
           <Typography variant="h5">LOGIN</Typography>
         </Box>
-        {error && <Alert severity="error">{error}</Alert>}
+        {authError && <Alert severity="error">{authError}</Alert>}
         <TextField
           required
           label="Email"

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FormEvent, useState, useRef } from 'react';
 import {
   Paper,
   Typography,
@@ -12,9 +12,14 @@ import {
   Input,
 } from '@mui/material';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
+import type { AuthComponentsProps } from '@/types/auth-types';
 
-export default function Signup() {
+export default function Signup({ onAuth, authError }: AuthComponentsProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const firstnameRef = useRef<HTMLInputElement>();
+  const lastnameRef = useRef<HTMLInputElement>();
+  const emailRef = useRef<HTMLInputElement>();
+  const passwordRef = useRef<HTMLInputElement>();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -23,10 +28,20 @@ export default function Signup() {
   ) => {
     event.preventDefault();
   };
+
+  const signupSubmitHandler = (event: FormEvent) => {
+    event.preventDefault();
+    const firstname = firstnameRef.current?.value;
+    const lastname = lastnameRef.current?.value;
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
+    onAuth({ firstname, lastname, email, password });
+  };
   return (
     <Paper sx={{ display: 'flex' }}>
       <Box
         component="form"
+        onSubmit={signupSubmitHandler}
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -46,6 +61,7 @@ export default function Signup() {
             name="firstname"
             autoComplete="given-name"
             variant="standard"
+            inputRef={firstnameRef}
           />
         </FormControl>
         <FormControl sx={{ m: 1 }}>
@@ -54,6 +70,7 @@ export default function Signup() {
             name="firstname"
             autoComplete="family-name"
             variant="standard"
+            inputRef={lastnameRef}
           />
         </FormControl>
         <FormControl sx={{ m: 1 }}>
@@ -64,6 +81,7 @@ export default function Signup() {
             type="email"
             autoComplete="email"
             variant="standard"
+            inputRef={emailRef}
           />
         </FormControl>
         <FormControl sx={{ m: 1 }} variant="standard">
@@ -75,6 +93,7 @@ export default function Signup() {
             id="standard-adornment-password"
             autoComplete="new-password"
             type={showPassword ? 'text' : 'password'}
+            inputRef={passwordRef}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton

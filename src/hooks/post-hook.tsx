@@ -43,9 +43,7 @@ export default function usePost({
       setErrorMessage(null);
       setSuccessMessage(null);
       setSlug(value);
-    },
-    []
-  );
+    }, []);
 
   const topicsChangeHandler = useCallback((value: {id: number, title: string}[]) => {
     setTopics(value)

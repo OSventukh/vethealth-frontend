@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Box, Paper } from '@mui/material';
 import EditorToolbar from './EditorToolbar';
 import EditorCore from './Editor';
@@ -16,6 +15,7 @@ export default function Editor({
   categoriesChangeHandler,
   topicsChangeHandler,
 }: EditorProps) {
+
   const saveHandler = () => {
     const status = 'published';
     onSave(status);
