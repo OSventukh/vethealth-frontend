@@ -10,7 +10,7 @@ import type { SelectChangeEvent } from '@mui/material';
 
 interface UseUserAgr {
   initFirstname?: string;
-  initLastName?: string;
+  initLastname?: string;
   initEmail?: string;
   initStatus?: string;
   initTopics?: { title: string; id: number }[];
@@ -19,7 +19,7 @@ interface UseUserAgr {
 
 export default function useUser({
   initFirstname,
-  initLastName,
+  initLastname,
   initEmail,
   initStatus,
   initTopics,
@@ -38,14 +38,14 @@ export default function useUser({
 
   useEffect(() => {
     initFirstname && setFirstname(initFirstname);
-    initLastName && setLastname(initLastName);
+    initLastname && setLastname(initLastname);
     initEmail && setEmail(initEmail);
     initStatus && setStatus(initStatus);
     initTopics && setTopics(initTopics);
     initRole && setRole(initRole);
   }, [
     initFirstname,
-    initLastName,
+    initLastname,
     initEmail,
     initStatus,
     initTopics,

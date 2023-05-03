@@ -150,6 +150,7 @@ export default function EditUser({
                 label="Status"
                 defaultValue="active"
               >
+                <MenuItem value="pending">Pending</MenuItem>
                 <MenuItem value="active">Active</MenuItem>
                 <MenuItem value="blocked">
                   <span style={{ color: 'red' }}>Blocked</span>
