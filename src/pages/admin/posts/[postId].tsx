@@ -1,7 +1,7 @@
 import { useContext, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import CircularProgress from '@mui/material/CircularProgress';
+import Loading from '@/components/admin/UI/Loading';
 
 import dynamic from 'next/dynamic';
 import { usePostData, useGetData } from '@/hooks/data-hook';
@@ -11,7 +11,7 @@ import usePost from '@/hooks/post-hook';
 
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
-  loading: () => <CircularProgress />
+  loading: () => <Loading />
 });
 
 export default function EditPostPage() {

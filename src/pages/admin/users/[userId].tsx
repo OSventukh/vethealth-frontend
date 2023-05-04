@@ -5,7 +5,11 @@ import useUser from '@/hooks/user-hook';
 import { FormEvent } from 'react';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 import AuthContext from '@/context/auth-context';
-const EditUser = dynamic(() => import('@/components/admin/User'));
+import Loading from '@/components/admin/UI/Loading';
+const EditUser = dynamic(() => import('@/components/admin/User'), {
+  loading: () => <Loading />,
+  ssr: false,
+});
 
 export default function EditUserPage() {
   const router = useRouter();

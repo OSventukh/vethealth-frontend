@@ -1,10 +1,10 @@
 import { FormEvent, useContext } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import CircularProgress from '@mui/material/CircularProgress';
+import Loading from '@/components/admin/UI/Loading';
 
 const EditCategory = dynamic(() => import('@/components/admin/Category'), {
-  loading: () => <CircularProgress />,
+  loading: () => <Loading />,
   ssr: false,
 })
 import AuthContext from '@/context/auth-context';

@@ -1,8 +1,9 @@
 
 import dynamic from 'next/dynamic';
-import CircularProgress from '@mui/material/CircularProgress';
+import Loading from '@/components/admin/UI/Loading';
+
 const ItemsTable = dynamic(() => import('@/components/admin/Items/AllItemsTable'), {
-  loading: () => <CircularProgress />,
+  loading: () => <Loading />,
   ssr: false,
 })
 

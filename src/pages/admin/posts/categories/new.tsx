@@ -1,9 +1,9 @@
 import { FormEvent, useContext } from 'react';
 import dynamic from 'next/dynamic';
-import CircularProgress from '@mui/material/CircularProgress';
+import Loading from '@/components/admin/UI/Loading';
 
 const EditCategory = dynamic(() => import('@/components/admin/Category'), {
-  loading: () => <CircularProgress />,
+  loading: () => <Loading />,
   ssr: false,
 })
 
