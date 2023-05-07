@@ -33,6 +33,7 @@ import type {
   EnhancedTableProps,
   EnhancedTableToolbarProps,
 } from '@/types/ui-types';
+import { Hidden } from '@mui/material';
 
 function EnhancedTableHead(props: EnhancedTableHeadProps) {
   const {
@@ -264,7 +265,10 @@ export function TableRowTree({ handleClick, row, selected, index }: TableRowTree
               );
             }
             return (
-              <TableCell key={i} align="left">
+              <TableCell key={i} align="left" sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}>
                 {value}
               </TableCell>
             );

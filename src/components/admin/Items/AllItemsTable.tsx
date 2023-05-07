@@ -1,7 +1,8 @@
 import { useState, useCallback, useContext, useEffect } from 'react';
 import AuthContext from '@/context/auth-context';
 import Box from '@mui/material/Box';
-import { CircularProgress } from '@mui/material';
+import Paper from '@mui/material/Paper';
+import CircularProgress from '@mui/material/CircularProgress';
 import EnhancedTable from '@/components/admin/UI/Table';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import { useGetData, usePostData } from '@/hooks/data-hook';
@@ -16,11 +17,16 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { accessToken } = useContext(AuthContext);
 
-  
   const attributes = header.map((item) => item.id).join();
-  const { data, isLoading, mutate, isValidating } = useGetData({
+  let requestPath = `${url}?order=${sortBy}:${sort}&page=${page}&size=${size}&columns=${attributes}`;
+
+  if (query) {
+    requestPath += `&${query}`;
+  }
+
+  const { data, isLoading, error: responseError, mutate, isValidating } = useGetData({
     key: `#${url}`,
-    path: `${url}?order=${sortBy}:${sort}&page=${page}&size=${size}&columns=${attributes}&${query}`,
+    path: requestPath,
   });
 
   const { trigger } = usePostData(url);
@@ -41,10 +47,16 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
     if (data && !isLoading && !isValidating) {
       const maxPage = Math.ceil(data.count / size);
       if (page > maxPage) {
-        setPage((prevState) => (prevState !== maxPage ? maxPage : prevState));
+        setPage((prevState) => (prevState !== maxPage ? maxPage + 1 : prevState));
       }
     }
   }, [data, isLoading, page, size, isValidating]);
+
+  useEffect(() => {
+    if (responseError) {
+      setErrorMessage('Receiving data failed')
+    }
+  }, [responseError]);
 
   const itemsDeleteHandler = useCallback(
     async (items: readonly number[]) => {
@@ -108,7 +120,7 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
           onItemsDelete={itemsDeleteHandler}
         />
       )}
-      {!isLoading && !data && <p>No data</p>}
+      {data && data[url].length === 0 && <Paper sx={{ width: '100%', p: '1rem', textAlign: 'center'}}>No data</Paper>}
     </Box>
   );
 }

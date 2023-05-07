@@ -1,12 +1,7 @@
-import {
-  useState,
-  useEffect,
-  FormEvent,
-  ChangeEvent,
-  ReactNode,
-  SyntheticEvent,
-} from 'react';
-
+import { useState, useEffect, useContext } from 'react';
+import type { FormEvent, ChangeEvent, SyntheticEvent } from 'react';
+import Link from 'next/link';
+import { UserRole, UserStatus } from '@/utils/constants/users.enum';
 import {
   Paper,
   Box,
@@ -23,8 +18,10 @@ import {
   CircularProgress,
   SelectChangeEvent,
 } from '@mui/material';
+import AuthContext from '@/context/auth-context';
 
 interface EditUserProps {
+  id?: string;
   firstname?: string;
   lastname?: string;
   email: string;
@@ -52,6 +49,7 @@ interface EditUserProps {
 import { useGetData } from '@/hooks/data-hook';
 
 export default function EditUser({
+  id,
   firstname,
   lastname,
   email,
@@ -70,12 +68,16 @@ export default function EditUser({
   edit,
 }: EditUserProps) {
   const [openTopics, setOpenTopics] = useState(false);
-  const [openrole, setOpenRole] = useState(false);
+  const [openRole, setOpenRole] = useState(false);
+
+  const { user } = useContext(AuthContext);
+
   const {
     data: topicsData,
     isLoading: isTopicsLoading,
     mutate: topicMutate,
   } = useGetData('topics', { revalidateOnMount: false });
+
   const {
     data: rolesData,
     isLoading: isRolesLoading,
@@ -84,8 +86,8 @@ export default function EditUser({
 
   useEffect(() => {
     openTopics && topicMutate();
-    openrole && roleMutate();
-  }, [openTopics, openrole, topicMutate, roleMutate]);
+    openRole && roleMutate();
+  }, [openTopics, openRole, topicMutate, roleMutate]);
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -138,96 +140,105 @@ export default function EditUser({
               value={email}
             />
 
-            <FormControl variant="standard">
-              <InputLabel id="demo-simple-select-standard-label">
-                Status
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-standard-label"
-                id="demo-simple-select-standard"
-                value={status}
-                onChange={statusChangeHandler}
-                label="Status"
-                defaultValue="active"
-              >
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="active">Active</MenuItem>
-                <MenuItem value="blocked">
-                  <span style={{ color: 'red' }}>Blocked</span>
-                </MenuItem>
-              </Select>
-            </FormControl>
-            <Autocomplete
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              onChange={roleChangeHandler}
-              onOpen={() => {
-                setOpenRole(true);
-              }}
-              onClose={() => {
-                setOpenRole(false);
-              }}
-              id="tags-standard"
-              options={rolesData?.roles ?? []}
-              getOptionLabel={(option: { name: string; id: number }) =>
-                option.name
-              }
-              value={role}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="Role"
-                  placeholder="Select user role"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {isRolesLoading && (
-                          <CircularProgress color="inherit" size={20} />
-                        )}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
+            {user && user.id?.toString() !== id && edit && (
+              <FormControl variant="standard">
+                <InputLabel id="demo-simple-select-standard-label">
+                  Status
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  id="demo-simple-select-standard"
+                  value={status}
+                  onChange={statusChangeHandler}
+                  label="Status"
+                >
+                  <MenuItem value={UserStatus.Pending}>{UserStatus.Pending}</MenuItem>
+                  <MenuItem value={UserStatus.Active}>{UserStatus.Active}</MenuItem>
+                  <MenuItem value={UserStatus.Blocked}>
+                    <span style={{ color: 'red' }}>{UserStatus.Blocked}</span>
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            )}
+            {user && user.id?.toString() !== id && (
+              <Autocomplete
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={roleChangeHandler}
+                onOpen={() => {
+                  setOpenRole(true);
+                }}
+                onClose={() => {
+                  setOpenRole(false);
+                }}
+                id="tags-standard"
+                options={rolesData?.roles ?? []}
+                getOptionLabel={(option: { name: string; id: number }) =>
+                  option.name
+                }
+                value={role}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Role"
+                    placeholder="Select user role"
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {isRolesLoading && (
+                            <CircularProgress color="inherit" size={20} />
+                          )}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            )}
+            {role?.name !== UserRole.SuperAdmin &&
+              role?.name !== UserRole.Admin && (
+                <Autocomplete
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  multiple
+                  onChange={topicsChangeHandler}
+                  onOpen={() => {
+                    setOpenTopics(true);
                   }}
+                  onClose={() => {
+                    setOpenTopics(false);
+                  }}
+                  id="tags-standard"
+                  options={topicsData?.topics ?? []}
+                  getOptionLabel={(option: { title: string; id: number }) =>
+                    option.title
+                  }
+                  noOptionsText={<Link style={{ color: 'inherit', textDecoration: 'none' }} href="/admin/topics/new">Create first topic</Link>}
+                  value={topics ?? []}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      label="Topics that the user can access"
+                      placeholder="Select topics"
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {isTopicsLoading && (
+                              <CircularProgress color="inherit" size={20} />
+                            )}
+                            {params.InputProps.endAdornment}
+                          </>
+                        ),
+                      }}
+                    />
+                  )}
                 />
               )}
-            />
-            <Autocomplete
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              multiple
-              onChange={topicsChangeHandler}
-              onOpen={() => {
-                setOpenTopics(true);
-              }}
-              onClose={() => {
-                setOpenTopics(false);
-              }}
-              id="tags-standard"
-              options={topicsData?.topics ?? []}
-              getOptionLabel={(option: { title: string; id: number }) =>
-                option.title
-              }
-              value={topics ?? []}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="Topics that the user can access"
-                  placeholder="Select topics"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {isTopicsLoading && (
-                          <CircularProgress color="inherit" size={20} />
-                        )}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
-            />
           </Grid>
         </Grid>
         <Grid container justifyContent="center" sx={{ mt: 3 }}>

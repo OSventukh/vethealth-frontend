@@ -74,6 +74,7 @@ export default function EditUserPage() {
   return (
     <EditUser
       edit
+      id={Array.isArray(userId) ? userId[0] : userId}
       firstname={firstname}
       lastname={lastname}
       email={email}
