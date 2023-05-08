@@ -45,7 +45,6 @@ export default function EditorToolbar({
     revalidation: false,
   });
 
-  console.log(categoryData)
   useEffect(() => {
     openTopic && mutateTopic();
     openCategory && mutateCategory();
