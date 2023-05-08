@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { FormEvent, useContext } from 'react';
+import { FormEvent, useContext, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/admin/UI/Loading';
 import { useSWRConfig } from 'swr';
@@ -21,9 +21,20 @@ export default function EditTopicPage() {
       revalidation: false,
     }
   );
+
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
   const { accessToken } = useContext(AuthContext);
+
+
+  const initTitle = data ? data?.topics[0]?.title : null;
+  const initSlug = data ? data?.topics[0]?.slug : null;
+  const initDescription = data ? data?.topics[0]?.description : null;
+  const initActiveStatus = data ? data?.topics[0]?.status === 'active' : false;
+  const initImage = data ? data?.topics[0]?.image : null
+  const initCategories = useMemo(() => data ? data?.topics[0]?.categories.filter((category: {parentId: number | null}) => category.parentId === null) : null, [data]); //display only hight level category
+  const initParentTopic = data ? data?.topics[0]?.parent : null;
+
   const {
     title,
     description,
@@ -44,13 +55,13 @@ export default function EditTopicPage() {
     setErrorMessage,
     setSuccessMessage,
   } = useTopic({
-    initTitle: data?.topics[0]?.title,
-    initSlug: data?.topics[0]?.slug,
-    initDescription: data?.topics[0]?.description,
-    initActiveStatus: data?.topics[0]?.status === 'active',
-    initImage: data?.topics[0]?.image,
-    initCategories: data?.topics[0]?.categories,
-    initParentTopic: data?.topics[0]?.parent,
+    initTitle,
+    initSlug,
+    initDescription,
+    initActiveStatus,
+    initImage,
+    initCategories, //display only hight level category
+    initParentTopic,
   });
 
   const getDataHandler = async (event: FormEvent) => {

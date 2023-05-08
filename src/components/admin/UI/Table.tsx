@@ -316,7 +316,7 @@ export default function EnhancedTable({
 
 
   const dataTree = buildItemsTree(data);
-    console.log(data)
+
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelected = data.map((n) => n.id);
