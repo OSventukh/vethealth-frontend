@@ -31,8 +31,9 @@ export default function EditTopicPage() {
   const initSlug = data ? data?.topics[0]?.slug : null;
   const initDescription = data ? data?.topics[0]?.description : null;
   const initActiveStatus = data ? data?.topics[0]?.status === 'active' : false;
-  const initImage = data ? data?.topics[0]?.image : null
-  const initCategories = useMemo(() => data ? data?.topics[0]?.categories.filter((category: {parentId: number | null}) => category.parentId === null) : null, [data]); //display only hight level category
+  const initImage = data ? data?.topics[0]?.image : null;
+  //display only high level category
+  const initCategories = useMemo(() => data ? data?.topics[0]?.categories.filter((category: {parentId: number | null}) => category.parentId === null) : null, [data]);
   const initParentTopic = data ? data?.topics[0]?.parent : null;
 
   const {
