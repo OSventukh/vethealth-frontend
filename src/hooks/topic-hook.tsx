@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useEffect, useCallback, useMemo } from 'react';
+import { useState, ChangeEvent, SyntheticEvent, useEffect, useCallback, useMemo } from 'react';
 
 interface UseTopicAgr {
   initTitle?: string;
@@ -6,6 +6,8 @@ interface UseTopicAgr {
   initDescription?: string;
   initActiveStatus?: boolean;
   initImage?: string;
+  initCategories?: {name: string; id: number}[];
+  initParentTopic?: {title: string; id: number};
 }
 
 export default function useTopic({
@@ -14,6 +16,8 @@ export default function useTopic({
   initDescription,
   initActiveStatus,
   initImage,
+  initCategories,
+  initParentTopic,
 }: UseTopicAgr = {}) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -22,6 +26,9 @@ export default function useTopic({
   const [description, setDescription] = useState<string>('');
   const [activeStatus, setActiveStatus] = useState(false);
   const [image, setImage] = useState<File | null | string>(null);
+  const [parentTopic, setParentTopic] = useState<{ title: string, id: number } | null>(null);
+  const [categories, setCategories] = useState<{ name: string, id: number }[] | null>(null);
+
 
   useEffect(() => {
     initTitle && setTitle(initTitle);
@@ -29,7 +36,9 @@ export default function useTopic({
     initDescription && setDescription(initDescription);
     initActiveStatus && setActiveStatus(initActiveStatus);
     initImage && setImage(initImage);
-  }, [initTitle, initSlug, initDescription, initActiveStatus, initImage]);
+    initCategories && setCategories(initCategories);
+    initParentTopic && setParentTopic(initParentTopic);
+  }, [initTitle, initSlug, initDescription, initActiveStatus, initImage, initCategories, initParentTopic]);
 
   const titleChangeHandler = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -64,12 +73,30 @@ export default function useTopic({
     []
   );
 
+  const parentTopicChangeHandler = useCallback(
+    (event: SyntheticEvent, value: any) => {
+      event.preventDefault();
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      value && setParentTopic(value);
+    },
+    []
+  );
+
+  const categoryChangeHandler = useCallback((event: SyntheticEvent, value: any) => {
+    event.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    value && setCategories(value);
+  }, [])
+
   const clearInputs: () => void = useCallback(() => {
     setTitle('');
     setDescription('');
     setSlug('');
     setActiveStatus(false);
     setImage(null);
+    setParentTopic(null);
   }, []);
 
   const value = useMemo(
@@ -79,9 +106,13 @@ export default function useTopic({
       description,
       activeStatus,
       image,
+      parentTopic,
+      categories,
       titleChangeHandler,
       descriptionChangeHandler,
       slugChangeHandler,
+      parentTopicChangeHandler,
+      categoryChangeHandler,
       setActiveStatus,
       setImage,
       clearInputs,
@@ -96,10 +127,14 @@ export default function useTopic({
       description,
       activeStatus,
       image,
+      parentTopic,
+      categories,
       titleChangeHandler,
       descriptionChangeHandler,
       slugChangeHandler,
       setActiveStatus,
+      parentTopicChangeHandler,
+      categoryChangeHandler,
       setImage,
       clearInputs,
       successMessage,

@@ -7,7 +7,7 @@ import AuthContext from '@/context/auth-context';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 
-const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
+const EditTopic = dynamic(() => import('@/components/admin/Topics'), {
   ssr: false,
   loading: () => <Loading />,
 });
@@ -15,9 +15,12 @@ const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
 export default function EditTopicPage() {
   const router = useRouter();
   const { topicId } = router.query;
-  const { data, isLoading } = useGetData(`topics/${topicId}`, {
-    revalidation: false,
-  });
+  const { data, isLoading } = useGetData(
+    `topics/${topicId}?include=categories,parent`,
+    {
+      revalidation: false,
+    }
+  );
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
   const { accessToken } = useContext(AuthContext);
@@ -27,9 +30,13 @@ export default function EditTopicPage() {
     slug,
     activeStatus,
     image,
+    categories,
+    parentTopic,
     titleChangeHandler,
     descriptionChangeHandler,
     slugChangeHandler,
+    categoryChangeHandler,
+    parentTopicChangeHandler,
     setActiveStatus,
     setImage,
     errorMessage,
@@ -42,6 +49,8 @@ export default function EditTopicPage() {
     initDescription: data?.topics[0]?.description,
     initActiveStatus: data?.topics[0]?.status === 'active',
     initImage: data?.topics[0]?.image,
+    initCategories: data?.topics[0]?.categories,
+    initParentTopic: data?.topics[0]?.parent,
   });
 
   const getDataHandler = async (event: FormEvent) => {
@@ -52,6 +61,12 @@ export default function EditTopicPage() {
     title && formData.append('title', title.trim());
     slug && formData.append('slug', slug.trim());
     description && formData.append('description', description.trim());
+    parentTopic && formData.append('parentId', parentTopic.id.toString());
+    categories &&
+      categories.length > 0 &&
+      categories.forEach((category) =>
+        formData.append('categoryId', category.id.toString())
+      );
     formData.append('status', activeStatus ? 'active' : 'inactive');
     image instanceof File && formData.append('topic-image', image);
     image === '' && formData.append('image', image);
@@ -78,24 +93,25 @@ export default function EditTopicPage() {
     }
   };
   return (
-    <>
-      {isLoading && <p>Loading...</p>}
-      <EditTopic
-        topicSubmitHandler={getDataHandler}
-        title={title}
-        slug={slug}
-        description={description}
-        activeStatus={activeStatus}
-        image={image}
-        titleChangeHandler={titleChangeHandler}
-        slugChangeHandler={slugChangeHandler}
-        descriptionChangeHandler={descriptionChangeHandler}
-        setActiveStatus={setActiveStatus}
-        setImage={setImage}
-        errorMessage={errorMessage}
-        successMessage={successMessage}
-        edit
-      />
-    </>
+    <EditTopic
+      topicSubmitHandler={getDataHandler}
+      title={title}
+      slug={slug}
+      description={description}
+      categories={categories}
+      parentTopic={parentTopic}
+      activeStatus={activeStatus}
+      image={image}
+      titleChangeHandler={titleChangeHandler}
+      slugChangeHandler={slugChangeHandler}
+      descriptionChangeHandler={descriptionChangeHandler}
+      categoryChangeHandler={categoryChangeHandler}
+      parentTopicChangeHandler={parentTopicChangeHandler}
+      setActiveStatus={setActiveStatus}
+      setImage={setImage}
+      errorMessage={errorMessage}
+      successMessage={successMessage}
+      edit
+    />
   );
 }

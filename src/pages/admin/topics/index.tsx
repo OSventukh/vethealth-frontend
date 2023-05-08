@@ -43,5 +43,5 @@ const header = [
 ];
 
 export default function TopicsPage() {
-  return <ItemsTable url="topics" title="Topics" header={header} />;
+  return <ItemsTable url="topics" title="Topics" header={header} query='include=parent' />;
 }

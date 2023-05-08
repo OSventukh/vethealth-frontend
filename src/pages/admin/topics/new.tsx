@@ -6,7 +6,7 @@ import useTopic from '@/hooks/topic-hook';
 import { usePostData } from '@/hooks/data-hook';
 import { useSWRConfig } from 'swr';
 
-const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
+const EditTopic = dynamic(() => import('@/components/admin/Topics'), {
   ssr: false,
   loading: () => <Loading />
 });
@@ -21,9 +21,13 @@ export default function NewTopicPage() {
     slug,
     activeStatus,
     image,
+    categories,
+    parentTopic,
     clearInputs,
     titleChangeHandler,
     descriptionChangeHandler,
+    categoryChangeHandler,
+    parentTopicChangeHandler,
     slugChangeHandler,
     setActiveStatus,
     setImage,
@@ -46,6 +50,8 @@ export default function NewTopicPage() {
     slug && formData.append('slug', slug.trim());
     description && formData.append('description', description.trim());
     formData.append('status', activeStatus ? 'active' : 'inactive');
+    parentTopic && formData.append('parentId', parentTopic.id.toString());
+    categories && formData.append('categoryId', JSON.stringify(categories.map((categories) => categories.id)))
     image && formData.append('topic-image', image);
 
     try {
@@ -75,9 +81,13 @@ export default function NewTopicPage() {
       description={description}
       activeStatus={activeStatus}
       image={image}
+      categories={categories}
+      parentTopic={parentTopic}
       titleChangeHandler={titleChangeHandler}
       slugChangeHandler={slugChangeHandler}
       descriptionChangeHandler={descriptionChangeHandler}
+      categoryChangeHandler={categoryChangeHandler}
+      parentTopicChangeHandler={parentTopicChangeHandler}
       setActiveStatus={setActiveStatus}
       setImage={setImage}
       errorMessage={errorMessage}
