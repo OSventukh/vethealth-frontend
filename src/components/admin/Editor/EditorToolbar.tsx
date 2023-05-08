@@ -31,7 +31,7 @@ export default function EditorToolbar({
     data: topicData,
     isLoading: isTopicLoading,
     mutate: mutateTopic,
-  } = useGetData('topics', {
+  } = useGetData('usertopics', {
     revalidateOnMount: false,
     revalidation: false,
   });
@@ -40,11 +40,12 @@ export default function EditorToolbar({
     data: categoryData,
     isLoading: isCategoryLoading,
     mutate: mutateCategory,
-  } = useGetData('categories', {
+  } = useGetData(`topiccategories/${initTopics && initTopics.map((t) => t.id).join(',')}`, {
     revalidateOnMount: false,
     revalidation: false,
   });
 
+  console.log(categoryData)
   useEffect(() => {
     openTopic && mutateTopic();
     openCategory && mutateCategory();
@@ -123,7 +124,7 @@ export default function EditorToolbar({
               />
             )}
           />
-          <Autocomplete
+          {initTopics && initTopics.length > 0 && <Autocomplete
             isOptionEqualToValue={(option, value) => option.id === value.id}
             multiple
             onOpen={() => {
@@ -157,7 +158,7 @@ export default function EditorToolbar({
               }}
               />
             )}
-          />
+          />}
           <TextField
             id="standard-basic"
             label="Slug"
