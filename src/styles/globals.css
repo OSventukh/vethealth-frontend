@@ -18,3 +18,27 @@ input:-webkit-autofill:focus {
 .ck.ck-block-toolbar-button {
   left: 103px !important;
 }
+
+/* SCROLLBAR */
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(210, 206, 206, 0.5);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #bab8b8;
+  border-radius: 10px;
+
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
