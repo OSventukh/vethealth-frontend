@@ -3,6 +3,8 @@ import dynamic from 'next/dynamic';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import { useGetData, usePostData } from '@/hooks/data-hook';
 import AuthContext from '@/context/auth-context';
 import type { AuthHandlerArgs } from '@/types/auth-types';
@@ -20,7 +22,12 @@ export default function Auth() {
 
   const { trigger } = usePostData(data?.action);
 
-  const authHandler = async ({firstname, lastname, email, password}: AuthHandlerArgs) => {
+  const authHandler = async ({
+    firstname,
+    lastname,
+    email,
+    password,
+  }: AuthHandlerArgs) => {
     try {
       const response = await trigger({
         method: 'POST',
@@ -29,13 +36,15 @@ export default function Auth() {
           lastname,
           password,
           email,
-        }
-      })
+        },
+      });
       login();
     } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'Something went wrong')
+      setAuthError(
+        error instanceof Error ? error.message : 'Something went wrong'
+      );
     }
-  }
+  };
   const theme = useTheme();
 
   return (
@@ -51,9 +60,18 @@ export default function Auth() {
       }}
     >
       {isLoading && <CircularProgress />}
-      {error && !isLoading && <p>error</p>}
-      {!isLoading && data && data.action === 'login' && <Login onAuth={authHandler} authError={authError} />}
-      {!isLoading && data && data.action === 'signup' && <Signup onAuth={authHandler} authError={authError} />}
+      {error && !isLoading && (
+        <Alert severity="error">
+          <AlertTitle>Error!</AlertTitle>
+          Server connection error
+        </Alert>
+      )}
+      {!isLoading && data && data.action === 'login' && (
+        <Login onAuth={authHandler} authError={authError} />
+      )}
+      {!isLoading && data && data.action === 'signup' && (
+        <Signup onAuth={authHandler} authError={authError} />
+      )}
     </Box>
   );
 }

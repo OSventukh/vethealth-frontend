@@ -20,13 +20,29 @@ export interface EditorProps {
   slugChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
+export type Category = {
+  id: number;
+  name: string;
+  parentId: number;
+  parent?: Category;
+  children?: Category[];
+}
+
+export type Topic = {
+  id: number;
+  title: string;
+  parentId: number;
+  parent?: Topic;
+  children?: Topic[];
+}
+
 export interface EditorToolbarProps {
   onSave: () => void;
   onSaveDraft: () => void;
   onSlug: Dispatch<SetStateAction<string>>;
   onCategories: Dispatch<SetStateAction<number[]>>;
   onTopics: Dispatch<SetStateAction<number[]>>;
-  initTopics?: { id: number, title: string }[] | null;
-  initCategories?: { id: number, name: string }[] | null;
+  initTopics?: Topic[] | null;
+  initCategories?: Category[] | null;
   initSlug?: string;
 }

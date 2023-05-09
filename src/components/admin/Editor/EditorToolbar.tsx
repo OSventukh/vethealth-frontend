@@ -11,7 +11,7 @@ import { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useGetData } from '@/hooks/data-hook';
 
-import { EditorToolbarProps } from '@/types/editor-types';
+import type { EditorToolbarProps, Category, Topic } from '@/types/editor-types';
 
 export default function EditorToolbar({
   onSave,
@@ -40,11 +40,11 @@ export default function EditorToolbar({
     data: categoryData,
     isLoading: isCategoryLoading,
     mutate: mutateCategory,
-  } = useGetData(`topiccategories/${initTopics && initTopics.map((t) => t.id).join(',')}`, {
+  } = useGetData(`topiccategories/?topics=${initTopics && initTopics.map((t) => t.id).join(',')}`, {
     revalidateOnMount: false,
     revalidation: false,
   });
-
+ 
   useEffect(() => {
     openTopic && mutateTopic();
     openCategory && mutateCategory();
@@ -100,7 +100,7 @@ export default function EditorToolbar({
             multiple
             id="tags-standard"
             options={topicData?.topics ?? []}
-            getOptionLabel={(option: { title: string, id: number }) => option.title}
+            getOptionLabel={(option: Topic) => option.title}
             defaultValue={[]}
             value={initTopics ?? []}
             renderInput={(params) => (
@@ -126,6 +126,7 @@ export default function EditorToolbar({
           {initTopics && initTopics.length > 0 && <Autocomplete
             isOptionEqualToValue={(option, value) => option.id === value.id}
             multiple
+            groupBy={(option) => option.parent ? option.parent.name : 'Other' }
             onOpen={() => {
               setOpenCategory(true);
             }}
@@ -134,8 +135,8 @@ export default function EditorToolbar({
             }}
             id="tags-standard"
             onChange={changeCategoriesHandler}
-            options={categoryData?.categories ?? []}
-            getOptionLabel={(option: { name: string, id: number }) => option.name}
+            options={categoryData?.categories.filter((category: Category) => category?.children?.length === 0) ?? []}
+            getOptionLabel={(option: Category) => option.name}
             defaultValue={[]}
             value={initCategories ?? []}
             renderInput={(params) => (
