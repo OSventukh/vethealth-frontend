@@ -31,5 +31,20 @@ export interface AuthHandlerArgs {
 export interface AuthComponentsProps {
   onAuth: (AuthHandlerArgs) => void;
   authError: string | null;
+  message?: string | null;
+}
+
+export interface ConfirmHandlerArgs {
+  password: string;
+  confirmPassword: string;
+}
+
+export interface ConfirmComponentsProps {
+  onConfirm: (ConfirmHandlerArgs) => void;
+  confirmError: string | null;
+  user: {
+    name: string,
+    email: string,
+  };
 }
 

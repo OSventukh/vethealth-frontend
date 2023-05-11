@@ -1,4 +1,6 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { useRouter } from 'next/router';
+
 import dynamic from 'next/dynamic';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
@@ -14,11 +16,21 @@ const Login = dynamic(() => import('@/components/admin/Auth/Login'));
 
 export default function Auth() {
   const [authError, setAuthError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
   const { login } = useContext(AuthContext);
 
   const { data, error, isLoading } = useGetData('auth', {
     revalidation: false,
   });
+
+  const router = useRouter();
+  
+  useEffect(() => {
+    if ('confirm' in router.query) {
+      setMessage('You have been successfully verified and can now login')
+    }
+  }, [router])
 
   const { trigger } = usePostData(data?.action);
 
@@ -28,6 +40,8 @@ export default function Auth() {
     email,
     password,
   }: AuthHandlerArgs) => {
+    setMessage(null);
+    setAuthError(null);
     try {
       const response = await trigger({
         method: 'POST',
@@ -67,7 +81,7 @@ export default function Auth() {
         </Alert>
       )}
       {!isLoading && data && data.action === 'login' && (
-        <Login onAuth={authHandler} authError={authError} />
+        <Login onAuth={authHandler} authError={authError} message={message} />
       )}
       {!isLoading && data && data.action === 'signup' && (
         <Signup onAuth={authHandler} authError={authError} />

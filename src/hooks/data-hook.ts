@@ -54,7 +54,7 @@ export function usePostData(url: string) {
 }
 
 export function useGetData(
-  url: string | object,
+  url: string | object | undefined,
   {
     revalidation = true,
     shouldRetryOnError = true,

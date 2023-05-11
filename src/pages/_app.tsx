@@ -1,6 +1,6 @@
 import '@/styles/globals.css';
-import { useRouter } from 'next/router';
 import { useMemo } from 'react';
+import { useRouter } from 'next/router';
 import { CssBaseline } from '@mui/material';
 import type { AppProps } from 'next/app';
 import AdminPanelLayout from '@/components/admin/Layout';
@@ -15,24 +15,19 @@ export default function App({ Component, pageProps }: AppProps) {
     () => router.pathname.startsWith('/admin'),
     [router.pathname]
   );
-  const authPage = useMemo(
-    () => router.pathname.startsWith('/admin/auth'),
-    [router.pathname]
-  );
-
   return (
     <AuthContextProvider>
       <Theme>
-        <AdminRouteGuard>
-          <CssBaseline />
-          {isAdminPanel && !authPage ? (
+        {isAdminPanel ? (
+          <AdminRouteGuard>
+            <CssBaseline />
             <AdminPanelLayout>
               <Component {...pageProps} />
             </AdminPanelLayout>
-          ) : (
-            <Component {...pageProps} />
-          )}
-        </AdminRouteGuard>
+          </AdminRouteGuard>
+        ) : (
+          <Component {...pageProps} />
+        )}
       </Theme>
     </AuthContextProvider>
   );

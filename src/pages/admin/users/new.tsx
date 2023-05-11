@@ -46,7 +46,7 @@ export default function NewUserPage() {
           lastname,
           email,
           status,
-          topicIds: topics?.map((topic) => topic.id),
+          topicId: topics?.map((topic) => topic.id),
           roleId: role?.id,
         },
       });
