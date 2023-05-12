@@ -15,30 +15,8 @@ import Collapse from '@mui/material/Collapse';
 import { Drawer, DrawerHeader } from '@/components/admin/Layout/drawer';
 import type { NavigationProps } from '@/types/props-types';
 import NavItem from './NavItem';
+import routes from '@/utils/routesList';
 
-const links = {
-  home: '/admin',
-  topics: {
-    all: '/admin/topics',
-    new: '/admin/topics/new',
-  },
-  posts: {
-    all: '/admin/posts',
-    new: '/admin/posts/new',
-    categories: '/admin/posts/categories',
-    newCategory: '/admin/posts/categories/new',
-  },
-  pages: {
-    all: '/admin/pages',
-  },
-  users: {
-    all: '/admin/users',
-    new: '/admin/users/new',
-  },
-  settings: {
-    general: '/admin/settings',
-  },
-};
 export default function Navigation({ open }: NavigationProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const router = useRouter();
@@ -56,7 +34,7 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin"
           open={open}
           icon={<Home />}
-          selected={router.pathname === links.home}
+          selected={router.pathname === routes.home}
         >
           Home
         </NavItem>
@@ -64,139 +42,139 @@ export default function Navigation({ open }: NavigationProps) {
           link="/admin/topics"
           open={open}
           icon={<ViewComfyAlt />}
-          onClick={(event) => menuClickHandler(event, links.topics.all)}
+          onClick={(event) => menuClickHandler(event, routes.topics.all)}
           expandIcon={
-            openMenu === links.topics.all ? <ExpandLess /> : <ExpandMore />
+            openMenu === routes.topics.all ? <ExpandLess /> : <ExpandMore />
           }
-          selected={router.pathname.startsWith(links.topics.all)}
+          selected={router.pathname.startsWith(routes.topics.all)}
         >
           Topics
         </NavItem>
         <Collapse
-          in={open && openMenu === links.topics.all}
+          in={open && openMenu === routes.topics.all}
           timeout="auto"
           unmountOnExit
         >
           <List disablePadding sx={{ pl: '1rem' }}>
             <NavItem
-              link={links.topics.all}
+              link={routes.topics.all}
               open={open}
               nested
-              selected={router.pathname === links.topics.all}
+              selected={router.pathname === routes.topics.all}
             >
               All topics
             </NavItem>
             <NavItem
-              link={links.topics.new}
+              link={routes.topics.new}
               open={open}
               nested
-              selected={router.pathname === links.topics.new}
+              selected={router.pathname === routes.topics.new}
             >
               New Topic
             </NavItem>
           </List>
         </Collapse>
         <NavItem
-          link={links.posts.all}
+          link={routes.posts.all}
           open={open}
           icon={<Article />}
           expandIcon={openMenu ? <ExpandLess /> : <ExpandMore />}
           onClick={(event: React.MouseEvent) =>
-            menuClickHandler(event, links.posts.all)
+            menuClickHandler(event, routes.posts.all)
           }
-          selected={router.pathname.startsWith(links.posts.all)}
+          selected={router.pathname.startsWith(routes.posts.all)}
         >
           Posts
         </NavItem>
         <Collapse
-          in={open && openMenu === links.posts.all}
+          in={open && openMenu === routes.posts.all}
           timeout="auto"
           unmountOnExit
         >
           <List disablePadding sx={{ pl: '1rem' }}>
             <NavItem
-              link={links.posts.all}
+              link={routes.posts.all}
               open={open}
               nested
-              selected={router.pathname === links.posts.all}
+              selected={router.pathname === routes.posts.all}
             >
               All posts
             </NavItem>
             <NavItem
-              link={links.posts.new}
+              link={routes.posts.new}
               open={open}
               nested
-              selected={router.pathname === links.posts.new}
+              selected={router.pathname === routes.posts.new}
             >
               New Post
             </NavItem>
             <NavItem
-              link={links.posts.categories}
+              link={routes.posts.categories}
               open={open}
               nested
-              selected={router.pathname === links.posts.categories}
+              selected={router.pathname === routes.posts.categories}
             >
               Categories
             </NavItem>
             <NavItem
-              link={links.posts.newCategory}
+              link={routes.posts.newCategory}
               open={open}
               nested
-              selected={router.pathname === links.posts.newCategory}
+              selected={router.pathname === routes.posts.newCategory}
             >
               New Category
             </NavItem>
           </List>
         </Collapse>
         <NavItem
-          link={links.pages.all}
+          link={routes.pages.all}
           open={open}
           icon={<Web />}
-          selected={router.pathname.startsWith(links.pages.all)}
+          selected={router.pathname.startsWith(routes.pages.all)}
         >
           Pages
         </NavItem>
         <NavItem
-          link={links.users.all}
+          link={routes.users.all}
           open={open}
           icon={<Group />}
-          selected={router.pathname.startsWith(links.users.all)}
+          selected={router.pathname.startsWith(routes.users.all)}
           expandIcon={openMenu ? <ExpandLess /> : <ExpandMore />}
           onClick={(event: React.MouseEvent) =>
-            menuClickHandler(event, links.users.all)
+            menuClickHandler(event, routes.users.all)
           }
         >
           Users
         </NavItem>
         <Collapse
-          in={open && openMenu === links.users.all}
+          in={open && openMenu === routes.users.all}
           timeout="auto"
           unmountOnExit
         >
           <List disablePadding sx={{ pl: '1rem' }}>
             <NavItem
-              link={links.users.all}
+              link={routes.users.all}
               open={open}
               nested
-              selected={router.pathname === links.users.all}
+              selected={router.pathname === routes.users.all}
             >
               All users
             </NavItem>
             <NavItem
-              link={links.users.new}
+              link={routes.users.new}
               open={open}
               nested
-              selected={router.pathname === links.users.new}
+              selected={router.pathname === routes.users.new}
             >
               New users
             </NavItem>
           </List>
         </Collapse>
         <NavItem
-          link={links.settings.general}
+          link={routes.settings.general}
           open={open}
           icon={<Settings />}
-          selected={router.pathname.startsWith(links.settings.general)}
+          selected={router.pathname.startsWith(routes.settings.general)}
         >
           Settings
         </NavItem>
