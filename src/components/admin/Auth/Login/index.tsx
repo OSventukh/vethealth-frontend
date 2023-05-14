@@ -13,6 +13,7 @@ import Alert from '@mui/material/Alert';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
 
+
 import type { AuthComponentsProps } from '@/types/auth-types';
 
 export default function Login({ onAuth, authError, message }: AuthComponentsProps) {

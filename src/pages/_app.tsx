@@ -7,8 +7,9 @@ import AdminPanelLayout from '@/components/admin/Layout';
 import Theme from '@/theme/themeProvider';
 import AuthContextProvider from '@/providers/auth-provider';
 import AdminRouteGuard from '@/providers/admin-route-guard-provider';
+import { SessionProvider } from 'next-auth/react';
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
 
   const isAdminPanel = useMemo(
@@ -16,19 +17,19 @@ export default function App({ Component, pageProps }: AppProps) {
     [router.pathname]
   );
   return (
-    <AuthContextProvider>
+    <SessionProvider session={session}>
       <Theme>
         {isAdminPanel ? (
-          <AdminRouteGuard>
+          <>
             <CssBaseline />
             <AdminPanelLayout>
               <Component {...pageProps} />
             </AdminPanelLayout>
-          </AdminRouteGuard>
+          </>
         ) : (
           <Component {...pageProps} />
         )}
       </Theme>
-    </AuthContextProvider>
+    </SessionProvider>
   );
 }

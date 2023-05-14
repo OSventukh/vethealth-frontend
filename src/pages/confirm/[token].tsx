@@ -12,6 +12,7 @@ const Confirm = dynamic(() => import('@/components/admin/Auth/Confirm'), {
   ssr: false,
   loading: () => <Loading />
 });
+
 export default function ConfirmPage() {
   const [confirmError, setConfirmError] = useState<string | null>(null);
 

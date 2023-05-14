@@ -10,6 +10,7 @@ import { ColorModeSwitch } from '../UI/Switch';
 import ColorModeContext from '@/context/theme-context';
 import Link from 'next/link';
 import Logo from './Logo';
+
 export default function Header({ open, handleDrawerToggle }: NavigationProps) {
   const theme = useTheme();
   const { toggleColorMode, mode } = useContext(ColorModeContext);
