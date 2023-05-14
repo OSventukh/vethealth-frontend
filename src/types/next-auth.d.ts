@@ -2,6 +2,7 @@ import NextAuth, { DefaultSession } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 
 type UserData = {
+  id: string;
   firstname: string;
   lastname?: string;
 };
@@ -12,7 +13,7 @@ declare module 'next-auth/jwt' {
     refreshToken: string;
     accessToken: string;
     user: UserDatas;
-    error: Error;
+    error: string;
   }
 }
 
@@ -23,7 +24,7 @@ declare module 'next-auth' {
   interface Session {
     user: UserData;
     accessToken: string;
-    error: Error;
+    error: string;
   }
 
   interface User extends NextAuthUser {

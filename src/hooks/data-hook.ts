@@ -1,18 +1,18 @@
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
-import { useContext } from 'react';
-import AuthContext from '@/context/auth-context';
+import { getSession } from 'next-auth/react';
 import type { ArgData } from '@/types/fetch-types';
 
 export const api = 'http://localhost:5000';
 
 
-async function getFetch(url: string, { token = '' }: {token?: string | null } = {}) {
+async function getFetch(url: string) {
+  const session = await getSession();
   const response = await fetch(url, {
     method: 'GET',
     credentials: 'include',
     headers: {
-      ...(token && { authorization: `Bearer ${token}` }),
+      authorization: `Bearer ${session?.accessToken}`,
       'Content-Type': 'application/json' 
     },
   });
@@ -25,11 +25,13 @@ async function getFetch(url: string, { token = '' }: {token?: string | null } = 
 };
 
 async function postFetch(url: string, { arg }: { arg?: ArgData } = {}) {
+  const session = await getSession();
+
   const response = await fetch(url, {
     method: arg?.method,
     credentials: 'include',
     headers: {
-      ...(arg?.token && { authorization: `Bearer ${arg?.token}` }),
+      authorization: `Bearer ${session?.accessToken}`,
       ...(arg?.data instanceof FormData
         ? {}
         : { 'Content-Type': 'application/json' }),
@@ -62,11 +64,11 @@ export function useGetData(
     refreshInterval,
   }: { revalidation?: boolean; shouldRetryOnError?: boolean, revalidateOnMount?: boolean, refreshInterval?: number } = {}
 ) {
-  const { accessToken } = useContext(AuthContext);
+
   if (typeof url === 'object') {}
   return useSWR(
     typeof url === 'string' ? `${api}/${url}` : url,
-    typeof url === 'string' ? () => getFetch(`${api}/${url}`, { token: accessToken }) : ({ path }: { path: string}) => getFetch(`${api}/${path}`, { token: accessToken }),
+    typeof url === 'string' ? () => getFetch(`${api}/${url}`) : ({ path }: { path: string}) => getFetch(`${api}/${path}`),
     {
       revalidateIfStale: revalidation,
       revalidateOnFocus: revalidation,

@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import dynamic from 'next/dynamic';
@@ -8,7 +8,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { useGetData, usePostData } from '@/hooks/data-hook';
-import AuthContext from '@/context/auth-context';
 import type { AuthHandlerArgs } from '@/types/auth-types';
 import { signIn } from 'next-auth/react';
 
@@ -18,8 +17,6 @@ const Login = dynamic(() => import('@/components/admin/Auth/Login'));
 export default function Auth() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-
-  const { login } = useContext(AuthContext);
 
   const { data, error, isLoading } = useGetData('auth', {
     revalidation: false,

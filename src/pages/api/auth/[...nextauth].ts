@@ -45,14 +45,13 @@ export default NextAuth({
         token.user = user.user;
       }
 
-      if (Date.now() > token.accessTokenExpires) {
-        return refreshAccessToken(token);
+      if (new Date() > new Date(token.accessTokenExpires)) {
+        return await refreshAccessToken(token);
       }
 
       return token;
     },
     async session({ session, token, user }) {
-      console.log('session user', user);
       try {
         if (!token) {
           return session;
@@ -79,7 +78,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         Authorization: `Bearer ${token.refreshToken}`,
       },
     });
-    const json = await res.json();
+    const result = await res.json();
 
     if (!res.ok) {
       throw new Error('Failed to refresh access token');
@@ -87,9 +86,9 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 
     return {
       ...token,
-      accessToken: json.accessToken,
-      refreshToken: json.refreshToken,
-      accessTokenExpires: Date.now() + json.expires_in * 1000,
+      accessToken: result.accessToken.token,
+      refreshToken: result.refreshToken.token,
+      accessTokenExpires: result.accessToken.expirationDate,
     };
   } catch (error) {
     return {

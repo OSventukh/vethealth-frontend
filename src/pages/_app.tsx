@@ -5,8 +5,6 @@ import { CssBaseline } from '@mui/material';
 import type { AppProps } from 'next/app';
 import AdminPanelLayout from '@/components/admin/Layout';
 import Theme from '@/theme/themeProvider';
-import AuthContextProvider from '@/providers/auth-provider';
-import AdminRouteGuard from '@/providers/admin-route-guard-provider';
 import { SessionProvider } from 'next-auth/react';
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {

@@ -1,7 +1,9 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import type { FormEvent, ChangeEvent, SyntheticEvent } from 'react';
 import Link from 'next/link';
 import { UserRole, UserStatus } from '@/utils/constants/users.enum';
+import { useSession } from 'next-auth/react';
+
 import {
   Paper,
   Box,
@@ -18,7 +20,6 @@ import {
   CircularProgress,
   SelectChangeEvent,
 } from '@mui/material';
-import AuthContext from '@/context/auth-context';
 
 interface EditUserProps {
   id?: string;
@@ -70,7 +71,7 @@ export default function EditUser({
   const [openTopics, setOpenTopics] = useState(false);
   const [openRole, setOpenRole] = useState(false);
 
-  const { user } = useContext(AuthContext);
+  const { data: session} = useSession()
 
   const {
     data: topicsData,
@@ -140,7 +141,7 @@ export default function EditUser({
               value={email}
             />
 
-            {user && user.id?.toString() !== id && edit && (
+            {session?.user && session.user.id.toString() !== id && edit && (
               <FormControl variant="standard">
                 <InputLabel id="demo-simple-select-standard-label">
                   Status
@@ -160,7 +161,7 @@ export default function EditUser({
                 </Select>
               </FormControl>
             )}
-            {user && user.id?.toString() !== id && (
+            {session?.user && session.user.id.toString() !== id && (
               <Autocomplete
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={roleChangeHandler}

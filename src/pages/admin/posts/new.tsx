@@ -1,9 +1,8 @@
-import { useContext, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { usePostData } from '@/hooks/data-hook';
-import AuthContext from '@/context/auth-context';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import usePost from '@/hooks/post-hook';
 import Loading from '@/components/admin/UI/Loading';
@@ -13,7 +12,6 @@ const Editor = dynamic(() => import('@/components/admin/Editor'), {
 });
 
 export default function NewPostPage() {
-  const { accessToken } = useContext(AuthContext);
   const router = useRouter()
   const {
     content,
@@ -50,7 +48,6 @@ export default function NewPostPage() {
       try {
         const response = await trigger({
           method: 'POST',
-          token: accessToken,
           data: {
             rawContent: content,
             slug: slug,
@@ -71,7 +68,7 @@ export default function NewPostPage() {
         );
       }
     },
-    [trigger, accessToken, content, slug, categories, topics, setErrorMessage, setSuccessMessage, router]
+    [trigger, content, slug, categories, topics, setErrorMessage, setSuccessMessage, router]
   );
 
   return (

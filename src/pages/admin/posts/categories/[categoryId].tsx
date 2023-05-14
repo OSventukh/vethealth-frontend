@@ -7,7 +7,7 @@ const EditCategory = dynamic(() => import('@/components/admin/Category'), {
   loading: () => <Loading />,
   ssr: false,
 })
-import AuthContext from '@/context/auth-context';
+
 import useCategory from '@/hooks/category-hook';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 import { useSWRConfig } from 'swr';
@@ -21,7 +21,6 @@ export default function EditCategoryPage() {
 
   const { data } = useGetData(`categories/${categoryId}?include=parent`);
 
-  const { accessToken } = useContext(AuthContext);
   const {
     name,
     slug,
@@ -58,7 +57,6 @@ export default function EditCategoryPage() {
           slug,
           parentId: parentCategory?.id,
         },
-        token: accessToken,
       });
       clearInputs();
       mutate(

@@ -1,7 +1,6 @@
 import { FormEvent, useContext } from 'react';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/admin/UI/Loading';
-import AuthContext from '@/context/auth-context';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData } from '@/hooks/data-hook';
 import { useSWRConfig } from 'swr';
@@ -14,7 +13,6 @@ const EditTopic = dynamic(() => import('@/components/admin/Topics'), {
 export default function NewTopicPage() {
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData('topics');
-  const { accessToken } = useContext(AuthContext);
   const {
     title,
     description,
@@ -58,7 +56,6 @@ export default function NewTopicPage() {
       const response = await trigger({
         method: 'POST',
         data: formData,
-        token: accessToken,
       });
       clearInputs();
       mutate(

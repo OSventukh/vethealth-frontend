@@ -1,11 +1,10 @@
-import { useContext, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Loading from '@/components/admin/UI/Loading';
 
 import dynamic from 'next/dynamic';
 import { usePostData, useGetData } from '@/hooks/data-hook';
-import AuthContext from '@/context/auth-context';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import usePost from '@/hooks/post-hook';
 
@@ -15,7 +14,7 @@ const Editor = dynamic(() => import('@/components/admin/Editor'), {
 });
 
 export default function EditPostPage() {
-  const { accessToken } = useContext(AuthContext);
+
   const router = useRouter();
   const postId = router.query.postId;
 
@@ -62,7 +61,6 @@ export default function EditPostPage() {
       try {
         const response = await trigger({
           method: 'PATCH',
-          token: accessToken,
           data: {
             id: postId,
             rawContent: content,
@@ -79,7 +77,7 @@ export default function EditPostPage() {
         );
       }
     },
-    [trigger, categories, topics, content, slug, accessToken, postId, setErrorMessage, setSuccessMessage]
+    [trigger, categories, topics, content, slug, postId, setErrorMessage, setSuccessMessage]
   );
 
   return (

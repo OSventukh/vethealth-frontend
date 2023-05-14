@@ -1,5 +1,4 @@
-import { useState, useCallback, useContext, useEffect } from 'react';
-import AuthContext from '@/context/auth-context';
+import { useState, useCallback, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -7,6 +6,7 @@ import EnhancedTable from '@/components/admin/UI/Table';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import { useGetData, usePostData } from '@/hooks/data-hook';
 import type { ItemsTableProps } from '@/types/props-types';
+import { getSession } from 'next-auth/react';
 
 export default function ItemsTable({url, title, header, query}: ItemsTableProps) {
   const [sortBy, setSortBy] = useState('');
@@ -15,7 +15,6 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
   const [size, setSize] = useState<number>(5);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const { accessToken } = useContext(AuthContext);
 
   const attributes = header.map((item) => item.id).join();
   let requestPath = `${url}?order=${sortBy}:${sort}&page=${page}&size=${size}&columns=${attributes}`;
@@ -61,8 +60,9 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
   const itemsDeleteHandler = useCallback(
     async (items: readonly number[]) => {
       try {
+        const session = await getSession();
         const response = await trigger({
-          token: accessToken,
+          token: session?.accessToken,
           data: {
             id: items,
           },
@@ -76,7 +76,7 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
         );
       }
     },
-    [accessToken, trigger, mutate]
+    [trigger, mutate]
   );
 
   return (

@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 import useUser from '@/hooks/user-hook';
 import { FormEvent } from 'react';
 import { usePostData } from '@/hooks/data-hook';
-import AuthContext from '@/context/auth-context';
 import Loading from '@/components/admin/UI/Loading';
 
 const EditUser = dynamic(() => import('@/components/admin/User'), {
@@ -32,7 +31,6 @@ export default function NewUserPage() {
   } = useUser();
 
   const { trigger } = usePostData('users');
-  const { accessToken } = useContext(AuthContext);
   const userSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
     setErrorMessage(null);
@@ -40,7 +38,6 @@ export default function NewUserPage() {
     try {
       const response = await trigger({
         method: 'POST',
-        token: accessToken,
         data: {
           firstname,
           lastname,

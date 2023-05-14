@@ -3,7 +3,6 @@ import { FormEvent, useContext, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/admin/UI/Loading';
 import { useSWRConfig } from 'swr';
-import AuthContext from '@/context/auth-context';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 
@@ -24,8 +23,6 @@ export default function EditTopicPage() {
 
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
-  const { accessToken } = useContext(AuthContext);
-
 
   const initTitle = data ? data?.topics[0]?.title : null;
   const initSlug = data ? data?.topics[0]?.slug : null;
@@ -86,7 +83,6 @@ export default function EditTopicPage() {
       const response = await trigger({
         method: 'PATCH',
         data: formData,
-        token: accessToken,
       });
       mutate(
         (key: any) =>
