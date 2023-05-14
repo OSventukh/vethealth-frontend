@@ -1,4 +1,4 @@
-import NextAuth, { DefaultSession } from 'next-auth';
+import NextAuth, { DefaultSession, User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 
 type UserData = {
@@ -7,34 +7,31 @@ type UserData = {
   lastname?: string;
 };
 
+type JWTToken = {
+  token: string;
+  expirationDate: number;
+}
+
 declare module 'next-auth/jwt' {
   interface JWT {
     accessTokenExpires: number;
     refreshToken: string;
     accessToken: string;
-    user: UserDatas;
+    user: UserData;
     error: string;
   }
 }
 
 declare module 'next-auth' {
-  /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
   interface Session {
     user: UserData;
     accessToken: string;
     error: string;
-  }
+  } 
 
-  interface User extends NextAuthUser {
-    accessToken: {
-      token: string;
-      expirationDate: number;
-    };
-    refreshToken: {
-      token: string;
-    };
+  interface User {
+    accessToken: JWTToken;
+    refreshToken: JWTToken;
     user: UserData;
   }
 }
