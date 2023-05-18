@@ -33,7 +33,6 @@ export default function EditorToolbar({
     mutate: mutateTopic,
   } = useGetData('usertopics', {
     revalidateOnMount: false,
-    revalidation: false,
   });
 
   const {
@@ -42,7 +41,6 @@ export default function EditorToolbar({
     mutate: mutateCategory,
   } = useGetData(`topiccategories/?topics=${initTopics && initTopics.map((t) => t.id).join(',')}`, {
     revalidateOnMount: false,
-    revalidation: false,
   });
  
   useEffect(() => {

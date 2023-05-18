@@ -8,8 +8,8 @@ import {
 interface UsePostAgr {
   initContent?: string;
   initSlug?: string;
-  initTopics?: { title: string; id: number }[] | null;
-  initCategories?: { name: string; id: number }[] | null;
+  initTopics?: { title: string; id: number; parentId: number }[] | null;
+  initCategories?: { name: string; id: number; parentId: number }[] | null;
 }
 
 export default function usePost({
@@ -22,8 +22,8 @@ export default function usePost({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [content, setContent] = useState<string>('');
   const [slug, setSlug] = useState<string>('');
-  const [categories, setCategories] = useState<{ name: string, id: number}[]| null>(null);
-  const [topics, setTopics] = useState<{ title: string, id: number }[] | null>(null);
+  const [categories, setCategories] = useState<{ name: string, id: number, parentId: number}[]| null>(null);
+  const [topics, setTopics] = useState<{ title: string, id: number, parentId: number }[] | null>(null);
 
   useEffect(() => {
     initContent && setContent(initContent);
@@ -45,11 +45,11 @@ export default function usePost({
       setSlug(value);
     }, []);
 
-  const topicsChangeHandler = useCallback((value: {id: number, title: string}[]) => {
+  const topicsChangeHandler = useCallback((value: {id: number, title: string, parentId: number}[]) => {
     setTopics(value)
   }, []);
 
-  const categoriesChangeHandler = useCallback((value: {id: number, name: string}[]) => {
+  const categoriesChangeHandler = useCallback((value: {id: number, name: string, parentId: number}[]) => {
     setCategories(value);
   }, []);
 

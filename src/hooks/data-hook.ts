@@ -58,8 +58,8 @@ export function usePostData(url: string) {
 export function useGetData(
   url: string | object | undefined,
   {
-    revalidation = true,
-    shouldRetryOnError = true,
+    revalidation = false,
+    shouldRetryOnError = false,
     revalidateOnMount = true,
     refreshInterval,
   }: { revalidation?: boolean; shouldRetryOnError?: boolean, revalidateOnMount?: boolean, refreshInterval?: number } = {}

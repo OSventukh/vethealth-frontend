@@ -23,7 +23,7 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
     requestPath += `&${query}`;
   }
 
-  const { data, isLoading, error: responseError, mutate, isValidating } = useGetData({
+  const { data, isLoading, error: responseError, mutate, isValidating } = useGetData(url && {
     key: `#${url}`,
     path: requestPath,
   });
@@ -60,9 +60,7 @@ export default function ItemsTable({url, title, header, query}: ItemsTableProps)
   const itemsDeleteHandler = useCallback(
     async (items: readonly number[]) => {
       try {
-        const session = await getSession();
         const response = await trigger({
-          token: session?.accessToken,
           data: {
             id: items,
           },

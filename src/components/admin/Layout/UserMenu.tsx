@@ -6,7 +6,7 @@ import { signOut, useSession } from 'next-auth/react';
 
 export default function UserMenu() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { data } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
   const logoutHandler = () => {
@@ -50,7 +50,7 @@ export default function UserMenu() {
       >
         <MenuItem onClick={clickMenuCloseHandler}>
           <Typography variant="h6">
-            {data?.user.firstname} {data?.user?.lastname}
+            {session?.user.firstname} {session?.user?.lastname}
           </Typography>
         </MenuItem>
         <MenuItem onClick={logoutHandler}>Exit</MenuItem>

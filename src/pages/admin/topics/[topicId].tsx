@@ -14,12 +14,7 @@ const EditTopic = dynamic(() => import('@/components/admin/Topics'), {
 export default function EditTopicPage() {
   const router = useRouter();
   const { topicId } = router.query;
-  const { data, isLoading } = useGetData(
-    `topics/${topicId}?include=categories,parent`,
-    {
-      revalidation: false,
-    }
-  );
+  const { data, isLoading } = useGetData(`topics/${topicId}?include=categories,parent`);
 
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);

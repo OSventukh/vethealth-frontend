@@ -9,7 +9,7 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { useGetData, usePostData } from '@/hooks/data-hook';
 import type { AuthHandlerArgs } from '@/types/auth-types';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 
 const Signup = dynamic(() => import('@/components/admin/Auth/Signup'));
 const Login = dynamic(() => import('@/components/admin/Auth/Login'));
@@ -17,10 +17,7 @@ const Login = dynamic(() => import('@/components/admin/Auth/Login'));
 export default function Auth() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-
-  const { data, error, isLoading } = useGetData('auth', {
-    revalidation: false,
-  });
+  const { data, error, isLoading } = useGetData('auth');
 
   const router = useRouter();
 

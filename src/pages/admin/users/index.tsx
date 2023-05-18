@@ -42,6 +42,6 @@ const header = [
   },
 ];
 
-export default function UserSPage() {
+export default function UsersPage() {
   return <ItemsTable url="users" title="Users" header={header} query='include=role'/>;
 }

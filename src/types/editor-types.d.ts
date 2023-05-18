@@ -3,20 +3,20 @@ export interface EditorValue {
   content: string;
   title?: string;
   slug: string;
-  categories: { id: number, name: string }[] | null;
-  topics: { id: number, title: string }[] | null;
+  categories: Category[] | null;
+  topics: Topic[] | null;
   status: 'published' | 'draft';
 }
 
 export interface EditorProps {
   onSave: (status: 'published' | 'draft') => void;
   content: string;
-  categories: { id: number, name: string }[] | null;
-  topics: { id: number, title: string }[] | null;
+  categories: Category[] | null;
+  topics: Topic[] | null;
   slug: string;
   contentChangeHandler: (value: any) => void;
-  categoriesChangeHandler: (value: { id: number, name: string }[]) => void;
-  topicsChangeHandler: (value: { id: number, title: string }[]) => void;
+  categoriesChangeHandler: (value: Category[]) => void;
+  topicsChangeHandler: (value: Topic[]) => void;
   slugChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 

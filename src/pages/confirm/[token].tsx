@@ -20,9 +20,7 @@ export default function ConfirmPage() {
 
   const token = router.query.token;
 
-  const { data, error, isLoading } = useGetData(token && `confirm/${token}`, {
-    revalidation: false,
-  });
+  const { data, error, isLoading } = useGetData(token && `confirm/${token}`);
 
   const { trigger } = usePostData('confirm');
 

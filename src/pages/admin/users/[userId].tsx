@@ -14,7 +14,7 @@ export default function EditUserPage() {
   const router = useRouter();
   const userId = router.query.userId;
 
-  const { data } = useGetData(`users/${userId}?include=role,topics`);
+  const { data } = useGetData(userId && `users/${userId}?include=role,topics`);
   const {
     firstname,
     lastname,
