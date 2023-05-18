@@ -15,9 +15,7 @@ input:-webkit-autofill:focus {
 .ck-content {
   min-height: 80vh;
 }
-.ck.ck-block-toolbar-button {
-  left: 103px !important;
-}
+
 
 /* SCROLLBAR */
 
@@ -42,3 +40,5 @@ input:-webkit-autofill:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+

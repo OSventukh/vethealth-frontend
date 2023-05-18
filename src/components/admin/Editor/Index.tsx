@@ -3,7 +3,6 @@ import EditorToolbar from './EditorToolbar';
 import EditorCore from './Editor';
 import styles from './editor.module.css';
 import type { EditorProps } from '@/types/editor-types';
-
 export default function Editor({
   onSave,
   content,
