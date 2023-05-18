@@ -2,7 +2,6 @@ import NextAuth, { User as NextAuthUser, Account, Session } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-
 async function refreshAccessToken(token: JWT): Promise<JWT> {
 
   try {
