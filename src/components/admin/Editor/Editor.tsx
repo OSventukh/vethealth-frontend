@@ -3,8 +3,7 @@ import { Editor as TinyEditor } from '@tinymce/tinymce-react/';
 import Box from '@mui/material/Box';
 import { Divider } from '@mui/material';
 import { useTheme } from '@emotion/react';
-import dynamic from 'next/dynamic';
-import Loading from '../UI/Loading';
+
 interface EditorCoreProps {
   title?: string;
   content?: string;

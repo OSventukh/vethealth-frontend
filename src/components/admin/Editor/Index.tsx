@@ -28,7 +28,6 @@ export default function Editor({
 
   return (
     <Box
-      component="div"
       sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
     >
       <EditorToolbar
