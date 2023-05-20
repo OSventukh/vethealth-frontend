@@ -22,10 +22,12 @@ export default function EditPostPage() {
     `posts/${postId}?include=categories,topics`
   );
   const {
+    title,
     content,
     slug,
     topics,
     categories,
+    titleChangeHandler,
     contentChangeHandler,
     slugChangeHandler,
     topicsChangeHandler,
@@ -35,9 +37,10 @@ export default function EditPostPage() {
     successMessage,
     setSuccessMessage,
   } = usePost({
+    initTitle: data?.posts[0]?.title,
     initCategories: data?.posts[0]?.categories,
     initTopics: data?.posts[0]?.topics,
-    initContent: data?.posts[0]?.title && `<h1>${data?.posts[0]?.title}</h1>${data?.posts[0]?.content}`,
+    initContent:data?.posts[0]?.content,
     initSlug: data?.posts[0]?.slug,
   });
 
@@ -63,7 +66,8 @@ export default function EditPostPage() {
           method: 'PATCH',
           data: {
             id: postId,
-            rawContent: content,
+            title,
+            content,
             slug: slug,
             categoryId: categories?.map((category) => category.id),
             topicId: topics?.map((topic) => topic.id),
@@ -77,7 +81,7 @@ export default function EditPostPage() {
         );
       }
     },
-    [trigger, categories, topics, content, slug, postId, setErrorMessage, setSuccessMessage]
+    [trigger, categories, topics, title, content, slug, postId, setErrorMessage, setSuccessMessage]
   );
 
   return (
@@ -88,10 +92,12 @@ export default function EditPostPage() {
       <>
         <Editor
           onSave={editorSaveHandler}
+          title={title}
           content={content}
           slug={slug}
           topics={topics}
           categories={categories}
+          titleChangeHandler={titleChangeHandler}
           contentChangeHandler={contentChangeHandler}
           slugChangeHandler={slugChangeHandler}
           topicsChangeHandler={topicsChangeHandler}

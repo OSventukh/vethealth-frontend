@@ -1,20 +1,21 @@
 import { Box, Paper } from '@mui/material';
 import EditorToolbar from './EditorToolbar';
-import EditorCore from './Editor';
-import styles from './editor.module.css';
+import RichEditor from './Editor';
 import type { EditorProps } from '@/types/editor-types';
+
 export default function Editor({
   onSave,
   content,
+  title,
   slug,
   categories,
   topics,
+  titleChangeHandler,
   contentChangeHandler,
   slugChangeHandler,
   categoriesChangeHandler,
   topicsChangeHandler,
 }: EditorProps) {
-
   const saveHandler = () => {
     const status = 'published';
     onSave(status);
@@ -27,7 +28,6 @@ export default function Editor({
 
   return (
     <Box
-      className={styles.editor}
       component="div"
       sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
     >
@@ -42,12 +42,11 @@ export default function Editor({
         initSlug={slug}
       />
       <Paper>
-        <EditorCore
-          onChange={(event: Event, editor: any) => {
-            const data = editor.getData();
-            contentChangeHandler(data);
-          }}
-          data={content}
+        <RichEditor
+          content={content}
+          title={title}
+          onTitleChange={titleChangeHandler}
+          onContentChange={contentChangeHandler}
         />
       </Paper>
     </Box>

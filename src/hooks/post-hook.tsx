@@ -3,9 +3,12 @@ import {
   useEffect,
   useCallback,
   useMemo,
+  ChangeEvent,
 } from 'react';
 
+import { Editor } from '@tinymce/tinymce-react';
 interface UsePostAgr {
+  initTitle?: string;
   initContent?: string;
   initSlug?: string;
   initTopics?: { title: string; id: number; parentId: number }[] | null;
@@ -14,6 +17,7 @@ interface UsePostAgr {
 
 export default function usePost({
   initContent,
+  initTitle,
   initSlug,
   initTopics,
   initCategories,
@@ -21,27 +25,38 @@ export default function usePost({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [content, setContent] = useState<string>('');
+  const [title, setTitle] = useState<string>('');
   const [slug, setSlug] = useState<string>('');
   const [categories, setCategories] = useState<{ name: string, id: number, parentId: number}[]| null>(null);
   const [topics, setTopics] = useState<{ title: string, id: number, parentId: number }[] | null>(null);
 
   useEffect(() => {
+    initTitle && setTitle(initTitle);
     initContent && setContent(initContent);
     initSlug && setSlug(initSlug);
     initTopics && setTopics(initTopics);
     initCategories && setCategories(initCategories);
-  }, [initContent, initSlug, initTopics, initCategories]);
+  }, [initTitle, initContent, initSlug, initTopics, initCategories]);
 
-  const contentChangeHandler = useCallback((value: any) => {
+  const removeMessages = () => {
     setErrorMessage(null);
     setSuccessMessage(null);
+  };
+
+  const titleChangeHandler = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    removeMessages();
+    const value = event.target.value;
+    setTitle(value);
+  }, []);
+
+  const contentChangeHandler = useCallback((value: any, editor: Editor) => {
+    removeMessages();
     setContent(value);
   }, []);
 
   const slugChangeHandler = useCallback(
     (value: string) => {
-      setErrorMessage(null);
-      setSuccessMessage(null);
+      removeMessages();
       setSlug(value);
     }, []);
 
@@ -55,10 +70,12 @@ export default function usePost({
 
   const value = useMemo(
     () => ({
+      title,
       content,
       slug,
       topics,
       categories,
+      titleChangeHandler,
       contentChangeHandler,
       slugChangeHandler,
       topicsChangeHandler,
@@ -69,10 +86,12 @@ export default function usePost({
       setErrorMessage,
     }),
     [
+      title,
       content,
       slug,
       topics,
       categories,
+      titleChangeHandler,
       contentChangeHandler,
       slugChangeHandler,
       topicsChangeHandler,

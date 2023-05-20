@@ -11,10 +11,12 @@ export interface EditorValue {
 export interface EditorProps {
   onSave: (status: 'published' | 'draft') => void;
   content: string;
+  title: string;
   categories: Category[] | null;
   topics: Topic[] | null;
   slug: string;
-  contentChangeHandler: (value: any) => void;
+  titleChangeHandler: (event: ChangeEvent) => void
+  contentChangeHandler: (value: string, editor: Editor) => void;
   categoriesChangeHandler: (value: Category[]) => void;
   topicsChangeHandler: (value: Topic[]) => void;
   slugChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;

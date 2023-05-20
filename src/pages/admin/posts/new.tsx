@@ -14,10 +14,12 @@ const Editor = dynamic(() => import('@/components/admin/Editor'), {
 export default function NewPostPage() {
   const router = useRouter()
   const {
+    title,
     content,
     slug,
     topics,
     categories,
+    titleChangeHandler,
     contentChangeHandler,
     slugChangeHandler,
     topicsChangeHandler,
@@ -49,8 +51,9 @@ export default function NewPostPage() {
         const response = await trigger({
           method: 'POST',
           data: {
-            rawContent: content,
-            slug: slug,
+            title,
+            content,
+            slug,
             categoryId: categories?.map((category) => category.id),
             topicId: topics?.map((topic) => topic.id),
             status: status,
@@ -80,9 +83,11 @@ export default function NewPostPage() {
         <Editor
           onSave={editorSaveHandler}
           content={content}
+          title={title}
           slug={slug}
           topics={topics}
           categories={categories}
+          titleChangeHandler={titleChangeHandler}
           contentChangeHandler={contentChangeHandler}
           slugChangeHandler={slugChangeHandler}
           topicsChangeHandler={topicsChangeHandler}
