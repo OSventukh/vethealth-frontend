@@ -12,6 +12,7 @@ const routes = {
   },
   pages: {
     all: '/admin/pages',
+    new: '/admin/pages/new',
   },
   users: {
     all: '/admin/users',

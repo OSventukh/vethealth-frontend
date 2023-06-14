@@ -10,11 +10,16 @@ export default function Editor({
   slug,
   categories,
   topics,
+  topic,
+  parentPage,
   titleChangeHandler,
   contentChangeHandler,
   slugChangeHandler,
   categoriesChangeHandler,
   topicsChangeHandler,
+  topicChangeHandler,
+  parentPageChangeHandler,
+  isPage,
 }: EditorProps) {
   const saveHandler = () => {
     const status = 'published';
@@ -35,10 +40,15 @@ export default function Editor({
         onSaveDraft={saveDraftHandler}
         onCategories={categoriesChangeHandler}
         onTopics={topicsChangeHandler}
+        onTopic={topicChangeHandler}
         onSlug={slugChangeHandler}
+        onParentPages={parentPageChangeHandler}
         initTopics={topics}
+        initTopic={topic}
+        initParentPage={parentPage}
         initCategories={categories}
         initSlug={slug}
+        isPage={isPage}
       />
       <Paper>
         <RichEditor

@@ -131,9 +131,37 @@ export default function Navigation({ open }: NavigationProps) {
           open={open}
           icon={<Web />}
           selected={router.pathname.startsWith(routes.pages.all)}
+          expandIcon={openMenu ? <ExpandLess /> : <ExpandMore />}
+          onClick={(event: React.MouseEvent) =>
+            menuClickHandler(event, routes.pages.all)
+          }
         >
           Pages
         </NavItem>
+        <Collapse
+          in={open && openMenu === routes.pages.all}
+          timeout="auto"
+          unmountOnExit
+        >
+          <List disablePadding sx={{ pl: '1rem' }}>
+            <NavItem
+              link={routes.pages.all}
+              open={open}
+              nested
+              selected={router.pathname === routes.pages.all}
+            >
+              All pages
+            </NavItem>
+            <NavItem
+              link={routes.pages.new}
+              open={open}
+              nested
+              selected={router.pathname === routes.pages.new}
+            >
+              New page
+            </NavItem>
+          </List>
+        </Collapse>
         <NavItem
           link={routes.users.all}
           open={open}

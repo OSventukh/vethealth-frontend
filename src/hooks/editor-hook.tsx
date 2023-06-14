@@ -7,28 +7,26 @@ import {
 } from 'react';
 
 import { Editor } from '@tinymce/tinymce-react';
-interface UsePostAgr {
-  initTitle?: string;
-  initContent?: string;
-  initSlug?: string;
-  initTopics?: { title: string; id: number; parentId: number }[] | null;
-  initCategories?: { name: string; id: number; parentId: number }[] | null;
-}
+import type { UseEditorAgr, Topic, Category, Page } from '@/types/editor-types';
 
-export default function usePost({
+export default function useEditor({
   initContent,
   initTitle,
   initSlug,
   initTopics,
+  initTopic,
+  initParentPage,
   initCategories,
-}: UsePostAgr = {}) {
+}: UseEditorAgr = {}) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [content, setContent] = useState<string>('');
   const [title, setTitle] = useState<string>('');
   const [slug, setSlug] = useState<string>('');
-  const [categories, setCategories] = useState<{ name: string, id: number, parentId: number}[]| null>(null);
-  const [topics, setTopics] = useState<{ title: string, id: number, parentId: number }[] | null>(null);
+  const [categories, setCategories] = useState<Category[]| null>(null);
+  const [topics, setTopics] = useState<Topic[] | null>(null);
+  const [topic, setTopic] = useState<Topic | null>(null);
+  const [parentPage, setParentPage] = useState<Page | null>(null)
 
   useEffect(() => {
     initTitle && setTitle(initTitle);
@@ -36,7 +34,9 @@ export default function usePost({
     initSlug && setSlug(initSlug);
     initTopics && setTopics(initTopics);
     initCategories && setCategories(initCategories);
-  }, [initTitle, initContent, initSlug, initTopics, initCategories]);
+    initTopic && setTopic(initTopic);
+    initParentPage && setParentPage(initParentPage);
+  }, [initTitle, initContent, initSlug, initTopics, initTopic, initCategories, initParentPage]);
 
   const removeMessages = () => {
     setErrorMessage(null);
@@ -60,12 +60,20 @@ export default function usePost({
       setSlug(value);
     }, []);
 
-  const topicsChangeHandler = useCallback((value: {id: number, title: string, parentId: number}[]) => {
+  const topicsChangeHandler = useCallback((value: Topic[]) => {
     setTopics(value)
   }, []);
 
-  const categoriesChangeHandler = useCallback((value: {id: number, name: string, parentId: number}[]) => {
+  const topicChangeHandler = useCallback((value: Topic) => {
+    setTopic(value)
+  }, []);
+
+  const categoriesChangeHandler = useCallback((value: Category[]) => {
     setCategories(value);
+  }, []);
+
+  const parentPageChangeHandler = useCallback((value: Page) => {
+    setParentPage(value)
   }, []);
 
   const value = useMemo(
@@ -74,12 +82,16 @@ export default function usePost({
       content,
       slug,
       topics,
+      topic,
       categories,
+      parentPage,
       titleChangeHandler,
       contentChangeHandler,
       slugChangeHandler,
       topicsChangeHandler,
+      topicChangeHandler,
       categoriesChangeHandler,
+      parentPageChangeHandler,
       successMessage,
       setSuccessMessage,
       errorMessage,
@@ -90,11 +102,15 @@ export default function usePost({
       content,
       slug,
       topics,
+      topic,
       categories,
+      parentPage,
       titleChangeHandler,
       contentChangeHandler,
       slugChangeHandler,
       topicsChangeHandler,
+      topicChangeHandler,
+      parentPageChangeHandler,
       categoriesChangeHandler,
       successMessage,
       setSuccessMessage,

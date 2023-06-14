@@ -1,63 +1,56 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import Loading from '@/components/admin/UI/Loading';
-
 import dynamic from 'next/dynamic';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
-import usePost from '@/hooks/editor-hook';
-
+import useEditor from '@/hooks/editor-hook';
+import Loading from '@/components/admin/UI/Loading';
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 
-export default function EditPostPage() {
-
+export default function EditPagePage() {
   const router = useRouter();
-  const postId = router.query.postId;
+  const pageId = router.query.pageId;
 
   const { data, isLoading } = useGetData(
-    `posts/${postId}?include=categories,topics`
+    `posts/${pageId}?include=parent,topics`
   );
+
   const {
     title,
     content,
     slug,
-    topics,
-    categories,
+    topic,
+    parentPage,
     titleChangeHandler,
     contentChangeHandler,
     slugChangeHandler,
-    topicsChangeHandler,
+    topicChangeHandler,
     categoriesChangeHandler,
     errorMessage,
     setErrorMessage,
     successMessage,
     setSuccessMessage,
-  } = usePost({
-    initTitle: data?.posts[0]?.title,
-    initCategories: data?.posts[0]?.categories,
-    initTopics: data?.posts[0]?.topics,
-    initContent:data?.posts[0]?.content,
-    initSlug: data?.posts[0]?.slug,
+  } = useEditor({
+    // initTitle: data?.pages[0]?.title,
+    // initParentPage: data?.pages[0]?.parent,
+    // initTopic: data?.pages[0]?.topics,
+    // initContent: data?.pages[0]?.content,
+    // initSlug: data?.pages[0]?.slug,
   });
 
-  const { trigger } = usePostData('posts');
+  const { trigger } = usePostData('pages');
 
   const editorSaveHandler = useCallback(
     async (status: 'published' | 'draft') => {
       setErrorMessage('');
       setSuccessMessage('');
 
-      if (!topics || topics.length === 0) {
-        setErrorMessage('Please select a post topic')
-        return;
-      }
-
-      if (!categories || categories.length === 0) {
-        setErrorMessage('Please select a post category')
+      if (!topic) {
+        setErrorMessage('Please select a post topic');
         return;
       }
 
@@ -65,43 +58,63 @@ export default function EditPostPage() {
         const response = await trigger({
           method: 'PATCH',
           data: {
-            id: postId,
             title,
             content,
-            slug: slug,
-            categoryId: categories?.map((category) => category.id),
-            topicId: topics?.map((topic) => topic.id),
+            description: 'test',
+            slug,
+            parentPage: parentPage?.id,
+            topicId: topic?.id,
             status: status,
           },
         });
-        setSuccessMessage(response?.message ?? 'Post saved successfully');
+        setSuccessMessage(response?.message || 'Post saved successfully');
+        setTimeout(() => {
+          router.push(
+            `/admin/posts/[postId]`,
+            `/admin/posts/${response.post.id}`,
+            {
+              shallow: true,
+            }
+          );
+        }, 2000);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : 'Saving post failed'
         );
       }
     },
-    [trigger, categories, topics, title, content, slug, postId, setErrorMessage, setSuccessMessage]
+    [
+      trigger,
+      title,
+      content,
+      slug,
+      parentPage,
+      topic,
+      setErrorMessage,
+      setSuccessMessage,
+      router,
+    ]
   );
 
   return (
     <>
       <Head>
-        <title>Update Post</title>
+        <title>Create Post</title>
       </Head>
       <>
         <Editor
           onSave={editorSaveHandler}
-          title={title}
           content={content}
+          title={title}
           slug={slug}
-          topics={topics}
-          categories={categories}
+          topic={topic}
+          parentPage={parentPage}
           titleChangeHandler={titleChangeHandler}
           contentChangeHandler={contentChangeHandler}
           slugChangeHandler={slugChangeHandler}
-          topicsChangeHandler={topicsChangeHandler}
+          topicChangeHandler={topicChangeHandler}
           categoriesChangeHandler={categoriesChangeHandler}
+          isPage
         />
 
         <SnackError

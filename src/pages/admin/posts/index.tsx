@@ -34,8 +34,14 @@ const header = [
     label: 'Updated',
     numeric: false,
   },
+  {
+    disablePadding: false,
+    id: 'atuhor.name',
+    label: 'Author',
+    numeric: false,
+  },
 ];
 
 export default function PostsPage() {
-  return <ItemsTable url="posts" title="Posts" header={header} />;
+  return <ItemsTable url="posts" title="Posts" header={header} query='include=author'/>;
 }

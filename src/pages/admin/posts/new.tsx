@@ -4,7 +4,7 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { usePostData } from '@/hooks/data-hook';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
-import usePost from '@/hooks/post-hook';
+import usePost from '@/hooks/editor-hook';
 import Loading from '@/components/admin/UI/Loading';
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
@@ -43,7 +43,7 @@ export default function NewPostPage() {
       }
 
       if (!categories || categories.length === 0) {
-        setErrorMessage('Please іудусе a post category')
+        setErrorMessage('Please select a post category')
         return;
       }
 
@@ -71,7 +71,7 @@ export default function NewPostPage() {
         );
       }
     },
-    [trigger, content, slug, categories, topics, setErrorMessage, setSuccessMessage, router]
+    [trigger, title, content, slug, categories, topics, setErrorMessage, setSuccessMessage, router]
   );
 
   return (
