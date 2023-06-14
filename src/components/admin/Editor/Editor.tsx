@@ -2,7 +2,6 @@ import { useRef, ChangeEvent } from 'react';
 import { Editor as TinyEditor } from '@tinymce/tinymce-react/';
 import Box from '@mui/material/Box';
 import { Divider } from '@mui/material';
-import { useTheme } from '@emotion/react';
 
 interface EditorCoreProps {
   title?: string;
@@ -18,7 +17,6 @@ export default function RichEditor({
   onContentChange,
 }: EditorCoreProps) {
   const editorRef = useRef<any>(null);
-  const theme = useTheme();
 
   const handleImageUpload: any = (blobInfo: any) => {
     return new Promise((resolve, reject) => {
@@ -102,13 +100,16 @@ export default function RichEditor({
             'wordcount',
             'code',
             'quickbars',
+            'pagebreak',
           ],
+          pagebreak_separator: '<!-- read more -->',
+          pagebreak_split_block: true,
           toolbar: false,
-          quickbars_insert_toolbar: 'quicktable image media codesample',
+          quickbars_insert_toolbar: 'quicktable image media codesample | numlist bullist | pagebreak',
           quickbars_selection_toolbar:
             'bold italic underline | blocks | blockquote quicklink',
           contextmenu:
-            'undo redo | inserttable | cell row column deletetable | help',
+            'undo redo | inserttable | cell row column deletetable | code | help',
           content_style: `.mce-content-body {
             min-height: 20rem;
             padding: 0.5rem 2rem;
