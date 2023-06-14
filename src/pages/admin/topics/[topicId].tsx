@@ -42,6 +42,10 @@ export default function EditTopicPage() {
     categoryChangeHandler,
     parentTopicChangeHandler,
     setActiveStatus,
+    content,
+    page,
+    contentChangeHandler,
+    pageChangeHandler,
     setImage,
     errorMessage,
     successMessage,
@@ -66,6 +70,8 @@ export default function EditTopicPage() {
     slug && formData.append('slug', slug.trim());
     description && formData.append('description', description.trim());
     parentTopic && formData.append('parentId', parentTopic.id.toString());
+    content && formData.append('content', content);
+    page && formData.append('page', page.id.toString());
     categories &&
       categories.length > 0 &&
       categories.forEach((category) =>
@@ -105,6 +111,10 @@ export default function EditTopicPage() {
       parentTopic={parentTopic}
       activeStatus={activeStatus}
       image={image}
+      content={content}
+      page={page}
+      contentChangeHandler={contentChangeHandler}
+      pageChangeHandler={pageChangeHandler}
       titleChangeHandler={titleChangeHandler}
       slugChangeHandler={slugChangeHandler}
       descriptionChangeHandler={descriptionChangeHandler}

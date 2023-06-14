@@ -21,6 +21,10 @@ export default function NewTopicPage() {
     image,
     categories,
     parentTopic,
+    content,
+    page,
+    contentChangeHandler,
+    pageChangeHandler,
     clearInputs,
     titleChangeHandler,
     descriptionChangeHandler,
@@ -51,6 +55,8 @@ export default function NewTopicPage() {
     parentTopic && formData.append('parentId', parentTopic.id.toString());
     categories && formData.append('categoryId', JSON.stringify(categories.map((categories) => categories.id)))
     image && formData.append('topic-image', image);
+    content && formData.append('content', content);
+    page && formData.append('page', page.id.toString());
 
     try {
       const response = await trigger({
@@ -80,6 +86,10 @@ export default function NewTopicPage() {
       image={image}
       categories={categories}
       parentTopic={parentTopic}
+      content={content}
+      page={page}
+      contentChangeHandler={contentChangeHandler}
+      pageChangeHandler={pageChangeHandler}
       titleChangeHandler={titleChangeHandler}
       slugChangeHandler={slugChangeHandler}
       descriptionChangeHandler={descriptionChangeHandler}

@@ -1,6 +1,9 @@
+// react imports
 import { useState, useEffect } from 'react';
-import type { FormEvent, ChangeEvent, Dispatch, SetStateAction } from 'react';
+// type imports
+import type { EditTopic } from '@/types/props-types';
 
+// mui imports
 import {
   Paper,
   Box,
@@ -12,32 +15,19 @@ import {
   FormLabel,
   Autocomplete,
   CircularProgress,
+  FormControl,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
 } from '@mui/material';
 import SwitchButton from '../UI/Switch';
 import ImageUpload from '../UI/ImageUpload';
+
+// hook imports
 import { useGetData } from '@/hooks/data-hook';
 
-interface EditTopicProps {
-  title?: string;
-  slug?: string;
-  description?: string;
-  activeStatus?: boolean;
-  image: string | File | null;
-  parentTopic: {title: string; id: number} | null;
-  categories: { name: string; id: number}[] | null;
-  titleChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
-  slugChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
-  descriptionChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
-  setImage: (Dispatch<SetStateAction<string | File | null>>);
-  setActiveStatus: (Dispatch<SetStateAction<boolean>>);
-  topicSubmitHandler: (event: FormEvent) => void;
-  categoryChangeHandler: (event: FormEvent, value: any) => void;
-  parentTopicChangeHandler: (event: FormEvent, value: any) => void;
-  successMessage?: string | null;
-  errorMessage?: string | null;
-  buttonText?: string;
-  edit?: boolean;
-}
+// constants imports
+import { TopicContent } from '@/utils/constants/content.enum';
 
 export default function EditTopic({
   title,
@@ -47,6 +37,8 @@ export default function EditTopic({
   image,
   parentTopic,
   categories,
+  page,
+  content,
   titleChangeHandler,
   slugChangeHandler,
   descriptionChangeHandler,
@@ -55,25 +47,53 @@ export default function EditTopic({
   topicSubmitHandler,
   categoryChangeHandler,
   parentTopicChangeHandler,
+  pageChangeHandler,
+  contentChangeHandler,
   errorMessage,
   successMessage,
   edit,
-}: EditTopicProps) {
+}: EditTopic) {
   const [openParentTopic, setOpenParentTopic] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
+  const [openPage, setOpenPage] = useState(false);
 
-  const { data: topicData, isLoading: isParentTopicLoading, mutate: topicMutate } = useGetData('topics', {
-    revalidateOnMount: false
+  const {
+    data: topicData,
+    isLoading: isParentTopicLoading,
+    mutate: topicMutate,
+  } = useGetData('topics', {
+    revalidateOnMount: false,
   });
 
-  const { data: categoryData, isLoading: isCategoryLoading, mutate: categoryMutate } = useGetData('categories?parentId=null', {
-    revalidateOnMount: false
+  const {
+    data: categoryData,
+    isLoading: isCategoryLoading,
+    mutate: categoryMutate,
+  } = useGetData('categories?parentId=null', {
+    revalidateOnMount: false,
+  });
+
+  const {
+    data: pageData,
+    isLoading: isPageLoading,
+    mutate: pageMutate,
+  } = useGetData('pages', {
+    revalidateOnMount: false,
   });
 
   useEffect(() => {
     openCategory && categoryMutate();
     openParentTopic && topicMutate();
-  }, [categoryMutate, topicMutate, openCategory, openParentTopic])
+    openPage && pageMutate();
+  }, [
+    categoryMutate,
+    topicMutate,
+    pageMutate,
+    openPage,
+    openCategory,
+    openParentTopic,
+  ]);
+
   return (
     <Paper sx={{ p: 2 }}>
       <Typography
@@ -81,7 +101,7 @@ export default function EditTopic({
         component="h2"
         sx={{ mb: 5, textAlign: 'center', padding: 2 }}
       >
-       { edit ? 'Edit Topic' : 'New Topic'}
+        {edit ? 'Edit Topic' : 'New Topic'}
       </Typography>
       <Box component="form" onSubmit={topicSubmitHandler}>
         <Grid
@@ -102,7 +122,7 @@ export default function EditTopic({
               </Alert>
             )}
             <TextField
-              id="standard-basic"
+              id="topic-title"
               label="Title"
               variant="standard"
               onChange={titleChangeHandler}
@@ -110,7 +130,7 @@ export default function EditTopic({
             />
 
             <TextField
-              id="standard-basic"
+              id="topic-slug"
               label="Slug"
               variant="standard"
               onChange={slugChangeHandler}
@@ -118,7 +138,7 @@ export default function EditTopic({
             />
 
             <TextField
-              id="standard-basic"
+              id="topic-description"
               label="Description"
               variant="standard"
               multiline
@@ -135,9 +155,11 @@ export default function EditTopic({
               onClose={() => {
                 setOpenCategory(false);
               }}
-              id="tags-standard"
+              id="topic-categories"
               options={categoryData?.categories ?? []}
-              getOptionLabel={(option: { name: string, id: number }) => option.name}
+              getOptionLabel={(option: { name: string; id: number }) =>
+                option.name
+              }
               value={categories ?? []}
               renderInput={(params) => (
                 <TextField
@@ -168,9 +190,11 @@ export default function EditTopic({
               onClose={() => {
                 setOpenParentTopic(false);
               }}
-              id="tags-standard"
+              id="topic-parent-topic"
               options={topicData?.topics ?? []}
-              getOptionLabel={(option: { title: string, id: number }) => option.title}
+              getOptionLabel={(option: { title: string; id: number }) =>
+                option.title
+              }
               value={parentTopic}
               renderInput={(params) => (
                 <TextField
@@ -192,22 +216,96 @@ export default function EditTopic({
                 />
               )}
             />
-            <FormLabel
-              sx={{ display: 'flex', gap: '4rem', alignItems: 'center', mt: 1 }}
+            <FormControl
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '4rem',
+                alignItems: 'center',
+                mt: 1,
+              }}
             >
-              Active:
+              <FormLabel>Active:</FormLabel>
               <SwitchButton
                 checked={activeStatus}
-                onChange={() => setActiveStatus((prevState) => !prevState)}
+                onChange={() =>
+                  setActiveStatus((prevState: boolean) => !prevState)
+                }
               />
-            </FormLabel>
+            </FormControl>
+            <FormControl
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '4rem',
+                alignItems: 'center',
+                mt: 1,
+              }}
+            >
+              <FormLabel id="topic-content">Сontent</FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="topic-content"
+                name="topic-content"
+                value={content}
+                onChange={contentChangeHandler}
+              >
+                <FormControlLabel
+                  value="posts"
+                  control={<Radio />}
+                  label="List of posts"
+                />
+                <FormControlLabel
+                  value="page"
+                  control={<Radio />}
+                  label="Single page"
+                />
+              </RadioGroup>
+            </FormControl>
+            {content === TopicContent.Page && (
+              <Autocomplete
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={pageChangeHandler}
+                onOpen={() => {
+                  setOpenPage(true);
+                }}
+                onClose={() => {
+                  setOpenPage(false);
+                }}
+                id="topic-page"
+                options={pageData?.pages ?? []}
+                getOptionLabel={(option: { title: string; id: number }) =>
+                  option.title
+                }
+                value={page}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Page"
+                    placeholder="Select page"
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {isParentTopicLoading ? (
+                            <CircularProgress color="inherit" size={20} />
+                          ) : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            )}
           </Grid>
           <Grid item>
             <ImageUpload onImage={setImage} value={image} />
           </Grid>
         </Grid>
         <Grid container justifyContent="center" sx={{ mt: 3 }}>
-          <Button type="submit">{ edit ? 'Update' : 'Create' }</Button>
+          <Button type="submit">{edit ? 'Update' : 'Create'}</Button>
         </Grid>
       </Box>
     </Paper>

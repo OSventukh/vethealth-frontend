@@ -1,14 +1,12 @@
+// react imports
 import { useState, ChangeEvent, SyntheticEvent, useEffect, useCallback, useMemo } from 'react';
 
-interface UseTopicAgr {
-  initTitle?: string;
-  initSlug?: string;
-  initDescription?: string;
-  initActiveStatus?: boolean;
-  initImage?: string;
-  initCategories?: {name: string; id: number}[];
-  initParentTopic?: {title: string; id: number};
-}
+// type imports
+import type { Topic, Category, Page } from '@/types/content-types';
+import type { UseTopic } from '@/types/props-types';
+
+// constant imports
+import { TopicContent } from '@/utils/constants/content.enum';
 
 export default function useTopic({
   initTitle,
@@ -18,7 +16,8 @@ export default function useTopic({
   initImage,
   initCategories,
   initParentTopic,
-}: UseTopicAgr = {}) {
+  initPage,
+}: UseTopic = {}) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initTitle || '');
@@ -26,9 +25,10 @@ export default function useTopic({
   const [description, setDescription] = useState<string>('');
   const [activeStatus, setActiveStatus] = useState(false);
   const [image, setImage] = useState<File | null | string>(null);
-  const [parentTopic, setParentTopic] = useState<{ title: string, id: number } | null>(null);
-  const [categories, setCategories] = useState<{ name: string, id: number }[] | null>(null);
-
+  const [parentTopic, setParentTopic] = useState<Topic | null>(null);
+  const [categories, setCategories] = useState<Category[] | null>(null);
+  const [content, setContent] = useState<TopicContent.Posts | TopicContent.Page>(TopicContent.Posts);
+  const [page, setPage] = useState<Page | null>(null);
 
   useEffect(() => {
     initTitle && setTitle(initTitle);
@@ -38,7 +38,8 @@ export default function useTopic({
     initImage && setImage(initImage);
     initCategories && setCategories(initCategories);
     initParentTopic && setParentTopic(initParentTopic);
-  }, [initTitle, initSlug, initDescription, initActiveStatus, initImage, initCategories, initParentTopic]);
+    initPage && setPage(initPage);
+  }, [initTitle, initSlug, initDescription, initActiveStatus, initImage, initCategories, initParentTopic, initPage]);
 
   const titleChangeHandler = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +75,7 @@ export default function useTopic({
   );
 
   const parentTopicChangeHandler = useCallback(
-    (event: SyntheticEvent, value: any) => {
+    (event: SyntheticEvent, value: Topic) => {
       event.preventDefault();
       setErrorMessage(null);
       setSuccessMessage(null);
@@ -83,7 +84,27 @@ export default function useTopic({
     []
   );
 
-  const categoryChangeHandler = useCallback((event: SyntheticEvent, value: any) => {
+  const pageChangeHandler = useCallback(
+    (event: SyntheticEvent, value: Page) => {
+      event.preventDefault();
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      value && setPage(value);
+    },
+    []
+  );
+
+  const contentChangeHandler = useCallback(
+    (event: SyntheticEvent, value: string) => {
+      event.preventDefault();
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      value && setContent(value as TopicContent);
+    },
+    []
+  );
+
+  const categoryChangeHandler = useCallback((event: SyntheticEvent, value: Category[]) => {
     event.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -115,6 +136,10 @@ export default function useTopic({
       categoryChangeHandler,
       setActiveStatus,
       setImage,
+      page,
+      content,
+      pageChangeHandler,
+      contentChangeHandler,
       clearInputs,
       successMessage,
       setSuccessMessage,
@@ -129,12 +154,16 @@ export default function useTopic({
       image,
       parentTopic,
       categories,
+      page,
+      content,
       titleChangeHandler,
       descriptionChangeHandler,
       slugChangeHandler,
       setActiveStatus,
       parentTopicChangeHandler,
       categoryChangeHandler,
+      pageChangeHandler,
+      contentChangeHandler,
       setImage,
       clearInputs,
       successMessage,
