@@ -56,7 +56,7 @@ export default function NewTopicPage() {
     categories && formData.append('categoryId', JSON.stringify(categories.map((categories) => categories.id)))
     image && formData.append('topic-image', image);
     content && formData.append('content', content);
-    page && formData.append('page', page.id.toString());
+    page && formData.append('pageId', page.id.toString());
 
     try {
       const response = await trigger({

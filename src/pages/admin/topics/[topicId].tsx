@@ -71,7 +71,7 @@ export default function EditTopicPage() {
     description && formData.append('description', description.trim());
     parentTopic && formData.append('parentId', parentTopic.id.toString());
     content && formData.append('content', content);
-    page && formData.append('page', page.id.toString());
+    page && formData.append('pageId', page.id.toString());
     categories &&
       categories.length > 0 &&
       categories.forEach((category) =>
