@@ -17,12 +17,11 @@ export default function NewPagePage() {
     title,
     content,
     slug,
-    topic,
-    parentPage,
+
     titleChangeHandler,
     contentChangeHandler,
     slugChangeHandler,
-    topicChangeHandler,
+
     categoriesChangeHandler,
     errorMessage,
     setErrorMessage,
@@ -37,10 +36,6 @@ export default function NewPagePage() {
       setErrorMessage('');
       setSuccessMessage('');
 
-      if (!topic) {
-        setErrorMessage('Please select a post topic')
-        return;
-      }
 
       try {
         const response = await trigger({
@@ -50,14 +45,12 @@ export default function NewPagePage() {
             content,
             description: 'test',
             slug,
-            parentPage: parentPage?.id,
-            topicId: topic?.id,
             status: status,
           },
         });
         setSuccessMessage(response?.message || 'Post saved successfully');
         setTimeout(() => {
-          router.push(`/admin/posts/[postId]`, `/admin/posts/${response.post.id}`, {
+          router.push(`/admin/pages/[pageId]`, `/admin/pages/${response.page.id}`, {
             shallow: true,
           })
         }, 2000)
@@ -67,7 +60,7 @@ export default function NewPagePage() {
         );
       }
     },
-    [trigger, title, content, slug, parentPage, topic, setErrorMessage, setSuccessMessage, router]
+    [trigger, title, content, slug, setErrorMessage, setSuccessMessage, router]
   );
 
   return (
@@ -81,12 +74,9 @@ export default function NewPagePage() {
           content={content}
           title={title}
           slug={slug}
-          topic={topic}
-          parentPage={parentPage}
           titleChangeHandler={titleChangeHandler}
           contentChangeHandler={contentChangeHandler}
           slugChangeHandler={slugChangeHandler}
-          topicChangeHandler={topicChangeHandler}
           categoriesChangeHandler={categoriesChangeHandler}
           isPage
         />

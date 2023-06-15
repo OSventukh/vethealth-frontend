@@ -251,12 +251,12 @@ export default function EditTopic({
                 onChange={contentChangeHandler}
               >
                 <FormControlLabel
-                  value="posts"
+                  value={TopicContent.Posts}
                   control={<Radio />}
                   label="List of posts"
                 />
                 <FormControlLabel
-                  value="page"
+                  value={TopicContent.Page}
                   control={<Radio />}
                   label="Single page"
                 />

@@ -16,30 +16,26 @@ export default function EditPagePage() {
   const pageId = router.query.pageId;
 
   const { data, isLoading } = useGetData(
-    `posts/${pageId}?include=parent,topics`
+    `pages/${pageId}`
   );
 
   const {
     title,
     content,
     slug,
-    topic,
-    parentPage,
+
     titleChangeHandler,
     contentChangeHandler,
     slugChangeHandler,
-    topicChangeHandler,
     categoriesChangeHandler,
     errorMessage,
     setErrorMessage,
     successMessage,
     setSuccessMessage,
   } = useEditor({
-    // initTitle: data?.pages[0]?.title,
-    // initParentPage: data?.pages[0]?.parent,
-    // initTopic: data?.pages[0]?.topics,
-    // initContent: data?.pages[0]?.content,
-    // initSlug: data?.pages[0]?.slug,
+    initTitle: data?.pages[0]?.title,
+    initContent: data?.pages[0]?.content,
+    initSlug: data?.pages[0]?.slug,
   });
 
   const { trigger } = usePostData('pages');
@@ -49,11 +45,6 @@ export default function EditPagePage() {
       setErrorMessage('');
       setSuccessMessage('');
 
-      if (!topic) {
-        setErrorMessage('Please select a post topic');
-        return;
-      }
-
       try {
         const response = await trigger({
           method: 'PATCH',
@@ -62,8 +53,6 @@ export default function EditPagePage() {
             content,
             description: 'test',
             slug,
-            parentPage: parentPage?.id,
-            topicId: topic?.id,
             status: status,
           },
         });
@@ -83,17 +72,7 @@ export default function EditPagePage() {
         );
       }
     },
-    [
-      trigger,
-      title,
-      content,
-      slug,
-      parentPage,
-      topic,
-      setErrorMessage,
-      setSuccessMessage,
-      router,
-    ]
+    [trigger, title, content, slug, setErrorMessage, setSuccessMessage, router]
   );
 
   return (
@@ -107,12 +86,9 @@ export default function EditPagePage() {
           content={content}
           title={title}
           slug={slug}
-          topic={topic}
-          parentPage={parentPage}
           titleChangeHandler={titleChangeHandler}
           contentChangeHandler={contentChangeHandler}
           slugChangeHandler={slugChangeHandler}
-          topicChangeHandler={topicChangeHandler}
           categoriesChangeHandler={categoriesChangeHandler}
           isPage
         />

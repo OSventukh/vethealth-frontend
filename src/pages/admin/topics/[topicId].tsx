@@ -14,7 +14,7 @@ const EditTopic = dynamic(() => import('@/components/admin/Topics'), {
 export default function EditTopicPage() {
   const router = useRouter();
   const { topicId } = router.query;
-  const { data, isLoading } = useGetData(`topics/${topicId}?include=categories,parent`);
+  const { data, isLoading } = useGetData(`topics/${topicId}?include=categories,parent,pages`);
 
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
@@ -27,6 +27,8 @@ export default function EditTopicPage() {
   //display only high level category
   const initCategories = useMemo(() => data ? data?.topics[0]?.categories.filter((category: {parentId: number | null}) => category.parentId === null) : null, [data]);
   const initParentTopic = data ? data?.topics[0]?.parent : null;
+  const initContent = data? data?.topics[0]?.content : null;
+  const initPage = data ? data?.topics[0]?.pages : null;
 
   const {
     title,
@@ -59,6 +61,8 @@ export default function EditTopicPage() {
     initImage,
     initCategories, //display only hight level category
     initParentTopic,
+    initContent,
+    initPage,
   });
 
   const getDataHandler = async (event: FormEvent) => {
@@ -101,6 +105,7 @@ export default function EditTopicPage() {
       );
     }
   };
+
   return (
     <EditTopic
       topicSubmitHandler={getDataHandler}

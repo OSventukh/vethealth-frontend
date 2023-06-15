@@ -1,3 +1,6 @@
+// react imports
+import { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
+// mui imports
 import {
   Paper,
   Button,
@@ -7,37 +10,37 @@ import {
   Autocomplete,
   CircularProgress,
 } from '@mui/material';
-import { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { useGetData } from '@/hooks/data-hook';
 
-import type { EditorToolbarProps, Category, Topic, Page } from '@/types/editor-types';
+// type imports
+import type { Category, Topic, Page } from '@/types/content-types';
+import type { EditorToolbarProps } from '@/types/editor-types';
+
+// hook imports
+import { useGetData } from '@/hooks/data-hook';
 
 export default function EditorToolbar({
   onSave,
   onSaveDraft,
   onTopics,
-  onTopic,
   onCategories,
   onSlug,
-  onParentPages,
   initTopics,
-  initTopic,
+
   initCategories,
   initSlug,
-  initParentPage,
+
   isPage,
 }: EditorToolbarProps) {
   const [openOption, setOpenOption] = useState(false);
   const [openTopic, setOpenTopic] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
-  const [openParentPage, setOpenParentPage] = useState(false);
 
   const {
     data: topicData,
     isLoading: isTopicLoading,
     mutate: mutateTopic,
-  } = useGetData('usertopics?include=pages', {
+  } = useGetData('usertopics?include', {
     revalidateOnMount: false,
   });
 
@@ -54,17 +57,6 @@ export default function EditorToolbar({
     }
   );
 
-  // const {
-  //   data: pageData,
-  //   isLoading: isPageLoading,
-  //   mutate: mutatePage,
-  // } = useGetData(
-  //   `topics=${initTopics && initTopics.map((t) => t.id).join(',')}`,
-  //   {
-  //     revalidateOnMount: false,
-  //   }
-  // );
-
   useEffect(() => {
     openTopic && mutateTopic();
     openCategory && mutateCategory();
@@ -74,20 +66,15 @@ export default function EditorToolbar({
     onTopics(value);
   };
 
-  const changeTopicHandler = (event: SyntheticEvent, value: Topic | null) => {
-    onTopic(value);
-  }
-
-  const changeCategoriesHandler = (event: SyntheticEvent, value: Category[]) => {
+  const changeCategoriesHandler = (
+    event: SyntheticEvent,
+    value: Category[]
+  ) => {
     onCategories(value);
   };
 
   const slugChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     onSlug(event.target.value.trim());
-  };
-
-  const changeParentPageHandler = (event: SyntheticEvent, value: Page | null) => {
-    onParentPages(value);
   };
 
   return (
@@ -187,77 +174,6 @@ export default function EditorToolbar({
                     endAdornment: (
                       <>
                         {isCategoryLoading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
-            />
-          )}
-
-          {isPage && (
-            <Autocomplete
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              onChange={changeTopicHandler}
-              onOpen={() => {
-                setOpenTopic(true);
-              }}
-              onClose={() => {
-                setOpenTopic(false);
-              }}
-              id="topic"
-              options={topicData?.topics ?? []}
-              getOptionLabel={(option: Topic) => option.title}
-              value={initTopic}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="Topic"
-                  placeholder="Select topic"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {isTopicLoading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
-            />
-          )}
-          {isPage && (
-            <Autocomplete
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              onChange={changeParentPageHandler}
-              onOpen={() => {
-                setOpenParentPage(true);
-              }}
-              onClose={() => {
-                setOpenParentPage(false);
-              }}
-              id="parent-page"
-              options={topicData?.topics?.pages || []}
-              getOptionLabel={(option: Page) => option.title}
-              value={initParentPage}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="Parent Page"
-                  placeholder="Select parent pages"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {isTopicLoading ? (
                           <CircularProgress color="inherit" size={20} />
                         ) : null}
                         {params.InputProps.endAdornment}

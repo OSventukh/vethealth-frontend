@@ -37,6 +37,7 @@ export interface UseTopic {
   initCategories?: Category[];
   initParentTopic?: Topic;
   initPage?: Page;
+  initContent?: TopicContent;
 }
 
 export interface EditTopic {

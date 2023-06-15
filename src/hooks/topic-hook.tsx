@@ -16,6 +16,7 @@ export default function useTopic({
   initImage,
   initCategories,
   initParentTopic,
+  initContent,
   initPage,
 }: UseTopic = {}) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -39,7 +40,8 @@ export default function useTopic({
     initCategories && setCategories(initCategories);
     initParentTopic && setParentTopic(initParentTopic);
     initPage && setPage(initPage);
-  }, [initTitle, initSlug, initDescription, initActiveStatus, initImage, initCategories, initParentTopic, initPage]);
+    initContent && setContent(initContent);
+  }, [initTitle, initSlug, initDescription, initActiveStatus, initImage, initCategories, initParentTopic, initPage, initContent]);
 
   const titleChangeHandler = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
