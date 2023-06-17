@@ -1,41 +1,5 @@
-import dynamic from 'next/dynamic';
-import Loading from '@/components/admin/UI/Loading';
-
-const ItemsTable = dynamic(
-  () => import('@/components/admin/Items/AllItemsTable'),
-  {
-    loading: () => <Loading />,
-    ssr: false,
-  }
-);
-
-const header = [
-  {
-    disablePadding: false,
-    id: 'title',
-    label: 'Title',
-    numeric: false,
-  },
-  {
-    disablePadding: false,
-    id: 'slug',
-    label: 'Slug',
-    numeric: false,
-  },
-  {
-    disablePadding: false,
-    id: 'createdAt',
-    label: 'Created',
-    numeric: false,
-  },
-  {
-    disablePadding: false,
-    id: 'updatedAt',
-    label: 'Updated',
-    numeric: false,
-  }
-];
+import PageList from '@/components/admin/Pages/PageList';
 
 export default function PagesPage() {
-  return <ItemsTable url="pages" title="Pages" header={header} />;
+  return <PageList />;
 }

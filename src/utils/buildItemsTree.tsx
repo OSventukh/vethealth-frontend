@@ -3,6 +3,8 @@ import type { Data } from "@/types/ui-types";
 export default function buildItemsTree(
   items: Data []
 ): any[] {
+  if (!items) return [];
+
   const itemMap = new Map();
   items.forEach((item) => {
     itemMap.set(item.id, { ...item, children: [] });

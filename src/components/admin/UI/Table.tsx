@@ -33,7 +33,6 @@ import type {
   EnhancedTableProps,
   EnhancedTableToolbarProps,
 } from '@/types/ui-types';
-import { Hidden } from '@mui/material';
 
 function EnhancedTableHead(props: EnhancedTableHeadProps) {
   const {
@@ -177,15 +176,23 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 
 interface TableRowTreeProps {
-  handleClick: (event: React.MouseEvent<HTMLTableRowElement, MouseEvent>, rowId: number) => void;
-  row: {id: number, children: any[]};
+  handleClick: (
+    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    rowId: number
+  ) => void;
+  row: { id: number; children: any[] };
   selected: readonly number[];
   index: number;
 }
 
-export function TableRowTree({ handleClick, row, selected, index }: TableRowTreeProps) {
+export function TableRowTree({
+  handleClick,
+  row,
+  selected,
+  index,
+}: TableRowTreeProps) {
   const [open, setOpen] = useState(false);
-  
+
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
   const isItemSelected = isSelected(row.id);
@@ -194,7 +201,7 @@ export function TableRowTree({ handleClick, row, selected, index }: TableRowTree
   const expandTableHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setOpen((prevState) => !prevState);
-  }
+  };
   return (
     <>
       <TableRow
@@ -237,7 +244,8 @@ export function TableRowTree({ handleClick, row, selected, index }: TableRowTree
             if (key === 'createdAt' || key === 'updatedAt') {
               return (
                 <TableCell key={i} align="left">
-                  {typeof value === 'string' && new Date(value).toLocaleString()}
+                  {typeof value === 'string' &&
+                    new Date(value).toLocaleString()}
                 </TableCell>
               );
             }
@@ -257,18 +265,15 @@ export function TableRowTree({ handleClick, row, selected, index }: TableRowTree
                 </TableCell>
               );
             }
-            if (key === 'role') {
-              return (
-                <TableCell key={i} align="left" sx={{ position: 'relative' }}>
-                  { (value as any)?.name }
-                </TableCell>
-              );
-            }
             return (
-              <TableCell key={i} align="left" sx={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}>
+              <TableCell
+                key={i}
+                align="left"
+                sx={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {value}
               </TableCell>
             );
@@ -276,15 +281,16 @@ export function TableRowTree({ handleClick, row, selected, index }: TableRowTree
       </TableRow>
       {row?.children && row.children.length > 0 && (
         <>
-          {open && row.children.map((item, index) => (
-            <TableRowTree
-              key={item.id}
-              row={item}
-              handleClick={handleClick}
-              selected={selected}
-              index={index}
-            />
-          ))}
+          {open &&
+            row.children.map((item, index) => (
+              <TableRowTree
+                key={item.id}
+                row={item}
+                handleClick={handleClick}
+                selected={selected}
+                index={index}
+              />
+            ))}
         </>
       )}
     </>
@@ -314,8 +320,25 @@ export default function EnhancedTable({
     [onSort]
   );
 
+  const itemsDeleteHander = useCallback(() => {
+    onItemsDelete(selected);
+    setSelected([]);
+  }, [onItemsDelete, selected]);
 
-  const dataTree = buildItemsTree(data);
+  const handleChangePage = useCallback(
+    (event: unknown, newPage: number) => {
+      onPage(newPage + 1);
+    },
+    [onPage]
+  );
+
+  const handleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const updatedRowsPerPage = parseInt(event.target.value, 10);
+      onSize(updatedRowsPerPage);
+    },
+    [onSize]
+  );
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -346,25 +369,13 @@ export default function EnhancedTable({
     setSelected(newSelected);
   };
 
-  const itemsDeleteHander = useCallback(() => {
-    onItemsDelete(selected);
-    setSelected([]);
-  }, [onItemsDelete, selected]);
-
-  const handleChangePage = useCallback(
-    (event: unknown, newPage: number) => {
-      onPage(newPage + 1);
-    },
-    [onPage]
-  );
-
-  const handleChangeRowsPerPage = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const updatedRowsPerPage = parseInt(event.target.value, 10);
-      onSize(updatedRowsPerPage);
-    },
-    [onSize]
-  );
+  if (!data) {
+    return (
+      <Paper sx={{ width: '100%', p: '1rem', textAlign: 'center' }}>
+        No data
+      </Paper>
+    );
+  }
 
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
@@ -390,7 +401,7 @@ export default function EnhancedTable({
           />
           <TableBody>
             {data
-              ? dataTree.map((row, index) => (
+              ? buildItemsTree(data).map((row, index) => (
                   <TableRowTree
                     key={row.id}
                     index={index}

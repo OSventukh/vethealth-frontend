@@ -5,7 +5,7 @@ import useTopic from '@/hooks/topic-hook';
 import { usePostData } from '@/hooks/data-hook';
 import { useSWRConfig } from 'swr';
 
-const EditTopic = dynamic(() => import('@/components/admin/Topics'), {
+const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
   ssr: false,
   loading: () => <Loading />
 });

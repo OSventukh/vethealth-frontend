@@ -65,7 +65,6 @@ export function useGetData(
   }: { revalidation?: boolean; shouldRetryOnError?: boolean, revalidateOnMount?: boolean, refreshInterval?: number } = {}
 ) {
 
-  if (typeof url === 'object') {}
   return useSWR(
     typeof url === 'string' ? `${api}/${url}` : url,
     typeof url === 'string' ? () => getFetch(`${api}/${url}`) : ({ path }: { path: string}) => getFetch(`${api}/${path}`),

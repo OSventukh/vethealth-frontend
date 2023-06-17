@@ -46,7 +46,6 @@ export default function useEditor({
   );
 
   const contentChangeHandler = useCallback((value: any, editor: Editor) => {
-    console.log('value', value);
     removeMessages();
     setContent(value);
   }, []);

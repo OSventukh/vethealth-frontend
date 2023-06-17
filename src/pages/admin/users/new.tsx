@@ -5,7 +5,7 @@ import { FormEvent } from 'react';
 import { usePostData } from '@/hooks/data-hook';
 import Loading from '@/components/admin/UI/Loading';
 
-const EditUser = dynamic(() => import('@/components/admin/User'), {
+const EditUser = dynamic(() => import('@/components/admin/User/EditUser'), {
   loading: () => <Loading />,
   ssr: false,
 });

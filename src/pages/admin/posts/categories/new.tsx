@@ -2,7 +2,7 @@ import { FormEvent, useContext } from 'react';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/admin/UI/Loading';
 
-const EditCategory = dynamic(() => import('@/components/admin/Category'), {
+const EditCategory = dynamic(() => import('@/components/admin/Category/EditCategory'), {
   loading: () => <Loading />,
   ssr: false,
 })
