@@ -1,11 +1,6 @@
 import NextAuth, { DefaultSession, User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
-
-type UserData = {
-  id: string;
-  firstname: string;
-  lastname?: string;
-};
+import { User as UserData } from './auth-types';
 
 type JWTToken = {
   token: string;

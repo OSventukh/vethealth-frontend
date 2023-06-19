@@ -1,7 +1,12 @@
+// react imports
 import { useState } from 'react';
+// next imports
 import { useRouter } from 'next/router';
-import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import Link from 'next/link';
+// mui imports
+import { IconButton, Menu, MenuItem } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
+// next-auth imports
 import { signOut, useSession } from 'next-auth/react';
 
 export default function UserMenu() {
@@ -17,7 +22,7 @@ export default function UserMenu() {
   const clickMenuHandler = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const clickMenuCloseHandler = () => {
     setAnchorEl(null);
   };
@@ -48,10 +53,8 @@ export default function UserMenu() {
         open={Boolean(anchorEl)}
         onClose={clickMenuCloseHandler}
       >
-        <MenuItem onClick={clickMenuCloseHandler}>
-          <Typography variant="h6">
-            {session?.user.firstname} {session?.user?.lastname}
-          </Typography>
+        <MenuItem component={Link} href={`/admin/users/profile?user=${session?.user.id}`} onClick={clickMenuCloseHandler}>
+          {session?.user.firstname} {session?.user?.lastname}
         </MenuItem>
         <MenuItem onClick={logoutHandler}>Exit</MenuItem>
       </Menu>

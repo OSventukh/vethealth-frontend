@@ -8,6 +8,7 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { useGetData, usePostData } from '@/hooks/data-hook';
 import type { ConfirmHandlerArgs } from '@/types/auth-types';
+
 const Confirm = dynamic(() => import('@/components/admin/Auth/Confirm'), {
   ssr: false,
   loading: () => <Loading />

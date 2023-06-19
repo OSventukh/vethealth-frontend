@@ -99,7 +99,7 @@ export default function EditTopic({
       <Typography
         variant="h5"
         component="h2"
-        sx={{ mb: 5, textAlign: 'center', padding: 2 }}
+        sx={{ mb: 2, textAlign: 'center', padding: 2 }}
       >
         {edit ? 'Edit Topic' : 'New Topic'}
       </Typography>
