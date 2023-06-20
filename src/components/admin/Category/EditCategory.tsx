@@ -126,7 +126,7 @@ export default function EditCategory({
           </Grid>
         </Grid>
         <Grid container justifyContent="center" sx={{ mt: 3 }}>
-          <Button type="submit">{edit ? 'Update' : 'Create'}</Button>
+          <Button type="submit" variant='contained'>{edit ? 'Update' : 'Create'}</Button>
         </Grid>
       </Box>
     </Paper>
