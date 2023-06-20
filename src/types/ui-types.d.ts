@@ -57,6 +57,7 @@ interface ModalProps {
   onAgree: () => void;
   agreeButton?: string;
   disagreeButton?: string;
+  notificationOnly?: boolean;
   setOpen: (arg: boolean) => void;
 }
 

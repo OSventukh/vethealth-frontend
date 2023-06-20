@@ -33,6 +33,7 @@ interface EditUserProps {
   lastnameChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
   emailChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
   statusChangeHandler: (event: SelectChangeEvent<string>) => void;
+  changePasswordHandler?: () => void;
   topicsChangeHandler: (
     event: SyntheticEvent,
     value: { title: string; id: number }[] | null
@@ -47,7 +48,7 @@ interface EditUserProps {
   edit?: boolean;
 }
 
-import { useGetData } from '@/hooks/data-hook';
+import { useGetData, usePostData } from '@/hooks/data-hook';
 
 export default function EditUser({
   id,
@@ -64,6 +65,7 @@ export default function EditUser({
   roleChangeHandler,
   userSubmit,
   statusChangeHandler,
+  changePasswordHandler,
   successMessage,
   errorMessage,
   edit,
@@ -71,7 +73,7 @@ export default function EditUser({
   const [openTopics, setOpenTopics] = useState(false);
   const [openRole, setOpenRole] = useState(false);
 
-  const { data: session} = useSession()
+  const { data: session } = useSession();
 
   const {
     data: topicsData,
@@ -118,7 +120,7 @@ export default function EditUser({
               </Alert>
             )}
             <TextField
-              id="standard-basic"
+              id="user-first-name"
               label="First name"
               variant="standard"
               onChange={firstnameChangeHandler}
@@ -126,7 +128,7 @@ export default function EditUser({
             />
 
             <TextField
-              id="standard-basic"
+              id="user-last-name"
               label="Last name"
               variant="standard"
               onChange={lastnameChangeHandler}
@@ -134,7 +136,7 @@ export default function EditUser({
             />
 
             <TextField
-              id="standard-basic"
+              id="user-email"
               label="Email"
               variant="standard"
               onChange={emailChangeHandler}
@@ -148,13 +150,17 @@ export default function EditUser({
                 </InputLabel>
                 <Select
                   labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
+                  id="user-status"
                   value={status}
                   onChange={statusChangeHandler}
                   label="Status"
                 >
-                  <MenuItem value={UserStatus.Pending}>{UserStatus.Pending}</MenuItem>
-                  <MenuItem value={UserStatus.Active}>{UserStatus.Active}</MenuItem>
+                  <MenuItem value={UserStatus.Pending}>
+                    {UserStatus.Pending}
+                  </MenuItem>
+                  <MenuItem value={UserStatus.Active}>
+                    {UserStatus.Active}
+                  </MenuItem>
                   <MenuItem value={UserStatus.Blocked}>
                     <span style={{ color: 'red' }}>{UserStatus.Blocked}</span>
                   </MenuItem>
@@ -171,7 +177,7 @@ export default function EditUser({
                 onClose={() => {
                   setOpenRole(false);
                 }}
-                id="tags-standard"
+                id="user-role"
                 options={rolesData?.roles ?? []}
                 getOptionLabel={(option: { name: string; id: number }) =>
                   option.name
@@ -212,12 +218,19 @@ export default function EditUser({
                   onClose={() => {
                     setOpenTopics(false);
                   }}
-                  id="tags-standard"
+                  id="user-topics"
                   options={topicsData?.topics ?? []}
                   getOptionLabel={(option: { title: string; id: number }) =>
                     option.title
                   }
-                  noOptionsText={<Link style={{ color: 'inherit', textDecoration: 'none' }} href="/admin/topics/new">Create first topic</Link>}
+                  noOptionsText={
+                    <Link
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                      href="/admin/topics/new"
+                    >
+                      Create first topic
+                    </Link>
+                  }
                   value={topics ?? []}
                   renderInput={(params) => (
                     <TextField
@@ -240,10 +253,17 @@ export default function EditUser({
                   )}
                 />
               )}
+            {edit && (
+              <Box>
+                <Button sx={{ display: 'flex' }} onClick={changePasswordHandler}>Change password</Button>
+              </Box>
+            )}
           </Grid>
         </Grid>
         <Grid container justifyContent="center" sx={{ mt: 3 }}>
-          <Button type="submit">{edit ? 'Update' : 'Create'}</Button>
+          <Button variant="contained" type="submit">
+            {edit ? 'Update' : 'Create'}
+          </Button>
         </Grid>
       </Box>
     </Paper>

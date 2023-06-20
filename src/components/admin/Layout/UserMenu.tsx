@@ -1,12 +1,11 @@
-// react imports
 import { useState } from 'react';
-// next imports
+
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-// mui imports
+
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
-// next-auth imports
+
 import { signOut, useSession } from 'next-auth/react';
 
 export default function UserMenu() {

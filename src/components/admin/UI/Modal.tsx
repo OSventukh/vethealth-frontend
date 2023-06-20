@@ -1,4 +1,3 @@
-import { ReactElement, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -15,6 +14,7 @@ export default function Modal({
   onAgree,
   agreeButton = 'Agree',
   disagreeButton = 'Disagree',
+  notificationOnly = false,
 }: ModalProps) {
   const handleClose = () => {
     setOpen(false);
@@ -35,9 +35,11 @@ export default function Modal({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>{disagreeButton}</Button>
-        <Button onClick={onAgree} autoFocus>
-          {agreeButton}
-        </Button>
+        {!notificationOnly && (
+          <Button onClick={onAgree} autoFocus>
+            {agreeButton}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

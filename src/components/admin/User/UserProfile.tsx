@@ -1,6 +1,4 @@
-// next imports
 import Link from 'next/link';
-// mui imports
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -8,7 +6,6 @@ import Fab from '@mui/material/Fab';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
 
-// type imports
 import type { User } from '@/types/auth-types';
 
 const rows = [

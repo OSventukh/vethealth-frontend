@@ -1,9 +1,7 @@
-// react imports
 import { useState, useEffect } from 'react';
-// type imports
+
 import type { EditTopic } from '@/types/props-types';
 
-// mui imports
 import {
   Paper,
   Box,
@@ -23,10 +21,8 @@ import {
 import SwitchButton from '../UI/Switch';
 import ImageUpload from '../UI/ImageUpload';
 
-// hook imports
 import { useGetData } from '@/hooks/data-hook';
 
-// constants imports
 import { TopicContent } from '@/utils/constants/content.enum';
 
 export default function EditTopic({

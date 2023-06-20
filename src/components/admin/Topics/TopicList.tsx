@@ -1,12 +1,11 @@
-// next imports 
 import dynamic from 'next/dynamic';
-// ui imports 
+
 import Loading from '@/components/admin/UI/Loading';
-// hook imports 
+
 import useTable from '@/hooks/table-hook';
-// mui imports
+
 import Paper from '@mui/material/Paper';
-// dynamic imports
+
 const Table = dynamic(() => import('../UI/Table'), {
   loading: () => <Loading />,
   ssr: false,

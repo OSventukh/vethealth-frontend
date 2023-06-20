@@ -1,9 +1,6 @@
-// next imports
 import { useRouter } from 'next/router';
 import { useGetData } from '@/hooks/data-hook';
-// components imports
 import UserProfile from '@/components/admin/User/UserProfile';
-// ui imports
 import Loading from '@/components/admin/UI/Loading';
 
 export default function ProfilePage() {

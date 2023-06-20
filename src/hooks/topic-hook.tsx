@@ -1,11 +1,6 @@
-// react imports
 import { useState, ChangeEvent, SyntheticEvent, useEffect, useCallback, useMemo } from 'react';
-
-// type imports
 import type { Topic, Category, Page } from '@/types/content-types';
 import type { UseTopic } from '@/types/props-types';
-
-// constant imports
 import { TopicContent } from '@/utils/constants/content.enum';
 
 export default function useTopic({

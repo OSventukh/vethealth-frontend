@@ -1,6 +1,5 @@
-// react imports
 import { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
-// mui imports
+
 import {
   Paper,
   Button,
@@ -12,11 +11,9 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-// type imports
 import type { Category, Topic, Page } from '@/types/content-types';
 import type { EditorToolbarProps } from '@/types/editor-types';
 
-// hook imports
 import { useGetData } from '@/hooks/data-hook';
 
 export default function EditorToolbar({

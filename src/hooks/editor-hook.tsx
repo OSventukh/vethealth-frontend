@@ -1,10 +1,5 @@
-// react imports
 import { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react';
-
-// tinymce imports
 import { Editor } from '@tinymce/tinymce-react';
-
-// type imports
 import type { UseEditorAgr } from '@/types/editor-types';
 import type { Topic, Category, Page } from '@/types/content-types';
 
