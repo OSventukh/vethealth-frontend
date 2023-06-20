@@ -13,10 +13,15 @@ import Alert from '@mui/material/Alert';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
 
-
 import type { AuthComponentsProps } from '@/types/auth-types';
 
-export default function Login({ onAuth, authError, message }: AuthComponentsProps) {
+export default function Login({
+  onAuth,
+  authError,
+  message,
+  resetPasswordMode,
+  setResetPasswordMode,
+}: AuthComponentsProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>();
@@ -29,7 +34,7 @@ export default function Login({ onAuth, authError, message }: AuthComponentsProp
 
     const email = emailRef.current?.value.trim();
     const password = passwordRef.current?.value.trim();
-    onAuth({ email, password })
+    onAuth({ email, password });
   };
 
   const handleMouseDownPassword = (
@@ -53,49 +58,64 @@ export default function Login({ onAuth, authError, message }: AuthComponentsProp
         }}
       >
         <Box>
-          <Typography variant="h5">LOGIN</Typography>
+          <Typography variant="h5">
+            {resetPasswordMode ? 'RESET PASSWORD' : 'LOGIN'}
+          </Typography>
         </Box>
         {authError && <Alert severity="error">{authError}</Alert>}
         {message && <Alert severity="info">{message}</Alert>}
-        <TextField
-          required
-          label="Email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          variant="standard"
-          inputRef={emailRef}
-          sx={{
-            m: 1,
-          }}
-        />
-
-        <FormControl sx={{ m: 1 }} variant="standard">
-          <InputLabel htmlFor="standard-adornment-password">
-            Password
-          </InputLabel>
-          <Input
+        {!message && (
+          <TextField
             required
-            id="standard-adornment-password"
-            autoComplete="current-password"
-            type={showPassword ? 'text' : 'password'}
-            inputRef={passwordRef}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
+            label="Email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            variant="standard"
+            inputRef={emailRef}
+            sx={{
+              m: 1,
+            }}
           />
-        </FormControl>
-        <Button type="submit" variant="contained">
-          Login
-        </Button>
+        )}
+
+        {!resetPasswordMode && (
+          <FormControl sx={{ m: 1 }} variant="standard">
+            <InputLabel htmlFor="standard-adornment-password">
+              Password
+            </InputLabel>
+            <Input
+              required
+              id="standard-adornment-password"
+              autoComplete="current-password"
+              type={showPassword ? 'text' : 'password'}
+              inputRef={passwordRef}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+        )}
+        {!message && (
+          <>
+            <Box>
+              <Button size="small" onClick={setResetPasswordMode}>
+                {resetPasswordMode ? 'Return to login' : 'Forgot password?'}
+              </Button>
+            </Box>
+            <Button type="submit" variant="contained">
+              {resetPasswordMode ? 'Send confirmation Link' : 'Login'}
+            </Button>
+          </>
+        )}
       </Box>
     </Paper>
   );

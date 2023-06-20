@@ -33,6 +33,8 @@ export interface AuthComponentsProps {
   onAuth: (AuthHandlerArgs) => void;
   authError: string | null;
   message?: string | null;
+  resetPasswordMode?: boolean;
+  setResetPasswordMode?: () => void;
 }
 
 export interface ConfirmHandlerArgs {

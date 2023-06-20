@@ -18,6 +18,7 @@ export default function Auth() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const { data, error, isLoading } = useGetData('auth');
+  const [resetPasswordMode, setResetPasswordMode] = useState(false);
 
   const router = useRouter();
 
@@ -29,7 +30,8 @@ export default function Auth() {
     }
   }, [router]);
 
-  const { trigger } = usePostData('signup');
+  const { trigger: signupTrigger } = usePostData('signup');
+  const { trigger: resetPasswordTrigger } = usePostData('reset-password');
 
   const authHandler = async ({
     firstname,
@@ -41,7 +43,7 @@ export default function Auth() {
     setAuthError(null);
     try {
       if (data.action === 'signup') {
-        await trigger({
+        await signupTrigger({
           method: 'POST',
           data: {
             firstname,
@@ -60,6 +62,16 @@ export default function Auth() {
         }
         router.push('/admin');
       } else {
+        if (resetPasswordMode) {
+          const response = await resetPasswordTrigger({
+            method: 'POST',
+            data: {
+              email,
+            },
+          });
+          setMessage(response.message || 'A confirmation link has been sent to your email address')
+          return;
+        }
         const response = await signIn('credentials', {
           redirect: false,
           email,
@@ -101,7 +113,15 @@ export default function Auth() {
         </Alert>
       )}
       {!isLoading && data && data.action === 'login' && (
-        <Login onAuth={authHandler} authError={authError} message={message} />
+        <Login
+          onAuth={authHandler}
+          authError={authError}
+          message={message}
+          resetPasswordMode={resetPasswordMode}
+          setResetPasswordMode={() =>
+            setResetPasswordMode((prevState) => !prevState)
+          }
+        />
       )}
       {!isLoading && data && data.action === 'signup' && (
         <Signup onAuth={authHandler} authError={authError} />
