@@ -1,0 +1,13 @@
+.topic__item {
+  position: relative;
+  border: 5px solid var(--main-theme-color);
+  width: 250px;
+  height: 250px;
+  transition: transform 0.3s ease-in;
+}
+
+@media only screen and (min-width: 678px) {
+  .topic__item:hover {
+    transform: scale(1.1);
+  }
+}

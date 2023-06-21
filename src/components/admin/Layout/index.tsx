@@ -6,6 +6,8 @@ import Navigation from './Navigation';
 import { replacePropertyName } from '@/utils/replacePropertyName';
 import type { ChildrenProps } from '@/types/props-types';
 import { useSession, signIn } from 'next-auth/react';
+import { Roboto } from 'next/font/google';
+const roboto = Roboto({ subsets: ['latin', 'cyrillic'], weight: '400'});
 
 export default function AdminPanelLayout(props: ChildrenProps) {
   const theme = useTheme();
@@ -24,7 +26,7 @@ export default function AdminPanelLayout(props: ChildrenProps) {
   }, [session]);
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box className={roboto.className} sx={{ display: 'flex', minHeight: '100vh' }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Navigation open={open} handleDrawerToggle={handleDrawerToggle} />
       <Box

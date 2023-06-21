@@ -1,0 +1,26 @@
+.preview-post {
+  margin: 2rem 0;
+}
+
+.post__title {
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.post__read-more {
+  margin-top: 2rem;
+}
+
+.button {
+  border: 2px solid var(--main-theme-color);
+  padding: 0.5rem 2rem;
+  text-transform: uppercase;
+}
+
+.button:hover {
+  text-decoration: none;
+  color: #fff;
+  background-color: var(--main-theme-color);
+  transition: all 0.2s ease;
+
+}

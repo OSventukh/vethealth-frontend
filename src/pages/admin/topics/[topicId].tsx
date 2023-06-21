@@ -18,17 +18,17 @@ export default function EditTopicPage() {
 
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
-
-  const initTitle = data ? data?.topics[0]?.title : null;
-  const initSlug = data ? data?.topics[0]?.slug : null;
-  const initDescription = data ? data?.topics[0]?.description : null;
-  const initActiveStatus = data ? data?.topics[0]?.status === 'active' : false;
-  const initImage = data ? data?.topics[0]?.image : null;
+  console.log('this data', data)
+  const initTitle = data ? data?.topic?.title : null;
+  const initSlug = data ? data?.topic?.slug : null;
+  const initDescription = data ? data?.topic?.description : null;
+  const initActiveStatus = data ? data?.topic?.status === 'active' : false;
+  const initImage = data ? data?.topic?.image : null;
   //display only high level category
-  const initCategories = useMemo(() => data ? data?.topics[0]?.categories.filter((category: {parentId: number | null}) => category.parentId === null) : null, [data]);
-  const initParentTopic = data ? data?.topics[0]?.parent : null;
-  const initContent = data? data?.topics[0]?.content : null;
-  const initPage = data ? data?.topics[0]?.pages : null;
+  const initCategories = useMemo(() => data ? data?.topic?.categories.filter((category: {parentId: number | null}) => category.parentId === null) : null, [data]);
+  const initParentTopic = data ? data?.topic?.parent : null;
+  const initContent = data? data?.topic?.content : null;
+  const initPage = data ? data?.topic?.pages : null;
 
   const {
     title,
