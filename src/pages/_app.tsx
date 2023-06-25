@@ -37,7 +37,7 @@ export default function App({
         ) : isAuthPage ? (
           <Component {...pageProps} />
         ) : (
-          <Layout general={pageProps.general}>
+          <Layout general={pageProps.general} navigationMenu={pageProps.navigationMenu}>
             <Component {...pageProps} />
           </Layout>
         )}

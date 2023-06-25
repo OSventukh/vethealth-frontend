@@ -19,6 +19,12 @@ const header = [
   },
   {
     disablePadding: false,
+    id: 'status',
+    label: 'Status',
+    numeric: false,
+  },
+  {
+    disablePadding: false,
     id: 'slug',
     label: 'Slug',
     numeric: false,

@@ -1,6 +1,7 @@
 export type Category = {
   id: number;
   name: string;
+  slug: string;
   parentId: number;
   parent?: Category;
   children?: Category[];
@@ -11,17 +12,22 @@ export type Topic = {
   title: string;
   slug: string;
   image: string;
+  description: string;
+  posts?: Post[];
+  categories?: Category[];
   parentId: number;
   parent?: Topic;
   children?: Topic[];
+  page?: Page;
+  content: 'posts' | 'page';
 }
 
 export type Page = {
   id: number;
   title: string;
-  parentId: number;
-  parent: Page;
-  children: Page[];
+  content: string;
+  slug: string;
+  status: 'published' | 'draft';
 }
 
 export type Post = {

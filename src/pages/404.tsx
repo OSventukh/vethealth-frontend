@@ -1,13 +1,9 @@
 export default function Page404() {
-  return (
-    <h2 className='notitification-title'>This page not found</h2>
-  )
+  return <h2 className="notitification-title">This page not found</h2>;
 }
 
-export async function getStaticProps(context) {
+export async function getStaticProps() {
   try {
-
-
     return {
       props: {
         general: {
@@ -23,10 +19,10 @@ export async function getStaticProps(context) {
         general: {
           siteName: null,
           siteDescription: null,
-          siteUrl: null
+          siteUrl: null,
         },
-        navigationMenu: null
-      }
-    }
+        navigationMenu: null,
+      },
+    };
   }
 }

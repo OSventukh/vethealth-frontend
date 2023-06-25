@@ -4,12 +4,11 @@ import TopicItem from './TopicItem';
 import type { Topic } from '@/types/content-types';
 
 export default function TopicsList({ topics }: { topics: Topic[]}) {
-  console.log(topics);
   return (
-    <>
+    <section className="topics">
       {topics?.map((topic) => (
-        <TopicItem topic={topic} />
+        <TopicItem key={topic.id} topic={topic} />
       ))}
-    </>
+    </section>
   );
 }

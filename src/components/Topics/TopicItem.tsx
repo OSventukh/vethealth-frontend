@@ -6,7 +6,6 @@ import classes from '@/styles/topics/TopicItem.module.css';
 import { Topic } from '@/types/content-types';
 
 export default function TopicItem({ topic }: { topic: Topic }) {
-  console.log(Server.Api + topic.image);
   return (
     <Link href={topic.slug}>
       <div className={classes.topic__item}>

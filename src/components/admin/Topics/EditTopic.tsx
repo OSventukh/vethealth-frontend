@@ -52,7 +52,7 @@ export default function EditTopic({
   const [openParentTopic, setOpenParentTopic] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
   const [openPage, setOpenPage] = useState(false);
-
+  console.log('page', page)
   const {
     data: topicData,
     isLoading: isParentTopicLoading,

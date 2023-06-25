@@ -38,7 +38,7 @@ export default function CategoryList() {
   } = useTable({
     url: 'categories',
     header,
-    query: 'include=parent',
+    query: 'include=children',
   });
 
   if (!data && !isLoading) {

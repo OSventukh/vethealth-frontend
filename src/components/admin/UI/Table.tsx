@@ -23,10 +23,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { visuallyHidden } from '@mui/utils';
 import { api } from '@/hooks/data-hook';
 import Modal from './Modal';
-import buildItemsTree from '@/utils/buildItemsTree';
+// import buildItemsTree from '@/utils/buildItemsTree';
 import type {
   HeadCell,
   EnhancedTableHeadProps,
@@ -180,7 +181,7 @@ interface TableRowTreeProps {
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     rowId: number
   ) => void;
-  row: { id: number; children: any[] };
+  row: { id: number; children?: any[] };
   selected: readonly number[];
   index: number;
 }
@@ -190,6 +191,7 @@ export function TableRowTree({
   row,
   selected,
   index,
+  children
 }: TableRowTreeProps) {
   const [open, setOpen] = useState(false);
 
@@ -220,6 +222,12 @@ export function TableRowTree({
             <IconButton onClick={expandTableHandle}>
               {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </IconButton>
+          )}
+          {children && (
+            <Box sx={{ pl: 2}}>
+              <ArrowRightIcon />
+
+            </Box>
           )}
         </TableCell>
         <TableCell padding="checkbox">
@@ -290,6 +298,7 @@ export function TableRowTree({
                 handleClick={handleClick}
                 selected={selected}
                 index={index}
+                children
               />
             ))}
         </>
@@ -402,7 +411,7 @@ export default function EnhancedTable({
           />
           <TableBody>
             {data
-              ? buildItemsTree(data).map((row, index) => (
+              ? data.map((row, index) => (
                   <TableRowTree
                     key={row.id}
                     index={index}

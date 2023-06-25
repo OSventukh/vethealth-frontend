@@ -18,7 +18,7 @@ export default function EditTopicPage() {
 
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
-  console.log('this data', data)
+
   const initTitle = data ? data?.topic?.title : null;
   const initSlug = data ? data?.topic?.slug : null;
   const initDescription = data ? data?.topic?.description : null;
@@ -28,7 +28,7 @@ export default function EditTopicPage() {
   const initCategories = useMemo(() => data ? data?.topic?.categories.filter((category: {parentId: number | null}) => category.parentId === null) : null, [data]);
   const initParentTopic = data ? data?.topic?.parent : null;
   const initContent = data? data?.topic?.content : null;
-  const initPage = data ? data?.topic?.pages : null;
+  const initPage = data ? data?.topic?.page : null;
 
   const {
     title,

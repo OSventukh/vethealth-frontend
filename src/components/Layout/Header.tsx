@@ -1,4 +1,4 @@
-// import MainNavigation from './Menu';
+import MainNavigation from './Navigation';
 import Link from 'next/link';
 import classes from '@/styles/layout/Header.module.css';
 import Container from '@mui/material/Container';
@@ -14,9 +14,9 @@ export default function Header(props) {
         <h1 className={classes['site-name']}>
           <Link href="/">{siteName}</Link>
         </h1>
-        {/* {props.navigationMenu && (
-          <MainNavigation navigation={props.navigationMenu} />
-        )} */}
+        {props.navigationMenu && (
+          <MainNavigation data={props.navigationMenu} />
+        )}
       </Container>
     </header>
   );

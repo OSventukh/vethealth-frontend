@@ -2,7 +2,7 @@ import { Server } from './constants/general.enum';
 
 
 
-export default async function getData(params: string ) {
+export default async function getData<T>(params: string ): Promise<T> {
  
   const response = await fetch(Server.Api + params);
 

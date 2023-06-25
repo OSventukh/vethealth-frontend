@@ -1,77 +1,82 @@
-import PostsList from '@/components/Posts/PostList';
+import dynamic from 'next/dynamic';
+import Loading from '@/components/UI/Loading';
+
 import getData from '@/utils/getData';
-// import transformMenu from '../../helpers/transform-menu';
-import TopicsList from '@/components/Topics/TopicList';
 import { Raleway } from 'next/font/google';
+import type { Params } from '@/types/params-types';
+import type { GetServerSidePropsContext, InferGetStaticPropsType } from 'next';
+import type { Post, Topic, Category } from '@/types/content-types';
+
+const PostsList = dynamic(() => import('@/components/Posts/PostList'), {
+  loading: () => <Loading />
+});
+
+const TopicsList = dynamic(() => import('@/components/Topics/TopicList'), {
+  loading: () => <Loading />,
+})
+
+const PostComponent = dynamic(() => import('@/components/Posts/Post'), {
+  loading: () => <Loading />,
+})
+
+
 const releway = Raleway({ weight: ['600'], subsets: ['latin', 'cyrillic'] });
 
-export default function TopicPage(props) {
-
+export default function TopicPage({
+  subtopics,
+  posts,
+  page,
+  general,
+}: InferGetStaticPropsType<typeof getServerSideProps>) {
   return (
     <>
       <div className="description">
-        <h2 className={releway.className}>{props.general.siteDescription}</h2>
+        <h2 className={releway.className}>{general.siteDescription}</h2>
       </div>
-      {props.subtopics && props.subtopics.length > 0 ? (
-        <section className="topics">
-          <TopicsList topics={props.subtopics} />
-        </section>
+      {page ? (
+        <PostComponent post={page as Post} />
+      ) : subtopics ? (
+        <TopicsList topics={subtopics} />
+      ) : posts ? (
+        <PostsList posts={posts} />
       ) : (
-        <section className="content">
-          <PostsList posts={props.posts} />
-        </section>
+        <p style={{ textAlign: 'center' }}>
+          Матеріли по даній темі поки відсутні
+        </p>
       )}
     </>
   );
 }
 
-export async function getStaticProps(context) {
-  const { topic } = context.params;
-  try {
-    const [data] =
-      await Promise.all([
-        getData(`/topics/?slug=${topic}&include=children,posts,page`),
-       
-      ]);
-    // const transformedMenu = transformMenu(navigationMenu);
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { topic } = context.params as Params;
+  const { category } = context.query;
 
-    return {
-      props: {
-        posts: data?.topic?.posts || null,
-        subtopics: data?.topic?.children || null,
-        general: {
-          siteName: 'Vethealth',
-          siteDescription: data?.topic?.description || null,
-        },
-        // navigationMenu: transformedMenu || null,
-      },
-      revalidate: 1,
-    };
-  } catch (error) {
-    return {
-      props: {
-        posts: [],
-        subtopics: null,
-        general: {
-          siteName: null,
-          siteDescription: null,
-          siteUrl: null
-        },
-        navigationMenu: null
-      }
-    }
+  const topicData = await getData<{ topic: Topic }>(
+    `/topics?slug=${topic}&include=categories,children,page&status=active`
+  );
+
+  let url = `/posts/?topic=${topic}&include=topics,categories&status=published`;
+
+  if (category) {
+    url += `&category=${category}`;
   }
-}
 
-export async function getStaticPaths() {
-  const data = await getData('/topics');
-
-  const paths = data.topics.map((item) => ({
-    params: { topic: item.slug },
-  }));
-
+  const [data] = await Promise.all([getData<{ posts: Post[] }>(url)]);
+  console.log(topicData)
   return {
-    paths: paths,
-    fallback: false,
+    props: {
+      posts: data?.posts && data.posts.length > 0 ? data.posts : null,
+      page: topicData?.topic?.content === 'page' ? topicData.topic.page : null,
+      subtopics:
+        topicData?.topic?.children && topicData.topic.children.length > 0
+          ? topicData.topic.children
+          : null,
+      general: {
+        siteName: 'Vethealth',
+        siteDescription: topicData?.topic?.description || null,
+      },
+      navigationMenu: topicData?.topic?.categories || null,
+    },
   };
 }

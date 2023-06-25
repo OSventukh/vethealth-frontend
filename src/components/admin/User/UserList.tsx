@@ -84,7 +84,7 @@ export default function UserList() {
       </Paper>
     );
   }
-  console.log(data)
+
   return (
     <Table
       title="Users"

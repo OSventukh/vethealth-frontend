@@ -59,7 +59,7 @@ export default function TopicList() {
   } = useTable({
     header,
     url: 'topics',
-    query: 'include=parent',
+    query: 'include=children',
   });
 
   if (!data && !isLoading) {

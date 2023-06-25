@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import parse, { HTMLReactParserOptions, Element, Text } from 'html-react-parser';
+import parse, { HTMLReactParserOptions, Element, Text, domToReact } from 'html-react-parser';
 
 const transformStyle = (styleStr: string) => {
   const obj: {[key: string]: string} = {};
@@ -25,7 +25,6 @@ const options: HTMLReactParserOptions = {
     }
     
     if (typedDomNode.name === 'img') {
-      console.log('image', typedDomNode.attribs)
       return <Image style={transformStyle(typedDomNode.attribs.style)} src={typedDomNode.attribs.src} priority width={+typedDomNode.attribs.width} height={+typedDomNode.attribs.height} alt={typedDomNode.attribs.alt} />
     } 
     return false

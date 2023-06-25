@@ -1,13 +1,13 @@
 import Head from 'next/head';
-import Image from 'next/image';
 import TopicList from '../components/Topics/TopicList';
 import getData from '@/utils/getData';
 import { Raleway } from 'next/font/google';
+import type { Topic } from '@/types/content-types';
+import type { InferGetStaticPropsType } from 'next';
+
 const releway = Raleway({ weight: ['600'], subsets: ['latin', 'cyrillic'] });
 
-import styles from '../styles/Home.module.css';
-
-export default function Home(props) {
+export default function Home(props: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <Head>
@@ -20,18 +20,13 @@ export default function Home(props) {
       <div className='description'>
         <h2 className={releway.className}>{props.general.siteDescription}</h2>
       </div>
-
-      <section className="topics">
         <TopicList topics={props.topics} />
-      </section>
     </>
   );
 }
 
 export async function getStaticProps() {
-  const [data] = await Promise.all([
-    getData('/topics'),
-  ]);
+  const data = await getData<{topics: Topic[]}>('/topics?status=active');
 
   return {
     props: {

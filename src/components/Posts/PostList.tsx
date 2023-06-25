@@ -9,10 +9,10 @@ export default function PostsList({ posts }: { posts: Post[] }) {
   }
 
   return (
-    <div>
+    <section className="content">
       {posts.map((post: Post) => (
         <PostItem key={post.id} post={post} />
       ))}
-    </div>
+    </section>
   );
 }

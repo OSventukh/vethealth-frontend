@@ -7,6 +7,7 @@ export interface Data {
   slug?: string;
   excerpt?: string;
   parent?: Data;
+  children?: Data;
 }
 
 export interface HeadCell {

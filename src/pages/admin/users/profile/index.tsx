@@ -8,7 +8,6 @@ export default function ProfilePage() {
 
   const userId = router.query.user;
   const { data, isLoading } = useGetData(`users?id=${userId}&include=role`);
-  console.log(data);
 
   if (isLoading) {
     return <Loading />;

@@ -34,9 +34,9 @@ export default function EditCategoryPage() {
     setErrorMessage,
     setSuccessMessage,
   } = useCategory({
-    initName: data?.categories[0]?.name,
-    initSlug: data?.categories[0]?.slug,
-    initParentCategory: data?.categories[0]?.parent,
+    initName: data?.category?.name,
+    initSlug: data?.category?.slug,
+    initParentCategory: data?.category?.parent,
   });
 
   const getDataHandler = async (event: FormEvent) => {

@@ -7,6 +7,12 @@
   text-transform: uppercase;
 }
 
+.post__content::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
 .post__read-more {
   margin-top: 2rem;
 }
