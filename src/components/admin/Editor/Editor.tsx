@@ -114,7 +114,6 @@ export default function RichEditor({
             min-height: 20rem;
             padding: 0.5rem 2rem;
             font-size: 1.5rem;
-            line-height: 1rem;
             border-radius: 5px;
           }
           

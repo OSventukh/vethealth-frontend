@@ -18,7 +18,6 @@
 
 @media only screen and (max-width: 678px) {
   :root {
-    font-size: 9px;
     --general-sides-padding: 5vw;
   }
 }
