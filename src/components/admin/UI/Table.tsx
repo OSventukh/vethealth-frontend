@@ -27,12 +27,13 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { visuallyHidden } from '@mui/utils';
 import { api } from '@/hooks/data-hook';
 import Modal from './Modal';
-// import buildItemsTree from '@/utils/buildItemsTree';
+
 import type {
   HeadCell,
   EnhancedTableHeadProps,
   EnhancedTableProps,
   EnhancedTableToolbarProps,
+  TableRowTreeProps,
 } from '@/types/ui-types';
 
 function EnhancedTableHead(props: EnhancedTableHeadProps) {
@@ -153,7 +154,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <Tooltip title="Edit">
               <IconButton
                 component={Link}
-                href={`${router.pathname}/${selected[0].toString()}`}
+                href={`${router.pathname}/${selected[0]?.toString()}`}
               >
                 <EditIcon />
               </IconButton>
@@ -176,22 +177,12 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 
-interface TableRowTreeProps {
-  handleClick: (
-    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    rowId: number
-  ) => void;
-  row: { id: number; children?: any[] };
-  selected: readonly number[];
-  index: number;
-}
-
 export function TableRowTree({
   handleClick,
   row,
   selected,
   index,
-  children
+  children,
 }: TableRowTreeProps) {
   const [open, setOpen] = useState(false);
 
@@ -224,9 +215,8 @@ export function TableRowTree({
             </IconButton>
           )}
           {children && (
-            <Box sx={{ pl: 2}}>
+            <Box sx={{ pl: 2 }}>
               <ArrowRightIcon />
-
             </Box>
           )}
         </TableCell>
@@ -273,7 +263,7 @@ export function TableRowTree({
                 </TableCell>
               );
             }
-           
+
             return (
               <TableCell
                 key={i}

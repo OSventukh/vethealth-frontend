@@ -1,21 +1,18 @@
 import { useState, ChangeEvent, SyntheticEvent, useEffect, useCallback, useMemo } from 'react';
+import type { UseCategory } from '@/types/props-types';
+import type { Category } from '@/types/content-types';
 
-interface UseCategoryAgr {
-  initName?: string;
-  initSlug?: string;
-  initParentCategory?: { name: string, id: number } | null;
-}
 
 export default function useTopic({
   initName,
   initSlug,
   initParentCategory
-}: UseCategoryAgr = {}) {
+}: UseCategory = {}) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [name, setName] = useState<string>('');
   const [slug, setSlug] = useState<string>('');
-  const [parentCategory, setParentCategory] = useState<{ name: string, id: number } | null>(null);
+  const [parentCategory, setParentCategory] = useState<Category | null>(null);
 
   useEffect(() => {
     initName && setName(initName);

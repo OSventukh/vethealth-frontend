@@ -72,11 +72,11 @@ export default function useTopic({
   );
 
   const parentTopicChangeHandler = useCallback(
-    (event: SyntheticEvent, value: Topic) => {
+    (event: SyntheticEvent, value: Topic | null) => {
       event.preventDefault();
       setErrorMessage(null);
       setSuccessMessage(null);
-      value && setParentTopic(value);
+      setParentTopic(value);
     },
     []
   );
@@ -86,7 +86,7 @@ export default function useTopic({
       event.preventDefault();
       setErrorMessage(null);
       setSuccessMessage(null);
-      value && setPage(value);
+      setPage(value);
     },
     []
   );
@@ -96,7 +96,7 @@ export default function useTopic({
       event.preventDefault();
       setErrorMessage(null);
       setSuccessMessage(null);
-      value && setContent(value as TopicContent);
+      setContent(value as TopicContent);
     },
     []
   );
@@ -105,7 +105,7 @@ export default function useTopic({
     event.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
-    value && setCategories(value);
+    setCategories(value);
   }, [])
 
   const clearInputs: () => void = useCallback(() => {

@@ -11,6 +11,7 @@ const EditCategory = dynamic(() => import('@/components/admin/Category/EditCateg
 import useCategory from '@/hooks/category-hook';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 import { useSWRConfig } from 'swr';
+import type { Category } from '@/types/content-types';
 
 export default function EditCategoryPage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function EditCategoryPage() {
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData('categories');
 
-  const { data } = useGetData(`categories/${categoryId}?include=parent`);
+  const { data } = useGetData<{category: Category}>(`categories/${categoryId}?include=parent,children`);
 
   const {
     name,
@@ -77,11 +78,13 @@ export default function EditCategoryPage() {
   };
   return (
     <EditCategory
+      id={categoryId?.toString()}
       edit
       categorySubmitHandler={getDataHandler}
       name={name}
       slug={slug}
       parentCategory={parentCategory}
+      childrenCategory={data?.category.children}
       nameChangeHandler={nameChangeHandler}
       slugChangeHandler={slugChangeHandler}
       parentCategoryChangeHandler={parentCategoryChangeHandler}

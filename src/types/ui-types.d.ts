@@ -7,7 +7,7 @@ export interface Data {
   slug?: string;
   excerpt?: string;
   parent?: Data;
-  children?: Data;
+  children?: Data[];
 }
 
 export interface HeadCell {
@@ -49,6 +49,17 @@ export interface EnhancedTableProps {
   onSize: (size: number) => void;
   onPage: (page: number) => void;
   onItemsDelete: (selected: readonly number[]) => void;
+}
+
+export interface TableRowTreeProps {
+  handleClick: (
+    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    rowId: number
+  ) => void;
+  row: Data;
+  selected: readonly number[];
+  index: number;
+  children?: boolean;
 }
 
 interface ModalProps {

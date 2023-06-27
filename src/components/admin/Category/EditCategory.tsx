@@ -9,27 +9,16 @@ import {
   Button,
   Alert,
   Autocomplete,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
-
-interface EditCategoryProps {
-  name?: string;
-  slug?: string;
-  parentCategory: { name: string, id: number } | null;
-  nameChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
-  slugChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
-  parentCategoryChangeHandler: (event: FormEvent, value: any) => void;
-  categorySubmitHandler: (event: FormEvent) => void;
-  successMessage?: string | null;
-  errorMessage?: string | null;
-  buttonText?: string;
-  edit?: boolean;
-}
-
+import type { Category } from '@/types/content-types';
+import type { EditCategory } from '@/types/props-types';
 export default function EditCategory({
+  id,
   name,
   slug,
   parentCategory,
+  childrenCategory,
   nameChangeHandler,
   slugChangeHandler,
   categorySubmitHandler,
@@ -37,16 +26,20 @@ export default function EditCategory({
   errorMessage,
   successMessage,
   edit,
-}: EditCategoryProps) {
+}: EditCategory) {
   const [openParentCategory, setOpenParentCategory] = useState<boolean>(false);
 
-  const { data: categoryData, isLoading: isParentCategoryLoading, mutate } = useGetData('categories', {
-    revalidateOnMount: false
+  const {
+    data: categoryData,
+    isLoading: isParentCategoryLoading,
+    mutate,
+  } = useGetData<{ categories: Category[] }>('categories', {
+    revalidateOnMount: false,
   });
 
   useEffect(() => {
-    openParentCategory && mutate()
-  }, [openParentCategory, mutate])
+    openParentCategory && mutate();
+  }, [openParentCategory, mutate]);
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -90,43 +83,58 @@ export default function EditCategory({
               onChange={slugChangeHandler}
               value={slug}
             />
-            <Autocomplete
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              onChange={parentCategoryChangeHandler}
-              onOpen={() => {
-                setOpenParentCategory(true);
-              }}
-              onClose={() => {
-                setOpenParentCategory(false);
-              }}
-              id="tags-standard"
-              options={categoryData?.categories ?? []}
-              getOptionLabel={(option: { name: string }) => option.name}
-              value={parentCategory}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="Parent Category"
-                  placeholder="Select topics"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {isParentCategoryLoading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
-            />
+            {childrenCategory && childrenCategory.length > 0 ? (
+              <Alert severity="info">
+                This category contains child categories, so it is not possible
+                to add a parent category
+              </Alert>
+            ) : (
+              <Autocomplete
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={parentCategoryChangeHandler}
+                onOpen={() => {
+                  setOpenParentCategory(true);
+                }}
+                onClose={() => {
+                  setOpenParentCategory(false);
+                }}
+                id="category-parant-category"
+                options={
+                  id
+                    ? categoryData?.categories.filter(
+                        (category) => category.id !== +id
+                      ) || []
+                    : categoryData?.categories || []
+                }
+                getOptionLabel={(option: Category) => option.name}
+                value={parentCategory}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Parent Category"
+                    placeholder="Select category"
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {isParentCategoryLoading ? (
+                            <CircularProgress color="inherit" size={20} />
+                          ) : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            )}
           </Grid>
         </Grid>
         <Grid container justifyContent="center" sx={{ mt: 3 }}>
-          <Button type="submit" variant='contained'>{edit ? 'Update' : 'Create'}</Button>
+          <Button type="submit" variant="contained">
+            {edit ? 'Update' : 'Create'}
+          </Button>
         </Grid>
       </Box>
     </Paper>

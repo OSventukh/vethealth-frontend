@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import Loading from '@/components/UI/Loading';
 
 import getData from '@/utils/getData';
@@ -28,6 +29,9 @@ export default function TopicPage({
   page,
   general,
 }: InferGetStaticPropsType<typeof getServerSideProps>) {
+  const router = useRouter();
+  const category = router.query?.category;
+
   return (
     <>
       <div className="description">
@@ -41,7 +45,7 @@ export default function TopicPage({
         <PostsList posts={posts} />
       ) : (
         <p style={{ textAlign: 'center' }}>
-          Матеріли по даній темі поки відсутні
+          {category ? 'Матеріали в даній категорії поки-що відсутні' : 'Матеріли по даній темі поки-що відсутні'}
         </p>
       )}
     </>
@@ -53,7 +57,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { category } = context.query;
 
   const topicData = await getData<{ topic: Topic }>(
-    `/topics?slug=${topic}&include=categories,children,page&status=active`
+    `/topics?slug=${topic}&parentId=null&include=categories,children,page&status=active`
   );
 
   let url = `/posts/?topic=${topic}&include=topics,categories&status=published`;
@@ -63,7 +67,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const [data] = await Promise.all([getData<{ posts: Post[] }>(url)]);
-  console.log(topicData)
   return {
     props: {
       posts: data?.posts && data.posts.length > 0 ? data.posts : null,

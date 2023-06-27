@@ -1,3 +1,4 @@
+import { TopicContent } from "@/utils/constants/content.enum";
 export type Category = {
   id: number;
   name: string;
@@ -12,6 +13,7 @@ export type Topic = {
   title: string;
   slug: string;
   image: string;
+  status: 'active' | 'inactive';
   description: string;
   posts?: Post[];
   categories?: Category[];
@@ -19,7 +21,7 @@ export type Topic = {
   parent?: Topic;
   children?: Topic[];
   page?: Page;
-  content: 'posts' | 'page';
+  content: TopicContent;
 }
 
 export type Page = {

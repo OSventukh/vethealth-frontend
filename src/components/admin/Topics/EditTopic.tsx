@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-
 import type { EditTopic } from '@/types/props-types';
 
 import {
@@ -22,10 +21,11 @@ import SwitchButton from '../UI/Switch';
 import ImageUpload from '../UI/ImageUpload';
 
 import { useGetData } from '@/hooks/data-hook';
-
+import type { Category, Topic, Page } from '@/types/content-types';
 import { TopicContent } from '@/utils/constants/content.enum';
 
 export default function EditTopic({
+  id,
   title,
   slug,
   description,
@@ -45,6 +45,7 @@ export default function EditTopic({
   parentTopicChangeHandler,
   pageChangeHandler,
   contentChangeHandler,
+  childrenTopic,
   errorMessage,
   successMessage,
   edit,
@@ -52,12 +53,12 @@ export default function EditTopic({
   const [openParentTopic, setOpenParentTopic] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
   const [openPage, setOpenPage] = useState(false);
-  console.log('page', page)
+
   const {
     data: topicData,
     isLoading: isParentTopicLoading,
     mutate: topicMutate,
-  } = useGetData('topics', {
+  } = useGetData<{topics: Topic[]}>('topics?parentId=null', {
     revalidateOnMount: false,
   });
 
@@ -65,7 +66,7 @@ export default function EditTopic({
     data: categoryData,
     isLoading: isCategoryLoading,
     mutate: categoryMutate,
-  } = useGetData('categories?parentId=null', {
+  } = useGetData<{categories: Category[]}>('categories?parentId=null', {
     revalidateOnMount: false,
   });
 
@@ -73,7 +74,7 @@ export default function EditTopic({
     data: pageData,
     isLoading: isPageLoading,
     mutate: pageMutate,
-  } = useGetData('pages', {
+  } = useGetData<{pages: Page[]}>('pages', {
     revalidateOnMount: false,
   });
 
@@ -152,8 +153,8 @@ export default function EditTopic({
                 setOpenCategory(false);
               }}
               id="topic-categories"
-              options={categoryData?.categories ?? []}
-              getOptionLabel={(option: { name: string; id: number }) =>
+              options={categoryData?.categories || []}
+              getOptionLabel={(option: Category) =>
                 option.name
               }
               value={categories ?? []}
@@ -177,41 +178,51 @@ export default function EditTopic({
                 />
               )}
             />
-            <Autocomplete
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              onChange={parentTopicChangeHandler}
-              onOpen={() => {
-                setOpenParentTopic(true);
-              }}
-              onClose={() => {
-                setOpenParentTopic(false);
-              }}
-              id="topic-parent-topic"
-              options={topicData?.topics ?? []}
-              getOptionLabel={(option: { title: string; id: number }) =>
-                option.title
-              }
-              value={parentTopic}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="Parent Topic"
-                  placeholder="Select topics"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {isParentTopicLoading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
-            />
+            {childrenTopic && childrenTopic.length > 0 ? (
+              <Alert severity="info">This topic contains child topics, so it is not possible to add a parent topic</Alert>
+            ) : (
+              <Autocomplete
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={parentTopicChangeHandler}
+                onOpen={() => {
+                  setOpenParentTopic(true);
+                }}
+                onClose={() => {
+                  setOpenParentTopic(false);
+                }}
+                id="topic-parent-topic"
+                options={
+                  id
+                    ? topicData?.topics?.filter(
+                        (topic: Topic) => topic.id !== parseInt(id)
+                      ) || []
+                    : topicData?.topics || []
+                }
+                getOptionLabel={(option: { title: string; id: number }) =>
+                  option.title
+                }
+                value={parentTopic}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Parent Topic"
+                    placeholder="Select topics"
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {isParentTopicLoading ? (
+                            <CircularProgress color="inherit" size={20} />
+                          ) : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+              />
+            )}
             <FormControl
               sx={{
                 display: 'flex',

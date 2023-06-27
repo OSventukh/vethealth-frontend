@@ -5,6 +5,7 @@ import Loading from '@/components/admin/UI/Loading';
 import { useSWRConfig } from 'swr';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData, useGetData } from '@/hooks/data-hook';
+import type { Topic } from '@/types/content-types';
 
 const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
   ssr: false,
@@ -14,21 +15,21 @@ const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
 export default function EditTopicPage() {
   const router = useRouter();
   const { topicId } = router.query;
-  const { data, isLoading } = useGetData(`topics/${topicId}?include=categories,parent,page`);
+  const { data, isLoading } = useGetData<{topic: Topic}>(`topics/${topicId}?include=categories,parent,page,children`);
 
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
 
-  const initTitle = data ? data?.topic?.title : null;
-  const initSlug = data ? data?.topic?.slug : null;
-  const initDescription = data ? data?.topic?.description : null;
-  const initActiveStatus = data ? data?.topic?.status === 'active' : false;
-  const initImage = data ? data?.topic?.image : null;
+  const initTitle = data?.topic?.title;
+  const initSlug = data?.topic?.slug;
+  const initDescription = data?.topic?.description;
+  const initActiveStatus = data?.topic?.status === 'active';
+  const initImage = data?.topic?.image;
   //display only high level category
-  const initCategories = useMemo(() => data ? data?.topic?.categories.filter((category: {parentId: number | null}) => category.parentId === null) : null, [data]);
-  const initParentTopic = data ? data?.topic?.parent : null;
-  const initContent = data? data?.topic?.content : null;
-  const initPage = data ? data?.topic?.page : null;
+  const initCategories = useMemo(() => data && data?.topic?.categories && data.topic.categories.filter((category: {parentId: number | null}) => category.parentId === null), [data]);
+  const initParentTopic = data?.topic?.parent;
+  const initContent = data?.topic?.content;
+  const initPage = data?.topic?.page;
 
   const {
     title,
@@ -59,23 +60,23 @@ export default function EditTopicPage() {
     initDescription,
     initActiveStatus,
     initImage,
-    initCategories, //display only hight level category
+    initCategories,
     initParentTopic,
     initContent,
     initPage,
   });
 
-  const getDataHandler = async (event: FormEvent) => {
+  const topicSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
     const formData = new FormData();
     title && formData.append('title', title.trim());
     slug && formData.append('slug', slug.trim());
-    description && formData.append('description', description.trim());
-    parentTopic && formData.append('parentId', parentTopic.id.toString());
-    content && formData.append('content', content);
-    page && formData.append('pageId', page.id.toString());
+    formData.append('description', description ? description.trim() : '');
+    formData.append('parentId', parentTopic ? parentTopic.id.toString() : '');
+    formData.append('content', content ? content: '');
+    formData.append('pageId', page ? page.id.toString(): '');
     categories &&
       categories.length > 0 &&
       categories.forEach((category) =>
@@ -108,7 +109,8 @@ export default function EditTopicPage() {
 
   return (
     <EditTopic
-      topicSubmitHandler={getDataHandler}
+      id={topicId?.toString()}
+      topicSubmitHandler={topicSubmitHandler}
       title={title}
       slug={slug}
       description={description}
@@ -127,6 +129,7 @@ export default function EditTopicPage() {
       parentTopicChangeHandler={parentTopicChangeHandler}
       setActiveStatus={setActiveStatus}
       setImage={setImage}
+      childrenTopic={data?.topic?.children}
       errorMessage={errorMessage}
       successMessage={successMessage}
       edit

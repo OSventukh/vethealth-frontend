@@ -6,7 +6,7 @@ import type { ArgData } from '@/types/fetch-types';
 export const api = 'http://localhost:5000';
 
 
-async function getFetch(url: string) {
+async function getFetch<T>(url: string): Promise<T> {
   const session = await getSession();
   const response = await fetch(url, {
     method: 'GET',
@@ -55,7 +55,7 @@ export function usePostData(url: string) {
   return useSWRMutation(`${api}/${url}`, postFetch);
 }
 
-export function useGetData(
+export function useGetData<T>(
   url: string | object | undefined,
   {
     revalidation = false,
@@ -67,7 +67,7 @@ export function useGetData(
 
   return useSWR(
     typeof url === 'string' ? `${api}/${url}` : url,
-    typeof url === 'string' ? () => getFetch(`${api}/${url}`) : ({ path }: { path: string}) => getFetch(`${api}/${path}`),
+    typeof url === 'string' ? () => getFetch<T>(`${api}/${url}`) : ({ path }: { path: string}) => getFetch<T>(`${api}/${path}`),
     {
       revalidateIfStale: revalidation,
       revalidateOnFocus: revalidation,
