@@ -22,10 +22,17 @@ const rows = [
     label: 'Role',
   },
 ];
-export default function UserProfile({ user }: { user: User }) {
+export default function UserProfile({ user }: { user?: User }) {
+
   if (!user) {
     return <Paper>No Data</Paper>;
   }
+
+  const userData: {[key: string]: any} = {
+    ...user,
+    role: user.role.name,
+  }
+
   return (
     <Paper
       sx={{
@@ -76,7 +83,7 @@ export default function UserProfile({ user }: { user: User }) {
             <Typography
               sx={{ textAlign: 'left', flexBasis: '50%', flexGrow: 1 }}
             >
-              {user[row.id]}
+              {userData[row.id]}
             </Typography>
           </Box>
         ))}

@@ -6,6 +6,8 @@ import { usePostData, useGetData } from '@/hooks/data-hook';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import useEditor from '@/hooks/editor-hook';
 import Loading from '@/components/admin/UI/Loading';
+import type { Page } from '@/types/content-types';
+
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
   loading: () => <Loading />,
@@ -15,7 +17,7 @@ export default function EditPagePage() {
   const router = useRouter();
   const pageId = router.query.pageId;
 
-  const { data, isLoading } = useGetData(
+  const { data, isLoading } = useGetData<{ page: Page}>(
     `pages/${pageId}`
   );
 
@@ -33,9 +35,9 @@ export default function EditPagePage() {
     successMessage,
     setSuccessMessage,
   } = useEditor({
-    initTitle: data?.pages[0]?.title,
-    initContent: data?.pages[0]?.content,
-    initSlug: data?.pages[0]?.slug,
+    initTitle: data?.page?.title,
+    initContent: data?.page?.content,
+    initSlug: data?.page?.slug,
   });
 
   const { trigger } = usePostData('pages');

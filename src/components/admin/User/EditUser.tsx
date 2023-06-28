@@ -1,54 +1,28 @@
-import { useState, useEffect } from 'react';
-import type { FormEvent, ChangeEvent, SyntheticEvent } from 'react';
-import Link from 'next/link';
 import { UserRole, UserStatus } from '@/utils/constants/users.enum';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 import {
-  Paper,
-  Box,
-  Typography,
-  TextField,
-  Grid,
-  Button,
   Alert,
   Autocomplete,
+  Box,
+  Button,
+  CircularProgress,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
-  Select,
-  CircularProgress,
-  SelectChangeEvent,
+  Paper,
+  Select, TextField,
+  Typography
 } from '@mui/material';
 
-interface EditUserProps {
-  id?: string;
-  firstname?: string;
-  lastname?: string;
-  email: string;
-  status: string;
-  topics: { title: string; id: number }[] | null;
-  role: { name: string; id: number } | null;
-  firstnameChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
-  lastnameChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
-  emailChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
-  statusChangeHandler: (event: SelectChangeEvent<string>) => void;
-  changePasswordHandler?: () => void;
-  topicsChangeHandler: (
-    event: SyntheticEvent,
-    value: { title: string; id: number }[] | null
-  ) => void;
-  roleChangeHandler: (
-    event: SyntheticEvent,
-    value: { name: string; id: number } | null
-  ) => void;
-  userSubmit: (event: FormEvent) => void;
-  successMessage: string | null;
-  errorMessage: string | null;
-  edit?: boolean;
-}
+import type { EditUser } from '@/types/props-types';
+import type { Topic } from '@/types/content-types';
+import type { Role } from '@/types/auth-types';
 
-import { useGetData, usePostData } from '@/hooks/data-hook';
+import { useGetData } from '@/hooks/data-hook';
 
 export default function EditUser({
   id,
@@ -69,7 +43,7 @@ export default function EditUser({
   successMessage,
   errorMessage,
   edit,
-}: EditUserProps) {
+}: EditUser) {
   const [openTopics, setOpenTopics] = useState(false);
   const [openRole, setOpenRole] = useState(false);
 
@@ -79,13 +53,13 @@ export default function EditUser({
     data: topicsData,
     isLoading: isTopicsLoading,
     mutate: topicMutate,
-  } = useGetData('topics', { revalidateOnMount: false });
+  } = useGetData<{ topics: Topic[]}>('topics', { revalidateOnMount: false });
 
   const {
     data: rolesData,
     isLoading: isRolesLoading,
     mutate: roleMutate,
-  } = useGetData('roles', { revalidateOnMount: false });
+  } = useGetData<{ roles: Role[]}>('roles', { revalidateOnMount: false });
 
   useEffect(() => {
     openTopics && topicMutate();

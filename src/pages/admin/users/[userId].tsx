@@ -5,6 +5,8 @@ import useUser from '@/hooks/user-hook';
 import { FormEvent } from 'react';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 import Loading from '@/components/admin/UI/Loading';
+import type { User } from '@/types/auth-types';
+import type { Role } from '@/types/auth-types';
 
 const Modal = dynamic(() => import('@/components/admin/UI/Modal'), {
   ssr: false,
@@ -19,7 +21,7 @@ export default function EditUserPage() {
   const router = useRouter();
   const userId = router.query.userId;
   const [showModal, setShowModal] = useState(false);
-  const { data } = useGetData(userId && `users/${userId}?include=role,topics`);
+  const { data } = useGetData<{ user: User}>(userId && `users/${userId}?include=role,topics`);
   const {
     firstname,
     lastname,
@@ -38,12 +40,12 @@ export default function EditUserPage() {
     setErrorMessage,
     setSuccessMessage,
   } = useUser({
-    initFirstname: data?.users[0]?.firstname,
-    initLastname: data?.users[0]?.lastname,
-    initEmail: data?.users[0]?.email,
-    initRole: data?.users[0]?.role,
-    initStatus: data?.users[0]?.status,
-    initTopics: data?.users[0]?.topics,
+    initFirstname: data?.user.firstname,
+    initLastname: data?.user.lastname,
+    initEmail: data?.user.email,
+    initRole: data?.user.role,
+    initStatus: data?.user.status,
+    initTopics: data?.user.topics,
   });
 
   const { trigger } = usePostData('users');

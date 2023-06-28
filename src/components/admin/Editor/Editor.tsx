@@ -107,7 +107,7 @@ export default function RichEditor({
           toolbar: false,
           quickbars_insert_toolbar: 'quicktable image media codesample | numlist bullist | pagebreak',
           quickbars_selection_toolbar:
-            'bold italic underline | blocks | blockquote quicklink',
+            'bold italic underline | align | blocks | blockquote quicklink',
           contextmenu:
             'undo redo | inserttable | cell row column deletetable | code | help',
           content_style: `.mce-content-body {

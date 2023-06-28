@@ -1,4 +1,12 @@
-import { TopicContent } from "@/utils/constants/content.enum";
+import { TopicContent } from '@/utils/constants/content.enum';
+import { UserRole } from '@/utils/constants/users.enum';
+
+export type PaginateData = {
+  count: number;
+  currentPage: number;
+  totalPages: number;
+};
+
 export type Category = {
   id: number;
   name: string;
@@ -6,7 +14,7 @@ export type Category = {
   parentId: number;
   parent?: Category;
   children?: Category[];
-}
+};
 
 export type Topic = {
   id: number;
@@ -22,7 +30,7 @@ export type Topic = {
   children?: Topic[];
   page?: Page;
   content: TopicContent;
-}
+};
 
 export type Page = {
   id: number;
@@ -30,7 +38,7 @@ export type Page = {
   content: string;
   slug: string;
   status: 'published' | 'draft';
-}
+};
 
 export type Post = {
   id: number;
@@ -41,4 +49,4 @@ export type Post = {
   categories: Category[] | null;
   topics: Topic[] | null;
   status: 'published' | 'draft';
-}
+};

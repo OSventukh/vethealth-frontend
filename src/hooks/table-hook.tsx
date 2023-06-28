@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useGetData, usePostData } from './data-hook';
-
+import type { PaginateData } from '@/types/content-types';
 interface UseTable {
   url: string;
   header: {
@@ -13,7 +13,7 @@ interface UseTable {
   transformCallback?: <T>(data: any) => T;
 }
 
-export default function useTable({ url, header, query, transformCallback }: UseTable) {
+export default function useTable<T>({ url, header, query, transformCallback }: UseTable) {
   const [sortBy, setSortBy] = useState('');
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
   const [page, setPage] = useState<number>(1);
@@ -34,7 +34,7 @@ export default function useTable({ url, header, query, transformCallback }: UseT
     error: responseError,
     mutate,
     isValidating,
-  } = useGetData(
+  } = useGetData<PaginateData & T>(
     url && {
       key: `#${url}`,
       path: requestPath,
@@ -93,7 +93,7 @@ export default function useTable({ url, header, query, transformCallback }: UseT
   );
 
   return {
-    data: transformCallback && data ? transformCallback(data) : data,
+    data: transformCallback && data ? transformCallback<PaginateData & T>(data) : data,
     isLoading,
     itemsDeleteHandler,
     onSizeHandler,

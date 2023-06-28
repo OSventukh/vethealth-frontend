@@ -5,7 +5,7 @@ import { Raleway } from 'next/font/google';
 import type { Topic } from '@/types/content-types';
 import type { InferGetStaticPropsType } from 'next';
 
-const releway = Raleway({ weight: ['600'], subsets: ['latin', 'cyrillic'] });
+const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default function Home(props: InferGetStaticPropsType<typeof getStaticProps>) {
   return (

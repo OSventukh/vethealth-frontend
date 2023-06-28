@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import usePost from '@/hooks/editor-hook';
+import type { Post } from '@/types/content-types';
 
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
@@ -18,7 +19,7 @@ export default function EditPostPage() {
   const router = useRouter();
   const postId = router.query.postId;
 
-  const { data, isLoading } = useGetData(
+  const { data, isLoading } = useGetData<{ post: Post }>(
     `posts/${postId}?include=categories,topics`
   );
   const {
@@ -37,11 +38,11 @@ export default function EditPostPage() {
     successMessage,
     setSuccessMessage,
   } = usePost({
-    initTitle: data?.posts[0]?.title,
-    initCategories: data?.posts[0]?.categories,
-    initTopics: data?.posts[0]?.topics,
-    initContent:data?.posts[0]?.content,
-    initSlug: data?.posts[0]?.slug,
+    initTitle: data?.post?.title,
+    initCategories: data?.post?.categories,
+    initTopics: data?.post?.topics,
+    initContent:data?.post?.content,
+    initSlug: data?.post?.slug,
   });
 
   const { trigger } = usePostData('posts');

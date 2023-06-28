@@ -84,7 +84,7 @@ export default function EditCategoryPage() {
       name={name}
       slug={slug}
       parentCategory={parentCategory}
-      childrenCategory={data?.category.children}
+      childrenCategory={data?.category?.children}
       nameChangeHandler={nameChangeHandler}
       slugChangeHandler={slugChangeHandler}
       parentCategoryChangeHandler={parentCategoryChangeHandler}

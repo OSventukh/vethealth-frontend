@@ -20,7 +20,7 @@ export default function App({
   );
 
   const isAuthPage = useMemo(
-    () => router.pathname.startsWith('/auth'),
+    () => router.pathname.startsWith('/auth') || router.pathname.startsWith('/confirm') ,
     [router.pathname]
   );
 

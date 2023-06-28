@@ -7,15 +7,8 @@ import {
   SyntheticEvent,
 } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
+import type { UseUser } from '@/types/props-types';
 
-interface UseUserAgr {
-  initFirstname?: string;
-  initLastname?: string;
-  initEmail?: string;
-  initStatus?: string;
-  initTopics?: { title: string; id: number }[];
-  initRole?: { name: string; id: number };
-}
 
 export default function useUser({
   initFirstname,
@@ -24,7 +17,7 @@ export default function useUser({
   initStatus,
   initTopics,
   initRole,
-}: UseUserAgr = {}) {
+}: UseUser = {}) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [firstname, setFirstname] = useState<string>('');

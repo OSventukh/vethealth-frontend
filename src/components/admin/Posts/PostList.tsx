@@ -4,6 +4,8 @@ import Loading from '@/components/admin/UI/Loading';
 import useTable from '@/hooks/table-hook';
 
 import { Paper } from '@mui/material';
+import { Post } from '@/types/content-types';
+import { Data } from '@/types/ui-types';
 
 const Table = dynamic(() => import('@/components/admin/UI/Table'), {
   loading: () => <Loading />,
@@ -70,7 +72,7 @@ export default function PostsList() {
     itemsDeleteHandler,
     onSortHandler,
     onSizeHandler,
-  } = useTable({
+  } = useTable<{posts: Post[]}>({
     url: 'posts',
     header,
     query: 'include=author',
@@ -95,8 +97,8 @@ export default function PostsList() {
     <Table
       header={header}
       title="Posts"
-      data={data?.posts}
-      count={data?.count}
+      data={data?.posts as Data[]}
+      count={data?.count || 0}
       onSort={onSortHandler}
       order={sort}
       orderBy={sortBy}

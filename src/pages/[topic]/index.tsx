@@ -6,7 +6,7 @@ import getData from '@/utils/getData';
 import { Raleway } from 'next/font/google';
 import type { Params } from '@/types/params-types';
 import type { GetServerSidePropsContext, InferGetStaticPropsType } from 'next';
-import type { Post, Topic, Category } from '@/types/content-types';
+import type { Post, Topic } from '@/types/content-types';
 
 const PostsList = dynamic(() => import('@/components/Posts/PostList'), {
   loading: () => <Loading />
@@ -21,7 +21,7 @@ const PostComponent = dynamic(() => import('@/components/Posts/Post'), {
 })
 
 
-const releway = Raleway({ weight: ['600'], subsets: ['latin', 'cyrillic'] });
+const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default function TopicPage({
   subtopics,

@@ -3,9 +3,11 @@ import Link from 'next/link';
 import classes from '@/styles/layout/Header.module.css';
 import Container from '@mui/material/Container';
 import { Raleway } from 'next/font/google';
-const releway = Raleway({ weight: ['400'], subsets: ['latin', 'cyrillic'] });
+import type { Header } from '@/types/props-types';
 
-export default function Header(props) {
+const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
+
+export default function Header(props: Header) {
   const { siteName } = props.general;
   const headerClasses = `${releway.className} ${classes.header}`;
   return (

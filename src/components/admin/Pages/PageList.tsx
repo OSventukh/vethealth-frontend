@@ -4,6 +4,8 @@ import Loading from '@/components/admin/UI/Loading';
 import useTable from '@/hooks/table-hook';
 
 import { Paper } from '@mui/material';
+import type { Page } from '@/types/content-types';
+import type { Data } from '@/types/ui-types';
 
 const Table = dynamic(() => import('@/components/admin/UI/Table'), {
   loading: () => <Loading />,
@@ -38,7 +40,6 @@ const header = [
   }
 ];
 
-
 export default function PageList() {
   const {
     data,
@@ -51,7 +52,7 @@ export default function PageList() {
     itemsDeleteHandler,
     onSortHandler,
     onSizeHandler,
-  } = useTable({
+  } = useTable<{pages: Page[]}>({
     url: 'pages',
     header,
   });
@@ -74,8 +75,8 @@ export default function PageList() {
   return (
     <Table
       title="Pages"
-      data={data.pages}
-      count={data.count}
+      data={data?.pages as Data[]}
+      count={data?.count || 0}
       page={page}
       header={header}
       onItemsDelete={itemsDeleteHandler}

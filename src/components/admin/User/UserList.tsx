@@ -2,6 +2,8 @@ import dynamic from 'next/dynamic';
 import Loading from '@/components/admin/UI/Loading';
 import useTable from '@/hooks/table-hook';
 import { Paper } from '@mui/material';
+import type { User } from '@/types/auth-types';
+import type { Data } from '@/types/ui-types';
 
 const Table = dynamic(() => import('@/components/admin/UI/Table'), {
   loading: () => <Loading />,
@@ -63,7 +65,7 @@ export default function UserList() {
     itemsDeleteHandler,
     onSortHandler,
     onSizeHandler,
-  } = useTable({
+  } = useTable<{ users: User[]}>({
     url: 'users',
     header,
     query: 'include=role',
@@ -88,8 +90,8 @@ export default function UserList() {
   return (
     <Table
       title="Users"
-      data={data.users}
-      count={data.count}
+      data={data?.users as unknown as Data[]}
+      count={data?.count || 0}
       page={page}
       header={header}
       onItemsDelete={itemsDeleteHandler}

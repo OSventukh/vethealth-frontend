@@ -47,6 +47,14 @@ export interface UseCategory {
   initParentCategory?: Category | null;
 }
 
+export interface UseUser {
+  initFirstname?: string;
+  initLastname?: string | null;
+  initEmail?: string;
+  initStatus?: string;
+  initTopics?: { title: string; id: number }[];
+  initRole?: { name: string; id: number };
+}
 export interface EditTopic {
   id?: string;
   title?: string;
@@ -89,4 +97,36 @@ export interface EditCategory {
   errorMessage?: string | null;
   buttonText?: string;
   edit?: boolean;
+}
+
+export interface EditUser {
+  id?: string;
+  firstname?: string;
+  lastname?: string;
+  email: string;
+  status: string;
+  topics: { title: string; id: number }[] | null;
+  role: { name: string; id: number } | null;
+  firstnameChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
+  lastnameChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
+  emailChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
+  statusChangeHandler: (event: SelectChangeEvent<string>) => void;
+  changePasswordHandler?: () => void;
+  topicsChangeHandler: (
+    event: SyntheticEvent,
+    value: { title: string; id: number }[] | null
+  ) => void;
+  roleChangeHandler: (
+    event: SyntheticEvent,
+    value: { name: string; id: number } | null
+  ) => void;
+  userSubmit: (event: FormEvent) => void;
+  successMessage: string | null;
+  errorMessage: string | null;
+  edit?: boolean;
+}
+
+export interface Header {
+  general: { siteName: string };
+  navigationMenu: Category[] | null;
 }

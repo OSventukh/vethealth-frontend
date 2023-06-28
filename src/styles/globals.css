@@ -152,6 +152,13 @@ img {
   height: auto;
 }
 
+figure.align-center {
+  text-align: center;
+}
+
+figcaption {
+  text-align: center;
+}
 
 /* .button,
 button,

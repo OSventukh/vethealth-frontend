@@ -1,11 +1,19 @@
+import { UserStatus, UserRole } from "@/utils/constants/users.enum";
+
+export type Role = {
+  id: number;
+  name: UserRole
+}
+
 export interface User {
   id: string;
   firstname: string;
-  lastname: string | null;
+  lastname: string;
   email: string;
   createdAt: Date,
-  role: string | null,
-  [key: string]: any,
+  role: Role,
+  status: UserStatus;
+  topics: Topic[];
 }
 
 export interface Auth {

@@ -37,7 +37,7 @@ export default function EditorToolbar({
     data: topicData,
     isLoading: isTopicLoading,
     mutate: mutateTopic,
-  } = useGetData('usertopics?include', {
+  } = useGetData<{ topics: Topic[]}>('usertopics', {
     revalidateOnMount: false,
   });
 
@@ -45,7 +45,7 @@ export default function EditorToolbar({
     data: categoryData,
     isLoading: isCategoryLoading,
     mutate: mutateCategory,
-  } = useGetData(
+  } = useGetData<{ categories: Category[]}>(
     `topiccategories/?topics=${
       initTopics && initTopics.map((t) => t.id).join(',')
     }`,

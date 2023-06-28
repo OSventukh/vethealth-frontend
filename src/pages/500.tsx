@@ -1,5 +1,5 @@
-export default function Page404() {
-  return <h2 className="notitification-title">Цієї сторінки не існує</h2>;
+export default function Page500() {
+  return <h2 className="notitification-title">Виникла непередбачувана помилка</h2>;
 }
 
 export async function getStaticProps() {

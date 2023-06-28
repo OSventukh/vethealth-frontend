@@ -5,7 +5,7 @@ import type { Post } from '@/types/content-types';
 
 import classes from '@/styles/posts/Post.module.css';
 
-const releway = Raleway({ weight: ['600'], subsets: ['latin', 'cyrillic'] });
+const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 
 export default function PostItem({ post }: {post: Post}) {

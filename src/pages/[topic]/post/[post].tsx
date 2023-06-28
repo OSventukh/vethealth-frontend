@@ -24,13 +24,13 @@ export async function getStaticProps(context: GetStaticPropsContext) {
   const { topic, post } = context.params as Params;
 
   const [postData, topicData] = await Promise.all([
-    getData<{posts: PostType[]}>(`/posts?slug=${post}`),
+    getData<{post: PostType}>(`/posts?slug=${post}`),
     getData<{topic: Topic}>(`/topics/?slug=${topic}&include=categories`),
   ]);
 
   return {
     props: {
-      post: postData.posts[0] || null,
+      post: postData.post || null,
       general: {
         siteName: 'Vethealth',
         siteDescription: null,

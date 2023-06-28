@@ -2,6 +2,8 @@ import dynamic from 'next/dynamic';
 import Loading from '@/components/admin/UI/Loading';
 import useTable from '@/hooks/table-hook';
 import { Paper } from '@mui/material';
+import type { Category } from '@/types/content-types';
+import type { Data } from '@/types/ui-types';
 
 const Table = dynamic(() => import('@/components/admin/UI/Table'), {
   loading: () => <Loading />,
@@ -35,10 +37,10 @@ export default function CategoryList() {
     itemsDeleteHandler,
     onSortHandler,
     onSizeHandler,
-  } = useTable({
+  } = useTable<{categories: Category[]}>({
     url: 'categories',
     header,
-    query: 'include=children',
+    query: 'parentId=null&include=children',
   });
 
   if (!data && !isLoading) {
@@ -58,8 +60,8 @@ export default function CategoryList() {
   return (
     <Table
       title="Categories"
-      data={data.categories}
-      count={data.count}
+      data={data?.categories as Data[]}
+      count={data?.count || 0}
       page={page}
       header={header}
       onItemsDelete={itemsDeleteHandler}

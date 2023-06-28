@@ -17,7 +17,7 @@ const Login = dynamic(() => import('@/components/admin/Auth/Login'));
 export default function Auth() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { data, error, isLoading } = useGetData('auth');
+  const { data, error, isLoading } = useGetData<{ action: 'signup' | 'login' }>('auth');
   const [resetPasswordMode, setResetPasswordMode] = useState(false);
 
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function Auth() {
     setMessage(null);
     setAuthError(null);
     try {
-      if (data.action === 'signup') {
+      if (data?.action === 'signup') {
         await signupTrigger({
           method: 'POST',
           data: {

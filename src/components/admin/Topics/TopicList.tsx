@@ -1,10 +1,9 @@
 import dynamic from 'next/dynamic';
-
 import Loading from '@/components/admin/UI/Loading';
-
 import useTable from '@/hooks/table-hook';
-
 import Paper from '@mui/material/Paper';
+import type { Topic } from '@/types/content-types';
+import type { Data } from '@/types/ui-types';
 
 const Table = dynamic(() => import('../UI/Table'), {
   loading: () => <Loading />,
@@ -56,7 +55,7 @@ export default function TopicList() {
     itemsDeleteHandler,
     onSizeHandler,
     onSortHandler,
-  } = useTable({
+  } = useTable<{topics: Topic[]}>({
     header,
     url: 'topics',
     query: '&parentId=null&include=children',
@@ -79,8 +78,8 @@ export default function TopicList() {
   return (
     <Table
       title="Topics"
-      data={data.topics}
-      count={data.count}
+      data={data?.topics as Data[]}
+      count={data?.count || 0}
       page={page}
       header={header}
       onItemsDelete={itemsDeleteHandler}
