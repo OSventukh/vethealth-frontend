@@ -7,15 +7,13 @@ export default function MainNavigation({ data }: { data: Category[] }) {
   const router = useRouter();
   const topic = router.query.topic;
 
-  const subMenuItems = (parentId: number) => {
-    const subItems = data.filter((item) => item.parentId === parentId);
+  const subMenuItems = (subItems: Category[]) => {
     if (subItems.length > 0) {
       return (
         <ul className={classes['main-menu__nested-items']}>
           {subItems.map((subItem) => (
             <li key={subItem.id}>
               <Link href={`/${topic}?category=${subItem.slug}`}>{subItem.name}</Link>
-              {subMenuItems(subItem.id)}
             </li>
           ))}
         </ul>
@@ -31,7 +29,7 @@ export default function MainNavigation({ data }: { data: Category[] }) {
             return (
               <li key={item.id}>
                 <Link href={`/${topic}?category=${item.slug}`}>{item.name}</Link>
-                {subMenuItems(item.id)}
+                {item?.children && subMenuItems(item.children)}
               </li>
             );
           }

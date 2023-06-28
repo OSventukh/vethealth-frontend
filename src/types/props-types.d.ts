@@ -130,3 +130,16 @@ export interface Header {
   general: { siteName: string };
   navigationMenu: Category[] | null;
 }
+
+export type NavItemWithNested = {
+  text: string;
+  nested: Category[];
+  anchor?: string;
+}
+
+export type NavItem = {
+  text: string;
+  link: string;
+  nested?: boolean
+  anchor?: string;
+};

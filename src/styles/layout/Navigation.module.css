@@ -1,4 +1,5 @@
 .main-menu {
+  display: block;
   font-size: 1rem;
   text-transform: uppercase;
   margin-bottom: 1rem;
@@ -44,4 +45,22 @@
   color: #fff;
   transition: all 0.3s ease;
   text-decoration: none;
+}
+
+.mobile-menu {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: 2rem;
+  transform: translateY(-50%);
+}
+
+
+@media only screen and (max-width: 600px) {
+  .main-menu {
+    display: none;
+  }
+  .mobile-menu {
+    display: block;
+  }
 }
