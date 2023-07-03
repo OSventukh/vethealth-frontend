@@ -1,5 +1,3 @@
 export default function Settings() {
-  return (
-    <div>Settings</div>
-  )
+  return <p style={{ textAlign: 'center' }}>Not avaiable</p>;
 }

@@ -3,7 +3,6 @@ import { Box, Button, useTheme } from '@mui/material';
 import LandscapeIcon from '@mui/icons-material/Landscape';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Image from 'next/image';
-import { api } from '@/hooks/data-hook';
 
 interface ImageUploadProps {
   width?: string | number;
@@ -20,7 +19,7 @@ export default function ImageUpload({ width, height, onImage, value }: ImageUplo
     if (!value) {
       setImageURL(null);
     } else if (typeof value === 'string') {
-      setImageURL(`${api}/${value}#${new Date().getTime().toString()}`);
+      setImageURL(`${process.env.NEXT_PUBLIC_API}/${value}#${new Date().getTime().toString()}`);
     } else {
       setImageURL(URL.createObjectURL(value) + '#' + new Date().getTime().toString());
     }

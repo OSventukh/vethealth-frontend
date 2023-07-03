@@ -1,3 +1,3 @@
 export default function IndexAdminPage() {
-  return <p>Hello world</p>;
+  return <p style={{ textAlign: 'center'}}>Not avaiable</p>;
 }

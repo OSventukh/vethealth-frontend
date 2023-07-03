@@ -53,8 +53,8 @@ export default function Login({
           flexDirection: 'column',
           gap: '1rem',
           p: '2rem',
-          width: '20rem',
-          maxWidth: '80vw',
+          width: '22rem',
+          maxWidth: '90vw',
         }}
       >
         <Box>

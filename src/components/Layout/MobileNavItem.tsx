@@ -42,7 +42,7 @@ export function MobileNavItemWithNested({
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {nested.map((item) => (
-            <MobileNavItem text={item.name} link={anchor ? anchor + item.slug : item.slug} nested />
+            <MobileNavItem key={item.id} text={item.name} link={anchor ? anchor + item.slug : item.slug} nested />
           ))}
         </List>
       </Collapse>

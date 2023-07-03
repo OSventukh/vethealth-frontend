@@ -11,7 +11,7 @@ import type { ConfirmHandlerArgs } from '@/types/auth-types';
 
 const Confirm = dynamic(() => import('@/components/admin/Auth/Confirm'), {
   ssr: false,
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 
 export default function ConfirmPage() {
@@ -21,7 +21,10 @@ export default function ConfirmPage() {
 
   const token = router.query.token;
 
-  const { data, error, isLoading } = useGetData<{ userName: string; userEmail: string }>(token && `confirm/${token}`);
+  const { data, error, isLoading } = useGetData<{
+    userName: string;
+    userEmail: string;
+  }>(token && `confirm/${token}`);
 
   const { trigger } = usePostData('confirm');
 
@@ -65,7 +68,13 @@ export default function ConfirmPage() {
           {error.message}
         </Alert>
       )}
-      {data && !isLoading && <Confirm onConfirm={confirmHandler} confirmError={confirmError} user={{ name: data?.userName, email: data?.userEmail }} />}
+      {data && !isLoading && (
+        <Confirm
+          onConfirm={confirmHandler}
+          confirmError={confirmError}
+          user={{ name: data?.userName, email: data?.userEmail }}
+        />
+      )}
     </Box>
   );
 }

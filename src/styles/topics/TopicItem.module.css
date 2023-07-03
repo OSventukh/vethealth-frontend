@@ -2,7 +2,8 @@
   position: relative;
   border: 5px solid var(--main-theme-color);
   width: 250px;
-  height: 250px;
+  max-width: 90%;
+  aspect-ratio: 1;
   transition: transform 0.3s ease-in;
 }
 

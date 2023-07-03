@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import { IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MobileNavItem, MobileNavItemWithNested } from './MobileNavItem';
-import classes from '@/styles/layout/Navigation.module.css'
+import classes from '@/styles/layout/Navigation.module.css';
 import type { Category } from '@/types/content-types';
 
 export default function MobileNavigation({ data }: { data: Category[] }) {
@@ -40,6 +40,7 @@ export default function MobileNavigation({ data }: { data: Category[] }) {
           if (item.children && item.children.length > 0) {
             return (
               <MobileNavItemWithNested
+                key={item.id}
                 text={item.name}
                 nested={item.children}
                 anchor={`/${topic}?category=`}
@@ -48,6 +49,7 @@ export default function MobileNavigation({ data }: { data: Category[] }) {
           } else {
             return (
               <MobileNavItem
+                key={item.id}
                 text={item.name}
                 link={item.slug}
                 anchor={`/${topic}?category=`}
@@ -61,11 +63,10 @@ export default function MobileNavigation({ data }: { data: Category[] }) {
 
   return (
     <div className={classes['mobile-menu']}>
-      
-        <IconButton size='large' onClick={toggleDrawer(true)}>
-          <MenuIcon />
-        </IconButton>
- 
+      <IconButton size="large" onClick={toggleDrawer(true)}>
+        <MenuIcon />
+      </IconButton>
+
       <Drawer anchor="left" open={openNav} onClose={toggleDrawer(false)}>
         {list()}
       </Drawer>

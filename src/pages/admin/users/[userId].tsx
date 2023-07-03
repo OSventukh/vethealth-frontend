@@ -6,7 +6,7 @@ import { FormEvent } from 'react';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 import Loading from '@/components/admin/UI/Loading';
 import type { User } from '@/types/auth-types';
-import type { Role } from '@/types/auth-types';
+import { useSession } from 'next-auth/react';
 
 const Modal = dynamic(() => import('@/components/admin/UI/Modal'), {
   ssr: false,
@@ -18,6 +18,7 @@ const EditUser = dynamic(() => import('@/components/admin/User/EditUser'), {
 });
 
 export default function EditUserPage() {
+  const { data: session, update } = useSession();
   const router = useRouter();
   const userId = router.query.userId;
   const [showModal, setShowModal] = useState(false);
@@ -68,7 +69,8 @@ export default function EditUserPage() {
           roleId: role?.id,
         },
       });
-      setSuccessMessage(response?.message || 'User was successfull created');
+      update({...session, user: response?.user});
+      setSuccessMessage(response?.message || 'User was successfully updated');
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : 'Something went wrong'

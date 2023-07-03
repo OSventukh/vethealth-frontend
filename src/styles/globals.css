@@ -35,11 +35,17 @@ body {
 }
 
 body {
-  min-height: 100vh;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: var(--font-color);
+  line-height: 1.5rem;
 }
 
+#__next {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+}
 input[type='password']::-ms-reveal {
   display: none;
 }
@@ -78,24 +84,22 @@ h3,
 h4,
 h5,
 h6 {
-  margin: 1rem 0;
+  margin: calc(0.5rem + 1vw) 0;
   font-weight: 600;
-  line-height: 1.2;
 }
 
 h1 {
-  font-size: 2rem;
-  line-height: 2rem;
+  font-size: calc(1.3rem + 0.8vw);
   text-transform: uppercase;
   /* font-family: Raleway, sans-serif; */
-  letter-spacing: 0.4rem;
+  letter-spacing: 0.3rem;
 }
 
 h2 {
-  font-size: 1.2rem;
+  font-size: calc(0.8rem + 0.3vw);
   text-transform: uppercase;
   /* font-family: Raleway, sans-serif; */
-  letter-spacing: 0.4rem;
+  letter-spacing: 0.2rem;
 }
 
 h3 {
@@ -160,77 +164,6 @@ figcaption {
   text-align: center;
 }
 
-/* .button,
-button,
-input[type='button'],
-input[type='reset'],
-input[type='submit'] {
-  box-sizing: border-box;
-  margin-bottom: 0.5rem;
-  padding: 1rem 1.5rem;
-  transition: all 0.3s ease;
-  background: transparent;
-  border-radius: 0;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: 1.2;
-  outline: 0;
-  font-size: 1.6rem;
-  font-weight: 600;
-  letter-spacing: 0.4rem;
-  text-decoration: none;
-  text-transform: uppercase;
-  border: 3px solid var(--main-theme-color);
-  color: var(--main-theme-color);
-  cursor: pointer;
-} */
-
-/* a.button:hover {
-  text-decoration: none;
-} */
-/* 
-.button:hover,
-button:hover,
-input[type='button']:hover,
-input[type='reset']:hover,
-input[type='submit']:hover {
-  background-color: var(--main-theme-color);
-  color: #fff;
-}
-
-input[type='color'],
-input[type='date'],
-input[type='datetime-local'],
-input[type='datetime'],
-input[type='email'],
-input[type='month'],
-input[type='number'],
-input[type='password'],
-input[type='range'],
-input[type='search'],
-input[type='tel'],
-input[type='text'],
-input[type='time'],
-input[type='url'],
-input[type='week'],
-textarea {
-  box-sizing: border-box;
-  margin-bottom: 0.5em;
-  padding: 1rem 1.5rem;
-  transition: all 0.3s ease;
-  background: #fff !important;
-  border-radius: 0 !important;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: 1.2;
-  outline: 0;
-  backface-visibility: hidden;
-  appearance: none;
-  width: 20rem;
-  max-width: 100%;
-  color: inherit;
-  border: 3px solid var(--main-theme-color);
-} */
 
 .topics {
   display: grid;
@@ -241,7 +174,7 @@ textarea {
 
 .topics,
 .content {
-  margin-top: 2rem;
+  margin-top: calc(0.5rem + 3vw);
 }
 
 @media only screen and (max-width: 678px) {
@@ -258,11 +191,6 @@ textarea {
   padding: 0.5rem;
   font-size: 1.2rem;
 }
-
-.notitification-title {
-  text-align: center;
-}
-
 
 @media only screen and (max-width: 678px) {
   .is-layout-flex {

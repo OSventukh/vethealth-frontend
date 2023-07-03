@@ -1,10 +1,11 @@
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import Container from '@mui/material/Container';
 import { Raleway } from 'next/font/google';
+const MobileNavigation = dynamic(() => import('./MobileNavigation'));
+const MainNavigation = dynamic(() => import('./Navigation'))
 import type { Header } from '@/types/props-types';
-import MobileNavigation from './MobileNavidation';
-import MainNavigation from './Navigation';
 
 import classes from '@/styles/layout/Header.module.css';
 const releway = Raleway({ subsets: ['latin', 'cyrillic'] });

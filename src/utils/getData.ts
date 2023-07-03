@@ -1,10 +1,7 @@
-import { Server } from './constants/general.enum';
-
-
 
 export default async function getData<T>(params: string ): Promise<T> {
  
-  const response = await fetch(Server.Api + params);
+  const response = await fetch(process.env.NEXT_PUBLIC_API + params);
 
   const data = await response.json();
 

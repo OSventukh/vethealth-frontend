@@ -26,7 +26,7 @@ export default function AdminPanelLayout(props: ChildrenProps) {
   }, [session]);
 
   return (
-    <Box className={roboto.className} sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box className={roboto.className} sx={{ display: 'flex', minHeight: '100vh', background: theme.palette.background.paper }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Navigation open={open} handleDrawerToggle={handleDrawerToggle} />
       <Box

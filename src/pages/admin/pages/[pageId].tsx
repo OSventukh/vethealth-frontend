@@ -80,7 +80,7 @@ export default function EditPagePage() {
   return (
     <>
       <Head>
-        <title>Create Post</title>
+        <title>Update Page</title>
       </Head>
       <>
         <Editor

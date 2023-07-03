@@ -21,9 +21,9 @@ export default function RichEditor({
   const handleImageUpload: any = (blobInfo: any) => {
     return new Promise((resolve, reject) => {
       const data = new FormData();
-      data.append('upload', blobInfo.blob(), blobInfo.filename());
+      data.append('post-image', blobInfo.blob(), blobInfo.filename());
 
-      return fetch('http://localhost:5000/posts/upload-image', {
+      return fetch(`${process.env.NEXT_PUBLIC_API}/posts/upload-image`, {
         method: 'POST',
         body: data,
       })

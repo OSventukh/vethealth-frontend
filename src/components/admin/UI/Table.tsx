@@ -1,4 +1,3 @@
-import { api } from '@/hooks/data-hook';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -252,7 +251,7 @@ export function TableRowTree({
                 <TableCell key={i} align="left" sx={{ position: 'relative' }}>
                   {value && (
                     <Image
-                      src={`${api}/${value}#${new Date().getTime()}`}
+                      src={`${process.env.NEXT_PUBLIC_API}/${value}#${new Date().getTime()}`}
                       alt={value.toString()}
                       unoptimized
                       height={40}

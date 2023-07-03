@@ -3,9 +3,6 @@ import useSWRMutation from 'swr/mutation';
 import { getSession } from 'next-auth/react';
 import type { ArgData } from '@/types/fetch-types';
 
-export const api = 'http://localhost:5000';
-
-
 async function getFetch<T>(url: string): Promise<T> {
   const session = await getSession();
   const response = await fetch(url, {
@@ -52,11 +49,11 @@ async function postFetch(url: string, { arg }: { arg?: ArgData } = {}) {
 }
 
 export function usePostData(url: string) {
-  return useSWRMutation(`${api}/${url}`, postFetch);
+  return useSWRMutation(`${process.env.NEXT_PUBLIC_API}/${url}`, postFetch);
 }
 
 export function useGetData<T>(
-  url: string | object | undefined,
+  url: string | object | undefined | null,
   {
     revalidation = false,
     shouldRetryOnError = false,
@@ -66,8 +63,9 @@ export function useGetData<T>(
 ) {
 
   return useSWR(
-    typeof url === 'string' ? `${api}/${url}` : url,
-    typeof url === 'string' ? () => getFetch<T>(`${api}/${url}`) : ({ path }: { path: string}) => getFetch<T>(`${api}/${path}`),
+    typeof url === 'string' ? `${process.env.NEXT_PUBLIC_API}/${url}` : url,
+    typeof url === 'string' ? () => getFetch<T>(`${process.env.NEXT_PUBLIC_API}/${url}`) : ({ path }: { path: string}) => getFetch<T>(`${process.env.NEXT_PUBLIC_API}/${path}`),
+    
     {
       revalidateIfStale: revalidation,
       revalidateOnFocus: revalidation,

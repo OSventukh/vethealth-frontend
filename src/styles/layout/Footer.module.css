@@ -1,10 +1,15 @@
 .footer {
+  margin-top: auto;
+
+}
+
+.footer__wrapper {
   border-top: 0.2rem solid var(--main-theme-color);
   margin-top: 4rem;
   padding-top: 2rem;
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: 2rem 2rem;
+  grid-template-rows: 5rem 2rem;
 }
 
 .footer__copyright {
@@ -22,10 +27,12 @@
 }
 
 @media only screen and (max-width: 678px) {
-  .footer {
-    grid-template-columns: 1fr;
+
+  .footer__wrapper {
     align-items: center;
     justify-items: center;
+    grid-template-columns: 1fr;
+
   }
 
   .footer__copyright {
@@ -38,6 +45,7 @@
   }
 
   .footer__search {
+    width: 100%;
     grid-column: 1 / -1;
     grid-row: 1 / 1;
   }

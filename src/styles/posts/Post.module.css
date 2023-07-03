@@ -1,5 +1,5 @@
 .preview-post {
-  margin: 2rem 0;
+  margin: calc(0.5rem + 3vw) 0;
 }
 
 .post__title {
@@ -14,12 +14,14 @@
 }
 
 .post__read-more {
-  margin-top: 2rem;
+  margin-top: calc(0.2rem + 1vw);
 }
 
 .button {
   border: 2px solid var(--main-theme-color);
   padding: 0.5rem 2rem;
+  font-weight: bold;
+  font-size: 0.8rem;
   text-transform: uppercase;
 }
 
@@ -29,4 +31,14 @@
   background-color: var(--main-theme-color);
   transition: all 0.2s ease;
 
+}
+
+@media screen and (max-width: 600px) {
+  .button {
+    border: 2px solid var(--main-theme-color);
+    padding: 0.3rem 1.5rem;
+    font-weight: bold;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+  }
 }

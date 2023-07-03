@@ -20,16 +20,18 @@ export default function App({
   );
 
   const isAuthPage = useMemo(
-    () => router.pathname.startsWith('/auth') || router.pathname.startsWith('/confirm') ,
+    () =>
+      router.pathname.startsWith('/auth') ||
+      router.pathname.startsWith('/confirm'),
     [router.pathname]
   );
 
   return (
     <SessionProvider session={session}>
+      <CssBaseline />
       <Theme>
         {isAdminPanel ? (
           <>
-            <CssBaseline />
             <AdminPanelLayout>
               <Component {...pageProps} />
             </AdminPanelLayout>
@@ -37,7 +39,10 @@ export default function App({
         ) : isAuthPage ? (
           <Component {...pageProps} />
         ) : (
-          <Layout general={pageProps.general} navigationMenu={pageProps.navigationMenu}>
+          <Layout
+            general={pageProps.general}
+            navigationMenu={pageProps.navigationMenu}
+          >
             <Component {...pageProps} />
           </Layout>
         )}

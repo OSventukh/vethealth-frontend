@@ -1,6 +1,5 @@
-import React from 'react'
-import Auth from '@/components/admin/Auth'
-
+import dynamic from 'next/dynamic'
+const Auth = dynamic(() => import('@/components/admin/Auth'))
 
 export default function SignInPage() {
   return (

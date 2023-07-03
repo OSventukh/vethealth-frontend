@@ -127,7 +127,7 @@ export interface EditUser {
 }
 
 export interface Header {
-  general: { siteName: string };
+  general: { siteName: string, siteDescription: string };
   navigationMenu: Category[] | null;
 }
 

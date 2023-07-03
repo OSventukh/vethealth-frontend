@@ -66,7 +66,7 @@ export default function NewPagePage() {
   return (
     <>
       <Head>
-        <title>Create Post</title>
+        <title>Create Page</title>
       </Head>
       <>
         <Editor
