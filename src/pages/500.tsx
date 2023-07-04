@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import type { InferGetStaticPropsType } from 'next';
-
+import { General } from '@/utils/constants/general.enum';
 export default function Page500({
   general,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -13,7 +13,7 @@ export default function Page500({
           content={
             general.siteDescription
               ? general.siteDescription
-              : 'Лікуванн та догляд за тваринами'
+              : General.SiteDescription
           }
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,19 +29,17 @@ export async function getStaticProps() {
     return {
       props: {
         general: {
-          siteName: 'VetHealth',
-          siteDescription: 'Лікувавння та догляд за тваринами',
+          siteName: General.SiteName,
+          siteDescription: General.SiteDescription,
         },
       },
-      revalidate: 1000,
     };
   } catch (error) {
     return {
       props: {
         general: {
-          siteName: null,
-          siteDescription: null,
-          siteUrl: null,
+          siteName: General.SiteName,
+          siteDescription: General.SiteDescription,
         },
         navigationMenu: null,
       },

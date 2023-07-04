@@ -2,7 +2,7 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import Loading from '@/components/UI/Loading';
-
+import { General } from '@/utils/constants/general.enum';
 import getData from '@/utils/getData';
 import type { Params } from '@/types/params-types';
 import type {
@@ -38,7 +38,7 @@ export default function TopicPage({
     <>
       <Head>
         <title>{`${page ? page.title : topic} | ${general.siteName} - ${general.siteDescription}`}</title>
-        <meta name="description" content={general.siteDescription ? general.siteDescription : 'Лікуванн та догляд за тваринами'} />
+        <meta name="description" content={general.siteDescription ? general.siteDescription : General.SiteDescription} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -62,32 +62,47 @@ export default function TopicPage({
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { topic } = context.params as Params;
   const { category, page } = context.query;
-
-  const topicData = await getData<{ topic: Topic }>(
-    `/topics?slug=${topic}&parentId=null&include=categories,children,page&status=active`
-  );
-
-  let url = `/posts/?topic=${topic}&include=topics,categories&status=published&order=createdAt:desc&size=10&page=${page}`;
-
-  if (category) {
-    url += `&category=${category}`;
-  }
-
-  const postData = await getData<PaginateData & { posts: Post[] }>(url);
-
-  return {
-    props: {
-      postsData: postData?.posts && postData.posts.length > 0 ? postData : null,
-      page: topicData?.topic?.content === 'page' ? topicData.topic.page : null,
-      subtopics:
-        topicData?.topic?.children && topicData.topic.children.length > 0
-          ? topicData.topic.children
-          : null,
-      general: {
-        siteName: 'VetHealth',
-        siteDescription: topicData?.topic?.description || null,
+  try {
+    const topicData = await getData<{ topic: Topic }>(
+      `/topics?slug=${topic}&parentId=null&include=categories,children,page&status=active`
+    );
+  
+    let url = `/posts/?topic=${topic}&include=topics,categories&status=published&order=createdAt:desc&size=10&page=${page}`;
+  
+    if (category) {
+      url += `&category=${category}`;
+    }
+  
+    const postData = await getData<PaginateData & { posts: Post[] }>(url);
+  
+    return {
+      props: {
+        postsData: postData?.posts && postData.posts.length > 0 ? postData : null,
+        page: topicData?.topic?.content === 'page' ? topicData.topic.page : null,
+        subtopics:
+          topicData?.topic?.children && topicData.topic.children.length > 0
+            ? topicData.topic.children
+            : null,
+        general: {
+          siteName: General.SiteName,
+          siteDescription: topicData?.topic?.description || null,
+        },
+        navigationMenu: topicData?.topic?.categories || null,
       },
-      navigationMenu: topicData?.topic?.categories || null,
-    },
-  };
+    };
+  } catch (error) {
+    return {
+      props: {
+        postsData: null,
+        page: null,
+        subtopics: null,
+        general: {
+          siteName: General.SiteName,
+          siteDescription: General.SiteDescription,
+        },
+        navigationMenu: null,
+      },
+    }
+  }
+  
 }

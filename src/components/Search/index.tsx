@@ -54,10 +54,11 @@ export default function Search() {
             border: '2px solid var(--main-theme-color)',
             borderRadius: 0,
           },
-          '& .MuiOutlinedInput-inputFocused': {
+          '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
             border: '2px solid var(--main-theme-color)',
+            borderRadius: 0,
           },
-          '& .MuiInputLabel-shrink': {
+          '& .MuiInputLabel-root.Mui-focused': {
             color: 'var(--main-color-theme)',
           },
         }}
@@ -77,7 +78,7 @@ export default function Search() {
                 width: '100%',
                 textDecoration: 'none',
               }}
-              href={`${option?.topics && option.topics[0].slug}/post/${
+              href={`${option?.topics && option.topics[0].slug}/${
                 option.slug
               }`}
             >

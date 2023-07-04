@@ -15,7 +15,7 @@ export default function PostItem({ post }: { post: Post }) {
     <article className={classes['preview-post']}>
       <header className={classes['post__header']}>
         <h2 className={`${classes['post__title']} ${releway.className}`}>
-          <Link href={`/${post?.topics ? post.topics[0]!.slug : topic}/post/${post.slug}`}>{post.title}</Link>
+          <Link href={`/${post?.topics ? post.topics[0]!.slug : topic}/${post.slug}`}>{post.title}</Link>
         </h2>
       </header>
       <div
@@ -25,7 +25,7 @@ export default function PostItem({ post }: { post: Post }) {
       <div className={classes['post__read-more']}>
         <Link
           className={`${classes.button} ${releway.className}`}
-          href={`/${post?.topics ? post.topics[0]!.slug : topic}/post/${post.slug}`}
+          href={`/${post?.topics ? post.topics[0]!.slug : topic}/${post.slug}`}
         >
           Читати далі
         </Link>

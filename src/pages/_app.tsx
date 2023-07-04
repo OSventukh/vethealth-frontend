@@ -29,24 +29,24 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <CssBaseline />
-      <Theme>
-        {isAdminPanel ? (
-          <>
-            <AdminPanelLayout>
-              <Component {...pageProps} />
-            </AdminPanelLayout>
-          </>
-        ) : isAuthPage ? (
-          <Component {...pageProps} />
-        ) : (
-          <Layout
-            general={pageProps.general}
-            navigationMenu={pageProps.navigationMenu}
-          >
+      {isAdminPanel ? (
+        <Theme>
+          <AdminPanelLayout>
             <Component {...pageProps} />
-          </Layout>
-        )}
-      </Theme>
+          </AdminPanelLayout>
+        </Theme>
+      ) : isAuthPage ? (
+        <Theme>
+          <Component {...pageProps} />
+        </Theme>
+      ) : (
+        <Layout
+          general={pageProps.general}
+          navigationMenu={pageProps.navigationMenu}
+        >
+          <Component {...pageProps} />
+        </Layout>
+      )}
     </SessionProvider>
   );
 }

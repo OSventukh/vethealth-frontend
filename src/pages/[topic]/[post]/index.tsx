@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 
 import Loading from '@/components/UI/Loading';
-
+import { General } from '@/utils/constants/general.enum';
 import getData from '@/utils/getData';
 const Post = dynamic(() => import('@/components/Posts/Post'), {
   loading: () => <Loading />,
@@ -15,20 +15,20 @@ export default function PostPage(
   { post, general }: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   if (!post) {
-    return <div>Loading</div>;
+    return <div>Стаття не знайдена</div>;
   }
   return (
     <>
       <Head>
         <title>
-        {`${post.title} | ${general.siteName} - ${general?.siteDescription || 'Лікування та догляд за тваринами'}`}
+        {`${post?.title} | ${general?.siteName} - ${general?.siteDescription}`}
         </title>
         <meta
           name="description"
           content={
-            general.siteDescription
+            general?.siteDescription
               ? general.siteDescription
-              : 'Лікуванн та догляд за тваринами'
+              : General.SiteDescription
           }
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,24 +42,38 @@ export default function PostPage(
 }
 
 export async function getStaticProps(context: GetStaticPropsContext) {
-  const { topic, post } = context.params as Params;
-
-  const [postData, topicData] = await Promise.all([
-    getData<{ post: PostType }>(`/posts?slug=${post}`),
-    getData<{ topic: Topic }>(`/topics/?slug=${topic}&include=categories`),
-  ]);
-
-  return {
-    props: {
-      post: postData.post || null,
-      general: {
-        siteName: 'VetHealth',
-        siteDescription: null,
+  
+  try {
+    const { topic, post } = context.params as Params;
+    const [postData, topicData] = await Promise.all([
+      getData<{ post: PostType }>(`/posts?slug=${post}`),
+      getData<{ topic: Topic }>(`/topics/?slug=${topic}&include=categories`),
+    ]);
+  
+    return {
+      props: {
+        post: postData?.post || null,
+        general: {
+          siteName: General.SiteName,
+          siteDescription: null,
+        },
+        navigationMenu: topicData?.topic?.categories || null,
       },
-      navigationMenu: topicData?.topic?.categories || null,
-    },
-    revalidate: 1000,
-  };
+      revalidate: 1000,
+    };
+  } catch (error) {
+    return {
+      props: {
+        post: null,
+        general: {
+          siteName: General.SiteName,
+          siteDescription: null,
+        },
+        navigationMenu: null,
+      }
+    }
+  }
+
 }
 
 export async function getStaticPaths() {

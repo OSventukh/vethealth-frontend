@@ -1,9 +1,9 @@
-import { TopicContent } from "@/utils/constants/content.enum";
-import type { HeadCell } from "./ui-types";
-import type { Category, Topic } from "./content-types";
+import { TopicContent } from '@/utils/constants/content.enum';
+import type { HeadCell } from './ui-types';
+import type { Category, Topic } from './content-types';
 
 export interface ChildrenProps {
-  children: ReactElement,
+  children: ReactElement;
 }
 
 export interface NavigationProps {
@@ -19,14 +19,14 @@ export interface NavIconProps {
   children: string;
   expandIcon?: ReactElement;
   selected?: boolean;
-  nested?: boolean
+  nested?: boolean;
 }
 
 export interface ItemsTableProps {
   url: string;
   query?: string;
   title: string;
-  header: HeadCell[]
+  header: HeadCell[];
 }
 
 export interface UseTopic {
@@ -73,10 +73,19 @@ export interface EditTopic {
   setImage: Dispatch<SetStateAction<string | File | null>>;
   setActiveStatus: Dispatch<SetStateAction<boolean>>;
   topicSubmitHandler: (event: React.SyntheticEvent) => void;
-  categoryChangeHandler: (event: React.SyntheticEvent, value: Category[]) => void;
-  parentTopicChangeHandler: (event: React.SyntheticEvent, value: Topic | null) => void;
+  categoryChangeHandler: (
+    event: React.SyntheticEvent,
+    value: Category[]
+  ) => void;
+  parentTopicChangeHandler: (
+    event: React.SyntheticEvent,
+    value: Topic | null
+  ) => void;
   pageChangeHandler: (event: React.SyntheticEvent, value: Page) => void;
-  contentChangeHandler: (event: ChangeEvent<HTMLInputElement>, value: string) => void;
+  contentChangeHandler: (
+    event: ChangeEvent<HTMLInputElement>,
+    value: string
+  ) => void;
   successMessage?: string | null;
   errorMessage?: string | null;
   buttonText?: string;
@@ -126,8 +135,13 @@ export interface EditUser {
   edit?: boolean;
 }
 
+export type General = {
+  siteName: string;
+  siteDescription: string;
+};
+
 export interface Header {
-  general: { siteName: string, siteDescription: string };
+  general: General;
   navigationMenu: Category[] | null;
 }
 
@@ -135,11 +149,11 @@ export type NavItemWithNested = {
   text: string;
   nested: Category[];
   anchor?: string;
-}
+};
 
 export type NavItem = {
   text: string;
   link: string;
-  nested?: boolean
+  nested?: boolean;
   anchor?: string;
 };

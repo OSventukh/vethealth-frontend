@@ -8,6 +8,7 @@ import type {
   InferGetServerSidePropsType,
 } from 'next';
 import type { Post, PaginateData } from '@/types/content-types';
+import { General } from '@/utils/constants/general.enum';
 
 export default function SearchPage({
   postsData,
@@ -24,7 +25,7 @@ export default function SearchPage({
           content={
             general.siteDescription
               ? general.siteDescription
-              : 'Лікуванн та догляд за тваринами'
+              : General.SiteDescription
           }
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -56,8 +57,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       postsData: postData?.posts && postData.posts.length > 0 ? postData : null,
 
       general: {
-        siteName: 'VetHealth',
-        siteDescription: 'Результати пошуку',
+        siteName: General.SiteName,
+        siteDescription: General.SiteDescription,
       },
       navigationMenu: null,
     },

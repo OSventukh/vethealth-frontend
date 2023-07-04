@@ -1,19 +1,19 @@
 import Head from 'next/head';
 import type { InferGetStaticPropsType } from 'next';
-
+import { General } from '@/utils/constants/general.enum';
 export default function Page404({
   general,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <>
       <Head>
-        <title>{`Cторінка не існує | ${general.siteName} - ${general.siteDescription}`}</title>
+        <title>{`Cторінка не існує | ${general?.siteName} - ${general?.siteDescription}`}</title>
         <meta
           name="description"
           content={
             general.siteDescription
               ? general.siteDescription
-              : 'Лікуванн та догляд за тваринами'
+              : General.SiteDescription
           }
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,19 +29,17 @@ export async function getStaticProps() {
     return {
       props: {
         general: {
-          siteName: 'VetHealth',
-          siteDescription: 'Лікувавння та догляд за тваринами',
+          siteName: General.SiteName,
+          siteDescription: General.SiteDescription,
         },
       },
-      revalidate: 1000,
     };
   } catch (error) {
     return {
       props: {
         general: {
-          siteName: null,
-          siteDescription: null,
-          siteUrl: null,
+          siteName: General.SiteName,
+          siteDescription: General.SiteDescription,
         },
         navigationMenu: null,
       },

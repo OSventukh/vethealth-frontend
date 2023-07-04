@@ -4,7 +4,7 @@ const TopicList = dynamic(() => import('../components/Topics/TopicList'))
 import getData from '@/utils/getData';
 import type { Topic } from '@/types/content-types';
 import type { InferGetStaticPropsType } from 'next';
-
+import { General } from '@/utils/constants/general.enum';
 export default function Home(
   { general, topics }: InferGetStaticPropsType<typeof getStaticProps>
 ) {
@@ -12,7 +12,7 @@ export default function Home(
     <>
       <Head>
         <title>{`${general.siteName} – ${general.siteDescription}`}</title>
-        <meta name="description" content="Лікування та догляд за тваринами" />
+        <meta name="description" content={General.SiteDescription} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -29,8 +29,8 @@ export async function getStaticProps() {
     props: {
       topics: data.topics || null,
       general: {
-        siteName: 'VetHealth',
-        siteDescription: 'Лікування та догляд за тваринами',
+        siteName: General.SiteName,
+        siteDescription: General.SiteDescription,
       },
     },
     revalidate: 1000,
