@@ -53,7 +53,7 @@ export default function EditUser({
     data: topicsData,
     isLoading: isTopicsLoading,
     mutate: topicMutate,
-  } = useGetData<{ topics: Topic[]}>('topics', { revalidateOnMount: false });
+  } = useGetData<{ topics: Topic[]}>('topics?include=children', { revalidateOnMount: false });
 
   const {
     data: rolesData,
@@ -193,7 +193,7 @@ export default function EditUser({
                     setOpenTopics(false);
                   }}
                   id="user-topics"
-                  options={topicsData?.topics ?? []}
+                  options={topicsData?.topics ? topicsData?.topics.filter((topic) =>  topic?.children && topic.children.length === 0): []}
                   getOptionLabel={(option: { title: string; id: number }) =>
                     option.title
                   }

@@ -7,11 +7,11 @@ export default function Page404({
   return (
     <>
       <Head>
-        <title>{`Cторінка не існує | ${general?.siteName} - ${general?.siteDescription}`}</title>
+        <title>{`Cторінка не існує | ${General.SiteTitle}`}</title>
         <meta
           name="description"
           content={
-            general.siteDescription
+            general?.siteDescription
               ? general.siteDescription
               : General.SiteDescription
           }

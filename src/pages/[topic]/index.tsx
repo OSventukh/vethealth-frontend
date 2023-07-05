@@ -2,6 +2,7 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import Loading from '@/components/UI/Loading';
+import type { General as GeneralType } from '@/utils/constants/general.enum';
 import { General } from '@/utils/constants/general.enum';
 import getData from '@/utils/getData';
 import type { Params } from '@/types/params-types';
@@ -25,20 +26,29 @@ const PostComponent = dynamic(() => import('@/components/Posts/Post'), {
 });
 
 export default function TopicPage({
+  topic,
   subtopics,
   postsData,
   page,
-  general
+  general,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const category = router.query?.category;
-  const topic = router.query?.topic;
 
   return (
     <>
       <Head>
-        <title>{`${page ? page.title : topic} | ${general.siteName} - ${general.siteDescription}`}</title>
-        <meta name="description" content={general.siteDescription ? general.siteDescription : General.SiteDescription} />
+        <title>{`${page ? page.title : topic?.title} | ${
+          General.SiteTitle
+        }`}</title>
+        <meta
+          name="description"
+          content={
+            general?.siteDescription
+              ? general.siteDescription
+              : General.SiteDescription
+          }
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -64,28 +74,42 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { category, page } = context.query;
   try {
     const topicData = await getData<{ topic: Topic }>(
-      `/topics?slug=${topic}&parentId=null&include=categories,children,page&status=active`
+      `/topics?slug=${topic}&include=categories,children,page&status=active`
     );
-  
+    
+    if (!topicData.topic) {
+      return {
+        notFound: true,
+      };
+    }
+
     let url = `/posts/?topic=${topic}&include=topics,categories&status=published&order=createdAt:desc&size=10&page=${page}`;
-  
+
     if (category) {
       url += `&category=${category}`;
     }
-  
+
     const postData = await getData<PaginateData & { posts: Post[] }>(url);
-  
+
     return {
       props: {
-        postsData: postData?.posts && postData.posts.length > 0 ? postData : null,
-        page: topicData?.topic?.content === 'page' ? topicData.topic.page : null,
+        topic: topicData?.topic || null,
+        postsData:
+          postData?.posts && postData.posts.length > 0 ? postData : null,
+        page:
+          topicData?.topic?.content === 'page' ? topicData.topic.page : null,
         subtopics:
-          topicData?.topic?.children && topicData.topic.children.length > 0
-            ? topicData.topic.children
+          topicData?.topic?.children && topicData.topic.children.filter((child) => child.status === 'active').length > 0
+            ? topicData.topic.children.filter((child) => child.status === 'active')
             : null,
         general: {
           siteName: General.SiteName,
-          siteDescription: topicData?.topic?.description || null,
+          siteDescription:
+            topicData?.topic?.description ||
+            (topicData?.topic?.children && topicData?.topic?.children.length > 0
+              ? topicData?.topic?.title
+              : null) ||
+            null,
         },
         navigationMenu: topicData?.topic?.categories || null,
       },
@@ -102,7 +126,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         },
         navigationMenu: null,
       },
-    }
+    };
   }
-  
 }

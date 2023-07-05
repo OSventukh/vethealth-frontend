@@ -12,7 +12,7 @@ import type { NavItem, NavItemWithNested } from '@/types/props-types';
 export function MobileNavItem({ text, link, nested, anchor }: NavItem) {
   return (
     <>
-      <ListItem sx={{ p: 0 }}>
+      <ListItem sx={{ p: 0, '& .MuiCollapse-root': { width: '100%'} }}>
         <ListItemButton sx={{ pl: nested ? 4 : 2 }} LinkComponent={Link} href={anchor ? anchor + link: link }>
           <ListItemText primary={text} />
         </ListItemButton>
@@ -34,7 +34,7 @@ export function MobileNavItemWithNested({
   };
 
   return (
-    <ListItem sx={{ display: 'flex', flexDirection: 'column', p: 0}}>
+    <ListItem sx={{ display: 'flex', flexDirection: 'column', p: 0, '& .MuiCollapse-root': { width: '100%'}}}>
       <ListItemButton sx={{ width: '100%', pl: 2}} onClick={handleClick}>
         <ListItemText primary={text} />
         {open ? <ExpandLess /> : <ExpandMore />}

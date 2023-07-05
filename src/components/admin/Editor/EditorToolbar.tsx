@@ -53,7 +53,6 @@ export default function EditorToolbar({
       revalidateOnMount: false,
     }
   );
-
   useEffect(() => {
     openTopic && mutateTopic();
     openCategory && mutateCategory();
@@ -154,7 +153,7 @@ export default function EditorToolbar({
               onChange={changeCategoriesHandler}
               options={
                 categoryData?.categories.filter(
-                  (category: Category) => category?.children?.length === 0
+                  (category: Category) => category?.parentId!==null
                 ) ?? []
               }
               getOptionLabel={(option: Category) => option.name}

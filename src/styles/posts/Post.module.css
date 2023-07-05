@@ -7,6 +7,11 @@
   text-transform: uppercase;
 }
 
+.post__content {
+  font-size: 1.1rem;
+  line-height: 2rem;
+}
+
 .post__content::after {
   content: "";
   clear: both;

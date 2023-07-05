@@ -7,12 +7,12 @@ import getData from '@/utils/getData';
 const Post = dynamic(() => import('@/components/Posts/Post'), {
   loading: () => <Loading />,
 });
-import type { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
+import type { GetServerSidePropsContext, InferGetStaticPropsType } from 'next';
 import type { Params } from '@/types/params-types';
 import type { Post as PostType, Topic } from '@/types/content-types';
 
 export default function PostPage(
-  { post, general }: InferGetStaticPropsType<typeof getStaticProps>
+  { post, general }: InferGetStaticPropsType<typeof getServerSideProps>
 ) {
   if (!post) {
     return <div>Стаття не знайдена</div>;
@@ -21,7 +21,7 @@ export default function PostPage(
     <>
       <Head>
         <title>
-        {`${post?.title} | ${general?.siteName} - ${general?.siteDescription}`}
+        {`${post?.title} | ${General.SiteTitle}`}
         </title>
         <meta
           name="description"
@@ -41,8 +41,8 @@ export default function PostPage(
   );
 }
 
-export async function getStaticProps(context: GetStaticPropsContext) {
-  
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+
   try {
     const { topic, post } = context.params as Params;
     const [postData, topicData] = await Promise.all([
@@ -59,7 +59,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
         },
         navigationMenu: topicData?.topic?.categories || null,
       },
-      revalidate: 1000,
     };
   } catch (error) {
     return {
@@ -73,22 +72,4 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       }
     }
   }
-
-}
-
-export async function getStaticPaths() {
-  const topicData = await getData<{ topics: Topic[] }>('/topics?include=posts');
-
-  const paths = topicData.topics.flatMap((item: Topic) => {
-    const postSlugs = item.posts?.map((post) => post.slug).filter(Boolean);
-
-    return postSlugs?.map((postSlug) => ({
-      params: { topic: item.slug, post: postSlug },
-    }));
-  });
-
-  return {
-    paths,
-    fallback: false,
-  };
 }

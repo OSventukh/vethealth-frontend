@@ -1,9 +1,9 @@
 :root {
   --main-theme-color: #002221;
   --font-color: #002221;
+  --background-color: #fff;
 }
-
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
 }
 
 @media (prefers-color-scheme: dark) {
@@ -12,9 +12,10 @@
   }
   :root {
     --main-theme-color: #267676;
-    --font-color: #dce3e3;
+    --font-color: #b8b8b8;
+    --background-color: #292929;
   }
-}
+} */
 
 @media only screen and (max-width: 678px) {
   :root {
@@ -37,6 +38,7 @@ body {
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: var(--font-color);
+  background-color: var(--background-color) !important;
   line-height: 1.5rem;
 }
 
@@ -44,7 +46,6 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
 }
 input[type='password']::-ms-reveal {
   display: none;
@@ -163,7 +164,6 @@ figure.align-center {
 figcaption {
   text-align: center;
 }
-
 
 .topics {
   display: grid;

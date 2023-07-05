@@ -7,11 +7,11 @@ export default function Page500({
   return (
     <>
       <Head>
-        <title>{`Помилка | ${general.siteName} - ${general.siteDescription}`}</title>
+        <title>{`Помилка | ${General.SiteTitle}`}</title>
         <meta
           name="description"
           content={
-            general.siteDescription
+            general?.siteDescription
               ? general.siteDescription
               : General.SiteDescription
           }

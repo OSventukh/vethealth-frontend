@@ -33,7 +33,7 @@ export default function EditCategory({
     data: categoryData,
     isLoading: isParentCategoryLoading,
     mutate,
-  } = useGetData<{ categories: Category[] }>('categories', {
+  } = useGetData<{ categories: Category[] }>('categories?parentId=null', {
     revalidateOnMount: false,
   });
 

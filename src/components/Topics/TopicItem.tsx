@@ -6,9 +6,9 @@ import { Topic } from '@/types/content-types';
 
 export default function TopicItem({ topic }: { topic: Topic }) {
   return (
-    <Link href={topic.slug}>
-      <div className={classes.topic__item}>
-        {topic?.image && (
+    <Link className={classes.topic__item} href={topic.slug}>
+      {topic?.image && (
+        <div className={classes.topic__image}>
           <Image
             src={process.env.NEXT_PUBLIC_API + '/' + topic.image}
             alt={topic.title}
@@ -16,8 +16,9 @@ export default function TopicItem({ topic }: { topic: Topic }) {
             style={{ objectFit: 'cover' }}
             priority
           />
-        )}
-      </div>
+        </div>
+      )}
+      <div className={classes.topic__title}>{topic.title}</div>
     </Link>
   );
 }
