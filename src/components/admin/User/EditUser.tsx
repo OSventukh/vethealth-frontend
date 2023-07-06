@@ -153,7 +153,7 @@ export default function EditUser({
                 }}
                 id="user-role"
                 options={rolesData?.roles ?? []}
-                getOptionLabel={(option: { name: string; id: number }) =>
+                getOptionLabel={(option: Role) =>
                   option.name
                 }
                 value={role}
@@ -194,7 +194,7 @@ export default function EditUser({
                   }}
                   id="user-topics"
                   options={topicsData?.topics ? topicsData?.topics.filter((topic) =>  topic?.children && topic.children.length === 0): []}
-                  getOptionLabel={(option: { title: string; id: number }) =>
+                  getOptionLabel={(option: Topic) =>
                     option.title
                   }
                   noOptionsText={

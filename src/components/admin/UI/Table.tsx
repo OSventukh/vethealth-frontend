@@ -185,7 +185,7 @@ export function TableRowTree({
 }: TableRowTreeProps) {
   const [open, setOpen] = useState(false);
 
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   const isItemSelected = isSelected(row.id);
   const labelId = `enhanced-table-checkbox-${index}`;
@@ -310,7 +310,7 @@ export default function EnhancedTable({
   count,
   onItemsDelete,
 }: EnhancedTableProps) {
-  const [selected, setSelected] = useState<readonly number[]>([]);
+  const [selected, setSelected] = useState<readonly string[]>([]);
 
   const handleRequestSort = useCallback(
     (event: React.MouseEvent<unknown>, newOrderBy: keyof HeadCell) => {
@@ -348,9 +348,9 @@ export default function EnhancedTable({
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
+    let newSelected: readonly string[] = [];
 
     if (selectedIndex === -1) {
       newSelected = [...selected, id];

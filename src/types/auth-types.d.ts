@@ -1,7 +1,7 @@
 import { UserStatus, UserRole } from "@/utils/constants/users.enum";
 
 export type Role = {
-  id: number;
+  id: string;
   name: UserRole
 }
 

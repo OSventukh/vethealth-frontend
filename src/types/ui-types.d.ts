@@ -1,5 +1,5 @@
 export interface Data {
-  id: number;
+  id: string;
   title?: string;
   name?: string;
   description?: string;
@@ -31,7 +31,7 @@ export interface EnhancedTableHeadProps {
 }
 
 export interface EnhancedTableToolbarProps {
-  selected: readonly number[];
+  selected: readonly string[];
   title: string;
   onDelete: () => void;
 }
@@ -48,16 +48,16 @@ export interface EnhancedTableProps {
   onSort: (newOrderBy: string) => void;
   onSize: (size: number) => void;
   onPage: (page: number) => void;
-  onItemsDelete: (selected: readonly number[]) => void;
+  onItemsDelete: (selected: readonly string[]) => void;
 }
 
 export interface TableRowTreeProps {
   handleClick: (
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    rowId: number
+    rowId: string
   ) => void;
   row: Data;
-  selected: readonly number[];
+  selected: readonly string[];
   index: number;
   children?: boolean;
 }

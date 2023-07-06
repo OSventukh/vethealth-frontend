@@ -102,7 +102,7 @@ export default function EditCategory({
                 options={
                   id
                     ? categoryData?.categories.filter(
-                        (category) => category.id !== +id
+                        (category) => category.id !== id
                       ) || []
                     : categoryData?.categories || []
                 }

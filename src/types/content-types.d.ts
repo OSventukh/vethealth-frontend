@@ -8,16 +8,16 @@ export type PaginateData = {
 };
 
 export type Category = {
-  id: number;
+  id: string;
   name: string;
   slug: string;
-  parentId: number;
+  parentId: string;
   parent?: Category;
   children?: Category[];
 };
 
 export type Topic = {
-  id: number;
+  id: string;
   title: string;
   slug: string;
   image: string;
@@ -25,7 +25,7 @@ export type Topic = {
   description: string;
   posts?: Post[];
   categories?: Category[];
-  parentId: number;
+  parentId: string;
   parent?: Topic;
   children?: Topic[];
   page?: Page;
@@ -33,7 +33,7 @@ export type Topic = {
 };
 
 export type Page = {
-  id: number;
+  id: string;
   title: string;
   content: string;
   slug: string;
@@ -41,7 +41,7 @@ export type Page = {
 };
 
 export type Post = {
-  id: number;
+  id: string;
   content: string;
   title: string;
   excerpt: string;

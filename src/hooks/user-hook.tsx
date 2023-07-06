@@ -8,6 +8,8 @@ import {
 } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import type { UseUser } from '@/types/props-types';
+import { Topic } from '@/types/content-types';
+import { Role } from '@/types/auth-types';
 
 
 export default function useUser({
@@ -24,10 +26,10 @@ export default function useUser({
   const [lastname, setLastname] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [status, setStatus] = useState<string>('');
-  const [topics, setTopics] = useState<{ title: string; id: number }[] | null>(
+  const [topics, setTopics] = useState<Topic[] | null>(
     null
   );
-  const [role, setRole] = useState<{ name: string; id: number } | null>(null);
+  const [role, setRole] = useState<Role | null>(null);
 
   useEffect(() => {
     initFirstname && setFirstname(initFirstname);
@@ -88,14 +90,14 @@ export default function useUser({
 
   const topicsChangeHandler = useCallback((
     event: SyntheticEvent,
-    value: { title: string; id: number }[] | null
+    value: Topic[] | null
   ) => {
     setTopics(value);
   }, []);
 
   const roleChangeHandler = useCallback((
     event: SyntheticEvent,
-    value: { name: string; id: number } | null
+    value: Role | null
   ) => {
     setRole(value);
   }, []);

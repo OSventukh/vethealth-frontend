@@ -10,7 +10,7 @@ const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 export default function PostItem({ post }: { post: Post }) {
   const router = useRouter();
   const topic = router.query.topic;
-
+  console.log(post.excerpt)
   return (
     <article className={classes['preview-post']}>
       <header className={classes['post__header']}>

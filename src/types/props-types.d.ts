@@ -1,6 +1,7 @@
 import { TopicContent } from '@/utils/constants/content.enum';
 import type { HeadCell } from './ui-types';
 import type { Category, Topic } from './content-types';
+import { Role } from './auth-types';
 
 export interface ChildrenProps {
   children: ReactElement;
@@ -52,8 +53,8 @@ export interface UseUser {
   initLastname?: string | null;
   initEmail?: string;
   initStatus?: string;
-  initTopics?: { title: string; id: number }[];
-  initRole?: { name: string; id: number };
+  initTopics?: Topic[];
+  initRole?: Role;
 }
 export interface EditTopic {
   id?: string;
@@ -114,8 +115,8 @@ export interface EditUser {
   lastname?: string;
   email: string;
   status: string;
-  topics: { title: string; id: number }[] | null;
-  role: { name: string; id: number } | null;
+  topics: Topic[] | null;
+  role: Role | null;
   firstnameChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
   lastnameChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
   emailChangeHandler: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -123,11 +124,11 @@ export interface EditUser {
   changePasswordHandler?: () => void;
   topicsChangeHandler: (
     event: SyntheticEvent,
-    value: { title: string; id: number }[] | null
+    value: Topic[] | null
   ) => void;
   roleChangeHandler: (
     event: SyntheticEvent,
-    value: { name: string; id: number } | null
+    value: Role | null
   ) => void;
   userSubmit: (event: FormEvent) => void;
   successMessage: string | null;

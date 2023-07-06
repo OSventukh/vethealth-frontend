@@ -1,11 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Grid } from '@mui/material';
 import parse, {
   HTMLReactParserOptions,
   Element,
   Text,
   domToReact,
+  DOMNode,
 } from 'html-react-parser';
 
 const transformStyle = (styleStr: string) => {
@@ -24,63 +26,75 @@ const transformStyle = (styleStr: string) => {
   return obj;
 };
 
-const options: HTMLReactParserOptions = {
-  replace: (domNode) => {
-    const typedDomNode = domNode as Element;
-    if (typedDomNode.attribs && typedDomNode.name === 'a') {
-      const linkText =
-        typedDomNode?.children &&
-        (typedDomNode.children.find((item) => item.type === 'text') as Text);
+const replaceFunction = (domNode: DOMNode) => {
+  const typedNode = domNode as Element;
+  if (typedNode.name === 'div' && typedNode?.attribs?.class === 'grid') {
+    return (
+      <Grid container spacing={10}>{domToReact(typedNode?.children, { replace: replaceFunction})}</Grid>
+    )
+  }
+  if (typedNode.name === 'div' && typedNode?.attribs?.class === 'grid-item') {
+    return (
+      <Grid item>{domToReact(typedNode?.children)}</Grid>
+    )
+  }
+  if (typedNode.attribs && typedNode.name === 'a') {
+    const linkText =
+    typedNode?.children &&
+      (typedNode.children.find((item) => item.type === 'text') as Text);
 
+    return (
+      <Link
+        className={typedNode.attribs.class}
+        title={typedNode.attribs.title}
+        href={typedNode.attribs.href}
+      >
+        {linkText?.data!}
+      </Link>
+    );
+  }
+
+  if (typedNode.name === 'img') {
+    if (!typedNode.attribs?.width) {
       return (
-        <Link
-          className={typedDomNode.attribs.class}
-          title={typedDomNode.attribs.title}
-          href={typedDomNode.attribs.href}
+        <div
+          style={{
+            ...transformStyle(typedNode?.attribs?.style),
+            position: 'relative',
+            width: '100%',
+            aspectRatio: 1,
+          }}
         >
-          {linkText?.data!}
-        </Link>
-      );
-    }
-
-    if (typedDomNode.name === 'img') {
-      if (!typedDomNode.attribs?.width) {
-        return (
-          <div
+          <Image
             style={{
-              ...transformStyle(typedDomNode?.attribs?.style),
-              position: 'relative',
-              width: '100%',
-              aspectRatio: 1,
+              ...transformStyle(typedNode?.attribs?.style),
+              objectFit: 'cover',
             }}
-          >
-            <Image
-              style={{
-                ...transformStyle(typedDomNode?.attribs?.style),
-                objectFit: 'cover',
-              }}
-              src={typedDomNode.attribs.src}
-              priority
-              fill
-              sizes="100%"
-              alt={typedDomNode?.attribs?.alt}
-            />
-          </div>
-        );
-      }
-      return (
-        <Image
-          style={transformStyle(typedDomNode?.attribs?.style)}
-          src={typedDomNode.attribs.src}
-          priority
-          width={+typedDomNode?.attribs?.width}
-          height={+typedDomNode?.attribs?.height}
-          alt={typedDomNode?.attribs?.alt}
-        />
+            src={typedNode.attribs.src}
+            priority
+            fill
+            sizes="100%"
+            alt={typedNode?.attribs?.alt}
+          />
+        </div>
       );
     }
-    return false;
-  },
+    return (
+      <Image
+        style={transformStyle(typedNode?.attribs?.style)}
+        src={typedNode.attribs.src}
+        priority
+        width={+typedNode?.attribs?.width}
+        height={+typedNode?.attribs?.height}
+        alt={typedNode?.attribs?.alt}
+      />
+    );
+  }
+  return false;
+};
+
+const options: HTMLReactParserOptions = {
+  replace: replaceFunction,
 };
 
 export default function ParsedContent({ html }: { html: string }) {

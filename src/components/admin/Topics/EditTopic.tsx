@@ -194,11 +194,11 @@ export default function EditTopic({
                 options={
                   id
                     ? topicData?.topics?.filter(
-                        (topic: Topic) => topic.id !== parseInt(id)
+                        (topic: Topic) => topic.id !== id
                       ) || []
                     : topicData?.topics || []
                 }
-                getOptionLabel={(option: { title: string; id: number }) =>
+                getOptionLabel={(option: Topic) =>
                   option.title
                 }
                 value={parentTopic}
@@ -281,7 +281,7 @@ export default function EditTopic({
                 }}
                 id="topic-page"
                 options={pageData?.pages ?? []}
-                getOptionLabel={(option: { title: string; id: number }) =>
+                getOptionLabel={(option: Page) =>
                   option.title
                 }
                 value={page}

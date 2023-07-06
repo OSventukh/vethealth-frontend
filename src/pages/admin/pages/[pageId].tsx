@@ -51,6 +51,7 @@ export default function EditPagePage() {
         const response = await trigger({
           method: 'PATCH',
           data: {
+            id: pageId,
             title,
             content,
             description: 'test',

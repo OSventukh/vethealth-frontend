@@ -152,6 +152,7 @@ a.disabled {
   color: rgb(106, 105, 105);
 }
 
+
 img {
   max-width: 100%;
   height: auto;
@@ -163,6 +164,8 @@ figure.align-center {
 
 figcaption {
   text-align: center;
+  color: #5d5d5d;
+  font-size: 1rem;
 }
 
 .topics {

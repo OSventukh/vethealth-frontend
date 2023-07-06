@@ -73,7 +73,7 @@ export default function useTable<T>({ url, header, query, transformCallback }: U
   }, [responseError]);
 
   const itemsDeleteHandler = useCallback(
-    async (items: readonly number[]) => {
+    async (items: readonly string[]) => {
       try {
         const response = await trigger({
           data: {

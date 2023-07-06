@@ -34,6 +34,6 @@ export async function getStaticProps() {
         siteDescription: General.SiteDescription,
       },
     },
-    revalidate: 1000,
+    revalidate: 60,
   };
 }

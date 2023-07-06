@@ -57,11 +57,6 @@ export default function EditPostPage() {
         return;
       }
 
-      if (!categories || categories.length === 0) {
-        setErrorMessage('Please select a post category')
-        return;
-      }
-
       try {
         const response = await trigger({
           method: 'PATCH',

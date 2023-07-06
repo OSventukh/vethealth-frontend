@@ -5,7 +5,7 @@ import Loading from '@/components/admin/UI/Loading';
 import { useSWRConfig } from 'swr';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData, useGetData } from '@/hooks/data-hook';
-import type { Topic } from '@/types/content-types';
+import type { Topic, Category } from '@/types/content-types';
 
 const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
   ssr: false,
@@ -15,7 +15,7 @@ const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
 export default function EditTopicPage() {
   const router = useRouter();
   const { topicId } = router.query;
-  const { data, isLoading } = useGetData<{topic: Topic}>(`topics/${topicId}?include=categories,parent,page,children`);
+  const { data } = useGetData<{topic: Topic}>(`topics/${topicId}?include=categories,parent,page,children`);
 
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
@@ -26,7 +26,7 @@ export default function EditTopicPage() {
   const initActiveStatus = data?.topic?.status === 'active';
   const initImage = data?.topic?.image;
   //display only high level category
-  const initCategories = useMemo(() => data && data?.topic?.categories && data.topic.categories.filter((category: {parentId: number | null}) => category.parentId === null), [data]);
+  const initCategories = useMemo(() => data && data?.topic?.categories && data.topic.categories.filter((category: Category) => category.parentId === null), [data]);
   const initParentTopic = data?.topic?.parent;
   const initContent = data?.topic?.content;
   const initPage = data?.topic?.page;
