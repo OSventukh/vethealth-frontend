@@ -1,7 +1,8 @@
 :root {
   --main-theme-color: #002221;
   --font-color: #002221;
-  --background-color: #fff;
+  --background-color: #f8f8f8;
+  --border-color: rgb(235 235 235);
 }
 /* @media (prefers-color-scheme: light) {
 }
@@ -178,6 +179,12 @@ figcaption {
 .topics,
 .content {
   margin-top: calc(0.5rem + 3vw);
+}
+
+.content {
+  background-color: #fff;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
 }
 
 @media only screen and (max-width: 678px) {

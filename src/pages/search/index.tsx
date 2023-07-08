@@ -58,7 +58,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
       general: {
         siteName: General.SiteName,
-        siteDescription: General.SiteDescription,
+        siteDescription: General.SearchResult,
       },
       navigationMenu: null,
     },

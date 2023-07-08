@@ -1,5 +1,11 @@
 .preview-post {
-  margin: calc(0.5rem + 3vw) 0;
+  margin: calc(0.1rem + 1vw) 0;
+  padding: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.preview-post:last-child {
+  border-bottom: none;
 }
 
 .post__title {
@@ -10,6 +16,7 @@
 .post__content {
   font-size: 1.1rem;
   line-height: 2rem;
+  padding: 2rem;
 }
 
 .post__title a, .post__content a {
