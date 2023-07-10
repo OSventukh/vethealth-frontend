@@ -12,9 +12,9 @@ const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default function Header(props: Header) {
   const { siteName } = props.general;
-  const headerClasses = `${releway.className} ${classes.header}`;
+
   return (
-    <header className={headerClasses}>
+    <header className={`${classes.header} ${releway.className}`}>
       <Container>
         <h1 className={classes['site-name']}>
           <Link href="/">{siteName}</Link>

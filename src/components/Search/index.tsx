@@ -78,7 +78,7 @@ export default function Search() {
                 width: '100%',
                 textDecoration: 'none',
               }}
-              href={`${option?.topics && option.topics[0].slug}/${
+              href={`/${option?.topics && option.topics[0].slug}/${
                 option.slug
               }`}
             >

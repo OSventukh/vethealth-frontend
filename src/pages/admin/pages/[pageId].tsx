@@ -60,15 +60,6 @@ export default function EditPagePage() {
           },
         });
         setSuccessMessage(response?.message || 'Post saved successfully');
-        setTimeout(() => {
-          router.push(
-            `/admin/posts/[postId]`,
-            `/admin/posts/${response.post.id}`,
-            {
-              shallow: true,
-            }
-          );
-        }, 2000);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : 'Saving post failed'
