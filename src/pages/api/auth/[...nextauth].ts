@@ -1,6 +1,7 @@
-import NextAuth, { User as NextAuthUser, Account, Session } from 'next-auth';
+import NextAuth, { User as NextAuthUser, Account, Session, NextAuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
+
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
@@ -34,7 +35,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
   }
 }
 
-export default NextAuth({
+export const nextAuthOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signin',
   },
@@ -108,6 +109,7 @@ export default NextAuth({
         }
         session.user = token.user;
         session.accessToken = token.accessToken;
+        session.accessTokenExpires = token.accessTokenExpires;
         if (token.error) {
           session.error = token.error;
         }
@@ -123,4 +125,6 @@ export default NextAuth({
   jwt: {
     maxAge: 1 * 60,
   },
-});
+};
+
+export default NextAuth(nextAuthOptions);

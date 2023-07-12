@@ -9,19 +9,28 @@ import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import usePost from '@/hooks/editor-hook';
 import type { Post } from '@/types/content-types';
 
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { getServerSession } from 'next-auth';
+import { nextAuthOptions } from '@/pages/api/auth/[...nextauth]';
+import { UserRole } from '@/utils/constants/users.enum';
+import getData from '@/utils/getData';
+import { Params } from '@/types/params-types';
+import { General } from '@/utils/constants/general.enum';
+
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
-  loading: () => <Loading />
+  loading: () => <Loading />,
 });
 
-export default function EditPostPage() {
-
+export default function EditPostPage({
+  post,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const postId = router.query.postId;
-
-  const { data, isLoading } = useGetData<{ post: Post }>(
-    `posts/${postId}?include=categories,topics`
+  const { data } = useGetData<{ post: Post }>(
+    `/posts/${postId}?include=categories,topics`
   );
+
   const {
     title,
     content,
@@ -38,11 +47,11 @@ export default function EditPostPage() {
     successMessage,
     setSuccessMessage,
   } = usePost({
-    initTitle: data?.post?.title,
-    initCategories: data?.post?.categories,
-    initTopics: data?.post?.topics,
-    initContent:data?.post?.content,
-    initSlug: data?.post?.slug,
+    initTitle: post?.title || data?.post.title,
+    initCategories: post?.categories || data?.post.categories,
+    initTopics: post?.topics || data?.post.topics,
+    initContent: post?.content || data?.post.content,
+    initSlug: post?.slug || data?.post.slug,
   });
 
   const { trigger } = usePostData('posts');
@@ -53,7 +62,7 @@ export default function EditPostPage() {
       setSuccessMessage('');
 
       if (!topics || topics.length === 0) {
-        setErrorMessage('Please select a post topic')
+        setErrorMessage('Please select a post topic');
         return;
       }
 
@@ -77,13 +86,23 @@ export default function EditPostPage() {
         );
       }
     },
-    [trigger, categories, topics, title, content, slug, postId, setErrorMessage, setSuccessMessage]
+    [
+      trigger,
+      categories,
+      topics,
+      title,
+      content,
+      slug,
+      postId,
+      setErrorMessage,
+      setSuccessMessage,
+    ]
   );
 
   return (
     <>
       <Head>
-        <title>Update Post</title>
+        <title>{`Update Post | ${General.SiteTitle}`}</title>
       </Head>
       <>
         <Editor
@@ -114,4 +133,39 @@ export default function EditPostPage() {
       </>
     </>
   );
+}
+
+export async function getServerSideProps({
+  req,
+  res,
+  params,
+}: GetServerSidePropsContext) {
+  const { postId } = params as Params;
+  const postData = await getData<{ post: Post }>(
+    `/posts/${postId}?include=categories,topics`
+  );
+
+  const session = await getServerSession(req, res, nextAuthOptions);
+
+  res.setHeader('Cache-Control', 'no-cache');
+  if (
+    session &&
+    postData?.post &&
+    session?.user?.role !== 'Super Administrator' &&
+    session?.user?.role !== UserRole.Admin &&
+    postData.post.userId !== session.user.id
+  ) {
+    return {
+      redirect: {
+        destination: '/admin',
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session: session,
+      post: postData?.post || null,
+    },
+  };
 }

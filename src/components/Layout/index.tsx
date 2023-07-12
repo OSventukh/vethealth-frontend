@@ -25,7 +25,7 @@ export default function Layout(
           {props.children}
         </Container>
       </main>
-      <Footer general={props.general}/>
+      <Footer general={props.general} />
     </>
   );
 }
