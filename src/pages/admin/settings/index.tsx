@@ -1,13 +1,12 @@
 import Head from 'next/head';
-import { General } from '@/utils/constants/general.enum';
+import { General as GeneralEnum } from '@/utils/constants/general.enum';
 
 export default function Settings() {
   return (
     <>
       <Head>
-        <title>{`Settings | ${General.SiteTitle}`}</title>
+        <title>{`Settings | ${GeneralEnum.SiteTitle}`}</title>
       </Head>
-      <p style={{ textAlign: 'center' }}>Not avaiable</p>
     </>
   );
 }

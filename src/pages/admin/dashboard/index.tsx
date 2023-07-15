@@ -22,8 +22,6 @@ interface Statistics {
 }
 export default function Dashboard() {
   const { data } = useGetData<Statistics>('statistics');
-  console.log(data);
-
   return (
     <Grid container gap={5}>
       <Grid item>

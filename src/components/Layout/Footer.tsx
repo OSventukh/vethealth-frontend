@@ -9,7 +9,7 @@ export default function Footer({ general }: {general: General}) {
     <footer className={classes.footer}>
       <Container>
         <div className={classes['footer__wrapper']}>
-          <div className={classes['footer__copyright']}> &copy; {general.siteName}</div>
+          <div className={classes['footer__copyright']}> &copy; {general.name}</div>
           <div className={classes['footer__navigation']}></div>
 
           <div className={classes['footer__search']}>

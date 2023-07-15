@@ -202,14 +202,14 @@ export default function Navigation({ open }: NavigationProps) {
             </NavItem>}
           </List>
         </Collapse>
-        {isShowMenu && <NavItem
+        {/* {isShowMenu && <NavItem
           link={routes.settings.general}
           open={open}
           icon={<Settings />}
           selected={router.pathname.startsWith(routes.settings.general)}
         >
           Settings
-        </NavItem>}
+        </NavItem>} */}
       </List>
     </Drawer>
   );

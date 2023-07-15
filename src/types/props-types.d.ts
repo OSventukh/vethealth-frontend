@@ -137,8 +137,9 @@ export interface EditUser {
 }
 
 export type General = {
-  siteName: string;
-  siteDescription: string;
+  title: string;
+  name: string;
+  description: string;
 };
 
 export interface Header {
