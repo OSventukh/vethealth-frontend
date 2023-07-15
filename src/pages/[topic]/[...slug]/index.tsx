@@ -1,9 +1,11 @@
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Loading from '@/components/UI/Loading';
 import { General } from '@/utils/constants/general.enum';
 import getData from '@/utils/getData';
+import { Breadcrumbs, Typography, Box } from '@mui/material';
 const PostsList = dynamic(() => import('@/components/Posts/PostList'), {
   loading: () => <Loading />,
 });
@@ -22,19 +24,47 @@ import type {
 export default function PostPage({
   post,
   page,
+  topic,
   postsData,
   general,
-  topic,
+  subtopic,
 }: InferGetStaticPropsType<typeof getServerSideProps>) {
   const router = useRouter();
+  const { topic: topicSlug, slug } = router.query;
 
   if (!post && !page && !postsData) {
     return <Loading />;
   }
-  const pageTitle = `${post?.title || page?.title || topic?.title} | ${general.title}`;
+  const pageTitle = `${post?.title || page?.title || subtopic?.title} | ${
+    general.title
+  }`;
   const pageDescription =
     post?.excerpt?.replace(/<[^>]+>/g, '').slice(0, 150) ||
     post?.content.replace(/<[^>]+>/g, '').slice(0, 150);
+
+  let breadcrumbs: React.ReactNode[] = [];
+
+  if (slug && slug.length === 1) {
+    breadcrumbs = [
+      <Typography component={Link} href={`/${topicSlug}`}>
+        {topic?.title}
+      </Typography>,
+      <Typography key="3" color="text.primary">
+        {subtopic?.title || post?.title}
+      </Typography>,
+    ];
+  }
+
+  if (slug && slug.length > 1) {
+    breadcrumbs = [
+      <Typography component={Link} href={`/${topicSlug}/${slug[0]}`}>
+        {subtopic?.title}
+      </Typography>,
+      <Typography key="3" color="text.primary">
+        {post?.title}
+      </Typography>,
+    ];
+  }
   return (
     <>
       <Head>
@@ -46,6 +76,9 @@ export default function PostPage({
         <meta property="twitter:title" content={pageTitle} />
         <meta property="twitter:description" content={pageDescription} />
       </Head>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Breadcrumbs separator="›">{breadcrumbs}</Breadcrumbs>
+      </Box>
       {postsData?.posts ? (
         <PostsList posts={postsData.posts} totalPages={postsData.totalPages} />
       ) : post ? (
@@ -92,7 +125,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     return {
       props: {
-        topic: subtopicData?.topic || null,
+        topic: topicData?.topic || null,
+        subtopic: subtopicData?.topic || null,
         page: subtopicData?.topic?.page || null,
         post: postData?.post || null,
         postsData: posts,
