@@ -1,12 +1,17 @@
 import React, { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 import classes from '@/styles/topics/TopicItem.module.css';
 import { Topic } from '@/types/content-types';
 
 export default function TopicItem({ topic }: { topic: Topic }) {
+  const router = useRouter();
+  const parentTopicSlug = router.query.topic;
+
+  const topicUrl = parentTopicSlug ? `${parentTopicSlug}/${topic.slug}`: topic.slug;
   return (
-    <Link className={classes.topic__item} href={topic.slug}>
+    <Link className={classes.topic__item} href={topicUrl}>
       {topic?.image && (
         <div className={classes.topic__image}>
           <Image
