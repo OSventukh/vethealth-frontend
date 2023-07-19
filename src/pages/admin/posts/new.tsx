@@ -6,6 +6,8 @@ import { usePostData } from '@/hooks/data-hook';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import usePost from '@/hooks/editor-hook';
 import Loading from '@/components/admin/UI/Loading';
+import { General } from '@/utils/constants/general.enum';
+
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
   loading: () => <Loading />
@@ -72,7 +74,7 @@ export default function NewPostPage() {
   return (
     <>
       <Head>
-        <title>Create Post</title>
+      <title>{`New Post | ${General.SiteTitle}`}</title>
       </Head>
       <>
         <Editor

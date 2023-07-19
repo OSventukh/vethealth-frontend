@@ -11,7 +11,7 @@ export interface User {
   lastname: string;
   email: string;
   createdAt: Date,
-  role: Role,
+  role: Role.name,
   status: UserStatus;
   topics: Topic[];
 }

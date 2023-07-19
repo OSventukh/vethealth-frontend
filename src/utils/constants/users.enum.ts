@@ -1,3 +1,4 @@
+import { Role } from "@/types/auth-types";
 export enum UserRole {
   SuperAdmin = 'Super Administrator',
   Admin = 'Administrator',

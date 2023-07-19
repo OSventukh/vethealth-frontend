@@ -46,6 +46,7 @@ export type Post = {
   title: string;
   excerpt: string;
   slug: string;
+  userId: string;
   categories: Category[] | null;
   topics: Topic[] | null;
   status: 'published' | 'draft';

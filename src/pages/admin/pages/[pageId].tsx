@@ -7,6 +7,11 @@ import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import useEditor from '@/hooks/editor-hook';
 import Loading from '@/components/admin/UI/Loading';
 import type { Page } from '@/types/content-types';
+import { GetServerSidePropsContext } from 'next';
+import { getServerSession } from 'next-auth';
+import { nextAuthOptions } from '@/pages/api/auth/[...nextauth]';
+import { UserRole } from '@/utils/constants/users.enum';
+import { General } from '@/utils/constants/general.enum';
 
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
@@ -60,15 +65,6 @@ export default function EditPagePage() {
           },
         });
         setSuccessMessage(response?.message || 'Post saved successfully');
-        setTimeout(() => {
-          router.push(
-            `/admin/posts/[postId]`,
-            `/admin/posts/${response.post.id}`,
-            {
-              shallow: true,
-            }
-          );
-        }, 2000);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : 'Saving post failed'
@@ -81,7 +77,7 @@ export default function EditPagePage() {
   return (
     <>
       <Head>
-        <title>Update Page</title>
+        <title>{`Update Page | ${General.SiteTitle}`}</title>
       </Head>
       <>
         <Editor
@@ -110,4 +106,30 @@ export default function EditPagePage() {
       </>
     </>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(
+    context.req,
+    context.res,
+    nextAuthOptions
+  );
+  
+  if (
+    session &&
+    (session?.user?.role !== UserRole.SuperAdmin &&
+      session?.user?.role !== UserRole.Admin)
+  ) {
+    return {
+      redirect: {
+        destination: '/admin',
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session: session,
+    },
+  };
 }

@@ -5,28 +5,35 @@ import Header from './Header';
 import Navigation from './Navigation';
 import { replacePropertyName } from '@/utils/replacePropertyName';
 import type { ChildrenProps } from '@/types/props-types';
-import { useSession, signIn } from 'next-auth/react';
 import { Roboto } from 'next/font/google';
-const roboto = Roboto({ subsets: ['latin', 'cyrillic'], weight: '400'});
+import { signIn, useSession } from 'next-auth/react';
+
+const roboto = Roboto({ subsets: ['latin', 'cyrillic'], weight: '400' });
 
 export default function AdminPanelLayout(props: ChildrenProps) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const { data: session } = useSession()
 
   const handleDrawerToggle = () => {
     setOpen((prevState) => !prevState);
   };
 
-  // redirect to login page if refresh token is failed
+  const { data: session } = useSession();
+
   useEffect(() => {
-    if (session?.error && session.error === 'RefreshAccessTokenError') {
+    if (session?.error === 'RefreshAccessTokenError') {
       signIn();
     }
   }, [session]);
-
   return (
-    <Box className={roboto.className} sx={{ display: 'flex', minHeight: '100vh', background: theme.palette.background.paper }}>
+    <Box
+      className={roboto.className}
+      sx={{
+        display: 'flex',
+        minHeight: '100vh',
+        background: theme.palette.background.paper,
+      }}
+    >
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Navigation open={open} handleDrawerToggle={handleDrawerToggle} />
       <Box

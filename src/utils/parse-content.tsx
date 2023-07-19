@@ -1,13 +1,15 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Grid } from '@mui/material';
+import { Grid, Tooltip } from '@mui/material';
+
 import parse, {
   HTMLReactParserOptions,
   Element,
   Text,
   domToReact,
   DOMNode,
+  
 } from 'html-react-parser';
 
 const transformStyle = (styleStr: string) => {
@@ -33,23 +35,29 @@ const replaceFunction = (domNode: DOMNode) => {
       <Grid container spacing={10}>{domToReact(typedNode?.children, { replace: replaceFunction})}</Grid>
     )
   }
+  if (typedNode.name === 'span' && typedNode?.attribs?.class === 'tooltip' && typedNode.attribs?.['data-tooltip']) {
+    const text = typedNode?.children && (typedNode.children.find((item) => item.type === 'text') as Text);
+    return (
+      <Tooltip title={typedNode.attribs['data-tooltip']} placement="top" enterTouchDelay={0}><span className='tooltip'>{text?.data}</span></Tooltip>
+    )
+  }
   if (typedNode.name === 'div' && typedNode?.attribs?.class === 'grid-item') {
     return (
       <Grid item>{domToReact(typedNode?.children)}</Grid>
     )
   }
-  if (typedNode.attribs && typedNode.name === 'a') {
+  if (typedNode.name === 'a') {
     const linkText =
     typedNode?.children &&
       (typedNode.children.find((item) => item.type === 'text') as Text);
 
     return (
       <Link
-        className={typedNode.attribs.class}
-        title={typedNode.attribs.title}
-        href={typedNode.attribs.href}
+        className={typedNode.attribs?.class}
+        title={typedNode.attribs?.title}
+        href={typedNode.attribs?.href}
       >
-        {linkText?.data!}
+        {linkText?.data}
       </Link>
     );
   }

@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import List from '@mui/material/List';
+import { UserRole } from '@/utils/constants/users.enum';
 import {
   Home,
   Article,
@@ -20,11 +22,13 @@ import routes from '@/utils/routesList';
 export default function Navigation({ open }: NavigationProps) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const router = useRouter();
+  const { data: session} = useSession();
 
   const menuClickHandler = (event: React.MouseEvent, item: string) => {
     setOpenMenu((prevState) => (prevState !== item ? item : null));
   };
 
+  const isShowMenu = session?.user.role === UserRole.SuperAdmin || session?.user.role === UserRole.Admin;
   return (
     <Drawer variant="permanent" open={open}>
       <DrawerHeader />
@@ -64,14 +68,14 @@ export default function Navigation({ open }: NavigationProps) {
             >
               All topics
             </NavItem>
-            <NavItem
+            {isShowMenu && <NavItem
               link={routes.topics.new}
               open={open}
               nested
               selected={router.pathname === routes.topics.new}
             >
               New Topic
-            </NavItem>
+            </NavItem>}
           </List>
         </Collapse>
         <NavItem
@@ -108,22 +112,22 @@ export default function Navigation({ open }: NavigationProps) {
             >
               New Post
             </NavItem>
-            <NavItem
+            {isShowMenu && <NavItem
               link={routes.posts.categories}
               open={open}
               nested
               selected={router.pathname === routes.posts.categories}
             >
               Categories
-            </NavItem>
-            <NavItem
+            </NavItem>}
+            {isShowMenu && <NavItem
               link={routes.posts.newCategory}
               open={open}
               nested
               selected={router.pathname === routes.posts.newCategory}
             >
               New Category
-            </NavItem>
+            </NavItem>}
           </List>
         </Collapse>
         <NavItem
@@ -152,14 +156,14 @@ export default function Navigation({ open }: NavigationProps) {
             >
               All pages
             </NavItem>
-            <NavItem
+            {isShowMenu && <NavItem
               link={routes.pages.new}
               open={open}
               nested
               selected={router.pathname === routes.pages.new}
             >
               New page
-            </NavItem>
+            </NavItem>}
           </List>
         </Collapse>
         <NavItem
@@ -188,24 +192,24 @@ export default function Navigation({ open }: NavigationProps) {
             >
               All users
             </NavItem>
-            <NavItem
+            {isShowMenu && <NavItem
               link={routes.users.new}
               open={open}
               nested
               selected={router.pathname === routes.users.new}
             >
               New users
-            </NavItem>
+            </NavItem>}
           </List>
         </Collapse>
-        <NavItem
+        {/* {isShowMenu && <NavItem
           link={routes.settings.general}
           open={open}
           icon={<Settings />}
           selected={router.pathname.startsWith(routes.settings.general)}
         >
           Settings
-        </NavItem>
+        </NavItem>} */}
       </List>
     </Drawer>
   );

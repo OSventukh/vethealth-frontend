@@ -153,7 +153,6 @@ a.disabled {
   color: rgb(106, 105, 105);
 }
 
-
 img {
   max-width: 100%;
   height: auto;
@@ -181,10 +180,10 @@ figcaption {
   margin-top: calc(0.5rem + 3vw);
 }
 
-.content {
-  background-color: #fff;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
+span.tooltip {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  cursor: help;
 }
 
 @media only screen and (max-width: 678px) {

@@ -16,20 +16,18 @@ export default function SearchPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
 
+  const pageTitle = `Пошук | ${general.title}`;
+  const pageDescription = general.desription;
   return (
     <>
       <Head>
-        <title>{`Пошук | ${general.siteName} - ${general.siteDescription}`}</title>
-        <meta
-          name="description"
-          content={
-            general.siteDescription
-              ? general.siteDescription
-              : General.SiteDescription
-          }
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>{pageTitle}</title>
+        <meta name="title" content={pageTitle} />
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="twitter:title" content={pageTitle} />
+        <meta property="twitter:description" content={pageDescription} />
       </Head>
       {!postsData && (
         <p style={{ textAlign: 'center' }}>Результатів не знайдено</p>
@@ -57,8 +55,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       postsData: postData?.posts && postData.posts.length > 0 ? postData : null,
 
       general: {
-        siteName: General.SiteName,
-        siteDescription: General.SearchResult,
+        name: General.SiteName,
+        title: General.SiteTitle,
+        desription: General.SearchResult,
       },
       navigationMenu: null,
     },

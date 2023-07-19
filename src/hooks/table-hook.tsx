@@ -14,7 +14,7 @@ interface UseTable {
 }
 
 export default function useTable<T>({ url, header, query, transformCallback }: UseTable) {
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState('createdAt');
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(5);

@@ -4,12 +4,12 @@ import { User as UserData } from './auth-types';
 
 type JWTToken = {
   token: string;
-  expirationDate: number;
+  expirationDate: string;
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    accessTokenExpires: number;
+    accessTokenExpires: string;
     refreshToken: string;
     accessToken: string;
     user: UserData;
@@ -21,6 +21,7 @@ declare module 'next-auth' {
   interface Session {
     user: UserData;
     accessToken: string;
+    accessTokenExpires: string;
     error: string;
   } 
 

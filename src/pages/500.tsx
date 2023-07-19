@@ -8,16 +8,7 @@ export default function Page500({
     <>
       <Head>
         <title>{`Помилка | ${General.SiteTitle}`}</title>
-        <meta
-          name="description"
-          content={
-            general?.siteDescription
-              ? general.siteDescription
-              : General.SiteDescription
-          }
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="title" content={`Помилка | ${General.SiteTitle}`} />
       </Head>
       <p style={{ textAlign: 'center' }}>Виникла непердбачувана помилка</p>
     </>
@@ -38,6 +29,7 @@ export async function getStaticProps() {
     return {
       props: {
         general: {
+          name: General.SiteName,
           siteName: General.SiteName,
           siteDescription: General.SiteDescription,
         },

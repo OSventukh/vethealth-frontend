@@ -15,17 +15,17 @@ export default function Layout(
       <Header general={props.general} navigationMenu={props.navigationMenu} />
       <main>
         <Container>
-          {props?.general?.siteDescription && (
+          {props?.general?.description && (
             <div className="description">
               <h2 className={releway.className}>
-                {props.general.siteDescription}
+                {props.general.description}
               </h2>
             </div>
           )}
           {props.children}
         </Container>
       </main>
-      <Footer general={props.general}/>
+      <Footer general={props.general} />
     </>
   );
 }

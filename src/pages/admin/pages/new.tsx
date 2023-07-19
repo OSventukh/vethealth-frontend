@@ -6,6 +6,12 @@ import { usePostData } from '@/hooks/data-hook';
 import { SnackError, SnackSuccess } from '@/components/admin/UI/SnackBar';
 import useEditor from '@/hooks/editor-hook';
 import Loading from '@/components/admin/UI/Loading';
+import { GetServerSidePropsContext } from 'next';
+import { getServerSession } from 'next-auth';
+import { nextAuthOptions } from '@/pages/api/auth/[...nextauth]';
+import { UserRole } from '@/utils/constants/users.enum';
+import { General } from '@/utils/constants/general.enum';
+
 const Editor = dynamic(() => import('@/components/admin/Editor'), {
   ssr: false,
   loading: () => <Loading />
@@ -66,7 +72,7 @@ export default function NewPagePage() {
   return (
     <>
       <Head>
-        <title>Create Page</title>
+        <title>{`New Page | ${General.SiteTitle}`}</title>
       </Head>
       <>
         <Editor
@@ -95,4 +101,31 @@ export default function NewPagePage() {
       </>
     </>
   );
+}
+
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(
+    context.req,
+    context.res,
+    nextAuthOptions
+  );
+  
+  if (
+    session &&
+    (session?.user?.role !== UserRole.SuperAdmin &&
+      session?.user?.role !== UserRole.Admin)
+  ) {
+    return {
+      redirect: {
+        destination: '/admin',
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session: session,
+    },
+  };
 }

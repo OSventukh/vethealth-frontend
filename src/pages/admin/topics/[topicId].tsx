@@ -1,11 +1,17 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { FormEvent, useContext, useMemo } from 'react';
+import { FormEvent, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Loading from '@/components/admin/UI/Loading';
 import { useSWRConfig } from 'swr';
 import useTopic from '@/hooks/topic-hook';
 import { usePostData, useGetData } from '@/hooks/data-hook';
 import type { Topic, Category } from '@/types/content-types';
+import { GetServerSidePropsContext } from 'next';
+import { getServerSession } from 'next-auth';
+import { nextAuthOptions } from '@/pages/api/auth/[...nextauth]';
+import { UserRole } from '@/utils/constants/users.enum';
+import { General } from '@/utils/constants/general.enum';
 
 const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
   ssr: false,
@@ -15,7 +21,9 @@ const EditTopic = dynamic(() => import('@/components/admin/Topics/EditTopic'), {
 export default function EditTopicPage() {
   const router = useRouter();
   const { topicId } = router.query;
-  const { data } = useGetData<{topic: Topic}>(`topics/${topicId}?include=categories,parent,page,children`);
+  const { data } = useGetData<{ topic: Topic }>(
+    `topics/${topicId}?include=categories,parent,page,children`
+  );
 
   const { mutate } = useSWRConfig();
   const { trigger } = usePostData(`topics/${topicId}`);
@@ -26,7 +34,15 @@ export default function EditTopicPage() {
   const initActiveStatus = data?.topic?.status === 'active';
   const initImage = data?.topic?.image;
   //display only high level category
-  const initCategories = useMemo(() => data && data?.topic?.categories && data.topic.categories.filter((category: Category) => category.parentId === null), [data]);
+  const initCategories = useMemo(
+    () =>
+      data &&
+      data?.topic?.categories &&
+      data.topic.categories.filter(
+        (category: Category) => category.parentId === null
+      ),
+    [data]
+  );
   const initParentTopic = data?.topic?.parent;
   const initContent = data?.topic?.content;
   const initPage = data?.topic?.page;
@@ -75,8 +91,8 @@ export default function EditTopicPage() {
     slug && formData.append('slug', slug.trim());
     formData.append('description', description ? description.trim() : '');
     formData.append('parentId', parentTopic ? parentTopic.id.toString() : '');
-    formData.append('content', content ? content: '');
-    formData.append('pageId', page ? page.id.toString(): '');
+    formData.append('content', content ? content : '');
+    formData.append('pageId', page ? page.id.toString() : '');
     categories &&
       categories.length > 0 &&
       categories.forEach((category) =>
@@ -108,31 +124,62 @@ export default function EditTopicPage() {
   };
 
   return (
-    <EditTopic
-      id={topicId?.toString()}
-      topicSubmitHandler={topicSubmitHandler}
-      title={title}
-      slug={slug}
-      description={description}
-      categories={categories}
-      parentTopic={parentTopic}
-      activeStatus={activeStatus}
-      image={image}
-      content={content}
-      page={page}
-      contentChangeHandler={contentChangeHandler}
-      pageChangeHandler={pageChangeHandler}
-      titleChangeHandler={titleChangeHandler}
-      slugChangeHandler={slugChangeHandler}
-      descriptionChangeHandler={descriptionChangeHandler}
-      categoryChangeHandler={categoryChangeHandler}
-      parentTopicChangeHandler={parentTopicChangeHandler}
-      setActiveStatus={setActiveStatus}
-      setImage={setImage}
-      childrenTopic={data?.topic?.children}
-      errorMessage={errorMessage}
-      successMessage={successMessage}
-      edit
-    />
+    <>
+      <Head>
+        <title>{`Update Topic | ${General.SiteTitle}`}</title>
+      </Head>
+      <EditTopic
+        id={topicId?.toString()}
+        topicSubmitHandler={topicSubmitHandler}
+        title={title}
+        slug={slug}
+        description={description}
+        categories={categories}
+        parentTopic={parentTopic}
+        activeStatus={activeStatus}
+        image={image}
+        content={content}
+        page={page}
+        contentChangeHandler={contentChangeHandler}
+        pageChangeHandler={pageChangeHandler}
+        titleChangeHandler={titleChangeHandler}
+        slugChangeHandler={slugChangeHandler}
+        descriptionChangeHandler={descriptionChangeHandler}
+        categoryChangeHandler={categoryChangeHandler}
+        parentTopicChangeHandler={parentTopicChangeHandler}
+        setActiveStatus={setActiveStatus}
+        setImage={setImage}
+        childrenTopic={data?.topic?.children}
+        errorMessage={errorMessage}
+        successMessage={successMessage}
+        edit
+      />
+    </>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(
+    context.req,
+    context.res,
+    nextAuthOptions
+  );
+  
+  if (
+    session &&
+    (session?.user?.role !== UserRole.SuperAdmin &&
+      session?.user?.role !== UserRole.Admin)
+  ) {
+    return {
+      redirect: {
+        destination: '/admin',
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      session: session,
+    },
+  };
 }
