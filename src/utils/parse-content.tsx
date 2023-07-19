@@ -38,7 +38,7 @@ const replaceFunction = (domNode: DOMNode) => {
   if (typedNode.name === 'span' && typedNode?.attribs?.class === 'tooltip' && typedNode.attribs?.['data-tooltip']) {
     const text = typedNode?.children && (typedNode.children.find((item) => item.type === 'text') as Text);
     return (
-      <Tooltip title={typedNode.attribs['data-tooltip']} placement="top"><span className='tooltip'>{text?.data}</span></Tooltip>
+      <Tooltip title={typedNode.attribs['data-tooltip']} placement="top" enterTouchDelay={0}><span className='tooltip'>{text?.data}</span></Tooltip>
     )
   }
   if (typedNode.name === 'div' && typedNode?.attribs?.class === 'grid-item') {

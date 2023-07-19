@@ -65,6 +65,7 @@ export default function PostPage({
       </Typography>,
     ];
   }
+
   return (
     <>
       <Head>
@@ -77,7 +78,7 @@ export default function PostPage({
         <meta property="twitter:description" content={pageDescription} />
       </Head>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Breadcrumbs separator="›">{breadcrumbs}</Breadcrumbs>
+        <Breadcrumbs sx={{ '& .MuiBreadcrumbs-ol': { justifyContent: 'center'}}} separator="›">{breadcrumbs}</Breadcrumbs>
       </Box>
       {postsData?.posts ? (
         <PostsList posts={postsData.posts} totalPages={postsData.totalPages} />
