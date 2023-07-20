@@ -5,7 +5,6 @@ import { Raleway } from 'next/font/google';
 const MobileNavigation = dynamic(() => import('./MobileNavigation'));
 const MainNavigation = dynamic(() => import('./Navigation'));
 import type { Header } from '@/types/props-types';
-import blobImage from '@/assets/svg/blob-haikei.svg'
 import classes from '@/styles/layout/Header.module.css';
 const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
@@ -14,16 +13,21 @@ export default function Header(props: Header) {
 
   return (
     <header className={`${classes.header} ${releway.className}`}>
-      <Container>
-        <h1 className={classes['site-name']}>
-          <Link href="/">{name}</Link>
-        </h1>
-        {props.navigationMenu && props.navigationMenu.length > 0 && (
-          <>
-            <MainNavigation data={props.navigationMenu} />
-            <MobileNavigation data={props.navigationMenu} />
-          </>
-        )}
+      <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+          <Link href="/">
+            <div className={classes['site-name']}>
+              <img src="/logo.svg" alt="VetHealth Logo" />
+              <h1 className={classes['site-title']}>
+                <img src="/title.svg" alt={name} />
+              </h1>
+            </div>
+          </Link>
+          {props.navigationMenu && props.navigationMenu.length > 0 && (
+            <>
+              <MainNavigation data={props.navigationMenu} />
+              <MobileNavigation data={props.navigationMenu} />
+            </>
+          )}
       </Container>
     </header>
   );

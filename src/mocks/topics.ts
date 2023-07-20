@@ -1,4 +1,4 @@
-
+import { Topic } from "@/types/content-types";
 const topics: Topic[] = [
   {
     id: '1',

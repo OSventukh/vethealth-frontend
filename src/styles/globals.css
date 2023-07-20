@@ -177,7 +177,7 @@ figcaption {
 
 .topics,
 .content {
-  margin-top: calc(0.5rem + 3vw);
+  margin-top: calc(0.5rem + 1vw);
 }
 
 span.tooltip {
