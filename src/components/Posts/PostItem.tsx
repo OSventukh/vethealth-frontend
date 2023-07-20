@@ -14,7 +14,13 @@ export default function PostItem({ post }: { post: Post }) {
     <article className={classes['preview-post']}>
       <header className={classes['post__header']}>
         <h2 className={`${classes['post__title']} ${releway.className}`}>
-          <Link href={`/${post?.topics ? post.topics[0]!.slug : topic}/${post.slug}`}>{post.title}</Link>
+          <Link
+            href={`/${post?.topics ? post.topics[0]!.slug : topic}/${
+              post.slug
+            }`}
+          >
+            {post.title}
+          </Link>
         </h2>
       </header>
       <div
@@ -23,10 +29,14 @@ export default function PostItem({ post }: { post: Post }) {
       />
       <div className={classes['post__read-more']}>
         <Link
-          className={`${classes.button} ${releway.className}`}
+          className={classes.button}
           href={`/${post?.topics ? post.topics[0]!.slug : topic}/${post.slug}`}
         >
-          Читати далі
+          <span>Читати далі</span>
+          <svg width="13px" height="10px" viewBox="0 0 13 10">
+            <path d="M1,5 L11,5"></path>
+            <polyline points="8 1 12 5 8 9"></polyline>
+          </svg>
         </Link>
       </div>
       <footer></footer>

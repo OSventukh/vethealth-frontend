@@ -1,4 +1,5 @@
-.preview-post, .post {
+.preview-post,
+.post {
   margin: calc(0.1rem + 1vw) 0;
   padding: 2rem;
   background: #fff;
@@ -76,21 +77,58 @@
 }
 
 .button {
-  border: 2px solid var(--main-theme-color);
-  padding: 0.5rem 2rem;
-  font-weight: bold;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-}
-
-.button:hover {
-  text-decoration: none;
-  color: #fff;
-  background-color: var(--main-theme-color);
+  display: inline-block;
+  position: relative;
+  margin: auto;
+  padding: 19px 22px;
   transition: all 0.2s ease;
 }
 
-@media screen and (max-width: 600px) {
+.button:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  display: block;
+  border-radius: 28px;
+  background: var(--main-theme-color);
+  width: 40px;
+  height: 40px;
+  transition: all 0.3s ease;
+}
+
+.button span {
+  position: relative;
+  line-height: 18px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+.button svg {
+  position: relative;
+  top: 0;
+  margin-left: 10px;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke: var(--font-color);
+  stroke-width: 2;
+  transform: translateX(-5px);
+  transition: all 0.3s ease;
+}
+.button:hover.button:before {
+  width: 100%;
+  background: var(--main-theme-color);
+}
+.button:hover svg {
+  transform: translateX(0);
+}
+
+.button:active {
+  transform: scale(0.96);
+}
+
+/* @media screen and (max-width: 600px) {
   .button {
     border: 2px solid var(--main-theme-color);
     padding: 0.3rem 1.5rem;
@@ -98,4 +136,4 @@
     font-size: 0.6rem;
     text-transform: uppercase;
   }
-}
+} */

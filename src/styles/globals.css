@@ -1,5 +1,5 @@
 :root {
-  --main-theme-color: #002221;
+  --main-theme-color: #b4efe8;
   --font-color: #002221;
   --background-color: #f8f8f8;
   --border-color: rgb(235 235 235);
@@ -145,9 +145,9 @@ a {
   text-decoration: none;
 }
 
-a:hover {
+/* a:hover {
   text-decoration: underline var(--main-theme-color);
-}
+} */
 
 a.disabled {
   color: rgb(106, 105, 105);
