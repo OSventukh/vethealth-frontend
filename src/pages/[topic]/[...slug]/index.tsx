@@ -46,10 +46,10 @@ export default function PostPage({
 
   if (slug && slug.length === 1) {
     breadcrumbs = [
-      <Typography component={Link} href={`/${topicSlug}`}>
+      <Typography key="1" component={Link} href={`/${topicSlug}`}>
         {topic?.title}
       </Typography>,
-      <Typography key="3" color="text.primary">
+      <Typography key="2" color="text.primary">
         {subtopic?.title || post?.title}
       </Typography>,
     ];
@@ -57,10 +57,10 @@ export default function PostPage({
 
   if (slug && slug.length > 1) {
     breadcrumbs = [
-      <Typography component={Link} href={`/${topicSlug}/${slug[0]}`}>
+      <Typography key="1" component={Link} href={`/${topicSlug}/${slug[0]}`}>
         {subtopic?.title}
       </Typography>,
-      <Typography key="3" color="text.primary">
+      <Typography key="2" color="text.primary">
         {post?.title}
       </Typography>,
     ];
@@ -77,7 +77,7 @@ export default function PostPage({
         <meta property="twitter:title" content={pageTitle} />
         <meta property="twitter:description" content={pageDescription} />
       </Head>
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: '0.5rem' }}>
         <Breadcrumbs sx={{ '& .MuiBreadcrumbs-ol': { justifyContent: 'center'}}} separator="›">{breadcrumbs}</Breadcrumbs>
       </Box>
       {postsData?.posts ? (

@@ -1,10 +1,9 @@
 .preview-post,
 .post {
-  margin: calc(0.1rem + 1vw) 0;
   padding: 2rem;
   background: #fff;
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: var(--border-radius);
 }
 
 .post__title {
@@ -19,7 +18,7 @@
 
 .post__title a,
 .post__content a {
-  color: var(--main-theme-color);
+  color: var(--font-color);
   text-decoration: none;
   display: inline-block;
   position: relative;
@@ -37,7 +36,7 @@
 .post__content a:after {
   position: absolute;
   content: '';
-  border-bottom: 2px solid var(--main-theme-color);
+  border-bottom: 2px solid var(--font-color);
   border-radius: 1em;
   bottom: 3%;
   transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -71,69 +70,3 @@
   clear: both;
   display: table;
 }
-
-.post__read-more {
-  margin-top: calc(0.2rem + 1vw);
-}
-
-.button {
-  display: inline-block;
-  position: relative;
-  margin: auto;
-  padding: 19px 22px;
-  transition: all 0.2s ease;
-}
-
-.button:before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 0;
-  display: block;
-  border-radius: 28px;
-  background: var(--main-theme-color);
-  width: 40px;
-  height: 40px;
-  transition: all 0.3s ease;
-}
-
-.button span {
-  position: relative;
-  line-height: 18px;
-  text-transform: uppercase;
-  vertical-align: middle;
-}
-.button svg {
-  position: relative;
-  top: 0;
-  margin-left: 10px;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke: var(--font-color);
-  stroke-width: 2;
-  transform: translateX(-5px);
-  transition: all 0.3s ease;
-}
-.button:hover.button:before {
-  width: 100%;
-  background: var(--main-theme-color);
-}
-.button:hover svg {
-  transform: translateX(0);
-}
-
-.button:active {
-  transform: scale(0.96);
-}
-
-/* @media screen and (max-width: 600px) {
-  .button {
-    border: 2px solid var(--main-theme-color);
-    padding: 0.3rem 1.5rem;
-    font-weight: bold;
-    font-size: 0.6rem;
-    text-transform: uppercase;
-  }
-} */

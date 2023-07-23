@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Raleway } from 'next/font/google';
 import type { Post } from '@/types/content-types';
-
+import { Button } from '@mui/material';
 import classes from '@/styles/posts/Post.module.css';
 
 const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
@@ -27,19 +27,24 @@ export default function PostItem({ post }: { post: Post }) {
         className={classes['post__content']}
         dangerouslySetInnerHTML={{ __html: post.excerpt }}
       />
-      <div className={classes['post__read-more']}>
-        <Link
-          className={classes.button}
+      <footer>
+        <Button
+          size="small"
+          LinkComponent={Link}
           href={`/${post?.topics ? post.topics[0]!.slug : topic}/${post.slug}`}
+          variant="contained"
+          sx={{
+            background: 'var(--main-theme-color)',
+            color: 'var(--font-color)',
+            boxShadow: 'none',
+            '&:hover': {
+              background: 'var(--main-theme-color)',
+            },
+          }}
         >
-          <span>Читати далі</span>
-          <svg width="13px" height="10px" viewBox="0 0 13 10">
-            <path d="M1,5 L11,5"></path>
-            <polyline points="8 1 12 5 8 9"></polyline>
-          </svg>
-        </Link>
-      </div>
-      <footer></footer>
+          Читати далі
+        </Button>
+      </footer>
     </article>
   );
 }

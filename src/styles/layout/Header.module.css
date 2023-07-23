@@ -18,11 +18,21 @@
 .site-title {
   height: 100%;
   margin: 0;
-  height: 2rem;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem
 }
 
 @media only screen and (max-width: 600px) {
   .site-name {
     text-align: center;
   }
+  .site-title {
+    height: 70%;
+  }
+
 }

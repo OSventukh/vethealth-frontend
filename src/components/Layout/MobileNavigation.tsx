@@ -64,10 +64,17 @@ export default function MobileNavigation({ data }: { data: Category[] }) {
   return (
     <div className={classes['mobile-menu']}>
       <IconButton size="large" onClick={toggleDrawer(true)}>
-        <MenuIcon sx={{color: 'var(--font-color)'}} />
+        <MenuIcon sx={{ color: 'var(--font-color)' }} />
       </IconButton>
 
-      <Drawer anchor="left" open={openNav} onClose={toggleDrawer(false)}  sx={{ '.MuiDrawer-paper': {backgroundColor: '#1e1e1e', color: '#ececec'}}}>
+      <Drawer
+        anchor="left"
+        open={openNav}
+        onClose={toggleDrawer(false)}
+        sx={{
+          '.MuiDrawer-paper': { backgroundColor: '#1e1e1e', color: '#ececec' },
+        }}
+      >
         {list()}
       </Drawer>
     </div>

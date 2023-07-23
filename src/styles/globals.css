@@ -2,7 +2,10 @@
   --main-theme-color: #b4efe8;
   --font-color: #002221;
   --background-color: #f8f8f8;
+  --border-radius: 10px;
   --border-color: rgb(235 235 235);
+  --search-result-bg: #fff;
+  --search-result-hover: #e6e6e6;
 }
 /* @media (prefers-color-scheme: light) {
 }
@@ -175,9 +178,11 @@ figcaption {
   gap: 4rem;
 }
 
-.topics,
+
 .content {
-  margin-top: calc(0.5rem + 1vw);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 span.tooltip {

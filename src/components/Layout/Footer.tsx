@@ -13,7 +13,7 @@ export default function Footer({ general }: {general: General}) {
           <div className={classes['footer__navigation']}></div>
 
           <div className={classes['footer__search']}>
-            <Search />
+            {/* <Search /> */}
           </div>
         </div>
       </Container>
