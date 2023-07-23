@@ -27,13 +27,11 @@
   background: #dee3eb;
   width: max-content;
   border-radius: var(--border-radius);
-  border: 1px solid var(--main-theme-color);
   overflow: hidden;
   visibility: collapse;
   list-style: none;
   opacity: 0;
   transition: all 0.2s linear;
-
 }
 
 .main-menu__main-items li:hover .main-menu__nested-items {
@@ -47,7 +45,7 @@
 }
 
 .main-menu a {
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   display: block;
   flex-shrink: 0;
   width: 100%;
