@@ -20,11 +20,6 @@ a.topic__item {
   aspect-ratio: 1;
 }
 
-/* @media (prefers-color-scheme: dark) {
-  .topic__image {
-    filter: drop-shadow(2px 4px 6px black);
-  }
-} */
 .topic__title {
   text-align: center;
   height: 3rem;

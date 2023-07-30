@@ -5,7 +5,6 @@ import getData from '@/utils/getData';
 import type { Topic } from '@/types/content-types';
 import type { InferGetStaticPropsType } from 'next';
 import { General } from '@/utils/constants/general.enum';
-import { default as topicsMock} from '@/mocks/topics';
 export default function Home({
   topics,
   general
@@ -24,7 +23,7 @@ export default function Home({
         <meta property="twitter:description" content={pageDescription} />
       </Head>
 
-      <TopicList topics={topicsMock} />
+      <TopicList topics={topics} />
     </>
   );
 }

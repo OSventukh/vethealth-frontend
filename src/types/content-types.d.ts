@@ -29,7 +29,7 @@ export type Topic = {
   parent?: Topic;
   children?: Topic[];
   page?: Page;
-  content: TopicContent;
+  content: TopicContent.Page | TopicContent.Posts;
 };
 
 export type Page = {

@@ -68,7 +68,7 @@ export default function CustomSearch() {
         <div className={classes['search-result']}>
           <ul>
             {data.posts.map((post) => (
-              <li>
+              <li key={post.id}>
                 <Link
                   href={`/${post?.topics && post.topics[0].slug}/${post.slug}`}
                 >

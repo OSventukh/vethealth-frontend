@@ -1,11 +1,16 @@
 :root {
   --main-theme-color: #b4efe8;
   --font-color: #002221;
-  --background-color: #f8f8f8;
+  --background-color: #ebf6f7;
   --border-radius: 10px;
   --border-color: rgb(235 235 235);
+  --search-bar-bg: #fff;
   --search-result-bg: #fff;
   --search-result-hover: #e6e6e6;
+  --navigation-hover: #fff;
+  --navigation-dropdown-bg: #defffb;
+  --navigation-dropdown-hover: #42a5f5;
+  --post-bg: #fff;
 }
 /* @media (prefers-color-scheme: light) {
 }

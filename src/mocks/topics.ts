@@ -1,4 +1,5 @@
 import { Topic } from "@/types/content-types";
+import { TopicContent } from "@/utils/constants/content.enum";
 const topics: Topic[] = [
   {
     id: '1',
@@ -6,6 +7,10 @@ const topics: Topic[] = [
     image: 'images/dog.svg',
     slug: 'dogs',
     description: '',
+    status: 'active',
+    parentId: '',
+    content: TopicContent.Posts,
+
   },
   {
     id: '2',
@@ -13,13 +18,19 @@ const topics: Topic[] = [
     image: 'images/cat.svg',
     slug: 'cats',
     description: '',
+    status: 'active',
+    parentId: '',
+    content: TopicContent.Posts,
   },
   {
     id: '3',
     title: 'Фармацевтичний довідник',
-    image: 'images/drug.svg',
-    slug: 'drug',
+    image: 'images/drugs.svg',
+    slug: 'drugs',
     description: '',
+    status: 'active',
+    parentId: '',
+    content: TopicContent.Posts,
   },
   {
     id: '4',
@@ -27,6 +38,9 @@ const topics: Topic[] = [
     image: 'images/lab.svg',
     slug: 'lab',
     description: '',
+    status: 'active',
+    parentId: '',
+    content: TopicContent.Posts,
   },
 ];
 

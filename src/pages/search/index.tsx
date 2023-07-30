@@ -17,7 +17,7 @@ export default function SearchPage({
   const router = useRouter();
 
   const pageTitle = `Пошук | ${general.title}`;
-  const pageDescription = general.desription;
+  const pageDescription = general.description;
   return (
     <>
       <Head>
@@ -57,7 +57,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       general: {
         name: General.SiteName,
         title: General.SiteTitle,
-        desription: General.SearchResult,
+        description: General.SearchResult,
       },
       navigationMenu: null,
     },

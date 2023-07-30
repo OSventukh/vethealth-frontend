@@ -27,7 +27,7 @@ export default function PostItem({ post }: { post: Post }) {
         className={classes['post__content']}
         dangerouslySetInnerHTML={{ __html: post.excerpt }}
       />
-      <footer>
+      {/* <footer>
         <Button
           size="small"
           LinkComponent={Link}
@@ -44,7 +44,7 @@ export default function PostItem({ post }: { post: Post }) {
         >
           Читати далі
         </Button>
-      </footer>
+      </footer> */}
     </article>
   );
 }

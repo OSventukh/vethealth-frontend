@@ -19,12 +19,11 @@
 
 .main-menu__nested-items {
   display: flex;
-
   flex-direction: column;
   position: absolute;
   z-index: 2;
   list-style: none;
-  background: #dee3eb;
+  background: var(--navigation-dropdown-bg);
   width: max-content;
   border-radius: var(--border-radius);
   overflow: hidden;
@@ -40,7 +39,7 @@
 }
 
 .main-menu__main-items > li:hover > a {
-  color: #fff;
+  color: var(--navigation-hover);
   transition: color 0.3s ease;
 }
 
@@ -53,8 +52,7 @@
 }
 
 .main-menu__nested-items a:hover {
-  background: #5fada4;
-  color: #fff;
+  color: var(--navigation-dropdown-hover);
   transition: all 0.3s ease;
   text-decoration: none;
 }

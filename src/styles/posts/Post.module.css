@@ -1,7 +1,7 @@
 .preview-post,
 .post {
   padding: 2rem;
-  background: #fff;
+  background: var(--post-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
 }
@@ -69,4 +69,11 @@
   content: '';
   clear: both;
   display: table;
+}
+
+@media only screen and (max-width: 600px) {
+  .preview-post,
+  .post {
+    padding: 1rem;
+  }
 }
