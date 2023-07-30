@@ -82,8 +82,7 @@
   margin-top: 1rem;
   border-radius: var(--border-radius);
   overflow: hidden;
-  border: 1px solid var(--border-color);
-  box-shadow: 1px 1px 5px #e4e3e3;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
 .search-result a,

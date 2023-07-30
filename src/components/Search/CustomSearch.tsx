@@ -9,6 +9,8 @@ import { useOutsideClick } from '@/hooks/outside-click-hook';
 import Button from '@mui/material/Button';
 import type { Post } from '@/types/content-types';
 
+const SEARCH_RESULTS_NUMBER = 5;
+
 export default function CustomSearch() {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -67,7 +69,7 @@ export default function CustomSearch() {
       {data?.posts && data.posts.length > 0 && (
         <div className={classes['search-result']}>
           <ul>
-            {data.posts.map((post) => (
+            {data.posts.slice(0, SEARCH_RESULTS_NUMBER).map((post) => (
               <li key={post.id}>
                 <Link
                   href={`/${post?.topics && post.topics[0].slug}/${post.slug}`}
@@ -76,6 +78,7 @@ export default function CustomSearch() {
                 </Link>
               </li>
             ))}
+            {data.posts.length > SEARCH_RESULTS_NUMBER && <Button sx={{ width: '100%'}} type="submit">Всі результати</Button>}
           </ul>
         </div>
       )}
