@@ -7,18 +7,17 @@ import classes from './Search.module.css';
 import SearchIcon from '@mui/icons-material/Search';
 import { useOutsideClick } from '@/hooks/outside-click-hook';
 import Button from '@mui/material/Button';
-import type { Post } from '@/types/content-types';
-
-const SEARCH_RESULTS_NUMBER = 5;
+import type { Post, PaginateData } from '@/types/content-types';
+import { Config } from '@/utils/constants/config.enum';
 
 export default function CustomSearch() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const { data, mutate } = useGetData<{ posts: Post[] }>(
+  const { data, mutate } = useGetData<PaginateData & {posts: Post[] }>(
     searchQuery.length > 2 && debouncedSearchQuery
-      ? `search/${debouncedSearchQuery}`
+      ? `search/${debouncedSearchQuery}?size=${Config.NumResultsSearchAutocomplete}&page=1`
       : null,
     { revalidateOnMount: false }
   );
@@ -69,7 +68,8 @@ export default function CustomSearch() {
       {data?.posts && data.posts.length > 0 && (
         <div className={classes['search-result']}>
           <ul>
-            {data.posts.slice(0, SEARCH_RESULTS_NUMBER).map((post) => (
+            
+            {data.posts.map((post) => (
               <li key={post.id}>
                 <Link
                   href={`/${post?.topics && post.topics[0].slug}/${post.slug}`}
@@ -78,7 +78,7 @@ export default function CustomSearch() {
                 </Link>
               </li>
             ))}
-            {data.posts.length > SEARCH_RESULTS_NUMBER && <Button sx={{ width: '100%'}} type="submit">Всі результати</Button>}
+            {data.totalPages > 1 && <Button sx={{ width: '100%'}} type="submit">Всі результати</Button>}
           </ul>
         </div>
       )}

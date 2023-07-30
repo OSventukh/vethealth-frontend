@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 const PostsList = dynamic(() => import('@/components/Posts/PostList'));
 import getData from '@/utils/getData';
@@ -9,12 +8,12 @@ import type {
 } from 'next';
 import type { Post, PaginateData } from '@/types/content-types';
 import { General } from '@/utils/constants/general.enum';
+import { Config } from '@/utils/constants/config.enum';
 
 export default function SearchPage({
   postsData,
   general,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const router = useRouter();
 
   const pageTitle = `Пошук | ${general.title}`;
   const pageDescription = general.description;
@@ -40,9 +39,9 @@ export default function SearchPage({
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { search } = context.query;
-
-  let url = `/search/${search}`;
+  const { search, page } = context.query;
+  
+  let url = `/search/${search}?size=${Config.PostPerPage}&page=${page}`;
 
   let postData;
 

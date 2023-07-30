@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import Loading from '@/components/UI/Loading';
 import { General } from '@/utils/constants/general.enum';
 import getData from '@/utils/getData';
+import { Config } from '@/utils/constants/config.enum';
 import type { Params } from '@/types/params-types';
 import type {
   GetServerSidePropsContext,
@@ -79,7 +80,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
 
-    let url = `/posts/?topic=${topic}&include=topics,categories&status=published&order=createdAt:desc&size=10&page=${page}`;
+    let url = `/posts/?topic=${topic}&include=topics,categories&status=published&order=createdAt:desc&size=${Config.PostPerPage}&page=${page}`;
 
     if (category) {
       url += `&category=${category}`;

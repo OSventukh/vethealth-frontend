@@ -26,7 +26,7 @@ export default function PostsList({ posts, totalPages }: { posts: Post[]; totalP
         <PostItem key={post.id} post={post} />
       ))}
       {totalPages && +totalPages > 1 && <Box sx={{ display: 'flex', justifyContent: 'center', p: '1rem'}}>
-        <Pagination count={totalPages} page={currentPage} onChange={postsPaginationChangeHandler} />
+        <Pagination count={totalPages} page={currentPage || 1} onChange={postsPaginationChangeHandler} />
       </Box>}
     </section>
   );
