@@ -1,4 +1,5 @@
 import React, { FormEvent, useState, useRef } from 'react';
+import Image from 'next/image';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -12,7 +13,6 @@ import Input from '@mui/material/Input';
 import Alert from '@mui/material/Alert';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
-
 import type { AuthComponentsProps } from '@/types/auth-types';
 
 export default function Login({
@@ -44,79 +44,106 @@ export default function Login({
   };
 
   return (
-    <Paper sx={{ display: 'flex' }}>
+    <Paper
+      sx={{
+        display: 'flex',
+        overflow: 'hidden',
+        justifyContent: 'center',
+        height: { xs: '90%', sm: '30rem' },
+        width: '40rem',
+        maxWidth: '90vw',
+      }}
+    >
       <Box
         onSubmit={loginSubmitHandler}
         component="form"
         sx={{
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'space-between',
           gap: '1rem',
           p: '2rem',
-          width: '22rem',
+          width: { xs: '100%', sm: '50%' },
+          height: '100%',
           maxWidth: '90vw',
         }}
       >
-        <Box>
-          <Typography variant="h5">
-            {resetPasswordMode ? 'RESET PASSWORD' : 'LOGIN'}
-          </Typography>
-        </Box>
-        {authError && <Alert severity="error">{authError}</Alert>}
-        {message && <Alert severity="info">{message}</Alert>}
-        {!message && (
-          <TextField
-            required
-            label="Email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            variant="standard"
-            inputRef={emailRef}
-            sx={{
-              m: 1,
-            }}
-          />
-        )}
+        <Typography variant="h6" sx={{ textAlign: 'center' }}>
+          {resetPasswordMode ? 'RESET PASSWORD' : 'LOGIN'}
+        </Typography>
 
-        {!resetPasswordMode && (
-          <FormControl sx={{ m: 1 }} variant="standard">
-            <InputLabel htmlFor="standard-adornment-password">
-              Password
-            </InputLabel>
-            <Input
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {authError && <Alert severity="error">{authError}</Alert>}
+          {message && <Alert severity="info">{message}</Alert>}
+          {!message && (
+            <TextField
               required
-              id="standard-adornment-password"
-              autoComplete="current-password"
-              type={showPassword ? 'text' : 'password'}
-              inputRef={passwordRef}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
+              label="Email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              variant="standard"
+              inputRef={emailRef}
+              sx={{
+                m: 1,
+              }}
             />
-          </FormControl>
-        )}
-        {!message && (
-          <>
-            <Box>
-              <Button size="small" onClick={setResetPasswordMode}>
-                {resetPasswordMode ? 'Return to login' : 'Forgot password?'}
-              </Button>
-            </Box>
-            <Button type="submit" variant="contained">
-              {resetPasswordMode ? 'Send confirmation Link' : 'Login'}
-            </Button>
-          </>
-        )}
+          )}
+          <Box>
+            {!resetPasswordMode && (
+              <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
+                <InputLabel htmlFor="standard-adornment-password">
+                  Password
+                </InputLabel>
+                <Input
+                  required
+                  fullWidth
+                  id="standard-adornment-password"
+                  autoComplete="current-password"
+                  type={showPassword ? 'text' : 'password'}
+                  inputRef={passwordRef}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            )}
+            {!message && (
+              <>
+                <Box>
+                  <Button size="small" onClick={setResetPasswordMode}>
+                    {resetPasswordMode ? 'Return to login' : 'Forgot password?'}
+                  </Button>
+                </Box>
+              </>
+            )}
+          </Box>
+        </Box>
+        <Button type="submit" variant="contained">
+          {resetPasswordMode ? 'Send confirmation Link' : 'Login'}
+        </Button>
       </Box>
+
+      <Box
+        sx={{
+          width: '50%',
+          backgroundImage: 'url(/images/login_image.svg)',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          display: {
+            xs: 'none',
+            sm: 'block',
+          },
+        }}
+      ></Box>
     </Paper>
   );
 }
