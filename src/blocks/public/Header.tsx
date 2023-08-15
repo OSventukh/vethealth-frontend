@@ -2,12 +2,16 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Container from '@mui/material/Container';
 import { Raleway } from 'next/font/google';
-const MobileNavigation = dynamic(() => import('@/components/navigation/mobile/MobileNavigation'));
-const MainNavigation = dynamic(() => import('@/components/navigation/common/Navigation'));
+const MobileNavigation = dynamic(
+  () => import('@/components/navigation/mobile/MobileNavigation')
+);
+const MainNavigation = dynamic(
+  () => import('@/components/navigation/common/Navigation')
+);
 import type { Header } from '@/types/props-types';
+import Logo from '@/components/logo';
 import classes from '@/styles/layout/Header.module.css';
-import CustomSearch from '@/components/search/CustomSearch';
-import type { Category } from '@/types/content-types';
+import CustomSearch from '@/components/search';
 const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default function Header(props: Header) {
@@ -24,11 +28,7 @@ export default function Header(props: Header) {
           gap: '2rem',
         }}
       >
-        <Link href="/" className={classes['site-name']}>
-          <h1 className={classes['site-title']}>
-            <img src="/vethealth-logo.svg" alt={name} />
-          </h1>
-        </Link>
+        <Logo />
         <div className={classes.navigation}>
           {props.navigationMenu && props.navigationMenu.length > 0 && (
             <>
@@ -36,8 +36,7 @@ export default function Header(props: Header) {
               <MobileNavigation data={props.navigationMenu} />
             </>
           )}
-           <CustomSearch />
-
+          <CustomSearch />
         </div>
       </Container>
     </header>

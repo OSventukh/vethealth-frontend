@@ -4,21 +4,6 @@
   background: var(--main-theme-color);
 }
 
-.site-name {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  height: 5rem;
-}
-
-.site-name img {
-  height: 100%;
-}
-
-.site-title {
-  height: 100%;
-  margin: 0;
-}
 
 .navigation {
   display: flex;

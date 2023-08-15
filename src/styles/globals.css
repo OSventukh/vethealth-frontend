@@ -153,10 +153,6 @@ a {
   text-decoration: none;
 }
 
-/* a:hover {
-  text-decoration: underline var(--main-theme-color);
-} */
-
 a.disabled {
   color: rgb(106, 105, 105);
 }

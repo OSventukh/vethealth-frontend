@@ -1,21 +1,24 @@
-import { useState, useEffect, FormEvent } from 'react';
-import Link from 'next/link';
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import useDebounce from '@/hooks/debounce-hook';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
-import ListItem from '@mui/material/ListItem';
 import { useGetData } from '@/hooks/data-hook';
-import type { Post } from '@/types/content-types';
-import { IconButton } from '@mui/material';
+import classes from './Search.module.css';
+import SearchIcon from '@mui/icons-material/Search';
+import { useOutsideClick } from '@/hooks/outside-click-hook';
+import Button from '@mui/material/Button';
+import type { Post, PaginateData } from '@/types/content-types';
+import { Config } from '@/utils/constants/config.enum';
 
-export default function Search() {
+export default function CustomSearch() {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
-  const { data, mutate } = useGetData<{ posts: Post[] }>(
-    debouncedSearchQuery ? `search/${debouncedSearchQuery}` : null,
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  const { data, mutate } = useGetData<PaginateData & {posts: Post[] }>(
+    searchQuery.length > 2 && debouncedSearchQuery
+      ? `search/${debouncedSearchQuery}?size=${Config.NumResultsSearchAutocomplete}&page=1`
+      : null,
     { revalidateOnMount: false }
   );
 
@@ -27,7 +30,8 @@ export default function Search() {
     }
   }, [debouncedSearchQuery]);
 
-  const searchChangeHandler = (event: React.SyntheticEvent, value: string) => {
+  const searchChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
     setSearchQuery(value);
   };
 
@@ -42,87 +46,47 @@ export default function Search() {
     });
   };
 
-  return (
-    <form
-      style={{ position: 'relative', width: '15rem', maxWidth: '100%'}}
-      onSubmit={searchSubmintHandler}
-    >
-      <Autocomplete
-    size='small'
-        sx={{
-          flexGrow: 1,
-          '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-            border: '1px solid var(--font-color)',
-            borderRadius: '20px',
-          },
-          '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline legend': {
-            display: 'none',
-          },
-          '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            border: '1px solid var(--font-color)',
-            borderRadius: '20px',
-          },
-          '& .MuiInputLabel-root': {
-                color: 'var(--font-color)',
+  const clearSearchInput = () => {
+    setSearchQuery('');
+  };
 
-          },
-          '& .MuiInputLabel-root.Mui-focused': {
-            display: 'none',
-            color: 'var(--font-color)',
-          },
-          '& .MuiOutlinedInput-root .MuiAutocomplete-input': {
-            mr: '2rem'
-          }
-        }}
-        freeSolo
-        id="search"
-        onInputChange={searchChangeHandler}
-        disableClearable
-        options={data?.posts || []}
-        getOptionLabel={(option) =>
-          typeof option === 'string' ? option : option.title
-        }
-        renderOption={(params, option) => (
-          <ListItem {...params}>
-            <Link
-              style={{
-                display: 'block',
-                width: '100%',
-                textDecoration: 'none',
-              }}
-              href={`/${option?.topics && option.topics[0].slug}/${
-                option.slug
-              }`}
-            >
-              {option.title}
-            </Link>
-          </ListItem>
-        )}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Пошук"
-            InputProps={{
-              ...params.InputProps,
-              type: 'search',
-            }}
-          />
-        )}
+  const ref = useOutsideClick(clearSearchInput);
+
+  return (
+    <form className={classes.search} onSubmit={searchSubmintHandler} ref={ref}>
+      <input
+        value={searchQuery}
+        type="text"
+        className={classes.input}
+        placeholder="Пошук..."
+        required
+        onChange={searchChangeHandler}
       />
-      <IconButton
-        sx={{
-          position: 'absolute',
-          right: '0.5rem',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          color: 'var(--font-color)',
-        
-        }}
-        size='small'
-        type="submit"
-      >
+      <Button className={classes.submit} type="submit">
         <SearchIcon />
-      </IconButton>
+      </Button>
+      {data?.posts && data.posts.length > 0 && (
+        <div className={classes['search-result']}>
+          <ul>
+            
+            {data.posts.map((post) => (
+              <li key={post.id}>
+                <Link
+                  href={`/${post?.topics && post.topics[0].slug}/${post.slug}`}
+                >
+                  {post.title}
+                </Link>
+              </li>
+            ))}
+            {data.totalPages > 1 && <Button sx={{ width: '100%'}} type="submit">Всі результати</Button>}
+          </ul>
+        </div>
+      )}
+      {data?.posts && data.posts.length === 0 && (
+        <div className={classes['search-result']}>
+          <p>Результатів не знайдено</p>
+        </div>
+      )}
     </form>
   );
 }
