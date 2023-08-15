@@ -13,15 +13,15 @@ import type {
 
 import type { Post, Topic, PaginateData } from '@/types/content-types';
 
-const PostsList = dynamic(() => import('@/components/Posts/PostList'), {
+const PostsList = dynamic(() => import('@/components/posts/PostList'), {
   loading: () => <Loading />,
 });
 
-const TopicsList = dynamic(() => import('@/components/Topics/TopicList'), {
+const TopicsList = dynamic(() => import('@/components/topics/TopicList'), {
   loading: () => <Loading />,
 });
 
-const PostComponent = dynamic(() => import('@/components/Posts/Post'), {
+const PostComponent = dynamic(() => import('@/components/posts/Post'), {
   loading: () => <Loading />,
 });
 

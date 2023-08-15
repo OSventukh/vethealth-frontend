@@ -147,15 +147,18 @@ export interface Header {
   navigationMenu: Category[] | null;
 }
 
-export type NavItemWithNested = {
+export type MobileNavExpandableItem = {
   text: string;
-  nested: Category[];
+  submenu: T[];
   anchor?: string;
 };
 
 export type NavItem = {
-  text: string;
-  link: string;
-  nested?: boolean;
-  anchor?: string;
+  item: Category;
+  anchor: string;
 };
+
+export type NavList = {
+  items: Category[];
+  anchor: string;
+}

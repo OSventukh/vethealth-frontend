@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-const PostsList = dynamic(() => import('@/components/Posts/PostList'));
+const PostsList = dynamic(() => import('@/components/posts/PostList'));
 import getData from '@/utils/getData';
 import type {
   GetServerSidePropsContext,

@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-const TopicList = dynamic(() => import('../components/Topics/TopicList'));
+const TopicList = dynamic(() => import('../components/topics/TopicList'));
 import getData from '@/utils/getData';
 import type { Topic } from '@/types/content-types';
 import type { InferGetStaticPropsType } from 'next';

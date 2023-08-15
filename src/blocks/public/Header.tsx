@@ -2,12 +2,12 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Container from '@mui/material/Container';
 import { Raleway } from 'next/font/google';
-const MobileNavigation = dynamic(() => import('./MobileNavigation'));
-const MainNavigation = dynamic(() => import('./Navigation'));
+const MobileNavigation = dynamic(() => import('@/components/navigation/mobile/MobileNavigation'));
+const MainNavigation = dynamic(() => import('@/components/navigation/common/Navigation'));
 import type { Header } from '@/types/props-types';
 import classes from '@/styles/layout/Header.module.css';
-import  Search from '../Search';
-import CustomSearch from '../Search/CustomSearch';
+import CustomSearch from '@/components/search/CustomSearch';
+import type { Category } from '@/types/content-types';
 const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default function Header(props: Header) {

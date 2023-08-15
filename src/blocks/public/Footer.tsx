@@ -1,6 +1,6 @@
 import Container from '@mui/material/Container';
 import dynamic from 'next/dynamic';
-const Search = dynamic(() => import('../Search'))
+const Search = dynamic(() => import('../../components/search'))
 import type { General } from '@/types/props-types';
 import classes from '@/styles/layout/Footer.module.css';
 

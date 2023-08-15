@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
-const Header = dynamic(() => import('./Header'));
-const Footer = dynamic(() => import('./Footer'));
+const Header = dynamic(() => import('@/blocks/public/Header'));
+const Footer = dynamic(() => import('@/blocks/public/Footer'));
 import { Raleway } from 'next/font/google';
 import Container from '@mui/material/Container';
 import type { Header as HeaderType } from '@/types/props-types';

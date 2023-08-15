@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material/';
-import Header from './Header';
-import Navigation from './Navigation';
+import Header from '@/blocks/admin/Header';
+import Navigation from '@/blocks/admin/Navigation';
 import { replacePropertyName } from '@/utils/replacePropertyName';
 import type { ChildrenProps } from '@/types/props-types';
 import { Roboto } from 'next/font/google';

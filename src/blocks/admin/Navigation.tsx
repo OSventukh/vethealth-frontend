@@ -10,13 +10,12 @@ import {
   ExpandLess,
   ViewComfyAlt,
   Web,
-  Settings,
   Group,
 } from '@mui/icons-material';
 import Collapse from '@mui/material/Collapse';
 import { Drawer, DrawerHeader } from '@/components/admin/Layout/drawer';
 import type { NavigationProps } from '@/types/props-types';
-import NavItem from './NavItem';
+import NavItem from '../../components/admin/Layout/NavItem';
 import routes from '@/utils/routesList';
 
 export default function Navigation({ open }: NavigationProps) {
@@ -202,14 +201,6 @@ export default function Navigation({ open }: NavigationProps) {
             </NavItem>}
           </List>
         </Collapse>
-        {/* {isShowMenu && <NavItem
-          link={routes.settings.general}
-          open={open}
-          icon={<Settings />}
-          selected={router.pathname.startsWith(routes.settings.general)}
-        >
-          Settings
-        </NavItem>} */}
       </List>
     </Drawer>
   );

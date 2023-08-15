@@ -4,12 +4,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
 import type { NavigationProps } from '@/types/props-types';
 import { AppBar } from '@/components/admin/Layout/drawer';
-import UserMenu from './UserMenu';
+import UserMenu from '../../components/admin/Layout/UserMenu';
 import { Box } from '@mui/material';
-import { ColorModeSwitch } from '../UI/Switch';
+import { ColorModeSwitch } from '../../components/admin/UI/Switch';
 import ColorModeContext from '@/context/theme-context';
 import Link from 'next/link';
-import Logo from './Logo';
+import Logo from '../../components/admin/Layout/Logo';
 
 export default function Header({ open, handleDrawerToggle }: NavigationProps) {
   const theme = useTheme();

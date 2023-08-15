@@ -6,11 +6,11 @@ import Loading from '@/components/UI/Loading';
 import { General } from '@/utils/constants/general.enum';
 import getData from '@/utils/getData';
 import { Breadcrumbs, Typography, Box } from '@mui/material';
-const PostsList = dynamic(() => import('@/components/Posts/PostList'), {
+const PostsList = dynamic(() => import('@/components/posts/PostList'), {
   loading: () => <Loading />,
 });
 
-const Post = dynamic(() => import('@/components/Posts/Post'), {
+const Post = dynamic(() => import('@/components/posts/Post'), {
   loading: () => <Loading />,
 });
 import type { GetServerSidePropsContext, InferGetStaticPropsType } from 'next';
