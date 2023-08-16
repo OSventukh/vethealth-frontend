@@ -196,7 +196,7 @@ span.tooltip {
   .topics {
     grid-template-columns: 1fr;
     justify-items: center;
-    gap: 4rem;
+    gap: 2rem;
   }
 }
 
