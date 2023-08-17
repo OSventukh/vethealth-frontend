@@ -135,7 +135,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          {title}
+          {title.toUpperCase()}
         </Typography>
       )}
       {selected.length > 0 ? (

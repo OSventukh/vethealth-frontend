@@ -2,9 +2,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Raleway } from 'next/font/google';
 import type { Post } from '@/types/content-types';
-import { Button } from '@mui/material';
 import TrendingFlatRoundedIcon from '@mui/icons-material/TrendingFlatRounded';
-import classes from '@/styles/posts/Post.module.css';
+import classes from './Post.module.css';
 
 const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
@@ -26,23 +25,7 @@ export default function PostItem({ post }: { post: Post }) {
           className={classes['post__content']}
           dangerouslySetInnerHTML={{ __html: post.excerpt }}
         />
-        <footer>
-        {/* <Button
-          size="small"
-          LinkComponent={Link}
-          href={`/${post?.topics ? post.topics[0]!.slug : topic}/${post.slug}`}
-          variant="contained"
-          sx={{
-            background: 'var(--main-theme-color)',
-            color: 'var(--font-color)',
-            boxShadow: 'none',
-            '&:hover': {
-              background: 'var(--main-theme-color)',
-            },
-          }}
-          >
-          Читати далі
-          </Button> */}
+        <footer className={classes['post__footer']}>
           <TrendingFlatRoundedIcon />
         </footer>
       </Link>

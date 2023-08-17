@@ -55,7 +55,7 @@ const replaceFunction = (domNode: DOMNode) => {
       <Link
         className={typedNode.attribs?.class}
         title={typedNode.attribs?.title}
-        href={typedNode.attribs?.href}
+        href={'/' + typedNode.attribs?.href}
       >
         {linkText?.data}
       </Link>

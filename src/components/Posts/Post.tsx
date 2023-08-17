@@ -1,5 +1,5 @@
 import ParsedContent from '@/utils/parse-content';
-import classes from '@/styles/posts/Post.module.css';
+import classes from './Post.module.css';
 
 import type { Post } from '@/types/content-types';
 

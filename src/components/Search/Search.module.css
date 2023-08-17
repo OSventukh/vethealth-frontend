@@ -4,11 +4,12 @@
   justify-content: center;
   align-items: center;
   transition: all 1s;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3rem;
+  height: 3rem;
   box-sizing: border-box;
-  border-radius: var(--border-radius);
   padding: 5px;
+  transition-delay: 1s;
+  transition: width 0.5s linear;
 }
 
 .search .input {
@@ -16,15 +17,19 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 2.5rem;
+  height: 3rem;
   line-height: 30px;
-  background: var(--search-bar-bg);
   outline: 0;
   border: 0;
-  display: none;
   border-radius: var(--border-radius);
-  padding: 0 20px;
-  padding-right: 2.5rem;
+  padding-right: 3rem;
+  background: none;
+  transition: width 0.5s linear;
+  font-size: 1rem;
+}
+
+.search .input::placeholder {
+  opacity: 0;
 }
 
 .search .submit {
@@ -33,10 +38,9 @@
   align-items: center;
   border: none;
   background: none;
-  padding: 10px;
-  width: 2.5rem;
-  min-width: 2.5rem;
-  height: 2.5rem;
+  width: 3rem;
+  min-width: 3rem;
+  height: 3rem;
   position: absolute;
   top: 0;
   right: 0;
@@ -51,12 +55,18 @@
 .search:hover,
 .search:focus-within {
   width: 15rem;
-  max-width: 100%;
 }
 
 .search:hover .input,
 .search:focus-within .input {
-  display: block;
+  padding-left: 1rem;
+  background: var(--search-bar-bg);
+  border-radius: var(--border-radius);
+}
+
+.search:hover .input::placeholder,
+.search:focus-within .input::placeholder {
+  opacity: 1;
 }
 
 .search:hover .submit,

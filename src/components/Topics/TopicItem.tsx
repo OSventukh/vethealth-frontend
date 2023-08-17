@@ -15,7 +15,7 @@ export default function TopicItem({ topic }: { topic: Topic }) {
     : topic.slug;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Link className={classes.topic__item} href={topicUrl}>
         {topic?.image && (
           <div className={classes.topic__image}>

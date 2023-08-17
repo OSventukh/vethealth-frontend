@@ -49,7 +49,7 @@ export default function Login({
         display: 'flex',
         overflow: 'hidden',
         justifyContent: 'center',
-        height: { xs: '90%', sm: '30rem' },
+        height: { xs: '80%', sm: '30rem' },
         width: '40rem',
         maxWidth: '90vw',
       }}
@@ -68,11 +68,18 @@ export default function Login({
           maxWidth: '90vw',
         }}
       >
-        <Typography variant="h6" sx={{ textAlign: 'center' }}>
-          {resetPasswordMode ? 'RESET PASSWORD' : 'LOGIN'}
-        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <Box
+            sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+          >
+            <img style={{ width: '20%' }} src="/logo/logo.svg" />
+          </Box>
+          <Typography variant="h6" sx={{ textAlign: 'center' }}>
+            {resetPasswordMode ? 'RESET PASSWORD' : 'LOGIN'}
+          </Typography>
+        </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {authError && <Alert severity="error">{authError}</Alert>}
           {message && <Alert severity="info">{message}</Alert>}
           {!message && (

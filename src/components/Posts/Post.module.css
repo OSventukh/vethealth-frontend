@@ -1,5 +1,10 @@
 .preview-post {
   display: block;
+  transition: box-shadow 0.3s linear;
+}
+
+.preview-post:hover {
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 }
 
 .preview-post,
@@ -72,6 +77,11 @@
   content: '';
   clear: both;
   display: table;
+}
+
+.post__footer {
+  display: flex;
+  justify-content: flex-end;
 }
 
 @media only screen and (max-width: 600px) {
