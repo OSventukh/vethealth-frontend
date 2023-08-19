@@ -50,38 +50,74 @@ export default function App({
       <Head>
         <title>{General.SiteTitle}</title>
         <meta name="title" content={General.SiteTitle} />
-        <meta name="description" content={General.SiteDescription} />
+        <meta
+          name="description"
+          content="Корисні статті про різні аспекти ветеринарної практики та догляду за тваринами. На нашому сайті ви дізнаєтеся про найновіші методи лікування, профілактики та діагностики хвороб тварин, а також поради щодо годівлі, виховання та здоров’я вашого улюбленця. Сайт призначений як для ветеринарів, так і для власників тварин, які хочуть покращити якість життя своїх чотирилапих друзів."
+        />
+
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/apple-touch-icon.png?v=1"
+          href="/favicon/apple-touch-icon.png"
         />
         <link
           rel="icon"
           type="image/png"
           sizes="32x32"
-          href="/favicon-32x32.png?v=1"
+          href="/favicon/favicon-32x32.png"
         />
         <link
           rel="icon"
           type="image/png"
           sizes="16x16"
-          href="/favicon-16x16.png?v=1"
+          href="/favicon/favicon-16x16.png"
         />
-        <link rel="manifest" href="/site.webmanifest?v=1" />
+        <link rel="manifest" href="/favicon/site.webmanifest" />
         <link
           rel="mask-icon"
-          href="/safari-pinned-tab.svg?v=1"
+          href="/favicon/safari-pinned-tab.svg"
           color="#5bbad5"
         />
-        <link rel="shortcut icon" href="/favicon.ico?v=1" />
+        <link rel="shortcut icon" href="/favicon/favicon.ico" />
         <meta name="msapplication-TileColor" content="#da532c" />
+        <meta
+          name="msapplication-config"
+          content="/favicon/browserconfig.xml"
+        />
         <meta name="theme-color" content="#ffffff" />
+        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/social.png" />
+        <meta property="og:url" content="https://vethealth.com.ua" />
+        <meta
+          property="og:title"
+          content={General.SiteTitle}
+        />
+        <meta
+          property="og:description"
+          content="Корисні статті про різні аспекти ветеринарної практики та догляду за тваринами. На нашому сайті ви дізнаєтеся про найновіші методи лікування, профілактики та діагностики хвороб тварин, а також поради щодо годівлі, виховання та здоров’я вашого улюбленця. Сайт призначений як для ветеринарів, так і для власників тварин, які хочуть покращити якість життя своїх чотирилапих друзів."
+        />
+        <meta
+          property="og:image"
+          content="/social/social.jpg"
+        />
+
+        {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:image" content="/social.png" />
+        <meta property="twitter:url" content="https://vethealth.com.ua" />
+        <meta
+          property="twitter:title"
+          content={General.SiteTitle}
+        />
+        <meta
+          property="twitter:description"
+          content="Корисні статті про різні аспекти ветеринарної практики та догляду за тваринами. На нашому сайті ви дізнаєтеся про найновіші методи лікування, профілактики та діагностики хвороб тварин, а також поради щодо годівлі, виховання та здоров’я вашого улюбленця. Сайт призначений як для ветеринарів, так і для власників тварин, які хочуть покращити якість життя своїх чотирилапих друзів."
+        />
+        <meta
+          property="twitter:image"
+          content="/social/social.jpg"
+        />
       </Head>
       <SessionProvider session={session} refetchInterval={10 * 60}>
         <CssBaseline />

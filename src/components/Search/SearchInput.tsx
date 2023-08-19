@@ -3,12 +3,13 @@ import classes from './Search.module.css';
 
 type SearchInput = {
   value: string;
-  onChange: ChangeEventHandler
-}
+  onChange: ChangeEventHandler;
+};
 
 export default function SearchInput({ value, onChange }: SearchInput) {
   return (
     <input
+      role="searchbox"
       value={value}
       type="text"
       className={classes.input}

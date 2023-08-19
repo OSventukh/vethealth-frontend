@@ -59,7 +59,7 @@ export default function CustomSearch() {
   const ref = useOutsideClick(clearSearchInput);
   const showAllResultButton: boolean = data?.totalPages ? data.totalPages > 1 : false;
   return (
-    <form className={classes.search} onSubmit={searchSubmintHandler} ref={ref}>
+    <form className={classes.search} onSubmit={searchSubmintHandler} ref={ref} role="search">
       <SearchInput value={searchQuery} onChange={searchChangeHandler} />
       <SearchButton />
       <SearchResult<Post> searchData={data?.posts} anchorFn={getPostUrl} showAllResultButton={showAllResultButton} />

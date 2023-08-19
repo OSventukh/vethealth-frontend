@@ -4,7 +4,7 @@ import classes from './Search.module.css';
 
 export default function SearchButton() {
   return (
-    <Button className={classes.submit} type="submit">
+    <Button className={classes.submit} type="submit" title="Пошук">
       <SearchIcon />
     </Button>
   );
