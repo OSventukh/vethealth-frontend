@@ -5,6 +5,7 @@ import Loading from '@/components/UI/Loading';
 import { General } from '@/utils/constants/general.enum';
 import getData from '@/utils/getData';
 import { Config } from '@/utils/constants/config.enum';
+import NotFound from '@/components/notFound';
 import type { Params } from '@/types/params-types';
 import type {
   GetServerSidePropsContext,
@@ -42,8 +43,8 @@ export default function TopicPage({
     <>
       <Head>
         <title>{pageTitle}</title>
-        <meta name="title" content={pageTitle}/>
-        <meta name="description" content={pageDescription}/>
+        <meta name="title" content={pageTitle} />
+        <meta name="description" content={pageDescription} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="twitter:title" content={pageTitle} />
@@ -56,11 +57,13 @@ export default function TopicPage({
       ) : postsData?.posts ? (
         <PostsList posts={postsData.posts} totalPages={postsData.totalPages} />
       ) : (
-        <p style={{ textAlign: 'center' }}>
-          {category
-            ? 'Матеріали в даній категорії поки-що відсутні'
-            : 'Матеріли по даній темі поки-що відсутні'}
-        </p>
+        <NotFound
+          text={
+            category
+              ? 'Матеріали в даній категорії поки-що відсутні'
+              : 'Матеріли по даній темі поки-що відсутні'
+          }
+        />
       )}
     </>
   );
@@ -111,12 +114,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             (topicData?.topic?.children && topicData?.topic?.children.length > 0
               ? topicData?.topic?.title
               : General.SiteDescription) ||
-              General.SiteDescription,
+            General.SiteDescription,
         },
         navigationMenu: topicData?.topic?.categories || null,
       },
     };
   } catch (error) {
-    throw new Error('Something went wrong')
+    throw new Error('Something went wrong');
   }
 }
