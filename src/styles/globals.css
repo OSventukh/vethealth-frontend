@@ -12,19 +12,7 @@
   --navigation-dropdown-hover: #42a5f5;
   --post-bg: #fff;
 }
-/* @media (prefers-color-scheme: light) {
-}
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  :root {
-    --main-theme-color: #267676;
-    --font-color: #b8b8b8;
-    --background-color: #292929;
-  }
-} */
 
 @media only screen and (max-width: 678px) {
   :root {
@@ -52,7 +40,7 @@ body {
 }
 
 #__next {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }

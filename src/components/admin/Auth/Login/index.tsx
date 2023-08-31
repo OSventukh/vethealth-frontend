@@ -49,7 +49,7 @@ export default function Login({
         display: 'flex',
         overflow: 'hidden',
         justifyContent: 'center',
-        height: { xs: '80%', sm: '30rem' },
+        height: { xs: '60%', sm: '30rem' },
         width: '40rem',
         maxWidth: '90vw',
       }}

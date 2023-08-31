@@ -110,7 +110,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       ),
     ]);
 
-    if ((!postData || !postData?.post) || (!subtopicData || !subtopicData.topic)) {
+    if (!postData?.post && !subtopicData.topic) {
       return {
         notFound: true,
       };
