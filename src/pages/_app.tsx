@@ -44,6 +44,10 @@ export default function App({
           gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}');
         `}
           </Script>
+          <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7516416801502205" crossOrigin="anonymous"
+          ></Script>
         </>
       )}
 
