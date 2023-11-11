@@ -1,4 +1,4 @@
-import { Relation } from './general';
+import { Relation } from './general.type';
 
 export type RegisterData = {
   firstname: string;
@@ -22,9 +22,21 @@ export type ConfirmData = {
   passport: string;
 };
 
+export type User = {
+  id: string;
+  firstname: string;
+  lastname?: string;
+  email: string;
+  role: string;
+  status: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+};
+
 export type LoginResponse = {
   token: string;
   refreshToken: string;
   tokenExpires: number;
-  user: unknown;
+  user: User;
 };

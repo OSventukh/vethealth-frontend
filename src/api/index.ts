@@ -6,13 +6,14 @@ import type {
   LoginData,
   LoginResponse,
   RegisterData,
-} from './types/auth';
+} from './types/auth.type';
 
 export const api = {
   auth: {
     register: (data: RegisterData) =>
       post<LoginResponse>({ url: routes.register, data }),
-    login: (data: LoginData) => post({ url: routes.login, data }),
+    login: (data: LoginData) =>
+      post<LoginResponse>({ url: routes.login, data }),
     logout: (accessToken: string) =>
       post({ url: routes.logout, token: accessToken }),
     refresh: (refreshToken: string) =>
