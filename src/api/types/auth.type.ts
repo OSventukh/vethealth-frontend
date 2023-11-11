@@ -34,9 +34,14 @@ export type User = {
   deletedAt?: Date;
 };
 
-export type LoginResponse = {
+export type Tokens = {
   token: string;
   refreshToken: string;
   tokenExpires: number;
-  user: User;
 };
+
+export type LoginResponse = {
+  user: User;
+} & Tokens;
+
+export type RefreshResponse = Tokens;

@@ -5,6 +5,7 @@ import type {
   ForgotData,
   LoginData,
   LoginResponse,
+  RefreshResponse,
   RegisterData,
 } from './types/auth.type';
 
@@ -17,7 +18,7 @@ export const api = {
     logout: (accessToken: string) =>
       post({ url: routes.logout, token: accessToken }),
     refresh: (refreshToken: string) =>
-      post<LoginResponse>({ url: routes.refresh, token: refreshToken }),
+      post<RefreshResponse>({ url: routes.refresh, token: refreshToken }),
     forgot: (data: ForgotData) => post<void>({ url: routes.forgot, data }),
     confirm: (data: ConfirmData, hash: string) =>
       post<void>({ url: routes.confirm, data, query: hash }),

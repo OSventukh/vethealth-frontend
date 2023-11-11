@@ -36,7 +36,11 @@ export const authOptions: NextAuthOptions = {
 
       if (new Date().getTime() < token.tokenExpires) return token;
 
-      return await api.auth.refresh(token.refreshToken);
+      const newTokens = await api.auth.refresh(token.refreshToken);
+      return {
+        user: token.user,
+        ...newTokens,
+      };
     },
 
     async session({ token, session }) {
