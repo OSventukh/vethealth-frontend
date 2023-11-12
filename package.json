@@ -13,6 +13,7 @@
     "type-check": "tsc --project tsconfig.json --pretty --noEmit && echo "
   },
   "dependencies": {
+    "@radix-ui/react-tooltip": "^1.0.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "lucide-react": "^0.292.0",
