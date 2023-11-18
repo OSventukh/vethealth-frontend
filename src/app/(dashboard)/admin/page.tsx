@@ -1,6 +1,9 @@
-import { auth } from '@/lib/next-auth/auth';
-import Editor from '@/components/dashboard/Editor';
+import dynamic from 'next/dynamic';
+
+const Editor = dynamic(() => import('@/components/dashboard/Editor'), {
+  ssr: false,
+});
+
 export default async function AdminPage() {
-  const session = await auth();
   return <Editor />;
 }

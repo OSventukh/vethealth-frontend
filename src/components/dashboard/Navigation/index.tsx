@@ -43,8 +43,8 @@ const navs: Nav[] = [
 
 export default function Navigation() {
   return (
-    <nav className="w-full">
-      <ul className="w-full flex flex-col items-center">
+    <nav className="w-full h-full">
+      <ul className="w-full h-full md:h-auto flex md:flex-col items-center">
         {navs.map((item) => (
           <li
             key={item.title}
@@ -52,10 +52,10 @@ export default function Navigation() {
           >
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger className="flex justify-center items-center w-full h-h-full">
+                <TooltipTrigger className="flex justify-center items-center w-full h-full">
                   <Link
                     href={item.route}
-                    className="flex justify-center items-center p-4 w-[80%] aspect-square transition-all rounded-xl hover:bg-blue-200 hover:shadow-md"
+                    className="flex justify-center items-center p-4 w-[80%] aspect-square transition-all rounded-xl hover:bg-primary hover:text-primary-foreground hover:shadow-lg"
                   >
                     {item.icon}
                   </Link>

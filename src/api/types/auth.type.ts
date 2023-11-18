@@ -44,4 +44,9 @@ export type LoginResponse = {
   user: User;
 } & Tokens;
 
+export type FileUploadResponse = {
+  id: string;
+  path: string;
+};
+
 export type RefreshResponse = Tokens;

@@ -1,7 +1,8 @@
-import { post } from './request';
+import { post, sendFile } from './request';
 import { routes } from './routes';
 import type {
   ConfirmData,
+  FileUploadResponse,
   ForgotData,
   LoginData,
   LoginResponse,
@@ -22,5 +23,9 @@ export const api = {
     forgot: (data: ForgotData) => post<void>({ url: routes.forgot, data }),
     confirm: (data: ConfirmData, hash: string) =>
       post<void>({ url: routes.confirm, data, query: hash }),
+  },
+  file: {
+    upload: (data: FormData, token: string) =>
+      sendFile<FileUploadResponse>({ url: routes.fileUpload, data, token }),
   },
 } as const;

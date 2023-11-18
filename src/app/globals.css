@@ -2,22 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 160, 43%, 99%;
+    --foreground: 180, 6%, 10%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card: 227, 100%, 93%;
+    --card-foreground: 180, 72%, 7%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover: 176, 38%, 85%;
+    --popover-foreground: 180, 72%, 7%;
 
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 183, 87%, 29%;
+    --primary-foreground: 0, 0%, 100%;
 
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 269, 57%, 50%;
+    --secondary-foreground: 0, 0%, 100%;
 
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;

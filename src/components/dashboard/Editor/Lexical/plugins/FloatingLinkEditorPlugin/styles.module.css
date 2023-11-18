@@ -1,0 +1,19 @@
+.linkEditor {
+  @apply flex absolute z-10 max-w-[400px] w-full opacity-0 transition-opacity duration-500 will-change-transform  left-0 top-20;
+}
+
+.linkWrap {
+  @apply flex w-full p-2 bg-background shadow-md border-[1px] border-border  rounded-lg
+}
+
+.linkView {
+  @apply flex mr-1 w-full items-center
+}
+
+.actions {
+  @apply flex;
+}
+
+.button {
+  @apply flex items-center gap-2 px-2 py-2 rounded-sm hover:bg-blue-200 hover:shadow-lg
+}

@@ -1,9 +1,13 @@
 import React from 'react';
 import Navigation from '../Navigation';
 
-export default function Sidebar() {
+type Props = {
+  className?: string;
+};
+
+export default function Sidebar({ className }: Props) {
   return (
-    <div className="col-start-1 col-span-1 row-span-1">
+    <div className={className}>
       <Navigation />
     </div>
   );
