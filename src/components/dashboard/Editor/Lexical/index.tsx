@@ -1,5 +1,5 @@
 'use client';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 
 import {
   InitialEditorStateType,
@@ -82,7 +82,9 @@ export default function Lexical({
                   type="text"
                   placeholder="Заголовок"
                   className="w-full px-5 -z-10 py-2 md:px-10 md:py-4 border-[1px] border-border outline-0 rounded-t-2xl bg-background text-2xl placeholder:text-slate-500"
-                  // onChange={(event) => onChangeTitle(event.target.value)}
+                  onChange={(event) =>
+                    onChangeTitle && onChangeTitle(event.target.value)
+                  }
                   value={initialTitle}
                 />
                 <ContentEditable />
@@ -110,7 +112,7 @@ export default function Lexical({
           <OnChangePlugin
             onChange={(state) => {
               const stringifiedContent = JSON.stringify(state);
-              // onChangeContent(stringifiedContent);
+              onChangeContent && onChangeContent(stringifiedContent);
             }}
           />
         </>
