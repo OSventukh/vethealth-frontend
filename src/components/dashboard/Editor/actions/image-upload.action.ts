@@ -1,19 +1,25 @@
 'use server';
 
-import { api } from '@/api';
 import { auth } from '@/lib/next-auth/auth';
-
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const imageUploadUrl = process.env.IMAGE_UPLOAD_URL!;
 export async function imageUploadAction(imageData: FormData) {
   const session = await auth();
-  console.log(session);
   try {
-    const response = await api.file.upload(imageData, session?.token || '');
-    console.log(response);
-    return { message: 'success' };
-  } catch (error) {
-    console.log(error);
+    const response = await fetch(imageUploadUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${session?.token}`,
+      },
+      body: imageData,
+    });
+    if (!response.ok) {
+      throw new Error();
+    }
+    return await response.json();
+  } catch (error: unknown) {
     return {
-      message: error instanceof Error ? error.message : 'Something went wrong',
+      error: error instanceof Error ? error?.message : 'Something went wrong',
     };
   }
 }

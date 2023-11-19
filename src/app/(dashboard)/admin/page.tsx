@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const Editor = dynamic(() => import('@/components/dashboard/Editor'), {
+const Editor = dynamic(() => import('@/components/dashboard/Editor/Lexical'), {
   ssr: false,
 });
 

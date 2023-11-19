@@ -92,50 +92,27 @@ export function InsertImageUploadedDialogBody({
   const [isPending, startTransition] = useTransition();
   const isDisabled = src === '';
 
-  // const loadImage = (files: FileList | null) => {
-  //   const reader = new FileReader();
-  //   reader.onload = function () {
-  //     if (typeof reader.result === 'string') {
-  //       setSrc(reader.result);
-  //     }
-  //     return '';
-  //   };
-  //   if (files !== null) {
-  //     reader.readAsDataURL(files[0]);
-  //   }
-  // };
-
-  const loadImage = async (files: FileList | null) => {
+  const loadImage = (files: FileList | null) => {
     startTransition(async () => {
       if (!files || files.length === 0) {
         return;
       }
       const formData = new FormData();
       formData.append('post', files[0]);
-      const res = await fetch('http://localhost:3000/api/files/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      console.log(res);
-      if (!res.ok) {
-        throw new Error();
-      }
-
-      const result = await res.json();
-      setSrc(result.path);
+      const result = await imageUploadAction(formData);
+      setSrc(result?.path);
     });
   };
   return (
     <>
       <FileInput
-        label="Image Upload"
+        label="Картинка"
         onChange={loadImage}
         accept="image/*"
         data-test-id="image-modal-file-upload"
       />
       <TextInput
-        label="Alt Text"
+        label="Альтернативний текст"
         placeholder="Descriptive alternative text"
         onChange={setAltText}
         value={altText}
@@ -147,7 +124,7 @@ export function InsertImageUploadedDialogBody({
           disabled={isDisabled}
           onClick={() => onClick({ altText, src })}
         >
-          Confirm
+          {isPending ? 'Завантаження' : 'Підтвердити'}
         </Button>
       </DialogActions>
     </>

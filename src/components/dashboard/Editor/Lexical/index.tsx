@@ -26,15 +26,15 @@ import { LayoutPlugin } from './plugins/LayoutPlugin/LayoutPlugin';
 import DraggableBlockPlugin from './plugins/DraggableBlockPlugin';
 
 type Props = {
-  setTitle: Dispatch<SetStateAction<string | undefined>>;
-  setContent: Dispatch<SetStateAction<string | undefined>>;
-  initialTitle?: string;
-  initialContent?: InitialEditorStateType;
+  onChangeTitle?: (title: string) => void;
+  onChangeContent?: (content: string) => void;
+  initialTitle?: string | undefined;
+  initialContent?: InitialEditorStateType | undefined;
 };
 
 export default function Lexical({
-  setTitle,
-  setContent,
+  onChangeTitle,
+  onChangeContent,
   initialContent,
   initialTitle,
 }: Props) {
@@ -82,7 +82,7 @@ export default function Lexical({
                   type="text"
                   placeholder="Заголовок"
                   className="w-full px-5 -z-10 py-2 md:px-10 md:py-4 border-[1px] border-border outline-0 rounded-t-2xl bg-background text-2xl placeholder:text-slate-500"
-                  onChange={(event) => setTitle(event.target.value)}
+                  // onChange={(event) => onChangeTitle(event.target.value)}
                   value={initialTitle}
                 />
                 <ContentEditable />
@@ -110,7 +110,7 @@ export default function Lexical({
           <OnChangePlugin
             onChange={(state) => {
               const stringifiedContent = JSON.stringify(state);
-              setContent(stringifiedContent);
+              // onChangeContent(stringifiedContent);
             }}
           />
         </>
