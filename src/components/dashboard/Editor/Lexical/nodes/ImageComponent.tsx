@@ -9,12 +9,7 @@ import type {
 
 import './ImageNode.css';
 
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { LexicalNestedComposer } from '@lexical/react/LexicalNestedComposer';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
 import { mergeRegister } from '@lexical/utils';
 import {
@@ -36,12 +31,9 @@ import {
 import * as React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
-import { useSharedHistoryContext } from '../context/SharedHistoryContext';
-import LinkPlugin from '../plugins/LinkPlugin';
-import ContentEditable from '../ui/ContentEditable';
 import ImageResizer from '../ui/ImageResizer';
-import Placeholder from '../ui/Placeholder';
 import { $isImageNode } from './ImageNode';
+import clsx from 'clsx';
 
 const imageCache = new Set();
 
@@ -109,7 +101,7 @@ export default function ImageComponent({
   captionsEnabled,
 }: {
   altText: string;
-  caption: LexicalEditor;
+  caption?: string;
   height: 'inherit' | number;
   maxWidth: number;
   nodeKey: NodeKey;
@@ -129,7 +121,7 @@ export default function ImageComponent({
     RangeSelection | NodeSelection | GridSelection | null
   >(null);
   const activeEditorRef = useRef<LexicalEditor | null>(null);
-
+  const captionRef = useRef<HTMLInputElement>(null);
   const onDelete = useCallback(
     (payload: KeyboardEvent) => {
       if (isSelected && $isNodeSelection($getSelection())) {
@@ -158,7 +150,7 @@ export default function ImageComponent({
           // Move focus into nested editor
           $setSelection(null);
           event.preventDefault();
-          caption.focus();
+          captionRef?.current && captionRef.current.focus();
           return true;
         } else if (
           buttonElem !== null &&
@@ -171,15 +163,12 @@ export default function ImageComponent({
       }
       return false;
     },
-    [caption, isSelected, showCaption]
+    [isSelected, showCaption]
   );
 
   const onEscape = useCallback(
     (event: KeyboardEvent) => {
-      if (
-        activeEditorRef.current === caption ||
-        buttonRef.current === event.target
-      ) {
+      if (buttonRef.current === event.target) {
         $setSelection(null);
         editor.update(() => {
           setSelected(true);
@@ -192,7 +181,7 @@ export default function ImageComponent({
       }
       return false;
     },
-    [caption, editor, setSelected]
+    [editor, setSelected]
   );
 
   const onClick = useCallback(
@@ -321,6 +310,15 @@ export default function ImageComponent({
     });
   };
 
+  const onCaptionChange = () => {
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageNode(node) && captionRef?.current?.value) {
+        node.setCaption(captionRef?.current?.value);
+      }
+    });
+  };
+
   const onResizeEnd = (
     nextWidth: 'inherit' | number,
     nextHeight: 'inherit' | number
@@ -342,8 +340,6 @@ export default function ImageComponent({
     setIsResizing(true);
   };
 
-  const { historyState } = useSharedHistoryContext();
-
   const draggable = isSelected && $isNodeSelection(selection) && !isResizing;
   const isFocused = isSelected || isResizing;
   return (
@@ -351,13 +347,10 @@ export default function ImageComponent({
       <>
         <div draggable={draggable}>
           <LazyImage
-            className={
-              isFocused
-                ? `outline outline-2 outline-blue-700 ${
-                    $isNodeSelection(selection) ? 'cursor-grab' : ''
-                  }`
-                : null
-            }
+            className={clsx('w-auto h-auto', {
+              'outline outline-2 outline-blue-700': isFocused,
+              'cursor-grab': $isNodeSelection(selection),
+            })}
             src={src}
             altText={altText}
             imageRef={imageRef}
@@ -367,24 +360,14 @@ export default function ImageComponent({
           />
         </div>
         {showCaption && (
-          <div className="block absolute bg-[#ffffffe6] min-w-[100px] text-black overflow-hidden select-none m-0 p-0 border-t-white border-t border-solid bottom-1 inset-x-0">
-            <LexicalNestedComposer initialEditor={caption}>
-              <AutoFocusPlugin />
-              <LinkPlugin />
-              <HistoryPlugin externalHistoryState={historyState} />
-              <RichTextPlugin
-                contentEditable={
-                  <ContentEditable className="min-h-[20px] resize-none cursor-text caret-[rgb(5,5,5)] block relative select-text text-xs w-[calc(100%_-_20px)] whitespace-pre-wrap p-2.5 border-0 outline-none" />
-                }
-                placeholder={
-                  <Placeholder className="text-xs text-[#888] overflow-hidden absolute text-ellipsis select-none whitespace-nowrap inline-block pointer-events-none left-2.5 top-2.5">
-                    Enter a caption...
-                  </Placeholder>
-                }
-                ErrorBoundary={LexicalErrorBoundary}
-              />
-            </LexicalNestedComposer>
-          </div>
+          <input
+            className="absolute bottom-0 left-0 w-full bg-card opacity-70 text-center text-gray-800 placeholder:text-gray-700"
+            ref={captionRef}
+            type="text"
+            placeholder="Введіть підпис"
+            defaultValue={caption}
+            onChange={onCaptionChange}
+          />
         )}
         {resizable && $isNodeSelection(selection) && isFocused && (
           <ImageResizer

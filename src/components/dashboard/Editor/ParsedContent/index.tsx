@@ -61,7 +61,7 @@ const handleFormatting = (str: string, format: number) => {
   return element;
 };
 
-const HandleParagraphChildren = ({ items }: any): any => {
+const HandleParagraphChildren = ({ items }: any): React.ReactNode => {
   const text = items.map((child: any) => {
     if (child.type === 'text') {
       return <>{handleFormatting(child.text?.trim(), child.format)}</>;
@@ -85,47 +85,12 @@ const HandleParagraphChildren = ({ items }: any): any => {
         </a>
       );
     }
-
-    if (child.type === 'image') {
-      const src = child.src;
-      const width = child.width;
-      const height = child.height;
-      if (child.showCaption) {
-        return (
-          <figure key={randomUUID()} className="inline">
-            <figcaption>
-              <Image
-                className="inline w-auto h-auto"
-                key={randomUUID()}
-                src={src}
-                width={width || 500}
-                height={height || 500}
-                alt={child?.altText}
-                priority
-              />
-              <ParsedContent content={child.caption.editorState} />
-            </figcaption>
-          </figure>
-        );
-      }
-      return (
-        <Image
-          className="inline w-auto h-auto"
-          key={randomUUID()}
-          src={src}
-          width={width || 500}
-          height={height || 500}
-          alt={child?.altText}
-          priority
-        />
-      );
-    }
   });
 
   return text;
 };
 
-const HandleListItem = ({ items }: any): any => {
+const HandleListItem = ({ items }: any): React.ReactNode => {
   const list = items.map((item: any) => {
     return (
       <li key={randomUUID()}>
@@ -137,7 +102,7 @@ const HandleListItem = ({ items }: any): any => {
   return list;
 };
 
-const AppendChildNodeToHtml = ({ node }: any): any => {
+const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
   const { children } = node;
 
   const currentNodeType = node.type;
@@ -169,6 +134,39 @@ const AppendChildNodeToHtml = ({ node }: any): any => {
     }
   }
 
+  if (currentNodeType === 'paragraph' && node.children[0]?.type == 'image') {
+    const imageNode = node.children[0];
+    const src = imageNode.src;
+    const width = imageNode.width || 500;
+    const height = imageNode.height || 500;
+    const alt = imageNode.altText;
+
+    return (
+      <figure
+        className={clsx('text-left', {
+          'text-center': node.format === 'center',
+          'text-right': node.format === 'right',
+        })}
+      >
+        <div className="inline-block">
+          <Image
+            className="inline w-auto h-auto"
+            key={randomUUID()}
+            src={src}
+            width={width}
+            height={height}
+            alt={alt}
+            priority
+          />
+          {imageNode.showCaption && (
+            <figcaption className="text-center text-sm text-gray-600 mt-1">
+              {imageNode?.caption}
+            </figcaption>
+          )}
+        </div>
+      </figure>
+    );
+  }
   if (currentNodeType === 'paragraph') {
     return (
       <p
