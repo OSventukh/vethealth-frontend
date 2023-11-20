@@ -1,4 +1,4 @@
-import { post, sendFile } from './request';
+import { post, get, sendFile } from './request';
 import { routes } from './routes';
 import type {
   ConfirmData,
@@ -9,6 +9,7 @@ import type {
   RefreshResponse,
   RegisterData,
 } from './types/auth.type';
+import { PostResponse } from './types/posts.type';
 
 export const api = {
   auth: {
@@ -27,5 +28,12 @@ export const api = {
   file: {
     upload: (data: FormData, token: string) =>
       sendFile<FileUploadResponse>({ url: routes.fileUpload, data, token }),
+  },
+  posts: {
+    getOne: (slug: string, token?: string) =>
+      get<PostResponse>({ url: routes.posts, query: `?slug=${slug}`, token }),
+    getMany: (query: string, token?: string) => {
+      get<PostResponse[]>({ url: routes.posts, query, token });
+    },
   },
 } as const;

@@ -55,7 +55,6 @@ const handleFormatting = (str: string, format: number) => {
   }
 
   if (hasFormat('superscript', format)) {
-    console.log('here');
     element = <sup>{element}</sup>;
   }
 

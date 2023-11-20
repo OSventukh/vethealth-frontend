@@ -2,6 +2,7 @@ const baseApi = process.env.API_SERVER;
 
 export const routes = {
   topics: `${baseApi}/topics`,
+  posts: `${baseApi}/posts`,
   users: `${baseApi}/users`,
   fileUpload: `${baseApi}/files/upload`,
 
