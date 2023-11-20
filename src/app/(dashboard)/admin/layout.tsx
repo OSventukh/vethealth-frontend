@@ -12,7 +12,6 @@ export default async function DashboardLayout({
   const session = await auth();
 
   if (!session) {
-    console.log(session);
     await fetch('http://localhost:3000/api/auth/signout', {
       method: 'POST',
     });

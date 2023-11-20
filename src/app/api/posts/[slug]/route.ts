@@ -14,7 +14,6 @@ export async function GET(
     }
     return Response.json(result);
   } catch (error) {
-    console.log(error);
     return Response.error();
   }
 }

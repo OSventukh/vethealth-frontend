@@ -20,7 +20,6 @@ export async function savePostAction(data: Props) {
       },
       body: JSON.stringify(data),
     });
-    console.log(await response.json());
   } catch (error) {
     console.log(error);
   }

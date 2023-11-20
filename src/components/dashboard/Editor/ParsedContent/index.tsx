@@ -88,7 +88,6 @@ const HandleParagraphChildren = ({ items }: any): any => {
     }
 
     if (child.type === 'image') {
-      console.log(child);
       const src = child.src;
       const width = child.width;
       const height = child.height;
@@ -200,7 +199,6 @@ const AppendChildNodeToHtml = ({ node }: any): any => {
 
   if (currentNodeType === 'layout-container') {
     const gridItemsNode = node.children;
-    console.log(node);
     const gridItems = gridItemsNode.map((gridItemNode: any) => {
       return (
         <div key={randomUUID()}>

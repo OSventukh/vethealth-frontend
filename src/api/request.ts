@@ -103,10 +103,11 @@ export const sendFile = async <Response>({
     },
     body: data,
   });
-  console.log(await response.json());
+
   if (!response.ok) {
     throw new Error('Failed to fetch');
   }
+
   const result = await response.json();
   return result.path;
 };
