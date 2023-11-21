@@ -32,8 +32,7 @@ export const api = {
   posts: {
     getOne: (slug: string, token?: string) =>
       get<PostResponse>({ url: routes.posts, query: `?slug=${slug}`, token }),
-    getMany: (query: string, token?: string) => {
-      get<PostResponse[]>({ url: routes.posts, query, token });
-    },
+    getMany: (query?: string, token?: string) =>
+      get<{ items: PostResponse[] }>({ url: routes.posts, query, token }),
   },
 } as const;
