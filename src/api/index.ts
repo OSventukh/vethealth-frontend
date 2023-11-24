@@ -9,6 +9,7 @@ import type {
   RefreshResponse,
   RegisterData,
 } from './types/auth.type';
+import { Pagination } from './types/general.type';
 import { PostResponse } from './types/posts.type';
 
 export const api = {
@@ -33,6 +34,6 @@ export const api = {
     getOne: (slug: string, token?: string) =>
       get<PostResponse>({ url: routes.posts, query: `?slug=${slug}`, token }),
     getMany: (query?: string, token?: string) =>
-      get<{ items: PostResponse[] }>({ url: routes.posts, query, token }),
+      get<Pagination<PostResponse>>({ url: routes.posts, query, token }),
   },
 } as const;
