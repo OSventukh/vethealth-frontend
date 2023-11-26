@@ -10,7 +10,25 @@ import type {
   RegisterData,
 } from './types/auth.type';
 import { Pagination } from './types/general.type';
-import { PostResponse } from './types/posts.type';
+import {
+  PostGetManyParams,
+  PostGetOneParams,
+  PostResponse,
+} from './types/posts.type';
+
+const queryObjectToString = (query?: unknown) => {
+  if (!query) {
+    return '';
+  }
+
+  return (
+    '?' +
+    Object.entries(query)
+      .filter(([key, value]) => value !== undefined)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&')
+  );
+};
 
 export const api = {
   auth: {
@@ -31,9 +49,13 @@ export const api = {
       sendFile<FileUploadResponse>({ url: routes.fileUpload, data, token }),
   },
   posts: {
-    getOne: (slug: string, token?: string) =>
+    getOne: ({ slug, token }: PostGetOneParams) =>
       get<PostResponse>({ url: routes.posts, query: `?slug=${slug}`, token }),
-    getMany: (query?: string, token?: string) =>
-      get<Pagination<PostResponse>>({ url: routes.posts, query, token }),
+    getMany: ({ query, token }: PostGetManyParams) =>
+      get<Pagination<PostResponse>>({
+        url: routes.posts,
+        query: queryObjectToString(query),
+        token,
+      }),
   },
 } as const;

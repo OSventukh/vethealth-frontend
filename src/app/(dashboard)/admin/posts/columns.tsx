@@ -24,7 +24,9 @@ export const postColumns: ColumnDef<PostResponse>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() => {
+            column.toggleSorting(column.getIsSorted() === 'asc');
+          }}
         >
           Статус
           <ArrowUpDown className="ml-2 h-4 w-4" />

@@ -1,8 +1,11 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+
+import { useMemo, useState, useEffect } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+
 import {
   ColumnDef,
+  PaginationState,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -20,18 +23,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { DataTablePagination } from './TablePagination';
-import { Input } from '../input';
+import TableSearch from './TableSearch';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageCount: number;
+  searchField: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   pageCount,
+  searchField,
 }: DataTableProps<TData, TValue>) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -40,8 +45,12 @@ export function DataTable<TData, TValue>({
     () => new URLSearchParams(searchParams),
     [searchParams]
   );
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: Number(params.get('page')) || 1,
+    pageSize: Number(params.get('size')) || 10,
+  });
   const [sorting, setSorting] = useState<SortingState>([]);
-
+  const [searching, setSearching] = useState<string>('');
   const table = useReactTable({
     data,
     columns,
@@ -50,45 +59,55 @@ export function DataTable<TData, TValue>({
     pageCount,
     autoResetAll: false,
     manualPagination: true,
+    manualSorting: true,
     onSortingChange: setSorting,
+    onPaginationChange: setPagination,
     getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
-    },
-    initialState: {
       pagination: {
-        pageIndex: Number(params.get('page')) - 1,
-        pageSize: Number(params.get('size')) || 10,
+        pageIndex: pagination.pageIndex - 1,
+        pageSize: pagination.pageSize,
       },
     },
   });
 
-  const { pageIndex, pageSize } = table.getState().pagination;
-  const sort = table.getState().sorting;
-
   useEffect(() => {
-    if (pageIndex > -1) {
-      params.set('page', String(pageIndex + 1));
+    if (sorting.length > 0) {
+      params.set('orderBy', sorting[0].id);
+      params.set('sort', sorting[0].desc ? 'desc' : 'asc');
+      replace(`${pathname}?${params.toString()}`);
+    }
+    if (pagination) {
+      params.set('page', String(pagination.pageIndex));
+      params.set('size', String(pagination.pageSize));
+
+      replace(`${pathname}?${params.toString()}`);
     }
 
-    if (pageSize > 10) {
-      params.set('size', String(pageSize));
+    if (searching) {
+      params.set(searchField, searching);
+      replace(`${pathname}?${params.toString()}`);
     }
 
-    if (sort.length > 0) {
-      sort.forEach((sortItem) => {
-        params.set('orderBy', sortItem.id);
-        params.set('sort', sortItem.desc ? 'desc' : 'asc');
-      });
+    if (searching === '') {
+      params.delete(searchField);
+      replace(`${pathname}?${params.toString()}`);
     }
-    replace(`${pathname}?${params.toString()}`);
-  }, [pageIndex, pageCount, pageSize, replace, params, pathname, sort]);
+  }, [sorting, pagination, replace, params, pathname, searchField, searching]);
 
+  const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (value) {
+      setSearching(value);
+    }
+    if (!value || value === '') {
+      setSearching('');
+    }
+  };
   return (
     <div className="flex flex-col gap-5 w-full rounded-2xl border p-5">
-      <div className="flex">
-        <Input className="max-w-sm rounded-xl" placeholder="Пошук..." />
-      </div>
+      <TableSearch value={searching} onChange={searchChangeHandler} />
       <div className="w-full rounded-xl border">
         <Table>
           <TableHeader>

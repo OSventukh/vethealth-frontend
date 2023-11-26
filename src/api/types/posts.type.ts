@@ -1,3 +1,6 @@
+import { postQuerySchema } from '@/utils/validators/query.validator';
+import { z } from 'zod';
+
 export type PostResponse = {
   id: string;
   title: string;
@@ -7,4 +10,14 @@ export type PostResponse = {
   createdAt: string;
   updatedAt?: string;
   status?: 'Draft' | 'Published';
+};
+
+export type PostGetOneParams = {
+  slug: string;
+  token?: string;
+};
+
+export type PostGetManyParams = {
+  token?: string;
+  query?: z.infer<typeof postQuerySchema>;
 };
