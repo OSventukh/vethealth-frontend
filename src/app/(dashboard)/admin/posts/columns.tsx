@@ -35,12 +35,29 @@ export const postColumns: ColumnDef<PostResponse>[] = [
     },
   },
   {
-    accessorKey: 'createdAt',
-    header: 'Створено',
-  },
-  {
     accessorKey: 'slug',
     header: 'URL адреса',
+  },
+  {
+    accessorKey: 'createdAt',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            column.toggleSorting(column.getIsSorted() === 'asc');
+          }}
+        >
+          Створено
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ getValue }) => {
+      const value = getValue() as string;
+      const date = new Date(value);
+      return <>{date.toLocaleDateString('uk-UA')}</>;
+    },
   },
   {
     id: 'actions',
