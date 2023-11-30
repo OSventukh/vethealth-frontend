@@ -11,3 +11,19 @@ export const postQuerySchema = z.object({
   sort: sortQuerySchema.optional(),
   title: z.string().optional(),
 });
+
+export const topicQuerySchema = z.object({
+  page: pageQuerySchema.optional(),
+  size: sizeQuerySchema.optional(),
+  orderBy: z.enum(['status', 'createAt']).optional(),
+  sort: sortQuerySchema.optional(),
+  title: z.string().optional(),
+});
+
+export const categoryQuerySchema = z.object({
+  page: pageQuerySchema.optional(),
+  size: sizeQuerySchema.optional(),
+  orderBy: z.enum(['status', 'createAt']).optional(),
+  sort: sortQuerySchema.optional(),
+  name: z.string().optional(),
+});

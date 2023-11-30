@@ -48,7 +48,7 @@ export const postColumns: ColumnDef<PostResponse>[] = [
             column.toggleSorting(column.getIsSorted() === 'asc');
           }}
         >
-          Створено
+          Дата створення
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
