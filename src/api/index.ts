@@ -9,12 +9,22 @@ import type {
   RefreshResponse,
   RegisterData,
 } from './types/auth.type';
+import {
+  CategoryGetManyParams,
+  CategoryGetOneParams,
+  CategoryResponse,
+} from './types/categories.type';
 import { Pagination } from './types/general.type';
 import {
   PostGetManyParams,
   PostGetOneParams,
   PostResponse,
 } from './types/posts.type';
+import {
+  TopicGetManyParams,
+  TopicGetOneParams,
+  TopicResponse,
+} from './types/topics.type';
 
 const queryObjectToString = (query?: unknown) => {
   if (!query) {
@@ -24,7 +34,7 @@ const queryObjectToString = (query?: unknown) => {
   return (
     '?' +
     Object.entries(query)
-      .filter(([key, value]) => value !== undefined)
+      .filter(([, value]) => value !== undefined)
       .map(([key, value]) => `${key}=${value}`)
       .join('&')
   );
@@ -54,6 +64,34 @@ export const api = {
     getMany: ({ query, token }: PostGetManyParams) =>
       get<Pagination<PostResponse>>({
         url: routes.posts,
+        query: queryObjectToString(query),
+        token,
+      }),
+  },
+  topics: {
+    getOne: ({ slug, token }: TopicGetOneParams) =>
+      get<TopicResponse>({
+        url: routes.topics,
+        query: `?slug=${slug}`,
+        token,
+      }),
+    getMany: ({ query, token }: TopicGetManyParams) =>
+      get<Pagination<TopicResponse>>({
+        url: routes.topics,
+        query: queryObjectToString(query),
+        token,
+      }),
+  },
+  categories: {
+    getOne: ({ slug, token }: CategoryGetOneParams) =>
+      get<CategoryResponse>({
+        url: routes.categories,
+        query: `?slug=${slug}`,
+        token,
+      }),
+    getMany: ({ query, token }: CategoryGetManyParams) =>
+      get<Pagination<CategoryResponse>>({
+        url: routes.categories,
         query: queryObjectToString(query),
         token,
       }),

@@ -1,56 +1,56 @@
 'use client';
-import { useState, useTransition } from 'react';
 import dynamic from 'next/dynamic';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { useState, useTransition } from 'react';
+import { MultiValue } from 'react-select';
+import { PanelRightOpen, Save, Settings } from 'lucide-react';
+
+import { CategoryResponse } from '@/api/types/categories.type';
+import { PostResponse } from '@/api/types/posts.type';
+import { TopicResponse } from '@/api/types/topics.type';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-const Lexical = dynamic(() => import('@/components/dashboard/Editor/Lexical'), {
-  ssr: false,
-});
-import { savePostAction } from '../../actions/save-post.action';
-import { Button } from '@/components/ui/button';
-import {
-  BookPlus,
-  CircleEllipsis,
-  MoreHorizontal,
-  Option,
-  OptionIcon,
-  PanelRightOpen,
-  Save,
-  Settings,
-} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Multiselect from '@/components/ui/multiselect';
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Spinner } from '@/components/ui/spinner';
+import { PostStatusEnum } from '../../actions/post-status.enum';
+import { savePostAction } from '../../actions/save-post.action';
+import { useToast } from '@/components/ui/use-toast';
 
-export default function EditPost() {
+const Lexical = dynamic(() => import('@/components/dashboard/Editor/Lexical'), {
+  ssr: false,
+});
+type Props = {
+  initialData?: PostResponse;
+  topics?: TopicResponse[];
+  categories?: CategoryResponse[];
+};
+
+export default function EditPost({
+  initialData,
+  topics: topicsOptions,
+  categories: categoriesOptions,
+}: Props) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [isPending, startTransition] = useTransition();
+  const [slug, setSlug] = useState<string>('');
+  const [topics, setTopics] = useState<{ id: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string }[]>([]);
 
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
   const titleChangeHandler = (title: string) => {
     setTitle(title);
   };
@@ -59,50 +59,100 @@ export default function EditPost() {
     setContent(content);
   };
 
-  const saveHandler = () => {
+  const saveHandler = (status: PostStatusEnum) => {
     startTransition(async () => {
       const res = await savePostAction({
         title,
         content,
+        topics,
+        categories,
         status: {
-          id: '2',
+          id: status,
         },
+      });
+
+      toast({
+        variant: res.error ? 'destructive' : 'default',
+        description: res.success ? 'Стаття збережена' : res.message,
       });
     });
   };
+
+  const topicsChangeHandler = (
+    selectedOptions: MultiValue<{ label: string; value: string }>
+  ) => {
+    const topicsIds = selectedOptions.map((topic) => ({ id: topic.value }));
+    setTopics(topicsIds);
+  };
+
+  const categoriesChangeHandler = (
+    selectedOptions: MultiValue<{ label: string; value: string }>
+  ) => {
+    const topicsIds = selectedOptions.map((category) => ({
+      id: category.value,
+    }));
+    setCategories(topicsIds);
+  };
+
+  const slugChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSlug(value);
+  };
+
   return (
     <Sheet>
       <Lexical
+        initialContent={initialData?.content}
+        initialTitle={initialData?.title}
         onChangeTitle={titleChangeHandler}
         onChangeContent={contentChangeHandler}
       />
 
-      <SheetContent>
+      <SheetContent showOverlay={false}>
         <SheetHeader>
           <SheetTitle>Налаштування статті</SheetTitle>
         </SheetHeader>
-        <Label htmlFor="slug">URL адреса</Label>
-        <Input id="slug" />
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a fruit" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Fruits</SelectLabel>
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Label htmlFor="topics">Вибрати тему</Label>
-        <Multiselect
-          id="topics"
-          options={[{ value: 'values', label: 'Value' }]}
-        />
+        <div className="flex flex-col gap-5 mt-5">
+          <Button onClick={() => saveHandler(PostStatusEnum.OnReview)}>
+            Опублікувати
+          </Button>
+          <div>
+            <Label htmlFor="topics">Тема</Label>
+            <Multiselect
+              id="topics"
+              isMulti
+              defaultValue={initialData?.topics?.map((topic) => ({
+                value: topic.id,
+                label: topic.title,
+              }))}
+              options={topicsOptions?.map((topic) => ({
+                label: topic.title,
+                value: topic.id,
+              }))}
+              onChange={topicsChangeHandler}
+            />
+          </div>
+          <div>
+            <Label htmlFor="categories">Категорія</Label>
+            <Multiselect
+              id="categories"
+              isMulti
+              defaultValue={initialData?.categories?.map((category) => ({
+                label: category.name,
+                value: category.id,
+              }))}
+              options={categoriesOptions?.map((category) => ({
+                label: category.name,
+                value: category.id,
+              }))}
+              onChange={categoriesChangeHandler}
+            />
+          </div>
+          <div>
+            <Label htmlFor="slug">URL адреса</Label>
+            <Input id="slug" value={slug} onChange={slugChangeHandler} />
+          </div>
+        </div>
       </SheetContent>
       <DropdownMenu>
         <DropdownMenuContent className="flex flex-col mb-4 gap-2 justify-center items-center bg-transparent border-none shadow-none">
@@ -114,13 +164,13 @@ export default function EditPost() {
           <DropdownMenuItem
             title="Зберегти"
             className="flex justify-center items-center p-0 w-12 h-12 cursor-pointer bg-green-600 hover:opacity-90 focus:bg-green-600 rounded-2xl shadow-lg"
-            onClick={saveHandler}
+            onClick={() => saveHandler(PostStatusEnum.Draft)}
           >
-            <Save />
+            {<Save />}
           </DropdownMenuItem>
         </DropdownMenuContent>
-        <DropdownMenuTrigger className="fixed flex justify-center items-center bottom-20 right-[calc(100vw/7)] p-0 w-14 h-14 bg-slate-400 transition-all opacity-50 hover:opacity-100 rounded-2xl shadow-lg hover:shadow-2xl">
-          <CircleEllipsis />
+        <DropdownMenuTrigger className="fixed flex justify-center items-center overflow-hidden bottom-20 right-[calc(100vw/7)] p-0 w-14 h-14 bg-slate-400 transition-all opacity-50 hover:opacity-100 rounded-2xl shadow-lg hover:shadow-2xl">
+          {isPending ? <Spinner /> : <Settings />}
         </DropdownMenuTrigger>
       </DropdownMenu>
     </Sheet>
