@@ -10,6 +10,8 @@ export const postQuerySchema = z.object({
   orderBy: z.enum(['status', 'createAt']).optional(),
   sort: sortQuerySchema.optional(),
   title: z.string().optional(),
+  slug: z.string().optional(),
+  include: z.string().optional(),
 });
 
 export const topicQuerySchema = z.object({

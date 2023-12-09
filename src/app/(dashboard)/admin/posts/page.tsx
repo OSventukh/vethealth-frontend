@@ -15,10 +15,11 @@ type Props = {
   };
 };
 
-export default async function Posts({ searchParams }: Props) {
+export default async function PostsPage({ searchParams }: Props) {
   const postQueryValidation = postQuerySchema.safeParse(searchParams);
   const posts = await api.posts.getMany({
     query: postQueryValidation.success ? postQueryValidation.data : undefined,
+    tags: ['admin_posts'],
   });
 
   return (

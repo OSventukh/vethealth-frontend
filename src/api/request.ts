@@ -27,6 +27,7 @@ export const post = async <Response>({
   });
 
   if (!response.ok) {
+    console.log(await response.json());
     throw new Error('Failed to fetch');
   }
 
@@ -37,18 +38,26 @@ type GetRequest = {
   url: Url;
   query?: string;
   token?: string;
+  revalidate?: number | false;
+  tags?: string[];
 };
 
 export const get = async <Response>({
   url,
   query,
   token,
+  tags,
+  revalidate,
 }: GetRequest): Promise<Response> => {
   const response = await fetch(url + (query || ''), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
+    },
+    next: {
+      tags,
+      revalidate,
     },
   });
 

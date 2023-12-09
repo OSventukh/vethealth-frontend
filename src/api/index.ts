@@ -59,13 +59,21 @@ export const api = {
       sendFile<FileUploadResponse>({ url: routes.fileUpload, data, token }),
   },
   posts: {
-    getOne: ({ slug, token }: PostGetOneParams) =>
-      get<PostResponse>({ url: routes.posts, query: `?slug=${slug}`, token }),
-    getMany: ({ query, token }: PostGetManyParams) =>
+    getOne: ({ slug, token, query, revalidate, tags }: PostGetOneParams) =>
+      get<PostResponse>({
+        url: routes.posts,
+        query: queryObjectToString({ ...query, slug }),
+        token,
+        revalidate,
+        tags,
+      }),
+    getMany: ({ query, token, revalidate, tags }: PostGetManyParams) =>
       get<Pagination<PostResponse>>({
         url: routes.posts,
         query: queryObjectToString(query),
         token,
+        revalidate,
+        tags,
       }),
   },
   topics: {

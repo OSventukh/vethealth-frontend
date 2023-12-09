@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
     [searchParams]
   );
   const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: Number(params.get('page')) || 1,
+    pageIndex: Number(params.get('page')) || 0,
     pageSize: Number(params.get('size')) || 10,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -66,7 +66,7 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
       pagination: {
-        pageIndex: pagination.pageIndex - 1,
+        pageIndex: pagination.pageIndex,
         pageSize: pagination.pageSize,
       },
     },
@@ -79,10 +79,10 @@ export function DataTable<TData, TValue>({
       replace(`${pathname}?${params.toString()}`);
     }
     if (pagination) {
-      params.set('page', String(pagination.pageIndex));
+      params.set('page', String(pagination.pageIndex + 1));
       params.set('size', String(pagination.pageSize));
 
-      replace(`${pathname}?${params.toString()}`);
+      replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
 
     if (searching) {

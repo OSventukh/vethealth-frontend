@@ -20,9 +20,14 @@ export type PostResponse = {
 export type PostGetOneParams = {
   slug: string;
   token?: string;
+  query?: z.infer<typeof postQuerySchema>;
+  revalidate?: number | false;
+  tags?: string[];
 };
 
 export type PostGetManyParams = {
   token?: string;
   query?: z.infer<typeof postQuerySchema>;
+  revalidate?: number | false;
+  tags?: string[];
 };

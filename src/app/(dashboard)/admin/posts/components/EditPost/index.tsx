@@ -1,7 +1,8 @@
 'use client';
 import dynamic from 'next/dynamic';
 import { useState, useTransition } from 'react';
-import { MultiValue } from 'react-select';
+import { useRouter } from 'next/navigation';
+import { MultiValue, Options } from 'react-select';
 import { PanelRightOpen, Save, Settings } from 'lucide-react';
 
 import { CategoryResponse } from '@/api/types/categories.type';
@@ -36,18 +37,49 @@ type Props = {
   initialData?: PostResponse;
   topics?: TopicResponse[];
   categories?: CategoryResponse[];
+  editMode?: boolean;
+};
+
+const getLabelAndValue = <T,>(
+  items: T[] | undefined,
+  { valueKey, labelKey }: { valueKey: keyof T; labelKey: keyof T }
+): {
+  value: string;
+  label: string;
+}[] => {
+  if (!items) return [];
+  return items.map((item) => ({
+    value: String(item[valueKey]),
+    label: String(item[labelKey]),
+  }));
 };
 
 export default function EditPost({
   initialData,
   topics: topicsOptions,
   categories: categoriesOptions,
+  editMode,
 }: Props) {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [slug, setSlug] = useState<string>('');
-  const [topics, setTopics] = useState<{ id: string }[]>([]);
-  const [categories, setCategories] = useState<{ id: string }[]>([]);
+  const initialTopics = getLabelAndValue<TopicResponse>(initialData?.topics, {
+    valueKey: 'id',
+    labelKey: 'title',
+  });
+  const initialCategories = getLabelAndValue<CategoryResponse>(
+    initialData?.categories,
+    {
+      valueKey: 'id',
+      labelKey: 'name',
+    }
+  );
+  const [title, setTitle] = useState(initialData?.title || '');
+  const [content, setContent] = useState(initialData?.content || null);
+  const [slug, setSlug] = useState<string>(initialData?.slug || '');
+  const [topics, setTopics] =
+    useState<Options<{ label: string; value: string }>>(initialTopics);
+  const [categories, setCategories] =
+    useState<Options<{ label: string; value: string }>>(initialCategories);
+
+  const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
@@ -61,37 +93,40 @@ export default function EditPost({
 
   const saveHandler = (status: PostStatusEnum) => {
     startTransition(async () => {
-      const res = await savePostAction({
-        title,
-        content,
-        topics,
-        categories,
-        status: {
-          id: status,
+      const res = await savePostAction(
+        {
+          id: initialData?.id,
+          title: title,
+          content: content || '',
+          topics: topics.map((item) => ({ id: item.value })),
+          categories: categories.map((item) => ({ id: item.value })),
+          slug,
+          status: {
+            id: status,
+          },
         },
-      });
-
+        editMode
+      );
       toast({
         variant: res.error ? 'destructive' : 'default',
         description: res.success ? 'Стаття збережена' : res.message,
       });
+      if (res.success && res.redirect) {
+        router.replace(`edit/${res.redirect}`, { scroll: false });
+      }
     });
   };
 
   const topicsChangeHandler = (
     selectedOptions: MultiValue<{ label: string; value: string }>
   ) => {
-    const topicsIds = selectedOptions.map((topic) => ({ id: topic.value }));
-    setTopics(topicsIds);
+    setTopics(selectedOptions);
   };
 
   const categoriesChangeHandler = (
     selectedOptions: MultiValue<{ label: string; value: string }>
   ) => {
-    const topicsIds = selectedOptions.map((category) => ({
-      id: category.value,
-    }));
-    setCategories(topicsIds);
+    setCategories(selectedOptions);
   };
 
   const slugChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,8 +137,8 @@ export default function EditPost({
   return (
     <Sheet>
       <Lexical
-        initialContent={initialData?.content}
-        initialTitle={initialData?.title}
+        initialContent={content}
+        initialTitle={title}
         onChangeTitle={titleChangeHandler}
         onChangeContent={contentChangeHandler}
       />
@@ -121,14 +156,11 @@ export default function EditPost({
             <Multiselect
               id="topics"
               isMulti
-              defaultValue={initialData?.topics?.map((topic) => ({
-                value: topic.id,
-                label: topic.title,
-              }))}
-              options={topicsOptions?.map((topic) => ({
-                label: topic.title,
-                value: topic.id,
-              }))}
+              defaultValue={topics}
+              options={getLabelAndValue<TopicResponse>(topicsOptions, {
+                valueKey: 'id',
+                labelKey: 'title',
+              })}
               onChange={topicsChangeHandler}
             />
           </div>
@@ -137,14 +169,11 @@ export default function EditPost({
             <Multiselect
               id="categories"
               isMulti
-              defaultValue={initialData?.categories?.map((category) => ({
-                label: category.name,
-                value: category.id,
-              }))}
-              options={categoriesOptions?.map((category) => ({
-                label: category.name,
-                value: category.id,
-              }))}
+              defaultValue={categories}
+              options={getLabelAndValue<CategoryResponse>(categoriesOptions, {
+                valueKey: 'id',
+                labelKey: 'name',
+              })}
               onChange={categoriesChangeHandler}
             />
           </div>

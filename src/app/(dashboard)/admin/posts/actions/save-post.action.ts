@@ -1,9 +1,12 @@
 'use server';
+import { revalidateTag } from 'next/cache';
+
 import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
 
 type Props = {
+  id?: string;
   title: string;
   content: string;
   topics?: { id: string }[] | [];
@@ -18,13 +21,17 @@ type ReturnedData = {
   error: boolean;
   success: boolean;
   message: string;
+  redirect?: string;
 };
 
-export async function savePostAction(data: Props): Promise<ReturnedData> {
+export async function savePostAction(
+  data: Props,
+  edit?: boolean
+): Promise<ReturnedData> {
   const session = await auth();
   try {
     const response = await fetch('http://localhost:5000/posts', {
-      method: 'POST',
+      method: edit ? 'PATCH' : 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${session?.token}`,
@@ -37,8 +44,11 @@ export async function savePostAction(data: Props): Promise<ReturnedData> {
       throw new Error(result.message);
     }
 
+    revalidateTag('admin_posts');
+
     return {
       success: true,
+      redirect: !edit && result.slug,
       error: false,
       message: 'Success',
     };
