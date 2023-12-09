@@ -3,7 +3,7 @@ import { postColumns } from './columns';
 import { api } from '@/api';
 import { postQuerySchema } from '@/utils/validators/query.validator';
 import Link from 'next/link';
-import { PenSquare, Plus } from 'lucide-react';
+import { PenSquare } from 'lucide-react';
 
 type Props = {
   searchParams: {
