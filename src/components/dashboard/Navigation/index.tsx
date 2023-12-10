@@ -1,5 +1,13 @@
 import Link from 'next/link';
-import { Home, Grid2X2, FileText, List, Layout } from 'lucide-react';
+import {
+  Home,
+  Grid2X2,
+  FileText,
+  List,
+  Layout,
+  Users,
+  ListTree,
+} from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -27,7 +35,7 @@ const navs: Nav[] = [
   {
     title: 'Категорії',
     route: '/admin/categories',
-    icon: <List size={20} />,
+    icon: <ListTree size={20} />,
   },
   {
     title: 'Cтатті',
@@ -38,6 +46,11 @@ const navs: Nav[] = [
     title: 'Сторінки',
     route: '/admin/pages',
     icon: <Layout size={20} />,
+  },
+  {
+    title: 'Користувачі',
+    route: '/admin/users',
+    icon: <Users size={20} />,
   },
 ];
 
