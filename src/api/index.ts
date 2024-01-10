@@ -77,17 +77,21 @@ export const api = {
       }),
   },
   topics: {
-    getOne: ({ slug, token }: TopicGetOneParams) =>
+    getOne: ({ slug, query, token, revalidate, tags }: TopicGetOneParams) =>
       get<TopicResponse>({
         url: routes.topics,
-        query: `?slug=${slug}`,
+        query: queryObjectToString({ ...query, slug }),
         token,
+        revalidate,
+        tags,
       }),
-    getMany: ({ query, token }: TopicGetManyParams) =>
+    getMany: ({ query, token, revalidate, tags }: TopicGetManyParams) =>
       get<Pagination<TopicResponse>>({
         url: routes.topics,
         query: queryObjectToString(query),
         token,
+        revalidate,
+        tags,
       }),
   },
   categories: {

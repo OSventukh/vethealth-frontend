@@ -6,3 +6,13 @@ export type Pagination<Model> = {
   count: number;
   currentPage: number;
 };
+
+export type Status = {
+  id: string;
+  name: string;
+};
+
+export type Image = {
+  id: string;
+  path: string;
+};

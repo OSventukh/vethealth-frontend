@@ -49,6 +49,7 @@ export const get = async <Response>({
   tags,
   revalidate,
 }: GetRequest): Promise<Response> => {
+  console.log(query);
   const response = await fetch(url + (query || ''), {
     method: 'GET',
     headers: {
@@ -112,7 +113,7 @@ export const sendFile = async <Response>({
     },
     body: data,
   });
-
+  console.log(await response.json());
   if (!response.ok) {
     throw new Error('Failed to fetch');
   }
