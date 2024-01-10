@@ -1,32 +1,38 @@
 import { z } from 'zod';
 
 import { topicQuerySchema } from '@/utils/validators/query.validator';
-import { PostResponse } from './posts.type';
-import { CategoryResponse } from './categories.type';
+import type { PostResponse } from './posts.type';
+import type { CategoryResponse } from './categories.type';
+import type { Image, Status } from './general.type';
 
 export type TopicResponse = {
   id: string;
   title: string;
-  image: string;
+  image: Image;
   description?: string;
   slug: string;
-  contentType: string;
+  contentType: 'post' | 'page';
   createdAt: string;
   updatedAt?: string;
-  status: 'Active' | 'Inactive';
+  status: Status;
   categories?: CategoryResponse[];
   posts?: PostResponse[];
   users?: [];
-  parent?: TopicResponse[];
+  parent?: TopicResponse;
   children?: TopicResponse[];
 };
 
 export type TopicGetOneParams = {
   slug: string;
   token?: string;
+  query?: z.infer<typeof topicQuerySchema>;
+  revalidate?: number | false;
+  tags?: string[];
 };
 
 export type TopicGetManyParams = {
   token?: string;
   query?: z.infer<typeof topicQuerySchema>;
+  revalidate?: number | false;
+  tags?: string[];
 };

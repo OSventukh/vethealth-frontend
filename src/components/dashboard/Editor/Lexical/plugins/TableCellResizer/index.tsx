@@ -316,14 +316,7 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
 
         document.addEventListener('mouseup', mouseUpHandler(direction));
       },
-    [
-      activeCell,
-      draggingDirection,
-      resetState,
-      updateColumnWidth,
-      updateRowHeight,
-      mouseUpHandler,
-    ]
+    [activeCell, mouseUpHandler]
   );
 
   const getResizers = useCallback(() => {

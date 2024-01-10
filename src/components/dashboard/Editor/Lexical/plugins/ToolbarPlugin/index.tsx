@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import {
   $isListNode,
-  INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
   ListNode,
@@ -12,16 +12,11 @@ import { $isDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import {
   $createHeadingNode,
-  $createQuoteNode,
   $isHeadingNode,
   $isQuoteNode,
   HeadingTagType,
 } from '@lexical/rich-text';
-import {
-  $isParentElementRTL,
-  $patchStyleText,
-  $setBlocksType,
-} from '@lexical/selection';
+import { $isParentElementRTL, $setBlocksType } from '@lexical/selection';
 import { $isTableNode } from '@lexical/table';
 import {
   $findMatchingParent,

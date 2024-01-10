@@ -78,7 +78,7 @@ export class CollapsibleContainerNode extends ElementNode {
 
   static importDOM(): DOMConversionMap<HTMLDetailsElement> | null {
     return {
-      details: (domNode: HTMLDetailsElement) => {
+      details: () => {
         return {
           conversion: convertDetailsElement,
           priority: 1,

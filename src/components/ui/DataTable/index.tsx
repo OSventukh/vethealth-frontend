@@ -5,10 +5,12 @@ import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 import {
   ColumnDef,
+  ExpandedState,
   PaginationState,
   SortingState,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -30,6 +32,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   pageCount: number;
   searchField: string;
+  childrenProp?: keyof TData;
 }
 
 export function DataTable<TData, TValue>({
@@ -37,6 +40,7 @@ export function DataTable<TData, TValue>({
   data,
   pageCount,
   searchField,
+  childrenProp,
 }: DataTableProps<TData, TValue>) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -46,11 +50,14 @@ export function DataTable<TData, TValue>({
     [searchParams]
   );
   const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: Number(params.get('page')) || 0,
+    pageIndex:
+      Number(params.get('page')) > 0 ? Number(params.get('page')) - 1 : 0,
     pageSize: Number(params.get('size')) || 10,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [searching, setSearching] = useState<string>('');
+  const [expanded, setExpanded] = useState<ExpandedState>({});
+
   const table = useReactTable({
     data,
     columns,
@@ -63,12 +70,17 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getSortedRowModel: getSortedRowModel(),
+    onExpandedChange: setExpanded,
+    getSubRows: (row) => (childrenProp ? (row?.[childrenProp] as TData[]) : []),
+    getExpandedRowModel: getExpandedRowModel(),
+    debugTable: true,
     state: {
       sorting,
       pagination: {
         pageIndex: pagination.pageIndex,
         pageSize: pagination.pageSize,
       },
+      expanded,
     },
   });
 
@@ -81,6 +93,12 @@ export function DataTable<TData, TValue>({
     if (pagination) {
       params.set('page', String(pagination.pageIndex + 1));
       params.set('size', String(pagination.pageSize));
+      if (pagination.pageIndex === 0) {
+        params.delete('page');
+      }
+      if (pagination.pageSize === 10) {
+        params.delete('size');
+      }
 
       replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
@@ -106,7 +124,7 @@ export function DataTable<TData, TValue>({
     }
   };
   return (
-    <div className="flex flex-col gap-5 w-full rounded-2xl border p-10 bg-background">
+    <div className="flex flex-col gap-5 w-full rounded-2xl border p-10 mt-5 bg-background">
       <TableSearch value={searching} onChange={searchChangeHandler} />
       <div className="w-full rounded-xl border">
         <Table>
@@ -115,7 +133,10 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      style={{ width: header.column.getSize() }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -136,7 +157,10 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{ width: cell.column.getSize() }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

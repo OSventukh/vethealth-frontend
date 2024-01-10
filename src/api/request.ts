@@ -60,12 +60,12 @@ export const get = async <Response>({
       revalidate,
     },
   });
-
+  const result = await response.json();
   if (!response.ok) {
-    throw new Error('Failed to fetch');
+    throw new Error(result.message);
   }
 
-  return await response.json();
+  return result;
 };
 
 type DeleteRequest = {
@@ -112,7 +112,7 @@ export const sendFile = async <Response>({
     },
     body: data,
   });
-
+  console.log(await response.json());
   if (!response.ok) {
     throw new Error('Failed to fetch');
   }

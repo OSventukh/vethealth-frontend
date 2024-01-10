@@ -33,7 +33,7 @@ import Button from '../../ui/Button';
 import { DialogActions, DialogButtonsList } from '../../ui/Dialog';
 import FileInput from '../../ui/FileInput';
 import TextInput from '../../ui/TextInput';
-import { imageUploadAction } from '../../../actions/image-upload.action';
+import { imageUploadAction } from '@/actions/image-upload.action';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 
@@ -99,8 +99,10 @@ export function InsertImageUploadedDialogBody({
       }
       const formData = new FormData();
       formData.append('post', files[0]);
-      const result = await imageUploadAction(formData);
-      setSrc(result?.path);
+      const result = await imageUploadAction(formData, 'post');
+      if (result.image) {
+        setSrc(result.image.path);
+      }
     });
   };
   return (

@@ -20,6 +20,7 @@ export const topicQuerySchema = z.object({
   orderBy: z.enum(['status', 'createAt']).optional(),
   sort: sortQuerySchema.optional(),
   title: z.string().optional(),
+  include: z.string().optional(),
 });
 
 export const categoryQuerySchema = z.object({
@@ -28,4 +29,5 @@ export const categoryQuerySchema = z.object({
   orderBy: z.enum(['status', 'createAt']).optional(),
   sort: sortQuerySchema.optional(),
   name: z.string().optional(),
+  include: z.string().optional(),
 });

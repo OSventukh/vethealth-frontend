@@ -13,16 +13,21 @@ export type CategoryResponse = {
   topics?: TopicResponse[];
   posts?: PostResponse[];
   users?: [];
-  parent?: CategoryResponse[];
+  parent?: CategoryResponse;
   children?: CategoryResponse[];
 };
 
 export type CategoryGetOneParams = {
   slug: string;
+  query?: z.infer<typeof categoryQuerySchema>;
   token?: string;
+  revalidate?: number | false;
+  tags?: string[];
 };
 
 export type CategoryGetManyParams = {
   token?: string;
   query?: z.infer<typeof categoryQuerySchema>;
+  revalidate?: number | false;
+  tags?: string[];
 };
