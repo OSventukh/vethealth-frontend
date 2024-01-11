@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   ArrowUpDown,
+  ChevronDownCircleIcon,
+  ChevronRightCircle,
   Copy,
   FileEdit,
   MoreHorizontal,
@@ -30,6 +32,7 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import { TopicResponse } from '@/api/types/topics.type';
 import type { Image as ImageType, Status } from '@/api/types/general.type';
+import { IconButton } from '@/components/ui/icon-button';
 
 export const topicColumns: ColumnDef<TopicResponse>[] = [
   {
@@ -37,9 +40,29 @@ export const topicColumns: ColumnDef<TopicResponse>[] = [
     header: 'Заголовок',
     cell: ({ row }) => {
       const topic = row.original as TopicResponse;
+
       return (
-        <div>
-          <Link href={'topics/edit/' + topic.slug}>{topic.title}</Link>
+        <div
+          className="flex gap-1 items-center"
+          style={{ paddingLeft: `${row.depth}rem` }}
+        >
+          <div className="flex justify-center items-center w-10">
+            {row.getCanExpand() && (
+              <IconButton
+                icon={
+                  row.getIsExpanded() ? (
+                    <ChevronDownCircleIcon size={15} />
+                  ) : (
+                    <ChevronRightCircle size={15} />
+                  )
+                }
+                onClick={() => row.toggleExpanded()}
+              ></IconButton>
+            )}
+          </div>
+          <div>
+            <Link href={'topics/edit/' + topic.slug}>{topic.title}</Link>
+          </div>
         </div>
       );
     },
@@ -95,10 +118,11 @@ export const topicColumns: ColumnDef<TopicResponse>[] = [
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
+              <div className="flex w-full h-full justify-end">
+                <IconButton icon={<MoreHorizontal size={15} />}>
+                  <span className="sr-only">Open menu</span>
+                </IconButton>
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem

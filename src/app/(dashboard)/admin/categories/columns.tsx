@@ -29,6 +29,9 @@ import {
 } from '@/components/ui/dialog';
 import { ColumnDef } from '@tanstack/react-table';
 import { CategoryResponse } from '@/api/types/categories.type';
+import { deleteCategoryAction } from './actions/delete-category.action';
+import { toast } from '@/components/ui/use-toast';
+import { IconButton } from '@/components/ui/icon-button';
 
 export const categoryColumns: ColumnDef<CategoryResponse>[] = [
   {
@@ -43,18 +46,16 @@ export const categoryColumns: ColumnDef<CategoryResponse>[] = [
         >
           <div className="flex justify-center items-center w-10">
             {row.getCanExpand() && (
-              <button
-                className="h-10 w-10 p-2 flex justify-center items-center rounded-full text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200"
+              <IconButton
+                icon={
+                  row.getIsExpanded() ? (
+                    <ChevronDownCircleIcon size={15} />
+                  ) : (
+                    <ChevronRightCircle size={15} />
+                  )
+                }
                 onClick={() => row.toggleExpanded()}
-                // onClick: () =>row.getToggleExpandedHandler(),
-                // style: { cursor: 'pointer' },
-              >
-                {row.getIsExpanded() ? (
-                  <ChevronDownCircleIcon size={15} />
-                ) : (
-                  <ChevronRightCircle size={15} />
-                )}
-              </button>
+              ></IconButton>
             )}
           </div>
           <div>
@@ -74,14 +75,16 @@ export const categoryColumns: ColumnDef<CategoryResponse>[] = [
     id: 'actions',
     cell: ({ row }) => {
       const category = row.original as CategoryResponse;
+
       return (
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
+              <div className="flex w-full h-full justify-end">
+                <IconButton icon={<MoreHorizontal size={15} />}>
+                  <span className="sr-only">Open menu</span>
+                </IconButton>
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
@@ -107,14 +110,28 @@ export const categoryColumns: ColumnDef<CategoryResponse>[] = [
           </DropdownMenu>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Видалити статтю</DialogTitle>
+              <DialogTitle>Видалити категорію</DialogTitle>
             </DialogHeader>
             <DialogDescription>
-              Ви впевненні що хочете видалити статтю &quot;{category.name}
+              Ви впевненні що хочете видалити категорію &quot;{category.name}
               &quot;?
             </DialogDescription>
             <DialogFooter>
-              <Button variant="destructive">Видалити</Button>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  const res = await deleteCategoryAction(category.id);
+                  toast({
+                    variant: res.error ? 'destructive' : 'success',
+                    description: res.success
+                      ? 'Категорія видалена'
+                      : res.message,
+                  });
+                }}
+              >
+                Видалити
+              </Button>
+
               <DialogClose asChild>
                 <Button>Скасувати</Button>
               </DialogClose>
