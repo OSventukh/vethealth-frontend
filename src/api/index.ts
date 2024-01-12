@@ -15,6 +15,7 @@ import {
   CategoryResponse,
 } from './types/categories.type';
 import { Pagination } from './types/general.type';
+import { PageResponse } from './types/pages.type';
 import {
   PostGetManyParams,
   PostGetOneParams,
@@ -106,6 +107,24 @@ export const api = {
     getMany: ({ query, token, revalidate, tags }: CategoryGetManyParams) =>
       get<Pagination<CategoryResponse>>({
         url: routes.categories,
+        query: queryObjectToString(query),
+        token,
+        revalidate,
+        tags,
+      }),
+  },
+  pages: {
+    getOne: ({ slug, token, query, revalidate, tags }: PostGetOneParams) =>
+      get<PageResponse>({
+        url: routes.pages,
+        query: queryObjectToString({ ...query, slug }),
+        token,
+        revalidate,
+        tags,
+      }),
+    getMany: ({ query, token, revalidate, tags }: PostGetManyParams) =>
+      get<Pagination<PageResponse>>({
+        url: routes.pages,
         query: queryObjectToString(query),
         token,
         revalidate,

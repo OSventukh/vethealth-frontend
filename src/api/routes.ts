@@ -4,6 +4,7 @@ export const routes = {
   topics: `${baseApi}/topics`,
   categories: `${baseApi}/categories`,
   posts: `${baseApi}/posts`,
+  pages: `${baseApi}/pages`,
   users: `${baseApi}/users`,
   fileUpload: `${baseApi}/files/upload`,
 
