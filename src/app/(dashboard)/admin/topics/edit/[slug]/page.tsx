@@ -12,7 +12,7 @@ export default async function EditTopicPage({ params }: Props) {
   const topic = await api.topics.getOne({
     slug,
     token: session?.token,
-    query: { include: 'parent,categories' },
+    query: { include: 'parent,categories,children' },
   });
   const categories = await api.categories.getMany({});
   const topics = await api.topics.getMany({});
@@ -20,7 +20,7 @@ export default async function EditTopicPage({ params }: Props) {
     <EditTopic
       initialData={topic}
       categories={categories.items}
-      parent={topics.items}
+      topics={topics.items}
       editMode
     />
   );

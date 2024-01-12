@@ -5,10 +5,12 @@ import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 import {
   ColumnDef,
+  ExpandedState,
   PaginationState,
   SortingState,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -30,6 +32,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   pageCount: number;
   searchField: string;
+  childrenProp?: keyof TData;
 }
 
 export function DataTable<TData, TValue>({
@@ -37,6 +40,7 @@ export function DataTable<TData, TValue>({
   data,
   pageCount,
   searchField,
+  childrenProp,
 }: DataTableProps<TData, TValue>) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -52,6 +56,8 @@ export function DataTable<TData, TValue>({
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [searching, setSearching] = useState<string>('');
+  const [expanded, setExpanded] = useState<ExpandedState>({});
+
   const table = useReactTable({
     data,
     columns,
@@ -64,12 +70,17 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getSortedRowModel: getSortedRowModel(),
+    onExpandedChange: setExpanded,
+    getSubRows: (row) => (childrenProp ? (row?.[childrenProp] as TData[]) : []),
+    getExpandedRowModel: getExpandedRowModel(),
+    debugTable: true,
     state: {
       sorting,
       pagination: {
         pageIndex: pagination.pageIndex,
         pageSize: pagination.pageSize,
       },
+      expanded,
     },
   });
 
@@ -82,6 +93,12 @@ export function DataTable<TData, TValue>({
     if (pagination) {
       params.set('page', String(pagination.pageIndex + 1));
       params.set('size', String(pagination.pageSize));
+      if (pagination.pageIndex === 0) {
+        params.delete('page');
+      }
+      if (pagination.pageSize === 10) {
+        params.delete('size');
+      }
 
       replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
@@ -116,7 +133,10 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      style={{ width: header.column.getSize() }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -137,7 +157,10 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{ width: cell.column.getSize() }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

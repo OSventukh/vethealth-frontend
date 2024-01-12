@@ -29,3 +29,16 @@ export const createTopicSchema = z.object({
 });
 
 export type TopicValues = z.infer<typeof createTopicSchema>;
+
+export const createCategorySchema = z.object({
+  name: z
+    .string()
+    .min(3, { message: 'Назва повинна мати не менше 3 символів' }),
+  slug: z.string().min(2, { message: 'URL повинний мати не менше 2 символів' }),
+  parent: relativeSchema
+    .optional()
+    .or(z.null())
+    .transform((value) => (value?.id === 'null' ? null : value)),
+});
+
+export type CategoryValues = z.infer<typeof createCategorySchema>;

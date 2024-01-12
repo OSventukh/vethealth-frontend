@@ -38,7 +38,7 @@ import { useToast } from '@/components/ui/use-toast';
 type Props = {
   initialData?: TopicResponse;
   categories: CategoryResponse[];
-  parent: TopicResponse[];
+  topics: TopicResponse[];
   pages?: [];
   editMode?: boolean;
 };
@@ -46,7 +46,7 @@ type Props = {
 export default function EditTopic({
   initialData,
   categories,
-  parent,
+  topics,
   editMode,
 }: Props) {
   const router = useRouter();
@@ -87,7 +87,7 @@ export default function EditTopic({
   };
   return (
     <div className="w-full rounded-2xl border p-10 mt-5 bg-background">
-      <h2>{editMode ? 'Редагувати кімнату' : 'Створити кімнату'}</h2>
+      <h2>{editMode ? 'Редагувати тему' : 'Створити тему'}</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(submitForm)}
@@ -237,7 +237,7 @@ export default function EditTopic({
                         <SelectContent>
                           <SelectGroup>
                             <SelectItem value="null">Відсутня</SelectItem>
-                            {parent.map((item) => (
+                            {topics.map((item) => (
                               <SelectItem
                                 key={item.id}
                                 value={item.id.toString()}

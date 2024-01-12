@@ -95,17 +95,21 @@ export const api = {
       }),
   },
   categories: {
-    getOne: ({ slug, token }: CategoryGetOneParams) =>
+    getOne: ({ slug, query, token, revalidate, tags }: CategoryGetOneParams) =>
       get<CategoryResponse>({
         url: routes.categories,
-        query: `?slug=${slug}`,
+        query: queryObjectToString({ ...query, slug }),
         token,
+        revalidate,
+        tags,
       }),
-    getMany: ({ query, token }: CategoryGetManyParams) =>
+    getMany: ({ query, token, revalidate, tags }: CategoryGetManyParams) =>
       get<Pagination<CategoryResponse>>({
         url: routes.categories,
         query: queryObjectToString(query),
         token,
+        revalidate,
+        tags,
       }),
   },
 } as const;

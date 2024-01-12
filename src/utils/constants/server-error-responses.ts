@@ -23,4 +23,5 @@ export const SERVER_ERROR = {
   USER_IS_NOT_CONFIRMED: 'userIsNotConfirmed',
   PASSWORD_IS_NOT_MATCH:
     'The password must contain at least one uppercase letter, one lowercase letter, one number, and be between 8 and 20 characters long',
+  SLUG_SHOULD_BE_UNIQUE: 'slugMustBeUnique',
 } as const;

@@ -17,7 +17,10 @@ type Props = {
 };
 
 export default async function TopicsPage({ searchParams }: Props) {
-  const topicQueryValidation = topicQuerySchema.safeParse(searchParams);
+  const topicQueryValidation = topicQuerySchema.safeParse({
+    ...searchParams,
+    include: 'children',
+  });
   const topics = await api.topics.getMany({
     query: topicQueryValidation.success ? topicQueryValidation.data : undefined,
     tags: ['admin_topics'],
@@ -38,6 +41,7 @@ export default async function TopicsPage({ searchParams }: Props) {
         data={topics.items}
         pageCount={topics.totalPages}
         searchField="title"
+        childrenProp="children"
       />
     </>
   );

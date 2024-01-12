@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import {
-  ArrowUpDown,
   ChevronDownCircleIcon,
   ChevronRightCircle,
   Copy,
@@ -29,17 +28,17 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ColumnDef } from '@tanstack/react-table';
-
-import type { PostResponse } from '@/api/types/posts.type';
+import { CategoryResponse } from '@/api/types/categories.type';
+import { deleteCategoryAction } from './actions/delete-category.action';
+import { toast } from '@/components/ui/use-toast';
 import { IconButton } from '@/components/ui/icon-button';
 
-export const postColumns: ColumnDef<PostResponse>[] = [
+export const categoryColumns: ColumnDef<CategoryResponse>[] = [
   {
-    accessorKey: 'title',
+    accessorKey: 'name',
     header: 'Заголовок',
     cell: ({ row }) => {
-      const post = row.original as PostResponse;
-
+      const category = row.original as CategoryResponse;
       return (
         <div
           className="flex gap-1 items-center"
@@ -60,25 +59,11 @@ export const postColumns: ColumnDef<PostResponse>[] = [
             )}
           </div>
           <div>
-            <Link href={'posts/edit/' + post.slug}>{post.title}</Link>
+            <Link href={'categories/edit/' + category.slug}>
+              {category.name}
+            </Link>
           </div>
         </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            column.toggleSorting(column.getIsSorted() === 'asc');
-          }}
-        >
-          Статус
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
       );
     },
   },
@@ -87,30 +72,10 @@ export const postColumns: ColumnDef<PostResponse>[] = [
     header: 'URL адреса',
   },
   {
-    accessorKey: 'createdAt',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            column.toggleSorting(column.getIsSorted() === 'asc');
-          }}
-        >
-          Дата створення
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ getValue }) => {
-      const value = getValue() as string;
-      const date = new Date(value);
-      return <>{date.toLocaleDateString('uk-UA')}</>;
-    },
-  },
-  {
     id: 'actions',
     cell: ({ row }) => {
-      const post = row.original as PostResponse;
+      const category = row.original as CategoryResponse;
+
       return (
         <Dialog>
           <DropdownMenu>
@@ -124,11 +89,11 @@ export const postColumns: ColumnDef<PostResponse>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 className="gap-2"
-                onClick={() => navigator.clipboard.writeText(post.id)}
+                onClick={() => navigator.clipboard.writeText(category.id)}
               >
                 <Copy size={16} /> Копіювати адресу
               </DropdownMenuItem>
-              <Link href={'posts/edit/' + post.slug}>
+              <Link href={'categories/edit/' + category.slug}>
                 <DropdownMenuItem className="gap-2">
                   <FileEdit size={16} />
                   Редагувати
@@ -145,13 +110,28 @@ export const postColumns: ColumnDef<PostResponse>[] = [
           </DropdownMenu>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Видалити статтю</DialogTitle>
+              <DialogTitle>Видалити категорію</DialogTitle>
             </DialogHeader>
             <DialogDescription>
-              Ви впевненні що хочете видалити статтю &quot;{post.title}&quot;?
+              Ви впевненні що хочете видалити категорію &quot;{category.name}
+              &quot;?
             </DialogDescription>
             <DialogFooter>
-              <Button variant="destructive">Видалити</Button>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  const res = await deleteCategoryAction(category.id);
+                  toast({
+                    variant: res.error ? 'destructive' : 'success',
+                    description: res.success
+                      ? 'Категорія видалена'
+                      : res.message,
+                  });
+                }}
+              >
+                Видалити
+              </Button>
+
               <DialogClose asChild>
                 <Button>Скасувати</Button>
               </DialogClose>

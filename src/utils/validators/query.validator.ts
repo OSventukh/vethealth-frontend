@@ -29,4 +29,5 @@ export const categoryQuerySchema = z.object({
   orderBy: z.enum(['status', 'createAt']).optional(),
   sort: sortQuerySchema.optional(),
   name: z.string().optional(),
+  include: z.string().optional(),
 });
