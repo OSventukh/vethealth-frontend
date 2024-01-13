@@ -52,7 +52,6 @@ export async function savePageAction(
       message: 'Success',
     };
   } catch (error: unknown) {
-    console.log(error);
     let message = 'Щось пішло не так';
 
     if (error instanceof Error) {

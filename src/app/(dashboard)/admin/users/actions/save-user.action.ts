@@ -4,7 +4,7 @@ import { revalidateTag } from 'next/cache';
 import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
-import { TopicValues } from '@/utils/validators/form.validator';
+import { UserValues } from '@/utils/validators/form.validator';
 
 type ReturnedData = {
   error: boolean;
@@ -13,13 +13,13 @@ type ReturnedData = {
   redirect?: string;
 };
 
-export async function saveTopicAction(
-  data: TopicValues & { id?: string },
+export async function saveUserAction(
+  data: UserValues & { id?: string },
   edit?: boolean
 ): Promise<ReturnedData> {
   const session = await auth();
   try {
-    const response = await fetch('http://localhost:5000/topics', {
+    const response = await fetch(`${process.env.API_SERVER}/users`, {
       method: edit ? 'PATCH' : 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export async function saveTopicAction(
       throw new Error(result.message);
     }
 
-    revalidateTag('admin_topics');
+    revalidateTag('admin_users');
 
     return {
       success: true,
@@ -51,6 +51,9 @@ export async function saveTopicAction(
           break;
         case SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY:
           message = ERROR_MESSAGE.TITLE_SHOULD_BE_NOT_EMPTY;
+          break;
+        case SERVER_ERROR.SLUG_SHOULD_BE_UNIQUE:
+          message = ERROR_MESSAGE.SLUG_SHOULD_BE_UNIQUE;
           break;
       }
     }

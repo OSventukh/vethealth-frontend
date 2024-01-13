@@ -31,3 +31,12 @@ export const categoryQuerySchema = z.object({
   name: z.string().optional(),
   include: z.string().optional(),
 });
+
+export const userQuerySchema = z.object({
+  page: pageQuerySchema.optional(),
+  size: sizeQuerySchema.optional(),
+  orderBy: z.enum(['status', 'createAt']).optional(),
+  sort: sortQuerySchema.optional(),
+  firstname: z.string().optional(),
+  include: z.string().optional(),
+});

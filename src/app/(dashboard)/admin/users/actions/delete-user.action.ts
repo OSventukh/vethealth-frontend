@@ -10,10 +10,10 @@ type ReturnedData = {
   redirect?: string;
 };
 
-export async function deletePageAction(id: string): Promise<ReturnedData> {
+export async function deleteUserAction(id: string): Promise<ReturnedData> {
   const session = await auth();
   try {
-    const response = await fetch(`${process.env.API_SERVER}/pages/${id}`, {
+    const response = await fetch(`${process.env.API_SERVER}/users/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ export async function deletePageAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag('admin_pages');
+    revalidateTag('admin_users');
 
     return {
       success: true,

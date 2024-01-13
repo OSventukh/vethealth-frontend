@@ -1,3 +1,4 @@
+import { User } from 'lucide-react';
 import { z } from 'zod';
 
 const relativeSchema = z.object({
@@ -42,3 +43,20 @@ export const createCategorySchema = z.object({
 });
 
 export type CategoryValues = z.infer<typeof createCategorySchema>;
+
+export const createUserSchema = z.object({
+  firstname: z
+    .string()
+    .min(2, { message: "Ім'я повинне мати не менше 2 символів" }),
+  lastname: z
+    .string()
+    .min(2, { message: 'Прізвище повинне мати не менше 2 символів' })
+    .optional()
+    .or(z.literal('')),
+  email: z.string().email({ message: 'Невірний формат пошти' }),
+  role: relativeSchema.optional(),
+  status: relativeSchema.optional(),
+  topics: z.array(relativeSchema).optional(),
+});
+
+export type UserValues = z.infer<typeof createUserSchema>;

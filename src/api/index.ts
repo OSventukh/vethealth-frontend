@@ -26,6 +26,11 @@ import {
   TopicGetOneParams,
   TopicResponse,
 } from './types/topics.type';
+import {
+  UserGetManyParams,
+  UserGetOneParams,
+  UserResponse,
+} from './types/user.type';
 
 const queryObjectToString = (query?: unknown) => {
   if (!query) {
@@ -125,6 +130,25 @@ export const api = {
     getMany: ({ query, token, revalidate, tags }: PostGetManyParams) =>
       get<Pagination<PageResponse>>({
         url: routes.pages,
+        query: queryObjectToString(query),
+        token,
+        revalidate,
+        tags,
+      }),
+  },
+  users: {
+    getOne: ({ token, id, query, revalidate, tags }: UserGetOneParams) =>
+      get<UserResponse>({
+        url: routes.users,
+        id: id,
+        query: queryObjectToString(query),
+        token,
+        revalidate,
+        tags,
+      }),
+    getMany: ({ token, query, revalidate, tags }: UserGetManyParams) =>
+      get<Pagination<UserResponse>>({
+        url: routes.users,
         query: queryObjectToString(query),
         token,
         revalidate,

@@ -27,7 +27,6 @@ export const post = async <Response>({
   });
 
   if (!response.ok) {
-    console.log(await response.json());
     throw new Error('Failed to fetch');
   }
 
@@ -36,6 +35,7 @@ export const post = async <Response>({
 
 type GetRequest = {
   url: Url;
+  id?: string;
   query?: string;
   token?: string;
   revalidate?: number | false;
@@ -44,13 +44,13 @@ type GetRequest = {
 
 export const get = async <Response>({
   url,
+  id,
   query,
   token,
   tags,
   revalidate,
 }: GetRequest): Promise<Response> => {
-  console.log(query);
-  const response = await fetch(url + (query || ''), {
+  const response = await fetch(url + (id ? `/${id}` : '') + (query || ''), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -113,7 +113,6 @@ export const sendFile = async <Response>({
     },
     body: data,
   });
-  console.log(await response.json());
   if (!response.ok) {
     throw new Error('Failed to fetch');
   }

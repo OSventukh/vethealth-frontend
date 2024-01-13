@@ -33,7 +33,6 @@ export async function deleteCategoryAction(id: string): Promise<ReturnedData> {
       message: 'Success',
     };
   } catch (error: unknown) {
-    console.log(error);
     const message =
       error instanceof Error ? error.message : 'Щось пішло не так';
 

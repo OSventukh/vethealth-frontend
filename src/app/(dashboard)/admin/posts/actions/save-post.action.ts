@@ -53,7 +53,6 @@ export async function savePostAction(
       message: 'Success',
     };
   } catch (error: unknown) {
-    console.log(error);
     let message = 'Щось пішло не так';
 
     if (error instanceof Error) {
