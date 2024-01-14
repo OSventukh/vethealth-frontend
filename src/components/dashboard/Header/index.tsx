@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Logo from '@/components/logo';
+import UserMenu from '@/app/(dashboard)/admin/users/components/UserMenu';
 
 type Props = {
   className?: string;
@@ -8,9 +9,12 @@ type Props = {
 export default function Header({ className }: Props) {
   return (
     <div className={className}>
-      <Link href="/admin">
-        <Logo />
-      </Link>
+      <div className="w-full h-full flex justify-between items-center">
+        <Link href="/admin">
+          <Logo />
+        </Link>
+        <UserMenu />
+      </div>
     </div>
   );
 }
