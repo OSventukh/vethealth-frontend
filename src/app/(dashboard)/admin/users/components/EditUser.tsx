@@ -51,8 +51,10 @@ export default function EditTopic({ initialData, topics, editMode }: Props) {
       firstname: initialData?.firstname,
       lastname: initialData?.lastname || '',
       email: initialData?.email || '',
-      role: initialData?.role,
-      status: { id: initialData?.status.id.toString() },
+      role: initialData?.role || { id: '4' },
+      status: initialData?.status
+        ? { id: initialData?.status.id.toString() }
+        : null,
       topics: initialData?.topics,
     },
     mode: 'onChange',
@@ -78,7 +80,7 @@ export default function EditTopic({ initialData, topics, editMode }: Props) {
         description: res.success
           ? editMode
             ? 'Користувача оновлена'
-            : 'Користувача стоврено, на його емейл надійде лист з підтвердженням'
+            : 'Користувача cтворено, на його емейл надійде лист з підтвердженням'
           : res.message,
       });
       if (res.success && res.redirect) {
@@ -124,37 +126,54 @@ export default function EditTopic({ initialData, topics, editMode }: Props) {
               </FormItem>
             )}
           ></FormField>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="Введіть email користувача" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          ></FormField>
           {initialData?.role.id !== '1' && (
             <>
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex justify-between items-center">
-                      Статус
-                    </FormLabel>
+              {editMode && (
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex justify-between items-center">
+                        Статус
+                      </FormLabel>
 
-                    <FormControl>
-                      <Select
-                        onValueChange={(value) => field.onChange({ id: value })}
-                        defaultValue={field.value?.id.toString()}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Виберіть статус користувача" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectItem value="1">Активний</SelectItem>
-                            <SelectItem value="3">Заблокований</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              ></FormField>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange({ id: value })
+                          }
+                          defaultValue={field.value?.id?.toString()}
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Виберіть статус користувача" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="1">Активний</SelectItem>
+                              <SelectItem value="3">Заблокований</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                ></FormField>
+              )}
               <FormField
                 control={form.control}
                 name="role"

@@ -19,31 +19,56 @@ export async function saveUserAction(
 ): Promise<ReturnedData> {
   const session = await auth();
   try {
-    const response = await fetch(`${process.env.API_SERVER}/users`, {
-      method: edit ? 'PATCH' : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session?.token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await response.json();
+    if (edit) {
+      const response = await fetch(`${process.env.API_SERVER}/users`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.token}`,
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(result.message);
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
+
+      revalidateTag('admin_users');
+
+      return {
+        success: true,
+        error: false,
+        message: 'Success',
+      };
+    } else {
+      const response = await fetch(`${process.env.API_SERVER}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'x-lang': 'ua',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.token}`,
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
+
+      revalidateTag('admin_users');
+
+      return {
+        success: true,
+        redirect: !edit && result.id,
+        error: false,
+        message: 'Success',
+      };
     }
-
-    revalidateTag('admin_users');
-
-    return {
-      success: true,
-      redirect: !edit && result.slug,
-      error: false,
-      message: 'Success',
-    };
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
-
+    console.log(error);
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:

@@ -24,12 +24,12 @@ export default async function PagesPage({ searchParams }: Props) {
 
   return (
     <>
-      <div className="w-full flex mb-5">
+      <div className="w-full flex">
         <Link
           href="pages/create"
-          className="flex justify-center items-center p-5 py-3 bg-primary text-white hover:opacity-90 rounded-2xl shadow-lg"
+          className="flex gap-2 justify-center items-center p-3 py-2 bg-primary text-sm text-white hover:opacity-90 rounded-xl shadow-lg"
         >
-          <PenSquare /> Нова сторінка
+          <PenSquare size={20} /> Нова сторінка
         </Link>
       </div>
       <DataTable

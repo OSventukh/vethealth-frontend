@@ -1,12 +1,11 @@
 import Link from 'next/link';
 import {
   Home,
-  Grid2X2,
   FileText,
-  List,
   Layout,
   Users,
   ListTree,
+  LayoutGrid,
 } from 'lucide-react';
 import {
   Tooltip,
@@ -30,7 +29,7 @@ const navs: Nav[] = [
   {
     title: 'Теми',
     route: '/admin/topics',
-    icon: <Grid2X2 size={20} />,
+    icon: <LayoutGrid size={20} />,
   },
   {
     title: 'Категорії',

@@ -55,7 +55,7 @@ export const createUserSchema = z.object({
     .or(z.literal('')),
   email: z.string().email({ message: 'Невірний формат пошти' }),
   role: relativeSchema.optional(),
-  status: relativeSchema.optional(),
+  status: relativeSchema.optional().or(z.null()),
   topics: z.array(relativeSchema).optional(),
 });
 
