@@ -59,7 +59,7 @@ export const userColumns: ColumnDef<UserResponse>[] = [
             )}
           </div>
           <div>
-            <Link href={'users/edit/' + user.id}>{user.firstname}</Link>
+            <Link href={'users/' + user.id}>{user.firstname}</Link>
           </div>
         </div>
       );

@@ -1,6 +1,7 @@
 'use client';
+import Link from 'next/link';
 import { signOut } from 'next-auth/react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { User } from 'lucide-react';
 
-export default function UserMenu() {
+export default function UserMenu({ userId }: { userId: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -20,7 +21,9 @@ export default function UserMenu() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>Профіль</DropdownMenuItem>
+        <Link href={`/admin/users/${userId}`}>
+          <DropdownMenuItem>Профіль</DropdownMenuItem>
+        </Link>
         <DropdownMenuItem onClick={() => signOut()}>Вихід</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
