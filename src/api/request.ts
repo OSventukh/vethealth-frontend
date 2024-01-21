@@ -26,11 +26,12 @@ export const post = async <Response>({
     body: JSON.stringify(data),
   });
 
+  const result = await response.json();
   if (!response.ok) {
-    throw new Error('Failed to fetch');
+    throw new Error(result.message);
   }
 
-  return await response.json();
+  return result;
 };
 
 type GetRequest = {

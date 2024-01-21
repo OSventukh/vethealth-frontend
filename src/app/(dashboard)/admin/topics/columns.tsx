@@ -148,10 +148,10 @@ export const topicColumns: ColumnDef<TopicResponse>[] = [
           </DropdownMenu>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Видалити статтю</DialogTitle>
+              <DialogTitle>Видалити тему</DialogTitle>
             </DialogHeader>
             <DialogDescription>
-              Ви впевненні що хочете видалити статтю &quot;{topic.title}&quot;?
+              Ви впевненні що хочете видалити тему &quot;{topic.title}&quot;?
             </DialogDescription>
             <DialogFooter>
               <Button variant="destructive">Видалити</Button>

@@ -1,4 +1,4 @@
-import SignIn from '@/components/dashboard/Auth/SignIn';
+import SignIn from '@/app/auth/components/SignIn';
 import React from 'react';
 
 export default function LoginPage() {

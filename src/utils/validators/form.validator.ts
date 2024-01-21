@@ -60,3 +60,14 @@ export const createUserSchema = z.object({
 });
 
 export type UserValues = z.infer<typeof createUserSchema>;
+
+export const loginSchema = z.object({
+  email: z
+    .string({ required_error: 'Введіть емейл' })
+    .email({ message: 'Невірний формат пошти' }),
+  password: z
+    .string({ required_error: 'Введіть пароль' })
+    .min(6, { message: 'Пароль повинен мати не менше 6 символів' }),
+});
+
+export type LoginValues = z.infer<typeof loginSchema>;
