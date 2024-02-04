@@ -67,7 +67,7 @@ export default function Navigation() {
                 <TooltipTrigger className="flex justify-center items-center w-full h-full">
                   <Link
                     href={item.route}
-                    className="flex justify-center items-center p-3 w-[80%] aspect-square transition-all rounded-xl hover:bg-primary hover:text-primary-foreground hover:shadow-lg"
+                    className="flex justify-center items-center p-3 w-[80%] aspect-square rounded-xl hover:bg-primary transition-all duration-200 hover:text-primary-foreground hover:shadow-lg"
                   >
                     {item.icon}
                   </Link>
