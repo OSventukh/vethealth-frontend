@@ -9,7 +9,7 @@ const defaultTitle = 'Лікування та догляд за тваринам
 
 const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
-export default function index({ title = defaultTitle }: Props) {
+export default function Description({ title = defaultTitle }: Props) {
   return (
     <h2
       className={`${releway.className} my-8 text-center text-lg font-normal uppercase`}

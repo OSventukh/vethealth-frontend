@@ -19,7 +19,7 @@ export default async function PagesPage({ searchParams }: Props) {
   const postQueryValidation = postQuerySchema.safeParse(searchParams);
   const pages = await api.pages.getMany({
     query: postQueryValidation.success ? postQueryValidation.data : undefined,
-    tags: ['admin_pages'],
+    tags: ['pages'],
   });
 
   return (

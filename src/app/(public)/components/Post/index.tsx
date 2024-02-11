@@ -1,11 +1,30 @@
+import { Raleway } from 'next/font/google';
 import { api } from '@/api';
+import { PostResponse } from '@/api/types/posts.type';
 import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 
-export default async function Post({ params }: { params: { slug: string } }) {
-  const post = await api.posts.getOne({ slug: params.slug });
+type Props = {
+  slug: string;
+};
+const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
+
+export default async function Post({ slug }: Props) {
+  const post = await api.posts.getOne({
+    slug,
+    tags: ['posts'],
+  });
+
+  if (!post) {
+    return <div>Сторінка не знайдена</div>;
+  }
+
   return (
-    <div>
-      <h2>{post.title}</h2>
+    <div className="mt-8 rounded-xl border-[1px] border-border bg-white p-8">
+      <h2
+        className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
+      >
+        {post.title}
+      </h2>
       <div>
         <ParsedContent content={JSON.parse(post.content)} />
       </div>

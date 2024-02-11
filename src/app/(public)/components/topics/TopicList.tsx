@@ -9,12 +9,16 @@ const roboto = Roboto({
 
 import { TopicResponse } from '@/api/types/topics.type';
 
-export default function TopicList({ items }: { items: TopicResponse[] }) {
+type Props = {
+  items: TopicResponse[];
+  parentSlug?: string;
+}
+export default function TopicList({ items, parentSlug }: Props) {
   return (
     <div className="grid justify-center justify-items-center grid-cols-1 md:grid-cols-2 gap-8">
       {items.map((item) => (
         <div key={item.id}>
-          <Link href={`/${item.slug}`} key={item.slug}>
+          <Link href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug} key={item.slug}>
             <Image
               src={item.image.path}
               alt={item.title}
@@ -24,7 +28,7 @@ export default function TopicList({ items }: { items: TopicResponse[] }) {
             />
           </Link>
           <div className="mt-4">
-            <Link href={`/topics/${item.slug}`} key={item.slug}>
+            <Link href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug} key={item.slug}>
               <h3
                 className={`${roboto.className} text-center text-sm uppercase`}
               >

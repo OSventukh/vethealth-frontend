@@ -24,7 +24,7 @@ export default async function CategoriesPage({ searchParams }: Props) {
     query: categoryQueryValidation.success
       ? categoryQueryValidation.data
       : undefined,
-    tags: ['admin_categories'],
+    tags: ['categories'],
   });
   return (
     <>

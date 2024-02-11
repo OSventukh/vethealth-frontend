@@ -4,6 +4,7 @@ import { topicQuerySchema } from '@/utils/validators/query.validator';
 import type { PostResponse } from './posts.type';
 import type { CategoryResponse } from './categories.type';
 import type { Image, Status } from './general.type';
+import { PageResponse } from './pages.type';
 
 export type TopicResponse = {
   id: string;
@@ -16,6 +17,7 @@ export type TopicResponse = {
   updatedAt?: string;
   status: Status;
   categories?: CategoryResponse[];
+  page?: PageResponse;
   posts?: PostResponse[];
   users?: [];
   parent?: TopicResponse;

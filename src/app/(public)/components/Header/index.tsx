@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import DesktopNavigation from '../Navigation/Desktop';
 
 export default function Header() {
   return (
@@ -14,6 +14,7 @@ export default function Header() {
             height={300}
           />
         </Link>
+        <DesktopNavigation items={[]} />
       </div>
     </div>
   );

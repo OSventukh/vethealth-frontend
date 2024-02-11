@@ -34,18 +34,20 @@ import ImageUpload from '@/components/ImageUpload';
 import { imageUploadAction } from '@/actions/image-upload.action';
 import { saveTopicAction } from '../../actions/save-topic.action';
 import { useToast } from '@/components/ui/use-toast';
+import { PageResponse } from '@/api/types/pages.type';
 
 type Props = {
-  initialData?: TopicResponse;
+  initialData?: TopicResponse | null;
   categories: CategoryResponse[];
   topics: TopicResponse[];
-  pages?: [];
+  pages?: PageResponse[];
   editMode?: boolean;
 };
 
 export default function EditTopic({
   initialData,
   categories,
+  pages,
   topics,
   editMode,
 }: Props) {
@@ -64,6 +66,7 @@ export default function EditTopic({
       categories: initialData?.categories,
       status: initialData?.status,
       parent: initialData?.parent,
+      page: initialData?.page,
       contentType: initialData?.contentType || 'post',
       image: initialData?.image,
     },
@@ -86,14 +89,14 @@ export default function EditTopic({
     });
   };
   return (
-    <div className="w-full rounded-2xl border p-10 mt-5 bg-background">
+    <div className="mt-5 w-full rounded-2xl border bg-background p-10">
       <h2>{editMode ? 'Редагувати тему' : 'Створити тему'}</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(submitForm)}
           className="grid grid-cols-2 grid-rows-[1fr_min-content] gap-8"
         >
-          <div className="flex flex-col gap-8 col-start-1 col-end-2 row-start-1 row-end-2">
+          <div className="col-start-1 col-end-2 row-start-1 row-end-2 flex flex-col gap-8">
             <FormField
               control={form.control}
               name="title"
@@ -189,6 +192,45 @@ export default function EditTopic({
                 </FormItem>
               )}
             ></FormField>
+            {form.getValues().contentType === 'page' && (
+              <FormField
+                control={form.control}
+                name="page"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Сторінкa</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => field.onChange({ id: value })}
+                        defaultValue={field.value?.id.toString()}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Виберіть сторінку теми" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="null">Відсутня</SelectItem>
+                            {pages?.map((item) => (
+                              <SelectItem
+                                key={item.id}
+                                value={item.id.toString()}
+                              >
+                                {item.title}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormDescription>
+                      Сторінка, яка буде відображатися при переході на сторінку
+                      теми
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              ></FormField>
+            )}
             <FormField
               control={form.control}
               name="categories"
@@ -217,7 +259,7 @@ export default function EditTopic({
               name="parent"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex justify-between items-center">
+                  <FormLabel className="flex items-center justify-between">
                     Батьківська тема
                     <Switch
                       checked={!!initialData?.parent || showParent}
@@ -284,7 +326,7 @@ export default function EditTopic({
             ></FormField>
             <FormControl></FormControl>
           </div>
-          <div className="justify-self-center col-start-1 col-end-3 row-start-2 row-end-3">
+          <div className="col-start-1 col-end-3 row-start-2 row-end-3 justify-self-center">
             <Button type="submit" variant="success">
               Зберегти
             </Button>

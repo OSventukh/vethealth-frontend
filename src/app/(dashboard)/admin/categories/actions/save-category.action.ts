@@ -33,7 +33,7 @@ export async function saveCategoryAction(
       throw new Error(result.message);
     }
 
-    revalidateTag('admin_categories');
+    revalidateTag('categories');
 
     return {
       success: true,

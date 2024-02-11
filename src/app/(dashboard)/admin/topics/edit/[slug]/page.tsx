@@ -14,13 +14,16 @@ export default async function EditTopicPage({ params }: Props) {
     token: session?.token,
     query: { include: 'parent,categories,children' },
   });
-  const categories = await api.categories.getMany({});
-  const topics = await api.topics.getMany({});
+  const categories = await api.categories.getMany({ tags: ['categories'] });
+  const topics = await api.topics.getMany({ tags: ['topics'] });
+  const pages = await api.pages.getMany({ tags: ['pages'] });
+
   return (
     <EditTopic
       initialData={topic}
-      categories={categories.items}
-      topics={topics.items}
+      categories={categories?.items || []}
+      topics={topics?.items || []}
+      pages={pages?.items || []}
       editMode
     />
   );

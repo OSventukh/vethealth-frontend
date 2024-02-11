@@ -25,7 +25,7 @@ export async function deleteCategoryAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag('admin_categories');
+    revalidateTag('categories');
 
     return {
       success: true,

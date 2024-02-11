@@ -22,7 +22,7 @@ export const createTopicSchema = z.object({
   contentType: z.enum(['post', 'page']),
   status: relativeSchema,
   categories: z.array(relativeSchema).optional(),
-  // page: relativeSchema.optional(),
+  page: relativeSchema.optional(),
   parent: relativeSchema
     .optional()
     .or(z.null())

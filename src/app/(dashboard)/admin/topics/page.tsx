@@ -23,7 +23,7 @@ export default async function TopicsPage({ searchParams }: Props) {
   });
   const topics = await api.topics.getMany({
     query: topicQueryValidation.success ? topicQueryValidation.data : undefined,
-    tags: ['admin_topics'],
+    tags: ['topics'],
   });
 
   return (
@@ -38,8 +38,8 @@ export default async function TopicsPage({ searchParams }: Props) {
       </div>
       <DataTable
         columns={topicColumns}
-        data={topics.items}
-        pageCount={topics.totalPages}
+        data={topics?.items || []}
+        pageCount={topics?.totalPages || 0}
         searchField="title"
         childrenProp="children"
       />

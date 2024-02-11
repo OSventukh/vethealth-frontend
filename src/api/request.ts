@@ -50,24 +50,28 @@ export const get = async <Response>({
   token,
   tags,
   revalidate,
-}: GetRequest): Promise<Response> => {
-  const response = await fetch(url + (id ? `/${id}` : '') + (query || ''), {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    next: {
-      tags,
-      revalidate,
-    },
-  });
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.message);
-  }
+}: GetRequest): Promise<Response | null> => {
+  try {
+    const response = await fetch(url + (id ? `/${id}` : '') + (query || ''), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      next: {
+        tags,
+        revalidate,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message);
+    }
 
-  return result;
+    return result;
+  } catch (error) {
+    return null
+  }
 };
 
 type DeleteRequest = {

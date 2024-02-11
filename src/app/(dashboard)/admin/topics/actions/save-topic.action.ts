@@ -33,7 +33,7 @@ export async function saveTopicAction(
       throw new Error(result.message);
     }
 
-    revalidateTag('admin_topics');
+    revalidateTag('topics');
 
     return {
       success: true,

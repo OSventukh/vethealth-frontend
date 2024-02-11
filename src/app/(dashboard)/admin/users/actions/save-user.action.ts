@@ -34,7 +34,7 @@ export async function saveUserAction(
         throw new Error(result.message);
       }
 
-      revalidateTag('admin_users');
+      revalidateTag('users');
 
       return {
         success: true,

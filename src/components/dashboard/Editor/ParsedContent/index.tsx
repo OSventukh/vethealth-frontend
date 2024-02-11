@@ -151,7 +151,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
       >
         <div className="inline-block">
           <Image
-            className="inline w-auto h-auto"
+            className="inline h-auto w-auto"
             key={randomUUID()}
             src={src}
             width={width}
@@ -160,7 +160,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
             priority
           />
           {imageNode.showCaption && (
-            <figcaption className="text-center text-sm text-gray-600 mt-1">
+            <figcaption className="mt-1 text-center text-sm text-gray-600">
               {imageNode?.caption}
             </figcaption>
           )}
@@ -211,11 +211,11 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
         className={clsx('grid', {
           'grid-cols-1 md:grid-cols-[1fr_1fr]': gridTamplate === '1fr 1fr',
           'grid-cols-1 md:grid-cols-[1fr_3fr]': gridTamplate === '1fr 3fr',
-          'grid-cols-1 md:grid-cols-[1fr 1fr 1fr]':
+          'md:grid-cols-[1fr 1fr 1fr] grid-cols-1':
             gridTamplate === '1fr 1fr 1fr',
-          'grid-cols-1 md:grid-cols-[1fr 2fr 1fr]':
+          'md:grid-cols-[1fr 2fr 1fr] grid-cols-1':
             gridTamplate === '1fr 2fr 1fr',
-          'grid-cols-1 md:grid-cols-[1fr 1fr 1fr 1fr]':
+          'md:grid-cols-[1fr 1fr 1fr 1fr] grid-cols-1':
             gridTamplate === '1fr 1fr 1fr 1fr',
         })}
       >
@@ -230,12 +230,22 @@ type Props = {
     children: any[];
     root?: any;
   };
+  excerpt?: boolean;
 };
-export const ParsedContent = ({ content }: Props): React.ReactNode => {
+export const ParsedContent = ({
+  content,
+  excerpt = false,
+}: Props): React.ReactNode => {
   if (!content) return <div></div>;
   const topLevelChildren = content?.root?.children || content?.children;
   if (!topLevelChildren) {
     return <div></div>;
+  }
+
+  if (excerpt) {
+    return (
+      <AppendChildNodeToHtml key={randomUUID()} node={topLevelChildren[0]} />
+    );
   }
   return (
     <>

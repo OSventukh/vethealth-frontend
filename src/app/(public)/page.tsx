@@ -7,7 +7,7 @@ export default async function Home() {
   return (
     <>
       <Description />
-      <TopicList items={topics.items} />
+      <TopicList items={topics?.items || []} />
     </>
   );
 }

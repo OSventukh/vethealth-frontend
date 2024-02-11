@@ -25,7 +25,7 @@ export async function deletePageAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag('admin_pages');
+    revalidateTag('pages');
 
     return {
       success: true,

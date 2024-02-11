@@ -43,7 +43,7 @@ export async function savePageAction(
     if (!response.ok) {
       throw new Error(result.message);
     }
-    revalidateTag('admin_pages');
+    revalidateTag('pages');
 
     return {
       success: true,

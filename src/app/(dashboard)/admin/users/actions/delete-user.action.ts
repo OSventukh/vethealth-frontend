@@ -25,7 +25,7 @@ export async function deleteUserAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag('admin_users');
+    revalidateTag('users');
 
     return {
       success: true,

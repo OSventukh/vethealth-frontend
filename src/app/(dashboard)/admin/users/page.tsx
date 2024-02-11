@@ -23,7 +23,7 @@ export default async function UsersPage({ searchParams }: Props) {
   const users = await api.users.getMany({
     query: userQueryValidation.success ? userQueryValidation.data : undefined,
     token: session?.token,
-    tags: ['admin_users'],
+    tags: ['users'],
   });
   return (
     <>

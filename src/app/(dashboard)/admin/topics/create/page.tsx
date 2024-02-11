@@ -4,5 +4,12 @@ import EditTopic from '../components/EditTopic';
 export default async function CreateTopicPage() {
   const categories = await api.categories.getMany({});
   const topics = await api.topics.getMany({});
-  return <EditTopic categories={categories.items} topics={topics.items} />;
+  const pages = await api.pages.getMany({});
+  return (
+    <EditTopic
+      categories={categories?.items || []}
+      topics={topics?.items || []}
+      pages={pages?.items || []}
+    />
+  );
 }
