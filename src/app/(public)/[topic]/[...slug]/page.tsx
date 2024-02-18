@@ -12,7 +12,6 @@ type Props = {
   };
 };
 export default async function SlugPage({ params }: Props) {
-  console.log('params', params);
   const topicSlug = params?.slug.length > 0 ? params?.slug[0] : params.topic;
   const topic = await api.topics.getOne({
     slug: topicSlug,

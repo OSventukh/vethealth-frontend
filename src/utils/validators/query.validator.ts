@@ -27,6 +27,7 @@ export const topicQuerySchema = z.object({
 export const categoryQuerySchema = z.object({
   page: pageQuerySchema.optional(),
   size: sizeQuerySchema.optional(),
+  topic: z.string().optional(),
   orderBy: z.enum(['status', 'createAt']).optional(),
   sort: sortQuerySchema.optional(),
   name: z.string().optional(),
