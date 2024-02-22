@@ -34,7 +34,7 @@ const Lexical = dynamic(() => import('@/components/dashboard/Editor/Lexical'), {
   ssr: false,
 });
 type Props = {
-  initialData?: PostResponse;
+  initialData?: PostResponse | null;
   topics?: TopicResponse[];
   categories?: CategoryResponse[];
   editMode?: boolean;
@@ -108,7 +108,7 @@ export default function EditPost({
         editMode
       );
       toast({
-        variant: res.error ? 'destructive' : 'default',
+        variant: res.error ? 'destructive' : 'success',
         description: res.success ? 'Стаття збережена' : res.message,
       });
       if (res.success && res.redirect) {

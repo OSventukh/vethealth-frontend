@@ -9,12 +9,18 @@ type Props = {
   params: {
     topic: string;
   };
+  searchParams: {
+    category?: string;
+  };
 };
-export default async function TopicPage({ params }: Props) {
+export default async function TopicPage({ params, searchParams }: Props) {
+  console.log(searchParams);
   const topic = await api.topics.getOne({
     slug: params.topic,
     query: { include: 'children' },
     tags: ['topics'],
   });
-  return <TopicContent topic={topic!} params={params} />;
+  return (
+    <TopicContent topic={topic!} params={params} searchParams={searchParams} />
+  );
 }

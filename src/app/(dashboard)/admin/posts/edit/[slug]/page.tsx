@@ -13,13 +13,15 @@ export default async function EditPostPage({ params }: Props) {
     query: { include: 'categories,topics' },
     token: session?.token,
   });
-  const topics = await api.topics.getMany({});
-  const categories = await api.categories.getMany({});
+  const topics = await api.topics.getMany({ query: { showAll: true } });
+  const categories = await api.categories.getMany({
+    query: { showAll: true },
+  });
   return (
     <EditPost
       initialData={post}
-      topics={topics.items}
-      categories={categories.items}
+      topics={topics?.items}
+      categories={categories?.items}
       editMode
     />
   );

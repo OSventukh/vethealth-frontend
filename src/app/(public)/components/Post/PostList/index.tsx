@@ -3,10 +3,11 @@ import PostItem from '../PostItem';
 
 type Props = {
   topic: string;
+  category?: string;
 };
-export default async function PostList({ topic }: Props) {
+export default async function PostList({ topic, category }: Props) {
   const posts = await api.posts.getMany({
-    query: { topic: topic },
+    query: { topic, category },
     tags: ['posts'],
   });
   return (

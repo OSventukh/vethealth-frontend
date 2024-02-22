@@ -12,8 +12,11 @@ type Props = {
     topic: string;
     slug?: string[];
   };
+  searchParams: {
+    category?: string;
+  };
 };
-export default function TopicContent({ topic, params }: Props) {
+export default function TopicContent({ topic, params, searchParams }: Props) {
   const parentSlug = params.slug
     ? `${params.topic}/${params.slug.join('/')}`
     : params.topic;
@@ -29,7 +32,7 @@ export default function TopicContent({ topic, params }: Props) {
       ) : topic.contentType === 'page' ? (
         <Page topic={params?.slug?.[0] || params.topic} />
       ) : (
-        <PostList topic={topic.slug} />
+        <PostList topic={topic.slug} category={searchParams?.category} />
       )}
     </div>
   );

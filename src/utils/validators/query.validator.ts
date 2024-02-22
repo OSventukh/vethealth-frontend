@@ -22,6 +22,7 @@ export const topicQuerySchema = z.object({
   sort: sortQuerySchema.optional(),
   title: z.string().optional(),
   include: z.string().optional(),
+  showAll: z.boolean().optional(),
 });
 
 export const categoryQuerySchema = z.object({
@@ -32,6 +33,7 @@ export const categoryQuerySchema = z.object({
   sort: sortQuerySchema.optional(),
   name: z.string().optional(),
   include: z.string().optional(),
+  showAll: z.boolean().optional(),
 });
 
 export const userQuerySchema = z.object({
