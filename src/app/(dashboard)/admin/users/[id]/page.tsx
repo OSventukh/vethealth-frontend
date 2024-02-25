@@ -15,11 +15,11 @@ export default async function UserProfilePage({
       <h2>Профіль</h2>
       <div className="grid grid-cols-2 gap-2">
         <div>Ім'я:</div>
-        <div>{user.firstname}</div>
+        <div>{user?.firstname}</div>
         <div>Прізвище:</div>
-        <div>{user.lastname}</div>
+        <div>{user?.lastname}</div>
         <div>Пошта:</div>
-        <div>{user.email}</div>
+        <div>{user?.email}</div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ import { saveCategoryAction } from '../actions/save-category.action';
 import { Info } from 'lucide-react';
 
 type Props = {
-  initialData?: CategoryResponse;
+  initialData?: CategoryResponse | null;
   categories: CategoryResponse[];
   editMode?: boolean;
 };

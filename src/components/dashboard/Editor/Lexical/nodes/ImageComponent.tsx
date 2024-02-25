@@ -1,5 +1,5 @@
 import type {
-  GridSelection,
+  BaseSelection,
   LexicalCommand,
   LexicalEditor,
   NodeKey,
@@ -118,7 +118,7 @@ export default function ImageComponent({
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const [editor] = useLexicalComposerContext();
   const [selection, setSelection] = useState<
-    RangeSelection | NodeSelection | GridSelection | null
+    RangeSelection | NodeSelection | BaseSelection | null
   >(null);
   const activeEditorRef = useRef<LexicalEditor | null>(null);
   const captionRef = useRef<HTMLInputElement>(null);

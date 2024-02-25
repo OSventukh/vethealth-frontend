@@ -26,7 +26,7 @@ export default async function Post({ slug }: Props) {
         {post.title}
       </h2>
       <div>
-        <ParsedContent content={JSON.parse(post.content)} />
+        {post?.content && <ParsedContent content={JSON.parse(post.content)} />}
       </div>
     </div>
   );

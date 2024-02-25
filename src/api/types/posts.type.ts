@@ -10,6 +10,11 @@ export type PostResponse = {
   content: string;
   slug: string;
   featuredImage: string | null;
+  featuredImageFile?: {
+    id: string;
+    path: string;
+  } | null;
+  featuredImageUrl?: string | null;
   createdAt: string;
   updatedAt?: string;
   status?: 'Draft' | 'Published';

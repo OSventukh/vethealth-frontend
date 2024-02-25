@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { User } from '@/api/types/auth.type';
+import type { User, UserSession } from '@/utils/types/user.type';
 import NextAuth from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
-    user: UserResponse;
+    user: UserSession;
     token: string;
     refreshToken: string;
     tokenExpires: number;

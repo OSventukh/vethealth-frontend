@@ -13,9 +13,10 @@ export default async function EditPostPage({ params }: Props) {
     query: { include: 'categories,topics' },
     token: session?.token,
   });
-  const topics = await api.topics.getMany({ query: { showAll: true } });
+  const topics = await api.topics.getMany({ query: { showAll: true }, tags: ['topics']});
   const categories = await api.categories.getMany({
     query: { showAll: true },
+    tags: ['categories'],
   });
   return (
     <EditPost
@@ -23,6 +24,7 @@ export default async function EditPostPage({ params }: Props) {
       topics={topics?.items}
       categories={categories?.items}
       editMode
+      user={session?.user}
     />
   );
 }

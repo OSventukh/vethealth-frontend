@@ -309,9 +309,8 @@ export default function EditTopic({
                   <FormLabel>Картинка</FormLabel>
                   <FormControl>
                     <ImageUpload
-                      uploadAction={(formData) =>
-                        imageUploadAction(formData, 'topic')
-                      }
+                      field="topic"
+                      uploadAction={imageUploadAction}
                       width={500}
                       height={500}
                       onImage={(value) =>

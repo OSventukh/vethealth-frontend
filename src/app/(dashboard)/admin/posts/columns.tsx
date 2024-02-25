@@ -32,6 +32,8 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import type { PostResponse } from '@/api/types/posts.type';
 import { IconButton } from '@/components/ui/icon-button';
+import { deletePostAction } from './actions/delete-post.action';
+import { toast } from '@/components/ui/use-toast';
 
 export const postColumns: ColumnDef<PostResponse>[] = [
   {
@@ -42,10 +44,10 @@ export const postColumns: ColumnDef<PostResponse>[] = [
 
       return (
         <div
-          className="flex gap-1 items-center"
+          className="flex items-center gap-1"
           style={{ paddingLeft: `${row.depth}rem` }}
         >
-          <div className="flex justify-center items-center w-10">
+          <div className="flex w-10 items-center justify-center">
             {row.getCanExpand() && (
               <IconButton
                 icon={
@@ -81,6 +83,31 @@ export const postColumns: ColumnDef<PostResponse>[] = [
         </Button>
       );
     },
+    cell: ({ getValue }) => {
+      const value = getValue() as string;
+      if (value === 'Published') {
+        return (
+          <span className="w-full rounded-full bg-green-500 px-4 py-1 text-center text-white">
+            Опубліковано
+          </span>
+        );
+      }
+      if (value === 'Draft') {
+        return (
+          <span className="w-full rounded-full bg-yellow-500 px-4 py-1 text-center text-white">
+            Чернетка
+          </span>
+        );
+      }
+
+      if (value === 'OnReview') {
+        return (
+          <span className="w-full rounded-full bg-blue-500 px-4 py-1 text-center text-white">
+            На рецензії
+          </span>
+        );
+      }
+    },
   },
   {
     accessorKey: 'slug',
@@ -115,7 +142,7 @@ export const postColumns: ColumnDef<PostResponse>[] = [
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="flex w-full h-full justify-end">
+              <div className="flex h-full w-full justify-end">
                 <IconButton icon={<MoreHorizontal size={15} />}>
                   <span className="sr-only">Open menu</span>
                 </IconButton>
@@ -151,7 +178,20 @@ export const postColumns: ColumnDef<PostResponse>[] = [
               Ви впевненні що хочете видалити статтю &quot;{post.title}&quot;?
             </DialogDescription>
             <DialogFooter>
-              <Button variant="destructive">Видалити</Button>
+            <Button
+                variant="destructive"
+                onClick={async () => {
+                  const res = await deletePostAction(post.id);
+                  toast({
+                    variant: res.error ? 'destructive' : 'success',
+                    description: res.success
+                      ? 'Стаття видалена'
+                      : res.message,
+                  });
+                }}
+              >
+                Видалити
+              </Button>
               <DialogClose asChild>
                 <Button>Скасувати</Button>
               </DialogClose>

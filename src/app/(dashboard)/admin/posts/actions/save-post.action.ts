@@ -9,6 +9,8 @@ type Props = {
   id?: string;
   title: string;
   content: string;
+  featuredImageFile: { id: string } | null;
+  featuredImageUrl?: string | null;
   topics?: { id: string }[] | [];
   categories?: { id: string }[] | [];
   slug?: string;

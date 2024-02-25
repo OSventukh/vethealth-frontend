@@ -1,6 +1,6 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { useState, useTransition } from 'react';
+import React, { ChangeEventHandler, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { MultiValue, Options } from 'react-select';
 import { PanelRightOpen, Save, Settings } from 'lucide-react';
@@ -25,20 +25,30 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { Spinner } from '@/components/ui/spinner';
 import { PostStatusEnum } from '../../actions/post-status.enum';
 import { savePostAction } from '../../actions/save-post.action';
 import { useToast } from '@/components/ui/use-toast';
+import ImageUpload from '@/components/ImageUpload';
+import { imageUploadAction } from '@/actions/image-upload.action';
+import type { UserSession } from '@/utils/types/user.type';
+import { UserRoleEnum } from '@/utils/enums/user.enum';
 
 const Lexical = dynamic(() => import('@/components/dashboard/Editor/Lexical'), {
   ssr: false,
 });
+
 type Props = {
   initialData?: PostResponse | null;
   topics?: TopicResponse[];
   categories?: CategoryResponse[];
   editMode?: boolean;
+  user?: UserSession;
 };
+
+type FeaturedImageFile = { id: string; path: string } | null | undefined;
 
 const getLabelAndValue = <T,>(
   items: T[] | undefined,
@@ -59,6 +69,7 @@ export default function EditPost({
   topics: topicsOptions,
   categories: categoriesOptions,
   editMode,
+  user,
 }: Props) {
   const initialTopics = getLabelAndValue<TopicResponse>(initialData?.topics, {
     valueKey: 'id',
@@ -74,6 +85,12 @@ export default function EditPost({
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || null);
   const [slug, setSlug] = useState<string>(initialData?.slug || '');
+  const [featuredImageFile, setFeaturedImageFile] = useState<FeaturedImageFile>(
+    initialData?.featuredImageFile || null
+  );
+  const [featuredImageUrl, setFeaturedImageUrl] = useState<string | null>(
+    initialData?.featuredImageUrl || null
+  );
   const [topics, setTopics] =
     useState<Options<{ label: string; value: string }>>(initialTopics);
   const [categories, setCategories] =
@@ -91,6 +108,17 @@ export default function EditPost({
     setContent(content);
   };
 
+  const imageUploadHandler = (image: FeaturedImageFile) => {
+    setFeaturedImageFile(image);
+  };
+
+  const imageUrlChangeHandler = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value;
+    setFeaturedImageUrl(value);
+  };
+
   const saveHandler = (status: PostStatusEnum) => {
     startTransition(async () => {
       const res = await savePostAction(
@@ -98,6 +126,10 @@ export default function EditPost({
           id: initialData?.id,
           title: title,
           content: content || '',
+          featuredImageFile: featuredImageFile
+            ? { id: featuredImageFile?.id }
+            : null,
+          featuredImageUrl: featuredImageUrl || null,
           topics: topics.map((item) => ({ id: item.value })),
           categories: categories.map((item) => ({ id: item.value })),
           slug,
@@ -143,14 +175,26 @@ export default function EditPost({
         onChangeContent={contentChangeHandler}
       />
 
-      <SheetContent showOverlay={false}>
+      <SheetContent showOverlay={false} className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Налаштування статті</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col gap-5 mt-5">
-          <Button onClick={() => saveHandler(PostStatusEnum.OnReview)}>
-            Опублікувати
-          </Button>
+        <div className="mt-5 flex flex-col gap-5">
+          <div className="flex justify-between">
+            {user?.role.name === UserRoleEnum.Administrator ||
+            user?.role.name === UserRoleEnum.SuperAdmininstrator ? (
+              <Button onClick={() => saveHandler(PostStatusEnum.Published)}>
+                Опублікувати
+              </Button>
+            ) : (
+              <Button onClick={() => saveHandler(PostStatusEnum.OnReview)}>
+                На перегляд
+              </Button>
+            )}
+            <Button onClick={() => saveHandler(PostStatusEnum.Draft)}>
+              Зберегти як чернетку
+            </Button>
+          </div>
           <div>
             <Label htmlFor="topics">Тема</Label>
             <Multiselect
@@ -181,24 +225,54 @@ export default function EditPost({
             <Label htmlFor="slug">URL адреса</Label>
             <Input id="slug" value={slug} onChange={slugChangeHandler} />
           </div>
+          <div>
+            <p>Закріпленна картика</p>
+            <Tabs
+              defaultValue={featuredImageFile ? 'upload' : 'url'}
+              className="w-full"
+            >
+              <TabsList>
+                <TabsTrigger value="url">Ввести url адресу</TabsTrigger>
+                <TabsTrigger value="upload">Завантажити</TabsTrigger>
+              </TabsList>
+              <TabsContent value="url" className="">
+                <Label htmlFor="imageUrl">URL адреса картинки</Label>
+                <Input
+                  id="imageUrl"
+                  value={featuredImageUrl || ''}
+                  onChange={imageUrlChangeHandler}
+                />
+              </TabsContent>
+              <TabsContent value="upload" className="">
+                <ImageUpload
+                  onImage={(image) => imageUploadHandler(image)}
+                  value={featuredImageFile?.path || null}
+                  width={500}
+                  height={500}
+                  field="post-featured"
+                  uploadAction={imageUploadAction}
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </SheetContent>
       <DropdownMenu>
-        <DropdownMenuContent className="flex flex-col mb-4 gap-2 justify-center items-center bg-transparent border-none shadow-none">
+        <DropdownMenuContent className="mb-4 flex flex-col items-center justify-center gap-2 border-none bg-transparent shadow-none">
           <DropdownMenuItem className="focus:bg-transparent" title="Меню">
-            <SheetTrigger className="flex justify-center items-center p-0 w-12 h-12 bg-blue-500 hover:opacity-90 rounded-2xl shadow-lg">
+            <SheetTrigger className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500 p-0 shadow-lg hover:opacity-90">
               <PanelRightOpen />
             </SheetTrigger>
           </DropdownMenuItem>
           <DropdownMenuItem
             title="Зберегти"
-            className="flex justify-center items-center p-0 w-12 h-12 cursor-pointer bg-green-600 hover:opacity-90 focus:bg-green-600 rounded-2xl shadow-lg"
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-2xl bg-green-600 p-0 shadow-lg hover:opacity-90 focus:bg-green-600"
             onClick={() => saveHandler(PostStatusEnum.Draft)}
           >
             {<Save />}
           </DropdownMenuItem>
         </DropdownMenuContent>
-        <DropdownMenuTrigger className="fixed flex justify-center items-center overflow-hidden bottom-20 right-[calc(100vw/7)] p-0 w-14 h-14 bg-slate-400 transition-all opacity-50 hover:opacity-100 rounded-2xl shadow-lg hover:shadow-2xl">
+        <DropdownMenuTrigger className="fixed bottom-20 right-[calc(100vw/7)] flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-slate-400 p-0 opacity-50 shadow-lg transition-all hover:opacity-100 hover:shadow-2xl">
           {isPending ? <Spinner /> : <Settings />}
         </DropdownMenuTrigger>
       </DropdownMenu>

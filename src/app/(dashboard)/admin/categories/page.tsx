@@ -4,6 +4,7 @@ import { DataTable } from '@/components/ui/DataTable';
 import { api } from '@/api';
 import { categoryColumns } from './columns';
 import { categoryQuerySchema } from '@/utils/validators/query.validator';
+import CreateButton from '@/components/ui/create-button';
 
 type Props = {
   searchParams: {
@@ -28,18 +29,15 @@ export default async function CategoriesPage({ searchParams }: Props) {
   });
   return (
     <>
-      <div className="w-full flex">
-        <Link
-          href="categories/create"
-          className="flex gap-2 justify-center items-center p-3 py-2 bg-primary text-sm text-white hover:opacity-90 rounded-xl shadow-lg"
-        >
-          <PenSquare size={20} /> Нова категорія
-        </Link>
-      </div>
+      <CreateButton
+        link="categories/create"
+        icon={<PenSquare size={20} />}
+        text="Нова категорія"
+      />
       <DataTable
         columns={categoryColumns}
-        data={categories.items}
-        pageCount={categories.totalPages}
+        data={categories?.items || []}
+        pageCount={categories?.totalPages || 1}
         searchField="name"
         childrenProp={'children'}
       />

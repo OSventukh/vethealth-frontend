@@ -13,5 +13,5 @@ export default async function EditPagePage({ params }: Props) {
     token: session?.token,
     tags: ['admin_pages'],
   });
-  return <EditPage initialData={page} editMode />;
+  return <EditPage initialData={page || null} editMode />;
 }

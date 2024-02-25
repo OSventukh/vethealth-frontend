@@ -9,6 +9,7 @@ export const postQuerySchema = z.object({
   size: sizeQuerySchema.optional(),
   orderBy: z.enum(['status', 'createAt']).optional(),
   sort: sortQuerySchema.optional(),
+  status: z.enum(['all', 'published', 'draft', 'onreview']).optional(),
   title: z.string().optional(),
   category: z.string().optional(),
   topic: z.string().optional(),

@@ -33,7 +33,6 @@ import {
   $isTextNode,
   COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_NORMAL,
-  DEPRECATED_$isGridSelection,
   ElementFormatType,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
@@ -42,6 +41,7 @@ import {
   NodeKey,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
+  TextNode,
   UNDO_COMMAND,
 } from 'lexical';
 import {
@@ -179,8 +179,7 @@ function BlockFormatDropDown({
     editor.update(() => {
       const selection = $getSelection();
       if (
-        $isRangeSelection(selection) ||
-        DEPRECATED_$isGridSelection(selection)
+        $isRangeSelection(selection)
       ) {
         $setBlocksType(selection, () => $createParagraphNode());
       }
@@ -192,8 +191,7 @@ function BlockFormatDropDown({
       editor.update(() => {
         const selection = $getSelection();
         if (
-          $isRangeSelection(selection) ||
-          DEPRECATED_$isGridSelection(selection)
+          $isRangeSelection(selection)
         ) {
           $setBlocksType(selection, () => $createHeadingNode(headingSize));
         }
@@ -512,14 +510,14 @@ export default function ToolbarPlugin({
               node = node.splitText(anchor.offset)[1] || node;
             }
             if (idx === nodes.length - 1) {
-              node = node.splitText(focus.offset)[0] || node;
+              node = (node as TextNode).splitText(focus.offset)[0] || node;
             }
 
-            if (node.__style !== '') {
-              node.setStyle('');
+            if ((node as TextNode).__style !== '') {
+              (node as TextNode).setStyle('');
             }
-            if (node.__format !== 0) {
-              node.setFormat(0);
+            if ((node as TextNode).__format !== 0) {
+              (node as TextNode).setFormat(0);
               $getNearestBlockElementAncestorOrThrow(node).setFormat('');
             }
           } else if ($isHeadingNode(node) || $isQuoteNode(node)) {

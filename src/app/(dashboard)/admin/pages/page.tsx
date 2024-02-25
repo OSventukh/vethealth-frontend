@@ -2,8 +2,8 @@ import { DataTable } from '@/components/ui/DataTable';
 import { pageColumns } from './columns';
 import { api } from '@/api';
 import { postQuerySchema } from '@/utils/validators/query.validator';
-import Link from 'next/link';
 import { PenSquare } from 'lucide-react';
+import CreateButton from '@/components/ui/create-button';
 
 type Props = {
   searchParams: {
@@ -24,18 +24,15 @@ export default async function PagesPage({ searchParams }: Props) {
 
   return (
     <>
-      <div className="w-full flex">
-        <Link
-          href="pages/create"
-          className="flex gap-2 justify-center items-center p-3 py-2 bg-primary text-sm text-white hover:opacity-90 rounded-xl shadow-lg"
-        >
-          <PenSquare size={20} /> Нова сторінка
-        </Link>
-      </div>
+      <CreateButton
+        link="pages/create"
+        icon={<PenSquare size={20} />}
+        text="Нова сторінка"
+      />
       <DataTable
         columns={pageColumns}
-        data={pages.items}
-        pageCount={pages.totalPages}
+        data={pages?.items || []}
+        pageCount={pages?.totalPages || 1}
         searchField="title"
       />
     </>

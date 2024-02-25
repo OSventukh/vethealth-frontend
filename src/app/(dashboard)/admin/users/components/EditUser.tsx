@@ -34,7 +34,7 @@ import { saveUserAction } from '../actions/save-user.action';
 import { Combobox } from '@/components/ui/combobox';
 
 type Props = {
-  initialData?: UserResponse;
+  initialData?: UserResponse | null;
   topics: TopicResponse[];
   editMode?: boolean;
 };

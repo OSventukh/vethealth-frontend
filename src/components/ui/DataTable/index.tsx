@@ -124,7 +124,7 @@ export function DataTable<TData, TValue>({
     }
   };
   return (
-    <div className="flex flex-col gap-5 w-full rounded-2xl border p-10 mt-5 bg-background">
+    <div className="flex flex-col gap-5 w-full rounded-2xl border p-4 md:p-10 mt-5 bg-background">
       <TableSearch value={searching} onChange={searchChangeHandler} />
       <div className="w-full rounded-xl border">
         <Table>
@@ -175,7 +175,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Немає результатів.
                 </TableCell>
               </TableRow>
             )}

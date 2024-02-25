@@ -34,7 +34,7 @@ const Lexical = dynamic(() => import('@/components/dashboard/Editor/Lexical'), {
   ssr: false,
 });
 type Props = {
-  initialData?: PageResponse;
+  initialData?: PageResponse | null;
   editMode?: boolean;
 };
 

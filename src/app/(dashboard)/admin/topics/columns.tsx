@@ -103,7 +103,10 @@ export const topicColumns: ColumnDef<TopicResponse>[] = [
     },
     cell: ({ getValue }) => {
       const value = getValue() as Status;
-      return value.name;
+      if (value.name === 'Active') {
+        return 'Активна';
+      }
+      return 'Неактивна';
     },
   },
   {

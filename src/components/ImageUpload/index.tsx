@@ -12,12 +12,14 @@ interface ImageUploadProps {
   onImage: (image: { id: string; path: string } | null) => void;
   value: File | null | string;
   uploadAction: typeof imageUploadAction;
+  field: 'topic' | 'post-featured';
 }
 
 export default function ImageUpload({
   onImage,
   value,
   uploadAction,
+  field,
 }: ImageUploadProps) {
   const [imageURL, setImageURL] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,10 +37,10 @@ export default function ImageUpload({
     const enteredImage = event.target.files;
     if (!enteredImage || enteredImage.length === 0) return;
     const formData = new FormData();
-    formData.append('topic', enteredImage[0]);
+    formData.append(field, enteredImage[0]);
 
     startTransition(async () => {
-      const response = await uploadAction(formData);
+      const response = await uploadAction(formData, field);
       if (response.image) {
         setImageURL(response.image.path);
         onImage(response.image);
@@ -52,11 +54,11 @@ export default function ImageUpload({
   };
 
   return (
-    <div className="flex flex-col gap-2 items-center justify-center">
+    <div className="flex flex-col items-center justify-center gap-2">
       <label>
         {imageURL ? (
-          <div className="group flex relative justify-center items-center cursor-pointer w-[200px] aspect-square rounded-md overflow-hidden">
-            <div className="absolute flex justify-center items-center invisible group-hover:visible z-10 w-full h-full bg-slate-500 bg-opacity-50">
+          <div className="group relative flex aspect-square w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-md">
+            <div className="invisible absolute z-10 flex h-full w-full items-center justify-center bg-slate-500 bg-opacity-50 group-hover:visible">
               <ImageIcon />
               CHANGE IMAGE
             </div>
@@ -71,14 +73,14 @@ export default function ImageUpload({
             />
           </div>
         ) : (
-          <div className="flex justify-center flex-col items-center w-[200px] aspect-square cursor-pointer rounded-md overflow-hidden">
+          <div className="flex aspect-square w-[200px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-md">
             <ImageIcon
               fontSize="large"
               size={200}
               // strokeWidth={1}
               absoluteStrokeWidth
             />
-            <span className="uppercase text-center">Завантажити картинку</span>
+            <span className="text-center uppercase">Завантажити картинку</span>
           </div>
         )}
         <input

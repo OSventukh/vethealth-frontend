@@ -16,8 +16,8 @@ export default async function CategoryCreatePage({ params }: Props) {
   });
   return (
     <EditCategory
-      initialData={category}
-      categories={categories.items}
+      initialData={category || null}
+      categories={categories?.items || []}
       editMode
     />
   );

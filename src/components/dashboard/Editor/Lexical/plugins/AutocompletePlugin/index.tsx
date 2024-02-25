@@ -7,7 +7,7 @@
  */
 
 import type {
-  GridSelection,
+  BaseSelection,
   NodeKey,
   NodeSelection,
   RangeSelection,
@@ -48,7 +48,7 @@ export const uuid = Math.random()
 
 // TODO lookup should be custom
 function $search(
-  selection: null | RangeSelection | NodeSelection | GridSelection
+  selection: null | RangeSelection | NodeSelection | BaseSelection
 ): [boolean, string] {
   if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
     return [false, ''];
