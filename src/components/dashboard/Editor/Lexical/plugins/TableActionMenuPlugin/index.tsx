@@ -30,6 +30,7 @@ import {
   HTMLTableElementWithWithTableSelectionState,
   TableCellHeaderStates,
   TableCellNode,
+  TableSelection,
 } from '@lexical/table';
 import {
   $createParagraphNode,
@@ -41,8 +42,6 @@ import {
   $isTextNode,
   DEPRECATED_$getNodeTriplet,
   DEPRECATED_$isGridCellNode,
-  DEPRECATED_$isGridSelection,
-  GridSelection,
 } from 'lexical';
 import * as React from 'react';
 import { ReactPortal, useCallback, useEffect, useRef, useState } from 'react';
@@ -52,7 +51,7 @@ import invariant from '../../utils/invariant';
 import useModal from '../../hooks/useModal';
 import ColorPicker from '../../ui/ColorPicker';
 
-function computeSelectionCount(selection: GridSelection): {
+function computeSelectionCount(selection: TableSelection): {
   columns: number;
   rows: number;
 } {
@@ -65,7 +64,7 @@ function computeSelectionCount(selection: GridSelection): {
 
 // This is important when merging cells as there is no good way to re-merge weird shapes (a result
 // of selecting merged cells and non-merged)
-function isGridSelectionRectangular(selection: GridSelection): boolean {
+function isGridSelectionRectangular(selection: BaseSelection): boolean {
   const nodes = selection.getNodes();
   const currentRows: Array<number> = [];
   let currentRow = null;
