@@ -57,7 +57,7 @@ export const api = {
     refresh: (refreshToken: string) =>
       post<RefreshResponse>({ url: routes.refresh, token: refreshToken }),
     forgot: (data: ForgotData) => post<void>({ url: routes.forgot, data }),
-    confirm: (data: ConfirmData, hash: string) =>
+    confirm: (data: ConfirmData, hash?: string) =>
       post<void>({ url: routes.confirm, data, query: hash }),
   },
   file: {

@@ -19,8 +19,8 @@ export type ForgotData = {
 };
 
 export type ConfirmData = {
-  email: string;
-  passport: string;
+  password: string;
+  confirmPassword: string;
 };
 
 

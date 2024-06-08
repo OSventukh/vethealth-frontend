@@ -71,3 +71,20 @@ export const loginSchema = z.object({
 });
 
 export type LoginValues = z.infer<typeof loginSchema>;
+
+export const confirmationSchema = z
+  .object({
+    hash: z.string(),
+    password: z
+      .string({ required_error: 'Введіть пароль' })
+      .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
+    confirmPassword: z
+      .string({ required_error: 'Підтвердіть пароль' })
+      .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Паролі не співпадають',
+    path: ['confirmPassword'],
+  });
+
+export type ConfirmationValues = z.infer<typeof confirmationSchema>;

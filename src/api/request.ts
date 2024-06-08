@@ -17,6 +17,7 @@ export const post = async <Response>({
   token,
   method,
 }: PostRequest): Promise<Response> => {
+  console.log('url', data);
   const response = await fetch(url + (query || ''), {
     method: method || 'POST',
     headers: {
