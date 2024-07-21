@@ -23,12 +23,12 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex items-center justify-between md:px-2 w-full">
+    <div className="flex w-full items-center justify-between md:px-2">
       {/* <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} з{' '}
         {table.getFilteredRowModel().rows.length} рядків вибрано.
       </div> */}
-      <div className="flex items-center w-full justify-between flex-wrap gap-2">
+      <div className="flex w-full flex-wrap items-center justify-between gap-2">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Рядків на сторінку</p>
           <Select

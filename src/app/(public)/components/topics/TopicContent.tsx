@@ -4,7 +4,6 @@ import TopicList from './TopicList';
 import PostList from '../Post/PostList';
 import Page from '../Page';
 import { TopicResponse } from '@/api/types/topics.type';
-import { filterFns } from '@tanstack/react-table';
 
 type Props = {
   topic: TopicResponse | null;
@@ -20,7 +19,7 @@ export default function TopicContent({ topic, params, searchParams }: Props) {
   const parentSlug = params.slug
     ? `${params.topic}/${params.slug.join('/')}`
     : params.topic;
- 
+
   if (!topic) {
     return <div>Сторінка не знайдена</div>;
   }

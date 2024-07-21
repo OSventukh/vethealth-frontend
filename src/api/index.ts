@@ -6,6 +6,7 @@ import type {
   ForgotData,
   LoginData,
   LoginResponse,
+  PendingUserResponse,
   RefreshResponse,
   RegisterData,
 } from './types/auth.type';
@@ -59,6 +60,12 @@ export const api = {
     forgot: (data: ForgotData) => post<void>({ url: routes.forgot, data }),
     confirm: (data: ConfirmData, hash?: string) =>
       post<void>({ url: routes.confirm, data, query: hash }),
+    getPendingUser: (hash: string) =>
+      get<PendingUserResponse>({
+        url: routes.confirm,
+        id: hash,
+        revalidate: 1,
+      }),
   },
   file: {
     upload: (data: FormData, token: string) =>

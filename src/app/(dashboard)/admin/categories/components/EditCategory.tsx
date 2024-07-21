@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import { CategoryResponse } from '@/api/types/categories.type';
 import { useToast } from '@/components/ui/use-toast';
@@ -47,6 +47,7 @@ export default function EditTopic({
 }: Props) {
   const router = useRouter();
   const [showParent, setIsShowParent] = useState(false);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition();
 
@@ -81,12 +82,12 @@ export default function EditTopic({
     });
   };
   return (
-    <div className="w-full rounded-2xl border p-10 mt-5 bg-background">
+    <div className="mt-5 w-full rounded-2xl border bg-background p-10">
       <h2>{editMode ? 'Редагувати категорію' : 'Створити категорію'}</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(submitForm)}
-          className="sm:w-full lg:w-[50%] grid grid-cols-1 grid-rows-[1fr_min-content] gap-8"
+          className="grid grid-cols-1 grid-rows-[1fr_min-content] gap-8 sm:w-full lg:w-[50%]"
         >
           <FormField
             control={form.control}
@@ -135,7 +136,7 @@ export default function EditTopic({
               name="parent"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex justify-between items-center">
+                  <FormLabel className="flex items-center justify-between">
                     Батьківська тема
                     <Switch
                       checked={!!initialData?.parent || showParent}

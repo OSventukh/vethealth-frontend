@@ -1,6 +1,6 @@
 'use client';
 import dynamic from 'next/dynamic';
-import React, { ChangeEventHandler, useState, useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { MultiValue, Options } from 'react-select';
 import { PanelRightOpen, Save, Settings } from 'lucide-react';

@@ -43,7 +43,7 @@ export default function InsertLayoutDialog({
         {LAYOUTS.map(({ label, value }) => (
           <DropDownItem
             key={value}
-            className="w-full text-left p-2 rounded-sm hover:bg-blue-200"
+            className="w-full rounded-sm p-2 text-left hover:bg-blue-200"
             onClick={() => setLayout(value)}
           >
             <span className="text">{label}</span>
@@ -51,7 +51,7 @@ export default function InsertLayoutDialog({
         ))}
       </DropDown>
       <button
-        className="bg-blue-100 rounded-sm p-2 hover:bg-blue-200"
+        className="rounded-sm bg-blue-100 p-2 hover:bg-blue-200"
         onClick={onClick}
       >
         Вставити

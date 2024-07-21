@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { User } from 'lucide-react';
 
-export default function UserMenu({ userId }: { userId: string }) {
+export default function UserMenu({ userId }: { userId: string | undefined }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>

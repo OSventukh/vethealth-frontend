@@ -1,14 +1,13 @@
 .floatingPopup {
-  @apply flex align-middle absolute z-10 bg-background opacity-0 shadow-lg transition-opacity duration-500 will-change-transform p-1 rounded-lg left-0 top-0;
+  @apply absolute left-0 top-0 z-10 flex rounded-lg bg-background p-1 align-middle opacity-0 shadow-lg transition-opacity duration-500 will-change-transform;
 }
 
-
 .button {
-  @apply flex items-center gap-2 px-2 py-2 rounded-sm hover:bg-blue-200 hover:shadow-lg
+  @apply flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg;
 }
 
 .buttonActive {
-  @apply bg-blue-200
+  @apply bg-blue-200;
 }
 
 .divider {
@@ -16,4 +15,3 @@
   background-color: #eee;
   margin: 0 4px;
 }
-

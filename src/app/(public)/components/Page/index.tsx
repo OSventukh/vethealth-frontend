@@ -1,10 +1,8 @@
 import { Raleway } from 'next/font/google';
 
-import { PageResponse } from '@/api/types/pages.type';
 import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 import React from 'react';
 import { api } from '@/api';
-import { TopicResponse } from '@/api/types/topics.type';
 
 type Props = {
   topic: string;
@@ -13,13 +11,11 @@ type Props = {
 const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default async function Page({ topic }: Props) {
-  console.log('topic', topic)
   const topicResponse = await api.topics.getOne({
     slug: topic,
     query: { include: 'page' },
     tags: ['topics'],
   });
-  console.log('page', topicResponse);
 
   if (!topicResponse?.page) {
     return <div>Сторінка не знайдена</div>;
@@ -32,7 +28,9 @@ export default async function Page({ topic }: Props) {
         {topicResponse?.page?.title}
       </h2>
       <div>
-        <ParsedContent content={JSON.parse(topicResponse?.page?.content || '')} />
+        <ParsedContent
+          content={JSON.parse(topicResponse?.page?.content || '')}
+        />
       </div>
     </div>
   );

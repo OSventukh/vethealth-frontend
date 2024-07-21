@@ -1,6 +1,6 @@
 'use client';
-import { useTransition, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import {
@@ -32,6 +32,7 @@ import { TopicResponse } from '@/api/types/topics.type';
 import { useToast } from '@/components/ui/use-toast';
 import { saveUserAction } from '../actions/save-user.action';
 import { Combobox } from '@/components/ui/combobox';
+import Link from 'next/link';
 
 type Props = {
   initialData?: UserResponse | null;
@@ -39,11 +40,11 @@ type Props = {
   editMode?: boolean;
 };
 
-export default function EditTopic({ initialData, topics, editMode }: Props) {
+export default function EditUser({ initialData, topics, editMode }: Props) {
   const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition();
-
+  const { id } = useParams();
   const { toast } = useToast();
   const form = useForm<UserValues>({
     resolver: zodResolver(createUserSchema),
@@ -89,12 +90,12 @@ export default function EditTopic({ initialData, topics, editMode }: Props) {
     });
   };
   return (
-    <div className="w-full rounded-2xl border p-10 mt-5 bg-background">
+    <div className="mt-5 w-full rounded-2xl border bg-background p-10">
       <h2>{editMode ? 'Редагувати користувача' : 'Створити користувача'}</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(submitForm)}
-          className="sm:w-full lg:w-[50%] grid grid-cols-1 grid-rows-[1fr_min-content] gap-8"
+          className="grid grid-cols-1 grid-rows-[1fr_min-content] gap-8 sm:w-full lg:w-[50%]"
         >
           <FormField
             control={form.control}
@@ -147,7 +148,7 @@ export default function EditTopic({ initialData, topics, editMode }: Props) {
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex justify-between items-center">
+                      <FormLabel className="flex items-center justify-between">
                         Статус
                       </FormLabel>
 
@@ -179,7 +180,7 @@ export default function EditTopic({ initialData, topics, editMode }: Props) {
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex justify-between items-center">
+                    <FormLabel className="flex items-center justify-between">
                       Роль
                     </FormLabel>
                     <FormControl>
@@ -226,6 +227,16 @@ export default function EditTopic({ initialData, topics, editMode }: Props) {
                 )}
               ></FormField>
             </>
+          )}
+          {editMode && (
+            <div className="flex">
+              <Link
+                className="flex items-center justify-center gap-2 rounded-md bg-none p-3 py-2 text-sm text-blue-500 hover:opacity-90"
+                href={`/admin/users/edit/${id}/password`}
+              >
+                Змінити пароль
+              </Link>
+            </div>
           )}
           <div className="justify-self-center">
             <Button type="submit" variant="success">

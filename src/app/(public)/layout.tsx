@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Sheet } from '@/components/ui/sheet';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -11,9 +10,5 @@ export default function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="min-h-screen bg-[#ebf6f7]">
-      {children}
-    </div>
-  );
+  return <div className="min-h-screen bg-[#ebf6f7]">{children}</div>;
 }

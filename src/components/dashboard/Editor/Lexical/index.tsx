@@ -49,7 +49,7 @@ export default function Lexical({
   };
 
   return (
-    <div className="relative h-[calc(100dvh-7rem)] md:h-[calc(100dvh-10rem)] overflow-auto w-full max-w-screen-lg flex flex-col gap-2">
+    <div className="relative flex h-[calc(100dvh-7rem)] w-full max-w-screen-lg flex-col gap-2 overflow-auto md:h-[calc(100dvh-10rem)]">
       <LexicalComposer
         initialConfig={{
           ...editorInitialConfig,
@@ -75,13 +75,13 @@ export default function Lexical({
           <RichTextPlugin
             contentEditable={
               <div
-                className="flex-auto mt-2 gap-1 relative resize-y"
+                className="relative mt-2 flex-auto resize-y gap-1"
                 ref={onRef}
               >
                 <input
                   type="text"
                   placeholder="Заголовок"
-                  className="w-full px-5 -z-10 py-2 md:px-10 md:py-4 border-[1px] border-border outline-0 rounded-t-2xl bg-background text-2xl placeholder:text-slate-500"
+                  className="-z-10 w-full rounded-t-2xl border-[1px] border-border bg-background px-5 py-2 text-2xl outline-0 placeholder:text-slate-500 md:px-10 md:py-4"
                   onChange={(event) =>
                     onChangeTitle && onChangeTitle(event.target.value)
                   }
@@ -91,7 +91,7 @@ export default function Lexical({
               </div>
             }
             placeholder={
-              <div className="absolute inline-block top-[9rem] text-lg text-slate-500 left-10">
+              <div className="absolute left-10 top-[9rem] inline-block text-lg text-slate-500">
                 <p>Введіть текст...</p>
               </div>
             }

@@ -1,6 +1,5 @@
 import { api } from '@/api';
 import React from 'react';
-import TopicContent from '../../components/topics/TopicContent';
 import Post from '../../components/Post';
 import Page from '../../components/Page';
 import TopicList from '../../components/topics/TopicList';

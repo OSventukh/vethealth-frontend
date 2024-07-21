@@ -26,18 +26,16 @@ export async function confirmationAction(
       confirmPassword: parsedData.confirmPassword,
       hash: parsedData.hash,
     } as ConfirmData);
-    console.log('body', body);
-    console.log(body);
     const response = await fetch(routes.confirm, {
       method: 'POST',
       headers: {
+        'x-lang': 'ua',
         'Content-Type': 'application/json',
         Authorization: `Bearer ${session?.token}`,
       },
 
       body,
     });
-    console.log(response);
     const result = await response.json();
 
     if (!response.ok) {
@@ -53,7 +51,6 @@ export async function confirmationAction(
     };
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
-    console.log(error);
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:

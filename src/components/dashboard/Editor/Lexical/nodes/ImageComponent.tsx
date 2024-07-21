@@ -347,7 +347,7 @@ export default function ImageComponent({
       <>
         <div draggable={draggable}>
           <LazyImage
-            className={clsx('w-auto h-auto', {
+            className={clsx('h-auto w-auto', {
               'outline outline-2 outline-blue-700': isFocused,
               'cursor-grab': $isNodeSelection(selection),
             })}
@@ -361,7 +361,7 @@ export default function ImageComponent({
         </div>
         {showCaption && (
           <input
-            className="absolute bottom-0 left-0 w-full bg-card opacity-70 text-center text-gray-800 placeholder:text-gray-700"
+            className="absolute bottom-0 left-0 w-full bg-card text-center text-gray-800 opacity-70 placeholder:text-gray-700"
             ref={captionRef}
             type="text"
             placeholder="Введіть підпис"

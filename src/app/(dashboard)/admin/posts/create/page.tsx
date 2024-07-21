@@ -10,7 +10,7 @@ export default async function CreatPage() {
     <EditPost
       topics={topics?.items || []}
       categories={categories?.items || []}
-      user= {session?.user}
+      user={session?.user}
     />
   );
 }

@@ -1,5 +1,5 @@
+import type { LoginResponse } from '@/api/types/auth.type';
 import type { User, UserSession } from '@/utils/types/user.type';
-import NextAuth from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
@@ -8,9 +8,8 @@ declare module 'next-auth' {
     refreshToken: string;
     tokenExpires: number;
   }
+  interface User extends LoginResponse {}
 }
-
-import { JWT } from 'next-auth/jwt';
 
 declare module 'next-auth/jwt' {
   interface JWT {

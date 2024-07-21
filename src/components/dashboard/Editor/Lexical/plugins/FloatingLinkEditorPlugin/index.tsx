@@ -35,8 +35,6 @@ import { createPortal } from 'react-dom';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { setFloatingElemPositionForLinkEditor } from '../../utils/setFloatingElemPositionForLinkEditor';
 import { sanitizeUrl } from '../../utils/url';
-import Button from '../../ui/Button';
-import ItemButton from '../../ui/ItemButton';
 import { Check, Edit, Trash, X } from 'lucide-react';
 
 function FloatingLinkEditor({

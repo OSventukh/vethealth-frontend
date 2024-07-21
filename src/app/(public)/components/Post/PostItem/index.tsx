@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { Raleway } from 'next/font/google';
 import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 import type { PostResponse } from '@/api/types/posts.type';
-import { MoveRight } from 'lucide-react';
 
 type Props = {
   post: PostResponse;
@@ -12,7 +11,6 @@ type Props = {
 const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default function PostItem({ post, topic }: Props) {
-  const { API_SERVER } = process.env;
   return (
     <article className="w-full overflow-hidden rounded-xl border-[1px] border-border bg-white pb-4 transition-shadow hover:shadow-md">
       <Link href={`${topic}/${post.slug}`} className="block h-full w-full">

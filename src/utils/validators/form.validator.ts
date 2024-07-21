@@ -1,4 +1,3 @@
-import { User } from 'lucide-react';
 import { z } from 'zod';
 
 const relativeSchema = z.object({
@@ -75,6 +74,7 @@ export type LoginValues = z.infer<typeof loginSchema>;
 export const confirmationSchema = z
   .object({
     hash: z.string(),
+    email: z.string(),
     password: z
       .string({ required_error: 'Введіть пароль' })
       .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
@@ -88,3 +88,30 @@ export const confirmationSchema = z
   });
 
 export type ConfirmationValues = z.infer<typeof confirmationSchema>;
+
+
+export const updatePasswordSchema = z
+  .object({
+    email: z.string(),
+    password: z
+      .string({ required_error: 'Введіть пароль' })
+      .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
+    confirmPassword: z
+      .string({ required_error: 'Підтвердіть пароль' })
+      .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Паролі не співпадають',
+    path: ['confirmPassword'],
+  });
+
+export type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>;
+
+
+export const forgotSchema = z.object({
+  email: z
+    .string({ required_error: 'Введіть емейл' })
+    .email({ message: 'Невірний формат пошти' }),
+});
+
+export type ForgotValues = z.infer<typeof forgotSchema>;

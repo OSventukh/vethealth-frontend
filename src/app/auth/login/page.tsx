@@ -1,6 +1,18 @@
 import SignIn from '@/app/auth/components/SignIn';
-import React from 'react';
+import { Suspense } from 'react';
+import Forgot from '../components/Forgot';
 
-export default function LoginPage() {
-  return <SignIn />;
+type Props = {
+  searchParams: {
+    forgotPassword?: string;
+  };
+};
+export default function LoginPage({ searchParams }: Props) {
+  const { forgotPassword } = searchParams;
+  return (
+    <Suspense>
+      {!forgotPassword && <SignIn />}
+      { forgotPassword && <Forgot />}
+    </Suspense>
+  );
 }

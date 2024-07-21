@@ -178,15 +178,13 @@ export const postColumns: ColumnDef<PostResponse>[] = [
               Ви впевненні що хочете видалити статтю &quot;{post.title}&quot;?
             </DialogDescription>
             <DialogFooter>
-            <Button
+              <Button
                 variant="destructive"
                 onClick={async () => {
                   const res = await deletePostAction(post.id);
                   toast({
                     variant: res.error ? 'destructive' : 'success',
-                    description: res.success
-                      ? 'Стаття видалена'
-                      : res.message,
+                    description: res.success ? 'Стаття видалена' : res.message,
                   });
                 }}
               >

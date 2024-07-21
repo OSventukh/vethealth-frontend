@@ -9,7 +9,8 @@
   "plugins": [
     "prettier",
     "@typescript-eslint",
-    "react-hooks"
+    "react-hooks",
+    "unused-imports"
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
@@ -17,6 +18,16 @@
       "warn",
       {
         "endOfLine": "auto"
+      }
+    ],
+    "unused-imports/no-unused-imports": "warn",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
       }
     ]
   },

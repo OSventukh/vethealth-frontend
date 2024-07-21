@@ -43,10 +43,10 @@ export const topicColumns: ColumnDef<TopicResponse>[] = [
 
       return (
         <div
-          className="flex gap-1 items-center"
+          className="flex items-center gap-1"
           style={{ paddingLeft: `${row.depth}rem` }}
         >
-          <div className="flex justify-center items-center w-10">
+          <div className="flex w-10 items-center justify-center">
             {row.getCanExpand() && (
               <IconButton
                 icon={
@@ -74,7 +74,7 @@ export const topicColumns: ColumnDef<TopicResponse>[] = [
     cell: ({ getValue }) => {
       const value = getValue() as ImageType;
       return (
-        <div className="flex justify-center items-center w-10 overflow-hidden">
+        <div className="flex w-10 items-center justify-center overflow-hidden">
           <Image
             className="w-auto"
             src={value.path}
@@ -121,7 +121,7 @@ export const topicColumns: ColumnDef<TopicResponse>[] = [
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="flex w-full h-full justify-end">
+              <div className="flex h-full w-full justify-end">
                 <IconButton icon={<MoreHorizontal size={15} />}>
                   <span className="sr-only">Open menu</span>
                 </IconButton>

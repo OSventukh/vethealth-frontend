@@ -17,12 +17,12 @@ export const post = async <Response>({
   token,
   method,
 }: PostRequest): Promise<Response> => {
-  console.log('url', data);
   const response = await fetch(url + (query || ''), {
     method: method || 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
+      'x-lang': 'ua',
     },
     body: JSON.stringify(data),
   });
@@ -71,7 +71,7 @@ export const get = async <Response>({
 
     return result;
   } catch (error) {
-    return null
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch');
   }
 };
 

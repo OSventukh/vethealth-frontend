@@ -178,9 +178,7 @@ function BlockFormatDropDown({
   const formatParagraph = () => {
     editor.update(() => {
       const selection = $getSelection();
-      if (
-        $isRangeSelection(selection)
-      ) {
+      if ($isRangeSelection(selection)) {
         $setBlocksType(selection, () => $createParagraphNode());
       }
     });
@@ -190,9 +188,7 @@ function BlockFormatDropDown({
     if (blockType !== headingSize) {
       editor.update(() => {
         const selection = $getSelection();
-        if (
-          $isRangeSelection(selection)
-        ) {
+        if ($isRangeSelection(selection)) {
           $setBlocksType(selection, () => $createHeadingNode(headingSize));
         }
       });
@@ -539,7 +535,7 @@ export default function ToolbarPlugin({
   }, [editor, isLink]);
 
   return (
-    <div className="flex sticky top-0 min-h-[3rem] z-20 bg-slate-100 gap-1 align-middle overflow-auto rounded-2xl border-[1px] border-border p-1 shadow-sm">
+    <div className="sticky top-0 z-20 flex min-h-[3rem] gap-1 overflow-auto rounded-2xl border-[1px] border-border bg-slate-100 p-1 align-middle shadow-sm">
       <button
         onClick={() => {
           activeEditor.dispatchCommand(UNDO_COMMAND, undefined);

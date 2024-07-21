@@ -66,8 +66,8 @@ export default function ImageResizer({
   const maxWidthContainer = maxWidth
     ? maxWidth
     : editorRootElement !== null
-    ? editorRootElement.getBoundingClientRect().width - 20
-    : 100;
+      ? editorRootElement.getBoundingClientRect().width - 20
+      : 100;
   const maxHeightContainer =
     editorRootElement !== null
       ? editorRootElement.getBoundingClientRect().height - 20
@@ -244,7 +244,7 @@ export default function ImageResizer({
     <div ref={controlWrapperRef}>
       {!showCaption && captionsEnabled && (
         <button
-          className="block absolute w-[30%] border bg-[#00000080] min-w-[100px] text-white cursor-pointer select-none mx-auto my-0 p-2.5 rounded-[5px] border-solid border-[rgba(255,255,255,0.3)] bottom-5 inset-x-0"
+          className="absolute inset-x-0 bottom-5 mx-auto my-0 block w-[30%] min-w-[100px] cursor-pointer select-none rounded-[5px] border border-solid border-[rgba(255,255,255,0.3)] bg-[#00000080] p-2.5 text-white"
           ref={buttonRef}
           onClick={() => {
             setShowCaption(!showCaption);

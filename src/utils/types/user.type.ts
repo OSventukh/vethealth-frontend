@@ -22,4 +22,7 @@ export type User = {
   deletedAt?: Date;
 };
 
-export type UserSession = Pick<User, 'id' | 'firstname' | 'lastname' | 'role' | 'status'>;
+export type UserSession = Pick<
+  User,
+  'id' | 'firstname' | 'lastname' | 'role' | 'status'
+>;

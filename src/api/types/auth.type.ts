@@ -23,7 +23,6 @@ export type ConfirmData = {
   confirmPassword: string;
 };
 
-
 export type Tokens = {
   token: string;
   refreshToken: string;
@@ -40,3 +39,8 @@ export type FileUploadResponse = {
 };
 
 export type RefreshResponse = Tokens;
+
+export type PendingUserResponse = {
+  firstname: string;
+  email: string;
+};

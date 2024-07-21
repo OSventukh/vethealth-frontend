@@ -1,8 +1,8 @@
 export enum UserRoleEnum {
   SuperAdmininstrator = 'Super Administrator',
   Administrator = 'Administrator',
-  Moderator = "Moderator",
-  Writer = "Writer",
+  Moderator = 'Moderator',
+  Writer = 'Writer',
 }
 
 export enum UserStatusEnum {

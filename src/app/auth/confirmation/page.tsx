@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+import { api } from '@/api';
 import Confirmation from '../components/Confirmation';
 
 type Props = {
@@ -5,7 +7,15 @@ type Props = {
     hash: string;
   };
 };
-export default function ConfirmationPage({ searchParams }: Props) {
+export default async function ConfirmationPage({ searchParams }: Props) {
   const { hash } = searchParams;
-  return <Confirmation token={hash} />;
+  try {
+    const user = await api.auth.getPendingUser(hash);
+    if (!user) {
+      redirect('/auth/login');
+    }
+    return <Confirmation user={user} token={hash} />;
+  } catch (error: unknown) {
+    redirect('/auth/login');
+  }
 }

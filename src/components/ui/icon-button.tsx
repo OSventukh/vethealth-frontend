@@ -11,7 +11,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     return (
       <Button
         ref={ref}
-        className="h-10 w-10 p-2 flex justify-center items-center rounded-full bg-transparent text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent p-2 text-gray-600 transition-colors duration-200 hover:bg-gray-100 active:bg-gray-200"
         {...props}
       >
         {icon}

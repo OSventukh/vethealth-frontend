@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { PenSquare } from 'lucide-react';
 import { DataTable } from '@/components/ui/DataTable';
 import { api } from '@/api';

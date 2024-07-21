@@ -71,7 +71,7 @@
 
     --info: 0 0% 14.9%;
     --info-foreground: 0 0% 98%;
-    
+
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
@@ -87,7 +87,7 @@
     @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
   }
   h2 {
-    @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-tight
+    @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-tight;
   }
   h3 {
     @apply scroll-m-20 text-2xl font-semibold tracking-tight;

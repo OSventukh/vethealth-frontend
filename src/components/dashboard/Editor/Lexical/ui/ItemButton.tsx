@@ -9,7 +9,7 @@ export default function ItemButton({ onClick, icon, children }: Props) {
   return (
     <button
       onClick={onClick}
-      className="flex gap-2 w-full p-2 hover:bg-blue-100 rounded-sm"
+      className="flex w-full gap-2 rounded-sm p-2 hover:bg-blue-100"
     >
       {icon && icon}
       {children}

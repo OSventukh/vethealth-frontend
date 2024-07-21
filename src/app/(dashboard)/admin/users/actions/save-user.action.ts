@@ -4,7 +4,7 @@ import { revalidateTag } from 'next/cache';
 import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
-import { UserValues } from '@/utils/validators/form.validator';
+import { UserValues, UpdatePasswordValues } from '@/utils/validators/form.validator';
 
 type ReturnedData = {
   error: boolean;
@@ -13,8 +13,10 @@ type ReturnedData = {
   redirect?: string;
 };
 
+type SaveUserAction = UserValues | Omit< UpdatePasswordValues, 'confirmPassword' | 'email'>;
+
 export async function saveUserAction(
-  data: UserValues & { id?: string },
+  data: SaveUserAction & { id?: string },
   edit?: boolean
 ): Promise<ReturnedData> {
   const session = await auth();
@@ -23,6 +25,7 @@ export async function saveUserAction(
       const response = await fetch(`${process.env.API_SERVER}/users`, {
         method: 'PATCH',
         headers: {
+          'x-lang': 'ua',
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session?.token}`,
         },
@@ -67,8 +70,8 @@ export async function saveUserAction(
       };
     }
   } catch (error: unknown) {
+    console.log('error', error)
     let message = 'Щось пішло не так';
-    console.log(error);
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:

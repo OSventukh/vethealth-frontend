@@ -11,7 +11,7 @@ export default async function Header({ className }: Props) {
   const session = await auth();
   return (
     <div className={className}>
-      <div className="w-full h-full flex justify-between items-center">
+      <div className="flex h-full w-full items-center justify-between">
         <Link href="/admin">
           <Logo />
         </Link>

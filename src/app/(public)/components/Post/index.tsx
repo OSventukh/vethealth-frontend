@@ -1,6 +1,5 @@
 import { Raleway } from 'next/font/google';
 import { api } from '@/api';
-import { PostResponse } from '@/api/types/posts.type';
 import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 
 type Props = {

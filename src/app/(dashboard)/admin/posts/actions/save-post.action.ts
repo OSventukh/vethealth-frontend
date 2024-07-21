@@ -56,7 +56,6 @@ export async function savePostAction(
     };
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
-    console.log('error', error);
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:

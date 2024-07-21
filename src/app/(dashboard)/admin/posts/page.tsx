@@ -2,7 +2,6 @@ import { DataTable } from '@/components/ui/DataTable';
 import { postColumns } from './columns';
 import { api } from '@/api';
 import { postQuerySchema } from '@/utils/validators/query.validator';
-import Link from 'next/link';
 import { PenSquare } from 'lucide-react';
 import CreateButton from '@/components/ui/create-button';
 

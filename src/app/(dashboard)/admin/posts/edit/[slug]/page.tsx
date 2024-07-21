@@ -13,7 +13,10 @@ export default async function EditPostPage({ params }: Props) {
     query: { include: 'categories,topics' },
     token: session?.token,
   });
-  const topics = await api.topics.getMany({ query: { showAll: true }, tags: ['topics']});
+  const topics = await api.topics.getMany({
+    query: { showAll: true },
+    tags: ['topics'],
+  });
   const categories = await api.categories.getMany({
     query: { showAll: true },
     tags: ['categories'],

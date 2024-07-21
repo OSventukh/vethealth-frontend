@@ -1,4 +1,3 @@
-
 import { PenSquare } from 'lucide-react';
 
 import { DataTable } from '@/components/ui/DataTable';
@@ -29,7 +28,11 @@ export default async function TopicsPage({ searchParams }: Props) {
 
   return (
     <>
-      <CreateButton link="topics/create" icon={<PenSquare size={20} />} text="Нова тема" />
+      <CreateButton
+        link="topics/create"
+        icon={<PenSquare size={20} />}
+        text="Нова тема"
+      />
       <DataTable
         columns={topicColumns}
         data={topics?.items || []}

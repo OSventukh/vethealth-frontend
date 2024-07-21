@@ -11,7 +11,7 @@ export default async function PostList({ topic, category }: Props) {
     tags: ['posts'],
   });
   return (
-    <div className="grid  md:grid-cols-2 gap-8">
+    <div className="grid  gap-8 md:grid-cols-2">
       {posts?.items.map((post) => (
         <PostItem key={post.id} post={post} topic={topic} />
       ))}

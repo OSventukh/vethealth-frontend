@@ -9,21 +9,18 @@ export const metadata: Metadata = {
 
 export default function TopicLayout({
   children,
-  params
+  params,
 }: {
   children: React.ReactNode;
   params: {
     topic: string;
   };
 }) {
- 
   return (
     <>
       <Header topic={params.topic} />
       <main>
-        <div className="container">
-          {children}
-        </div>
+        <div className="container">{children}</div>
       </main>
       <Footer />
     </>

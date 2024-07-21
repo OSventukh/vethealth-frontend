@@ -1,4 +1,4 @@
-import { NextAuthOptions } from 'next-auth';
+import { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 import { api } from '@/api';
@@ -26,9 +26,8 @@ export const authOptions: NextAuthOptions = {
             email: credentials.email,
             password: credentials.password,
           });
-          return user as any;
+          return user as User;
         } catch (error) {
-          console.log('error', error);
           throw new Error();
         }
       },

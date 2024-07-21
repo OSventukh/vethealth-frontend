@@ -2,11 +2,8 @@
 import dynamic from 'next/dynamic';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { MultiValue, Options } from 'react-select';
 import { PanelRightOpen, Save, Settings } from 'lucide-react';
 
-import { CategoryResponse } from '@/api/types/categories.type';
-import { TopicResponse } from '@/api/types/topics.type';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -16,7 +13,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Multiselect from '@/components/ui/multiselect';
 import {
   Sheet,
   SheetContent,
@@ -97,7 +93,7 @@ export default function EditPage({ initialData, editMode }: Props) {
         <SheetHeader>
           <SheetTitle>Налаштування статті</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col gap-5 mt-5">
+        <div className="mt-5 flex flex-col gap-5">
           <Button onClick={() => saveHandler(PageStatusEnum.OnReview)}>
             Опублікувати
           </Button>
@@ -112,21 +108,21 @@ export default function EditPage({ initialData, editMode }: Props) {
         </div>
       </SheetContent>
       <DropdownMenu>
-        <DropdownMenuContent className="flex flex-col mb-4 gap-2 justify-center items-center bg-transparent border-none shadow-none">
+        <DropdownMenuContent className="mb-4 flex flex-col items-center justify-center gap-2 border-none bg-transparent shadow-none">
           <DropdownMenuItem className="focus:bg-transparent" title="Меню">
-            <SheetTrigger className="flex justify-center items-center p-0 w-12 h-12 bg-blue-500 hover:opacity-90 rounded-2xl shadow-lg">
+            <SheetTrigger className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500 p-0 shadow-lg hover:opacity-90">
               <PanelRightOpen />
             </SheetTrigger>
           </DropdownMenuItem>
           <DropdownMenuItem
             title="Зберегти"
-            className="flex justify-center items-center p-0 w-12 h-12 cursor-pointer bg-green-600 hover:opacity-90 focus:bg-green-600 rounded-2xl shadow-lg"
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-2xl bg-green-600 p-0 shadow-lg hover:opacity-90 focus:bg-green-600"
             onClick={() => saveHandler(PageStatusEnum.Draft)}
           >
             {<Save />}
           </DropdownMenuItem>
         </DropdownMenuContent>
-        <DropdownMenuTrigger className="fixed flex justify-center items-center overflow-hidden bottom-20 right-[calc(100vw/7)] p-0 w-14 h-14 bg-slate-400 transition-all opacity-50 hover:opacity-100 rounded-2xl shadow-lg hover:shadow-2xl">
+        <DropdownMenuTrigger className="fixed bottom-20 right-[calc(100vw/7)] flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-slate-400 p-0 opacity-50 shadow-lg transition-all hover:opacity-100 hover:shadow-2xl">
           {isPending ? <Spinner /> : <Settings />}
         </DropdownMenuTrigger>
       </DropdownMenu>

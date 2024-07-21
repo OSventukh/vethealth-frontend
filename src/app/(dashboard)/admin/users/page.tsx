@@ -2,7 +2,6 @@ import { DataTable } from '@/components/ui/DataTable';
 import { userColumns } from './columns';
 import { api } from '@/api';
 import { userQuerySchema } from '@/utils/validators/query.validator';
-import Link from 'next/link';
 import { UserPlus } from 'lucide-react';
 import { auth } from '@/lib/next-auth/auth';
 import CreateButton from '@/components/ui/create-button';
@@ -28,7 +27,11 @@ export default async function UsersPage({ searchParams }: Props) {
   });
   return (
     <>
-      <CreateButton link="users/create" icon={<UserPlus size={20} />} text="Новий користувач" />
+      <CreateButton
+        link="users/create"
+        icon={<UserPlus size={20} />}
+        text="Новий користувач"
+      />
 
       <DataTable
         columns={userColumns}
