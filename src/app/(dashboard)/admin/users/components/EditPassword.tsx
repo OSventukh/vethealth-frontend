@@ -1,6 +1,6 @@
 'use client';
 import { useTransition } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import {
@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,7 +20,7 @@ import { Input } from '@/components/ui/input';
 
 import { UserResponse } from '@/api/types/user.type';
 import { useToast } from '@/components/ui/use-toast';
-import { saveUserAction } from '../actions/save-user.action';
+import { changePasswordAction } from '../actions/change-password.action';
 
 type Props = {
   user: UserResponse;
@@ -37,18 +36,18 @@ export default function EditUserPassword({ user }: Props) {
     defaultValues: {
       email: user.email,
       password: '',
+      confirmPassword: '',
     },
     mode: 'onChange',
   });
 
   const submitForm = (values: UpdatePasswordValues) => {
     startTransition(async () => {
-      const res = await saveUserAction(
+      const res = await changePasswordAction(
         {
           id: user.id,
           password: values.password,
         },
-        true
       );
       toast({
         variant: res.error ? 'destructive' : 'success',
@@ -72,14 +71,10 @@ export default function EditUserPassword({ user }: Props) {
             name="email"
             render={({ field }) => (
               <FormItem className="">
-                <FormLabel>Email</FormLabel>
+                <FormLabel className='hidden'>Email</FormLabel>
 
                 <FormControl>
-                  <Input
-                    type="email"
-                    autoComplete="email"
-                    {...field}
-                  />
+                  <Input type="hidden" autoComplete="email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,7 +90,7 @@ export default function EditUserPassword({ user }: Props) {
                   <Input
                     type="password"
                     autoComplete="new-password"
-                    placeholder="Введіть прізвище користувача"
+                    placeholder="Введіть пароль"
                     {...field}
                   />
                 </FormControl>
@@ -114,7 +109,7 @@ export default function EditUserPassword({ user }: Props) {
                   <Input
                     type="password"
                     autoComplete="new-password"
-                    placeholder="Введіть прізвище користувача"
+                    placeholder="Введіть пароль"
                     {...field}
                   />
                 </FormControl>

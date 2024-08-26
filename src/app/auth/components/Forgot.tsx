@@ -29,6 +29,9 @@ export default function Forgot() {
   });
   const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<ForgotValues>({
+    defaultValues: {
+      email: '',
+    },
     resolver: zodResolver(forgotSchema),
     mode: 'onChange',
   });

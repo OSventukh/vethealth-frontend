@@ -4,8 +4,6 @@ import { revalidateTag } from 'next/cache';
 import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
-import { routes } from '@/api/routes';
-import { ForgotData } from '@/api/types/auth.type';
 
 type ReturnedData = {
   error: boolean;
@@ -14,42 +12,43 @@ type ReturnedData = {
   redirect?: string;
 };
 
-export async function forgotAction(
-  state: ReturnedData,
-  data: FormData
+type ChangePasswordActionData = {
+  password: string;
+  id: string;
+};
+
+export async function changePasswordAction(
+  data: ChangePasswordActionData & { id?: string },
 ): Promise<ReturnedData> {
   const session = await auth();
   try {
-    const parsedData = Object.fromEntries(data);
-    const body = JSON.stringify({
-      email: parsedData.email,
-    } as ForgotData);
-
-    const response = await fetch(routes.forgot, {
-      method: 'POST',
-      headers: {
-        'x-lang': 'ua',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session?.token}`,
-      },
-
-      body,
-    });
-
-    if (!response.ok && response.status !== 422 && response.status !== 400) {
+    const response = await fetch(
+      `${process.env.API_SERVER}/auth/change-password`,
+      {
+        method: 'PATCH',
+        headers: {
+          'x-lang': 'ua',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    
+    if (!response.ok) {
       const result = await response.json();
       throw new Error(result.message);
     }
 
-    revalidateTag('admin_users');
+    revalidateTag('users');
 
     return {
       success: true,
       error: false,
-      message: 'Якщо користувач з таким email існує, він отримає лист з інструкціями по відновленню паролю',
+      message: 'Success',
     };
   } catch (error: unknown) {
-    console.log(error);
+    console.log('error', error);
     let message = 'Щось пішло не так';
     if (error instanceof Error) {
       switch (error.message) {
