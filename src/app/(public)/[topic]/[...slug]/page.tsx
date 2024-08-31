@@ -12,23 +12,26 @@ type Props = {
 };
 export default async function SlugPage({ params }: Props) {
   const topicSlug = params?.slug.length > 0 ? params?.slug[0] : params.topic;
+
   const topic = await api.topics.getOne({
     slug: topicSlug,
     query: { include: 'children,page' },
     tags: ['topics'],
   });
 
+  const hasChildren = typeof topic !== 'string' && topic?.children && topic.children.length > 0;
+  const isPage = typeof topic !== 'string' && topic && topic.contentType === 'page';
+  const isRootSlug = params.slug.length < 1;
+  
   return (
     <>
-      {topic?.children &&
-      topic.children.length > 0 &&
-      params.slug.length < 1 ? (
-        <TopicList items={topic?.children} />
-      ) : topic && topic.contentType === 'page' ? (
-        <Page topic={params.slug[params.slug.length - 1]} />
-      ) : (
-        <Post slug={params.slug[params.slug.length - 1]} />
-      )}
-    </>
+    {hasChildren && isRootSlug ? (
+      <TopicList items={topic?.children || []} />
+    ) : isPage ? (
+      <Page topic={params.slug[params.slug.length - 1]} />
+    ) : (
+      <Post slug={params.slug[params.slug.length - 1]} />
+    )}
+  </>
   );
 }

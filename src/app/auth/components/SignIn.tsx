@@ -25,6 +25,10 @@ export default function SignIn() {
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     mode: 'onChange',
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
   const router = useRouter();
   const pathname = usePathname();

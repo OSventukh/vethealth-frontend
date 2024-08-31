@@ -13,7 +13,7 @@ export default async function Post({ slug }: Props) {
     tags: ['posts'],
   });
 
-  if (!post) {
+  if (!post || typeof post === 'string') {
     return <div>Сторінка не знайдена</div>;
   }
 
