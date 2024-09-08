@@ -16,17 +16,16 @@ type Props = {
 
 export default function CustomBreadcrumb({ prevPages, currentPage }: Props) {
   return (
-    <div className='mt-4 flex lg:justify-center'>
+    <div className="mt-4 flex lg:justify-center">
       <Breadcrumb>
         <BreadcrumbList>
           {prevPages.map((item, index) => (
-            <BreadcrumbItem key={index}>
-              <BreadcrumbLink>
+            <>
+              <BreadcrumbItem key={index}>
                 <Link href={item.href}>{item.label}</Link>
-              </BreadcrumbLink>
-
+              </BreadcrumbItem>
               <BreadcrumbSeparator />
-            </BreadcrumbItem>
+            </>
           ))}
           <BreadcrumbItem>
             <BreadcrumbPage>{currentPage.label}</BreadcrumbPage>

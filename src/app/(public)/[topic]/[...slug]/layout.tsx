@@ -50,7 +50,7 @@ async function getPostMetadata(postSlug: string): Promise<Metadata> {
     return getTopicMetadata(postSlug);
   }
 
-  return { title: `${post?.title} | ${SITE_TITLE}` };
+  return { title: `${post?.title} | ${SITE_TITLE}`, openGraph: { images: post?.featuredImage || [] } };
 }
 
 export async function generateMetadata(

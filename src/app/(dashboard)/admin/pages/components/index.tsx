@@ -66,7 +66,7 @@ export default function EditPage({ initialData, editMode }: Props) {
         editMode
       );
       toast({
-        variant: res.error ? 'destructive' : 'default',
+        variant: res.error ? 'destructive' : 'success',
         description: res.success ? 'Сторінка збережена' : res.message,
       });
       if (res.success && res.redirect) {

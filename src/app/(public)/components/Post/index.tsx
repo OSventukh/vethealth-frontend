@@ -6,26 +6,26 @@ import { notFound } from 'next/navigation';
 
 
 type Props = {
-  topicSlug: string;
+  parentTopicSlug: string;
   slug: string;
 };
 const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
-export default async function Post({ slug, topicSlug }: Props) {
+export default async function Post({ slug, parentTopicSlug }: Props) {
   const post = await api.posts.getOne({
     slug,
     tags: ['posts'],
   });
 
   const parentTopic = await api.topics.getOne({
-    slug: topicSlug,
+    slug: parentTopicSlug,
     tags: ['topics'],
   });
 
   if (!post || typeof post === 'string') {
     return notFound();
   }
-  
+
   return (
     <>
       <CustomBreadcrumb

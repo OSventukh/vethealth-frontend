@@ -7,6 +7,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
+  NavigationMenuViewport,
 } from '@/components/ui/navigation-menu';
 
 import { CategoryResponse } from '@/api/types/categories.type';
@@ -17,10 +18,10 @@ type Props = {
 export default function DesktopNavigation({ items }: Props) {
   return (
     <NavigationMenu className="hidden max-h-20 sm:flex">
-      <NavigationMenuList>
+      <NavigationMenuList className="w-full">
         {items.length > 0 &&
           items.map((item) => (
-            <NavigationMenuItem key={item.id}>
+            <NavigationMenuItem key={item.id} className="relative">
               <Link href={`?category=${item.slug}`}>
                 <NavigationMenuTrigger
                   showArrow={item?.children && item.children.length > 0}
@@ -29,8 +30,8 @@ export default function DesktopNavigation({ items }: Props) {
                   {item.name}
                 </NavigationMenuTrigger>
               </Link>
-              <NavigationMenuContent>
-                <ul className="grid min-w-max">
+              <NavigationMenuContent className="w-full">
+                <ul className="w-full">
                   {item.children &&
                     item.children.map((child) => (
                       <li key={child.id} className="p-4">

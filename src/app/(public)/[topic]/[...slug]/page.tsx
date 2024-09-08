@@ -23,20 +23,25 @@ export default async function SlugPage({ params }: Props) {
   const hasChildren = topic && topic?.children && topic.children.length > 0;
   const isPage = topic && topic && topic.contentType === 'page';
   const isRootSlug = params.slug.length < 1;
-
+  console.log('topic', params.topic);
   return (
     <>
-    {hasChildren && isRootSlug ? (
-      <>
-      <CustomBreadcrumb prevPages={[{ href: '/', label: 'Головна' }]} currentPage={{ label: topic?.title || ''}} />
-      <TopicList items={topic?.children || []} />
-      </>
-    ) : isPage ? (
-      <Page topic={params.slug[params.slug.length - 1]} />
-    ) : (
-      
-      <Post topicSlug={params.topic} slug={params.slug[params.slug.length - 1]} />
-    )}
-  </>
+      {hasChildren && isRootSlug ? (
+        <>
+          <CustomBreadcrumb
+            prevPages={[{ href: '/', label: 'Головна' }]}
+            currentPage={{ label: topic?.title || '' }}
+          />
+          <TopicList items={topic?.children || []} />
+        </>
+      ) : isPage ? (
+        <Page parentTopicSlug={params.topic} topic={params.slug[params.slug.length - 1]} />
+      ) : (
+        <Post
+          parentTopicSlug={params.topic}
+          slug={params.slug[params.slug.length - 1]}
+        />
+      )}
+    </>
   );
 }
