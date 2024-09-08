@@ -51,7 +51,7 @@ export const get = async <Response>({
   token,
   tags,
   revalidate,
-}: GetRequest): Promise<Response | string | null> => {
+}: GetRequest): Promise<Response | null> => {
   try {
     const response = await fetch(url + (id ? `/${id}` : '') + (query || ''), {
       method: 'GET',
@@ -66,12 +66,12 @@ export const get = async <Response>({
     });
     const result = await response.json();
     if (!response.ok) {
-      return result.message;
+      return null;
     }
 
     return result;
   } catch (error) {
-    return error instanceof Error ? error.message : 'Failed to fetch';
+    return null;
   }
 };
 

@@ -31,10 +31,9 @@ export async function generateMetadata(
     description: topic?.description,
     openGraph: {
       images: topic?.image.path || [],
-    },  
+    },
   };
 }
-
 
 export default function TopicLayout({
   children,

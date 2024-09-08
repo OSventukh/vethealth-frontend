@@ -1,5 +1,7 @@
 import { api } from '@/api';
 import TopicContent from '../components/topics/TopicContent';
+import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
+import { notFound } from 'next/navigation';
 
 type Props = {
   params: {
@@ -15,7 +17,15 @@ export default async function TopicPage({ params, searchParams }: Props) {
     query: { include: 'children' },
     tags: ['topics'],
   });
+
+  if (!topic) {
+    return notFound();
+  }
+
   return (
+    <>
+    <CustomBreadcrumb prevPages={[{ href: '/', label: 'Головна' }]} currentPage={{ label: topic?.description || topic?.title}} />
     <TopicContent topic={topic!} params={params} searchParams={searchParams} />
+    </>
   );
 }

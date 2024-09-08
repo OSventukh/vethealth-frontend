@@ -3,6 +3,7 @@ import { Raleway } from 'next/font/google';
 import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 import React from 'react';
 import { api } from '@/api';
+import { notFound } from 'next/navigation';
 
 type Props = {
   topic: string;
@@ -18,8 +19,9 @@ export default async function Page({ topic }: Props) {
   });
 
   if (!topicResponse?.page) {
-    return <div>Сторінка не знайдена</div>;
+    return notFound();
   }
+  
   return (
     <div className="mt-8 rounded-xl border-[1px] border-border bg-white p-8">
       <h2

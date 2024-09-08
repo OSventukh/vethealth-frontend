@@ -3,6 +3,7 @@ import React from 'react';
 import Post from '../../components/Post';
 import Page from '../../components/Page';
 import TopicList from '../../components/topics/TopicList';
+import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 
 type Props = {
   params: {
@@ -19,18 +20,22 @@ export default async function SlugPage({ params }: Props) {
     tags: ['topics'],
   });
 
-  const hasChildren = typeof topic !== 'string' && topic?.children && topic.children.length > 0;
-  const isPage = typeof topic !== 'string' && topic && topic.contentType === 'page';
+  const hasChildren = topic && topic?.children && topic.children.length > 0;
+  const isPage = topic && topic && topic.contentType === 'page';
   const isRootSlug = params.slug.length < 1;
-  
+
   return (
     <>
     {hasChildren && isRootSlug ? (
+      <>
+      <CustomBreadcrumb prevPages={[{ href: '/', label: 'Головна' }]} currentPage={{ label: topic?.title || ''}} />
       <TopicList items={topic?.children || []} />
+      </>
     ) : isPage ? (
       <Page topic={params.slug[params.slug.length - 1]} />
     ) : (
-      <Post slug={params.slug[params.slug.length - 1]} />
+      
+      <Post topicSlug={params.topic} slug={params.slug[params.slug.length - 1]} />
     )}
   </>
   );

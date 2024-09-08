@@ -3,6 +3,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { api } from '@/api';
 import { NOT_FOUND_TITLE, SITE_TITLE } from '@/utils/constants/generals';
+import { notFound } from 'next/navigation';
 
 type Props = {
   params: {
@@ -19,8 +20,8 @@ async function getTopicMetadata(topicSlug: string): Promise<Metadata> {
     tags: ['topics'],
   });
 
-  if (typeof topic === 'string') {
-    return { title: NOT_FOUND_TITLE };
+  if (!topic) {
+    return notFound();
   }
 
   const hasChildren = topic?.children && topic.children.length > 0;
@@ -45,8 +46,8 @@ async function getPostMetadata(postSlug: string): Promise<Metadata> {
     tags: ['posts'],
   });
 
-  if (typeof post === 'string') {
-    return { title: NOT_FOUND_TITLE };
+  if (!post) {
+    return getTopicMetadata(postSlug);
   }
 
   return { title: `${post?.title} | ${SITE_TITLE}` };

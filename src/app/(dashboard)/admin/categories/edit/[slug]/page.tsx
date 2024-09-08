@@ -1,3 +1,5 @@
+
+import { notFound } from 'next/navigation';
 import { auth } from '@/lib/next-auth/auth';
 import EditCategory from '../../components/EditCategory';
 import { api } from '@/api';
@@ -14,6 +16,7 @@ export default async function CategoryCreatePage({ params }: Props) {
     token: session?.token,
     query: { include: 'parent,children' },
   });
+
   return (
     <EditCategory
       initialData={category || null}

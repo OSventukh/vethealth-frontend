@@ -43,7 +43,6 @@ export async function saveCategoryAction(
     };
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
-
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:

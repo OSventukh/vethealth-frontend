@@ -8,7 +8,7 @@ export default async function Header({ topic }: { topic?: string }) {
   const categories = await api.categories.getMany({
     query: { include: 'children', topic },
   });
-
+  
   return (
     <div className="max-h-40 bg-[rgb(180,239,232)]">
       <div className="container flex justify-between gap-8 py-8">
@@ -22,7 +22,7 @@ export default async function Header({ topic }: { topic?: string }) {
             className="h-auto"
           />
         </Link>
-        {topic && (
+        {topic && categories &&  (
           <>
             <DesktopNavigation items={categories?.items || []} />
 

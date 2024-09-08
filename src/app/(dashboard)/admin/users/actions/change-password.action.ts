@@ -48,7 +48,6 @@ export async function changePasswordAction(
       message: 'Success',
     };
   } catch (error: unknown) {
-    console.log('error', error);
     let message = 'Щось пішло не так';
     if (error instanceof Error) {
       switch (error.message) {

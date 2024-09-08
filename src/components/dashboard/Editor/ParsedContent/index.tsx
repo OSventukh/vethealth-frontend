@@ -119,7 +119,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
     }
 
     if (tag === 'h3') {
-      return <h3>{node.children[0].text}</h3>;
+      return <h3>{node?.children[0]?.text}</h3>;
     }
 
     if (tag === 'h4') {
@@ -211,7 +211,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
         className={clsx('grid', {
           'grid-cols-1 md:grid-cols-[1fr_1fr]': gridTamplate === '1fr 1fr',
           'grid-cols-1 md:grid-cols-[1fr_3fr]': gridTamplate === '1fr 3fr',
-          'md:grid-cols-[1fr 1fr 1fr] grid-cols-1':
+          'md:grid-cols-2 lg:grid-cols-3':
             gridTamplate === '1fr 1fr 1fr',
           'md:grid-cols-[1fr 2fr 1fr] grid-cols-1':
             gridTamplate === '1fr 2fr 1fr',
