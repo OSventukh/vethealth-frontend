@@ -1,0 +1,62 @@
+name: Deploy Next.js App
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  deploy-main:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/vethealth.com.ua
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart nextjs-app || pm2 start npm --name "nextjs-app" -- run start
+
+  deploy-staging:
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USERNAME }}
+          key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/staging.vethealth.com.ua
+            git pull origin staging
+            npm install
+            npm run build
+            pm2 restart nextjs-app || pm2 start npm --name "nextjs-app" -- run start
