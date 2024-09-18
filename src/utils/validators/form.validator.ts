@@ -89,7 +89,6 @@ export const confirmationSchema = z
 
 export type ConfirmationValues = z.infer<typeof confirmationSchema>;
 
-
 export const updatePasswordSchema = z
   .object({
     email: z.string(),
@@ -106,7 +105,6 @@ export const updatePasswordSchema = z
   });
 
 export type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>;
-
 
 export const forgotSchema = z.object({
   email: z

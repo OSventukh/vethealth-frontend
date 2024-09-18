@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function invariant(
   cond?: boolean,
-  message?: string,
-  ...args: string[]
+  message?: string
 ): asserts cond {
   if (cond) {
     return;

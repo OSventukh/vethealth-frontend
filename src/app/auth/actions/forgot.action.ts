@@ -46,7 +46,8 @@ export async function forgotAction(
     return {
       success: true,
       error: false,
-      message: 'Якщо користувач з таким email існує, він отримає лист з інструкціями по відновленню паролю',
+      message:
+        'Якщо користувач з таким email існує, він отримає лист з інструкціями по відновленню паролю',
     };
   } catch (error: unknown) {
     console.log(error);

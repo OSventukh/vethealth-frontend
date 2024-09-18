@@ -35,7 +35,10 @@ export default async function SlugPage({ params }: Props) {
           <TopicList items={topic?.children || []} />
         </>
       ) : isPage ? (
-        <Page parentTopicSlug={params.topic} topic={params.slug[params.slug.length - 1]} />
+        <Page
+          parentTopicSlug={params.topic}
+          topic={params.slug[params.slug.length - 1]}
+        />
       ) : (
         <Post
           parentTopicSlug={params.topic}

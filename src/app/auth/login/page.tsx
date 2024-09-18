@@ -12,7 +12,7 @@ export default function LoginPage({ searchParams }: Props) {
   return (
     <Suspense>
       {!forgotPassword && <SignIn />}
-      { forgotPassword && <Forgot />}
+      {forgotPassword && <Forgot />}
     </Suspense>
   );
 }

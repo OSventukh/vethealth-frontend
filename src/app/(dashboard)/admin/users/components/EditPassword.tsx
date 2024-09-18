@@ -43,12 +43,10 @@ export default function EditUserPassword({ user }: Props) {
 
   const submitForm = (values: UpdatePasswordValues) => {
     startTransition(async () => {
-      const res = await changePasswordAction(
-        {
-          id: user.id,
-          password: values.password,
-        },
-      );
+      const res = await changePasswordAction({
+        id: user.id,
+        password: values.password,
+      });
       toast({
         variant: res.error ? 'destructive' : 'success',
         description: res.success ? 'Пароль оновлено' : res.message,
@@ -71,7 +69,7 @@ export default function EditUserPassword({ user }: Props) {
             name="email"
             render={({ field }) => (
               <FormItem className="">
-                <FormLabel className='hidden'>Email</FormLabel>
+                <FormLabel className="hidden">Email</FormLabel>
 
                 <FormControl>
                   <Input type="hidden" autoComplete="email" {...field} />

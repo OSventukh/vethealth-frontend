@@ -4,7 +4,6 @@ import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { notFound } from 'next/navigation';
 
-
 type Props = {
   parentTopicSlug: string;
   slug: string;

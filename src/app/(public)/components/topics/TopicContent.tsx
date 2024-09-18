@@ -29,7 +29,10 @@ export default function TopicContent({ topic, params, searchParams }: Props) {
       {topic?.children && topic.children.length > 0 ? (
         <TopicList items={topic.children} parentSlug={parentSlug} />
       ) : topic.contentType === 'page' ? (
-        <Page topic={params?.slug?.[0] || params.topic} />
+        <Page
+          parentTopicSlug={topic.slug}
+          topic={params?.slug?.[0] || params.topic}
+        />
       ) : (
         <PostList topic={topic.slug} category={searchParams?.category} />
       )}

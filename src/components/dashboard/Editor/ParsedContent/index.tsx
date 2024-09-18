@@ -75,13 +75,13 @@ const HandleParagraphChildren = ({ items }: any): React.ReactNode => {
     if (child.type === 'link') {
       if (child.url?.startsWith('/')) {
         return (
-          <Link key={randomUUID()} href={child.url} className='underline'>
+          <Link key={randomUUID()} href={child.url} className="underline">
             {child.children[0]?.text}
           </Link>
         );
       }
       return (
-        <a key={randomUUID()} href={child.url}  className='underline'>
+        <a key={randomUUID()} href={child.url} className="underline">
           {child.children[0]?.text}
         </a>
       );
@@ -211,8 +211,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
         className={clsx('grid gap-4', {
           'grid-cols-1 md:grid-cols-[1fr_1fr]': gridTamplate === '1fr 1fr',
           'grid-cols-1 md:grid-cols-[1fr_3fr]': gridTamplate === '1fr 3fr',
-          'md:grid-cols-2 lg:grid-cols-3':
-            gridTamplate === '1fr 1fr 1fr',
+          'md:grid-cols-2 lg:grid-cols-3': gridTamplate === '1fr 1fr 1fr',
           'md:grid-cols-[1fr 2fr 1fr] grid-cols-1':
             gridTamplate === '1fr 2fr 1fr',
           'md:grid-cols-[1fr 1fr 1fr 1fr] grid-cols-1':

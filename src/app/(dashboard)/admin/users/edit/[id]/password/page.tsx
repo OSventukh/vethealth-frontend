@@ -1,5 +1,3 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import EditUserPassword from '../../../components/EditPassword';
 import { api } from '@/api';
 import { auth } from '@/lib/next-auth/auth';

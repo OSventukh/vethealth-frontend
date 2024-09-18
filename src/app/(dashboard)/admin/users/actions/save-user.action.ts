@@ -4,7 +4,10 @@ import { revalidateTag } from 'next/cache';
 import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
-import { UserValues, UpdatePasswordValues } from '@/utils/validators/form.validator';
+import {
+  UserValues,
+  UpdatePasswordValues,
+} from '@/utils/validators/form.validator';
 
 type ReturnedData = {
   error: boolean;
@@ -13,7 +16,9 @@ type ReturnedData = {
   redirect?: string;
 };
 
-type SaveUserAction = UserValues | Omit< UpdatePasswordValues, 'confirmPassword' | 'email'>;
+type SaveUserAction =
+  | UserValues
+  | Omit<UpdatePasswordValues, 'confirmPassword' | 'email'>;
 
 export async function saveUserAction(
   data: SaveUserAction & { id?: string },

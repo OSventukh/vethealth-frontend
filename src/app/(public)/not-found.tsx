@@ -1,9 +1,7 @@
-
 import Image from 'next/image';
 import Header from './components/Header';
 import Description from './components/Description';
 import Footer from './components/Footer';
-import { Button } from '@/components/ui/button';
 import { Metadata } from 'next/types';
 import { SITE_DESCRIPTION, SITE_TITLE } from '@/utils/constants/generals';
 import Return from '@/components/public/NotFound/Return';
@@ -12,7 +10,6 @@ export const metadata: Metadata = {
   title: `Сторінка не знайдена | ${SITE_TITLE}`,
   description: SITE_DESCRIPTION,
 };
-
 
 export default function NotFoundPage() {
   return (
@@ -29,7 +26,9 @@ export default function NotFoundPage() {
               alt="404 image"
             />
           </div>
-          <h2 className="mt-4 text-center text-[rgb(48,100,94)] uppercase">Сторінка не знайдена</h2>
+          <h2 className="mt-4 text-center uppercase text-[rgb(48,100,94)]">
+            Сторінка не знайдена
+          </h2>
           <div>
             <Return />
           </div>

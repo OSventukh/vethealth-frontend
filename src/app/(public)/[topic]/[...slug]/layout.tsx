@@ -1,16 +1,13 @@
-import type { Metadata, ResolvingMetadata } from 'next';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import type { Metadata } from 'next';
 import { api } from '@/api';
-import { NOT_FOUND_TITLE, SITE_TITLE } from '@/utils/constants/generals';
+import { SITE_TITLE } from '@/utils/constants/generals';
 import { notFound } from 'next/navigation';
 
 type Props = {
   params: {
-    topic: string;
-    slug: string[];
+    topic?: string;
+    slug?: string[];
   };
-  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 async function getTopicMetadata(topicSlug: string): Promise<Metadata> {
@@ -50,27 +47,28 @@ async function getPostMetadata(postSlug: string): Promise<Metadata> {
     return getTopicMetadata(postSlug);
   }
 
-  return { title: `${post?.title} | ${SITE_TITLE}`, openGraph: { images: post?.featuredImage || [] } };
+  return {
+    title: `${post?.title} | ${SITE_TITLE}`,
+    openGraph: { images: post?.featuredImage || [] },
+  };
 }
 
-export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const topicSlug = params.topic;
-  const isRootSlug = params.slug.length < 1;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { topic, slug } = params;
+  if (!topic || !slug) return notFound();
+  const topicSlug = topic;
+  const isRootSlug = slug.length < 1;
 
   if (isRootSlug) {
     return getTopicMetadata(topicSlug);
   } else {
-    const postSlug = params.slug[params.slug.length - 1];
+    const postSlug = slug[slug.length - 1];
     return getPostMetadata(postSlug);
   }
 }
 
 export default function TopicLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
   params: {

@@ -1,5 +1,3 @@
-
-import { notFound } from 'next/navigation';
 import { auth } from '@/lib/next-auth/auth';
 import EditCategory from '../../components/EditCategory';
 import { api } from '@/api';

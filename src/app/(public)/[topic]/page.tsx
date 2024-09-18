@@ -24,8 +24,15 @@ export default async function TopicPage({ params, searchParams }: Props) {
 
   return (
     <>
-    <CustomBreadcrumb prevPages={[{ href: '/', label: 'Головна' }]} currentPage={{ label: topic?.description || topic?.title}} />
-    <TopicContent topic={topic!} params={params} searchParams={searchParams} />
+      <CustomBreadcrumb
+        prevPages={[{ href: '/', label: 'Головна' }]}
+        currentPage={{ label: topic?.description || topic?.title }}
+      />
+      <TopicContent
+        topic={topic!}
+        params={params}
+        searchParams={searchParams}
+      />
     </>
   );
 }

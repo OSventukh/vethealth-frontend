@@ -18,7 +18,7 @@ type ChangePasswordActionData = {
 };
 
 export async function changePasswordAction(
-  data: ChangePasswordActionData & { id?: string },
+  data: ChangePasswordActionData & { id?: string }
 ): Promise<ReturnedData> {
   const session = await auth();
   try {
@@ -34,7 +34,7 @@ export async function changePasswordAction(
         body: JSON.stringify(data),
       }
     );
-    
+
     if (!response.ok) {
       const result = await response.json();
       throw new Error(result.message);

@@ -1,8 +1,7 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useFormState } from 'react-dom';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
@@ -39,8 +38,6 @@ export default function Forgot() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
-  const toast = useToast();
 
   const backToLoginClickHandler = () => {
     const params = new URLSearchParams(searchParams);
