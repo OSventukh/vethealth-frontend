@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/navigation-menu';
 
 import { CategoryResponse } from '@/api/types/categories.type';
+import { ChevronRight } from 'lucide-react';
 
 type Props = {
   items: CategoryResponse[];
@@ -31,11 +32,14 @@ export default function DesktopNavigation({ items }: Props) {
                 </NavigationMenuTrigger>
               </Link>
               <NavigationMenuContent className="w-full">
-                <ul className="w-full">
+                <ul className="grid gap-3 p-2 min-w-[350px] w-max lg:grid-cols-[.75fr_1fr]">
                   {item.children &&
                     item.children.map((child) => (
-                      <li key={child.id} className="p-4">
-                        <Link href={`?category=${child.slug}`}>
+                      <li key={child.id} className="align-center flex">
+                        <Link
+                          className="rounded-md p-2 hover:bg-accent text-nowrap "
+                          href={`?category=${child.slug}`}
+                        >
                           {child.name}
                         </Link>
                       </li>

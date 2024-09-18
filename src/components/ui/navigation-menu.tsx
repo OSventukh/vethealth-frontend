@@ -53,7 +53,7 @@ type NavigationMenuTriggerProps = React.ComponentPropsWithoutRef<
 const NavigationMenuTrigger = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
   NavigationMenuTriggerProps
->(({ className, children, showArrow = true, ...props }, ref) => (
+>(({ className, children, showArrow, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger
     ref={ref}
     className={cn(navigationMenuTriggerStyle(), 'group', className)}
