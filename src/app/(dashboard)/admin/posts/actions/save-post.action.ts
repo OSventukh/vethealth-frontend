@@ -4,6 +4,7 @@ import { revalidateTag } from 'next/cache';
 import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
+import logger from '@/logger';
 
 type Props = {
   id?: string;
@@ -56,6 +57,7 @@ export async function savePostAction(
     };
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
+    logger.error(error instanceof Error ? error.message: JSON.stringify(error));
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:

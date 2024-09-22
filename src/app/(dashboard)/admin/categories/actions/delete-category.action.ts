@@ -2,6 +2,7 @@
 import { revalidateTag } from 'next/cache';
 
 import { auth } from '@/lib/next-auth/auth';
+import logger from '@/logger';
 
 type ReturnedData = {
   error: boolean;
@@ -33,6 +34,7 @@ export async function deleteCategoryAction(id: string): Promise<ReturnedData> {
       message: 'Success',
     };
   } catch (error: unknown) {
+    logger.error(error instanceof Error ? error.message: JSON.stringify(error));
     const message =
       error instanceof Error ? error.message : 'Щось пішло не так';
 

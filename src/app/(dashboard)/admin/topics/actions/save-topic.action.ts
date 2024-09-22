@@ -1,6 +1,6 @@
 'use server';
 import { revalidateTag } from 'next/cache';
-
+import logger from '@/logger';
 import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
@@ -43,16 +43,15 @@ export async function saveTopicAction(
     };
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
-
+    logger.error(error instanceof Error ? error.message: JSON.stringify(error));
     if (error instanceof Error) {
-      switch (error.message) {
-        case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:
-          message = ERROR_MESSAGE.TITLE_MUST_BE_UNIQUE;
-          break;
-        case SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY:
-          message = ERROR_MESSAGE.TITLE_SHOULD_BE_NOT_EMPTY;
-          break;
+      message = error.message;
+      if (error.message.includes(SERVER_ERROR.TITLE_MUST_BE_UNIQUE)) {
+        message = ERROR_MESSAGE.TITLE_MUST_BE_UNIQUE;
       }
+      if (error.message.includes(SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY)) {
+        message = ERROR_MESSAGE.TITLE_SHOULD_BE_NOT_EMPTY;
+      } 
     }
 
     return {

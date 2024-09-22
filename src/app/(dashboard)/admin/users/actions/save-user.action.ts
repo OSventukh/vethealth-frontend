@@ -8,6 +8,7 @@ import {
   UserValues,
   UpdatePasswordValues,
 } from '@/utils/validators/form.validator';
+import logger from '@/logger';
 
 type ReturnedData = {
   error: boolean;
@@ -76,6 +77,7 @@ export async function saveUserAction(
     }
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
+    logger.error(error instanceof Error ? error.message: JSON.stringify(error));
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:
