@@ -34,7 +34,9 @@ export async function deletePostAction(id: string): Promise<ReturnedData> {
       message: 'Success',
     };
   } catch (error: unknown) {
-    logger.error(error instanceof Error ? error.message: JSON.stringify(error));
+    logger.error(
+      error instanceof Error ? error.message : JSON.stringify(error)
+    );
     const message =
       error instanceof Error ? error.message : 'Щось пішло не так';
 

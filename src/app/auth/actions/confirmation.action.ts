@@ -52,12 +52,16 @@ export async function confirmationAction(
     };
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
-    logger.error(error instanceof Error ? error.message: JSON.stringify(error));
+    logger.error(
+      error instanceof Error ? error.message : JSON.stringify(error)
+    );
     if (error instanceof Error) {
       message = error.message;
       if (error.message.includes(SERVER_ERROR.TITLE_MUST_BE_UNIQUE)) {
         message = ERROR_MESSAGE.TITLE_MUST_BE_UNIQUE;
-      } else if (error.message.includes(SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY)) {
+      } else if (
+        error.message.includes(SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY)
+      ) {
         message = ERROR_MESSAGE.TITLE_SHOULD_BE_NOT_EMPTY;
       } else if (error.message.includes(SERVER_ERROR.SLUG_SHOULD_BE_UNIQUE)) {
         message = ERROR_MESSAGE.SLUG_SHOULD_BE_UNIQUE;

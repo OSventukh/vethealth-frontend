@@ -50,7 +50,9 @@ export async function changePasswordAction(
     };
   } catch (error: unknown) {
     let message = 'Щось пішло не так';
-    logger.error(error instanceof Error ? error.message: JSON.stringify(error));
+    logger.error(
+      error instanceof Error ? error.message : JSON.stringify(error)
+    );
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:
