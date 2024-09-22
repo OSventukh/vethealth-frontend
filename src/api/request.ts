@@ -1,3 +1,4 @@
+import logger from '@/logger';
 import { routes } from './routes';
 
 type Url = (typeof routes)[keyof typeof routes];
@@ -95,6 +96,7 @@ export const remove = async <Response>({
   });
 
   if (!response.ok) {
+    logger.error(await response.text());
     throw new Error('Failed to fetch');
   }
 
@@ -120,6 +122,7 @@ export const sendFile = async <Response>({
     body: data,
   });
   if (!response.ok) {
+    logger.error(await response.text());
     throw new Error('Failed to fetch');
   }
 
