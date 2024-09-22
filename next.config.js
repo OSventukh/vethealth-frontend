@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'vethealth.com.ua',
       },
+      {
+        protocol: 'https',
+        hostname: '*.vethealth.com.ua',
+      },
       
     ],
   },
