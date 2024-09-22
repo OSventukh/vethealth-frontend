@@ -33,7 +33,7 @@ export async function savePostAction(
 ): Promise<ReturnedData> {
   const session = await auth();
   try {
-    const response = await fetch('http://localhost:5000/posts', {
+    const response = await fetch(`${process.env.API_SERVER}/posts`, {
       method: edit ? 'PATCH' : 'POST',
       headers: {
         'Content-Type': 'application/json',

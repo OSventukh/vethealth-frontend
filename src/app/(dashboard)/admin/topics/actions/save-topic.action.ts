@@ -19,7 +19,7 @@ export async function saveTopicAction(
 ): Promise<ReturnedData> {
   const session = await auth();
   try {
-    const response = await fetch('http://localhost:5000/topics', {
+    const response = await fetch(`${process.env.API_SERVER}/topics`, {
       method: edit ? 'PATCH' : 'POST',
       headers: {
         'Content-Type': 'application/json',
