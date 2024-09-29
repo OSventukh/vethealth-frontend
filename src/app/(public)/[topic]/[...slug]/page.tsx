@@ -23,7 +23,7 @@ export default async function SlugPage({ params }: Props) {
   const hasChildren = topic && topic?.children && topic.children.length > 0;
   const isPage = topic && topic && topic.contentType === 'page';
   const isRootSlug = params.slug.length < 1;
-  console.log('topic', params.topic);
+
   return (
     <>
       {hasChildren && isRootSlug ? (
