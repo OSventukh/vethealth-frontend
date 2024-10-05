@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 
 import {
@@ -19,12 +20,12 @@ export default function CustomBreadcrumb({ prevPages, currentPage }: Props) {
       <Breadcrumb>
         <BreadcrumbList>
           {prevPages.map((item, index) => (
-            <>
-              <BreadcrumbItem key={index}>
+            <React.Fragment key={index}>
+              <BreadcrumbItem>
                 <Link href={item.href}>{item.label}</Link>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
-            </>
+            </React.Fragment>
           ))}
           <BreadcrumbItem>
             <BreadcrumbPage>{currentPage.label}</BreadcrumbPage>
