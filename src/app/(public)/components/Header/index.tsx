@@ -7,6 +7,7 @@ import MobileNavigation from '../Navigation/Mobile';
 export default async function Header({ topic }: { topic?: string }) {
   const categories = await api.categories.getMany({
     query: { include: 'children', topic },
+    tags: ['categories'],
   });
 
   return (
