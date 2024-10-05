@@ -23,7 +23,7 @@ export default async function Header({ topic }: { topic?: string }) {
             className="h-auto"
           />
         </Link>
-        {topic && categories && (
+        {topic && categories && categories?.count > 0 && (
           <>
             <DesktopNavigation items={categories?.items || []} />
 
