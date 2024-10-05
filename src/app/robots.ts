@@ -1,7 +1,7 @@
-import type { MetadataRoute } from 'next'
- 
+import type { MetadataRoute } from 'next';
+
 export default function robots(): MetadataRoute.Robots {
-  const isAllowed = process.env.NODE_ENV === 'production'
+  const isAllowed = process.env.NODE_ENV === 'production';
 
   if (!isAllowed) {
     return {
@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         disallow: ['/', '/admin'],
       },
-    }
+    };
   }
   return {
     rules: {
@@ -17,5 +17,5 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin'],
     },
-  }
+  };
 }
