@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import { Metadata } from 'next/types';
 import { SITE_DESCRIPTION, SITE_TITLE } from '@/utils/constants/generals';
 import Return from '@/components/public/NotFound/Return';
+import NotFound from '@/components/public/NotFound/NotFound';
 
 export const metadata: Metadata = {
   title: `Сторінка не знайдена | ${SITE_TITLE}`,
@@ -18,20 +19,7 @@ export default function NotFoundPage() {
       <main>
         <div className="container">
           <Description />
-          <div className="flex justify-center">
-            <Image
-              src="/images/404.svg"
-              width="500"
-              height="400"
-              alt="404 image"
-            />
-          </div>
-          <h2 className="mt-4 text-center uppercase text-[rgb(48,100,94)]">
-            Сторінка не знайдена
-          </h2>
-          <div>
-            <Return />
-          </div>
+          <NotFound />
         </div>
       </main>
       <Footer />

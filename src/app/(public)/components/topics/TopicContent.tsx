@@ -4,6 +4,7 @@ import TopicList from './TopicList';
 import PostList from '../Post/PostList';
 import Page from '../Page';
 import { TopicResponse } from '@/api/types/topics.type';
+import { notFound } from 'next/navigation';
 
 type Props = {
   topic: TopicResponse | null;
@@ -21,7 +22,7 @@ export default function TopicContent({ topic, params, searchParams }: Props) {
     : params.topic;
 
   if (!topic) {
-    return <div>Сторінка не знайдена</div>;
+    return notFound();
   }
   return (
     <div>
