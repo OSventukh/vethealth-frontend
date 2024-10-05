@@ -32,7 +32,7 @@ export default function PostItem({ post, topic }: Props) {
         </header>
         {post?.content && (
           <div className="px-4">
-            {/* <ParsedContent content={JSON.parse(post.content)} excerpt /> */}
+            <ParsedContent content={JSON.parse(post.content)} excerpt />
           </div>
         )}
         {/* <footer className="flex justify-end p-8">
