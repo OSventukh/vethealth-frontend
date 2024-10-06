@@ -20,7 +20,7 @@ export async function loginAction(
   const session = await auth();
   try {
     const response = await fetch(
-      `${process.env.FRONTEND}/api/auth/signin/credentials`,
+      `${process.env.CLIENT_URL}/api/auth/signin/credentials`,
       {
         method: 'POST',
         headers: {
