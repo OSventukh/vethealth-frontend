@@ -8,6 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
+  metadataBase: new URL(process.env.CLIENT_URL!),
   openGraph: { images: '/social/social.webp' },
 };
 
