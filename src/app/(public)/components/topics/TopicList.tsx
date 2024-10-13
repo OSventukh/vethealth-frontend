@@ -27,7 +27,7 @@ export default function TopicList({ items, parentSlug }: Props) {
               alt={item.title}
               width={200}
               height={200}
-              className="h-[240px] w-[240px] rounded-2xl transition duration-300 ease-in hover:scale-110"
+              className="h-[240px] w-[240px] rounded-2xl transition duration-300 ease-in md:hover:scale-110"
               priority
             />
           </Link>
