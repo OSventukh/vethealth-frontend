@@ -1,8 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import DesktopNavigation from '../Navigation/Desktop';
+
 import { api } from '@/api';
+import DesktopNavigation from '../Navigation/Desktop';
 import MobileNavigation from '../Navigation/Mobile';
+import SearchBar from '../Navigation/Search';
 
 export default async function Header({ topic }: { topic?: string }) {
   const categories = await api.categories.getMany({
@@ -11,7 +13,7 @@ export default async function Header({ topic }: { topic?: string }) {
   });
 
   return (
-    <div className="max-h-40 bg-[rgb(180,239,232)]">
+    <header className="max-h-40 bg-[rgb(180,239,232)]">
       <div className="container flex justify-between gap-8 py-8">
         <Link href="/">
           <Image
@@ -24,13 +26,13 @@ export default async function Header({ topic }: { topic?: string }) {
           />
         </Link>
         {topic && categories && categories?.count > 0 && (
-          <>
+          <div className="flex items-center">
             <DesktopNavigation items={categories?.items || []} />
-
+            <SearchBar />
             <MobileNavigation items={categories?.items || []} />
-          </>
+          </div>
         )}
       </div>
-    </div>
+    </header>
   );
 }

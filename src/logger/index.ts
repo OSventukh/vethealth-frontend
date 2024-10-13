@@ -1,6 +1,6 @@
 import winston from 'winston';
 
-// Створюємо формат логування
+
 const logFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.printf(
@@ -8,7 +8,7 @@ const logFormat = winston.format.combine(
   )
 );
 
-console.log(__dirname);
+
 const logger = winston.createLogger({
   level: 'info',
   format: logFormat,

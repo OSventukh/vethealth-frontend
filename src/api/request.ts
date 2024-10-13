@@ -1,4 +1,3 @@
-import logger from '@/logger';
 import { routes } from './routes';
 
 type Url = (typeof routes)[keyof typeof routes];
@@ -88,7 +87,7 @@ export const remove = async <Response>({
   token,
 }: DeleteRequest): Promise<Response> => {
   const response = await fetch(url + id, {
-    method: 'GET',
+    method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
@@ -96,7 +95,10 @@ export const remove = async <Response>({
   });
 
   if (!response.ok) {
-    logger.error(await response.text());
+    if (typeof window === 'undefined') {
+      const { default: logger } = await import('@/logger');
+      logger.error(await response.text());
+    }
     throw new Error('Failed to fetch');
   }
 
@@ -122,7 +124,10 @@ export const sendFile = async <Response>({
     body: data,
   });
   if (!response.ok) {
-    logger.error(await response.text());
+    if (typeof window === 'undefined') {
+      const { default: logger } = await import('@/logger');
+      logger.error(await response.text());
+    }
     throw new Error('Failed to fetch');
   }
 

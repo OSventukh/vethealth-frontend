@@ -162,4 +162,6 @@ export const api = {
         tags,
       }),
   },
+  search: (query: string) =>
+    get<Pagination<PostResponse>>({ query: query, url: routes.search }),
 } as const;

@@ -113,3 +113,9 @@ export const forgotSchema = z.object({
 });
 
 export type ForgotValues = z.infer<typeof forgotSchema>;
+
+export const searchSchema = z.object({
+  query: z.string().optional().or(z.literal('')),
+});
+
+export type SearchValues = z.infer<typeof searchSchema>;

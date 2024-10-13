@@ -1,4 +1,6 @@
-const baseApi = process.env.API_SERVER;
+const { NEXT_PUBLIC_API_SERVER, API_SERVER } = process.env;
+
+const baseApi = NEXT_PUBLIC_API_SERVER || API_SERVER;
 
 export const routes = {
   topics: `${baseApi}/topics`,
@@ -14,4 +16,5 @@ export const routes = {
   confirm: `${baseApi}/auth/confirm`,
   refresh: `${baseApi}/auth/refresh`,
   forgot: `${baseApi}/auth/forgot-password`,
+  search: `${baseApi}/search`,
 } as const;

@@ -13,6 +13,7 @@
     "type-check": "tsc --project tsconfig.json --pretty --noEmit && echo ",
     "format": "prettier --write 'src/**/*.{ts,js,jsx,tsx}'"
   },
+  
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@lexical/clipboard": "0.18.0",

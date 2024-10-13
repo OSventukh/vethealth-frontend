@@ -28,6 +28,15 @@ const TEXT_TYPE_TO_FORMAT: Record<TextFormatType | string, number> = {
   superscript: IS_SUPERSCRIPT,
 };
 
+
+const generateRandomKey = () => {
+  if (typeof window === 'undefined') {
+    return randomUUID()
+  }
+  return window.crypto.getRandomValues(new Uint32Array(1))[0];
+};
+
+
 const hasFormat = (type: TextFormatType, format: number): boolean => {
   return (format & TEXT_TYPE_TO_FORMAT[type]) !== 0;
 };
@@ -69,19 +78,19 @@ const HandleParagraphChildren = ({ items }: any): React.ReactNode => {
     }
 
     if (child.type === 'linebreak') {
-      return <br key={randomUUID()} />;
+      return <br key={generateRandomKey()} />;
     }
 
     if (child.type === 'link') {
       if (child.url?.startsWith('/')) {
         return (
-          <Link key={randomUUID()} href={child.url} className="underline">
+          <Link key={generateRandomKey()} href={child.url} className="underline">
             {child.children[0]?.text}
           </Link>
         );
       }
       return (
-        <a key={randomUUID()} href={child.url} className="underline">
+        <a key={generateRandomKey()} href={child.url} className="underline">
           {child.children[0]?.text}
         </a>
       );
@@ -94,7 +103,7 @@ const HandleParagraphChildren = ({ items }: any): React.ReactNode => {
 const HandleListItem = ({ items }: any): React.ReactNode => {
   const list = items.map((item: any) => {
     return (
-      <li key={randomUUID()}>
+      <li key={generateRandomKey()}>
         <HandleParagraphChildren items={item.children} />
       </li>
     );
@@ -152,7 +161,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
         <div className="inline-block">
           <Image
             className="inline h-auto w-auto"
-            key={randomUUID()}
+            key={generateRandomKey()}
             src={src}
             width={width}
             height={height}
@@ -199,7 +208,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
     const gridItemsNode = node.children;
     const gridItems = gridItemsNode.map((gridItemNode: any) => {
       return (
-        <div key={randomUUID()}>
+        <div key={generateRandomKey()}>
           <ParsedContent content={gridItemNode} />
         </div>
       );
@@ -243,13 +252,13 @@ export const ParsedContent = ({
 
   if (excerpt) {
     return (
-      <AppendChildNodeToHtml key={randomUUID()} node={topLevelChildren[0]} />
+      <AppendChildNodeToHtml key={generateRandomKey()} node={topLevelChildren[0]} />
     );
   }
   return (
     <>
       {topLevelChildren.map((topLevelNode: any) => {
-        return <AppendChildNodeToHtml key={randomUUID()} node={topLevelNode} />;
+        return <AppendChildNodeToHtml key={generateRandomKey()} node={topLevelNode} />;
       })}
     </>
   );
