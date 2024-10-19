@@ -37,3 +37,9 @@ export type UserGetManyParams = {
   revalidate?: number | false;
   tags?: string[];
 };
+
+export type SearchParams = {
+  query: string;
+  revalidate?: number | false;
+  tags?: string[];
+};

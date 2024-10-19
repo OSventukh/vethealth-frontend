@@ -24,10 +24,8 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PostResponse } from '@/api/types/posts.type';
 import { Card } from '@/components/ui/card';
-import Image from 'next/image';
 import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 import Link from 'next/link';
-import { set } from 'zod';
 import { LoadingSpinner } from '@/components/ui/custom/loading';
 
 export default function SearchBar() {
@@ -47,7 +45,6 @@ export default function SearchBar() {
     },
   });
 
-
   const submitForm = async (values: SearchValues) => {
     const { query } = values;
     if (!query || query.trim() === '') return;
@@ -57,13 +54,13 @@ export default function SearchBar() {
   const getSearchResults = async (query: string) => {
     try {
       if (query.trim() === '') return;
-      
+
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
-      
+
       abortControllerRef.current = new AbortController();
-      
+
       setLoading(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_SERVER}/search?query=${encodeURIComponent(query)}`,
@@ -101,7 +98,7 @@ export default function SearchBar() {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 300);
+    }, 500);
 
     return () => {
       clearTimeout(handler);
@@ -122,7 +119,7 @@ export default function SearchBar() {
         <SheetTrigger>
           <Search />
         </SheetTrigger>
-        <SheetContent side="top" className="px-0">
+        <SheetContent side="top" className="bg-[rgb(180,239,232)] px-0">
           <div className="container">
             <Form {...form}>
               <form
@@ -138,6 +135,7 @@ export default function SearchBar() {
                       <div className="flex gap-2">
                         <FormControl>
                           <Input
+                            className="border-none bg-white bg-opacity-80"
                             placeholder="Пошук"
                             {...field}
                             onChange={(e) => {
@@ -147,8 +145,12 @@ export default function SearchBar() {
                           />
                         </FormControl>
                         <div>
-                          <Button variant="ghost" type="submit">
-                            <Search />
+                          <Button
+                            className="aspect-square p-1"
+                            variant="default"
+                            type="submit"
+                          >
+                            <Search size={20} />
                           </Button>
                         </div>
                       </div>
@@ -170,13 +172,13 @@ export default function SearchBar() {
             )}
             {searchResults.length > 0 && !loading && (
               <>
-                <hr />
+                <div className="h-[1px] w-full bg-white" />
                 <ul className="w-100 mt-4 max-h-[calc(100vw+6rem)] space-y-2 overflow-y-auto">
                   {searchResults.map((item) => (
                     <li key={item.id}>
                       <SheetClose asChild>
                         <Link href={`/${item.topics![0].slug}/${item.slug}`}>
-                          <Card className="overflow-hidden">
+                          <Card className="overflow-hidden border-none">
                             <div className="flex">
                               <div className="p-2">
                                 <h3 className="text-lg">{item.title}</h3>
@@ -199,8 +201,8 @@ export default function SearchBar() {
 
             {!loading && query.length >= 3 && searchResults.length === 0 && (
               <>
-              <hr />
-              <div className='mt-2'>Результатів немає</div>
+                <div className="h-[1px] w-full bg-white" />
+                <div className="mt-2">Результатів немає</div>
               </>
             )}
           </div>

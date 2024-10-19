@@ -12,6 +12,8 @@ export default async function Header({ topic }: { topic?: string }) {
     tags: ['categories'],
   });
 
+  const isCategories = topic && categories && categories?.count > 0;
+
   return (
     <header className="max-h-40 bg-[rgb(180,239,232)]">
       <div className="container flex justify-between gap-8 py-8">
@@ -25,13 +27,17 @@ export default async function Header({ topic }: { topic?: string }) {
             className="h-auto"
           />
         </Link>
-        {topic && categories && categories?.count > 0 && (
-          <div className="flex items-center">
+        <div className="flex items-center">
+          {isCategories && (
             <DesktopNavigation items={categories?.items || []} />
+          )}
+          <div className="flex items-center gap-4">
             <SearchBar />
-            <MobileNavigation items={categories?.items || []} />
+            {isCategories && (
+              <MobileNavigation items={categories?.items || []} />
+            )}
           </div>
-        )}
+        </div>
       </div>
     </header>
   );

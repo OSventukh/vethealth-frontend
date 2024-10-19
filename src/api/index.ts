@@ -28,6 +28,7 @@ import {
   TopicResponse,
 } from './types/topics.type';
 import {
+  SearchParams,
   UserGetManyParams,
   UserGetOneParams,
   UserResponse,
@@ -162,6 +163,11 @@ export const api = {
         tags,
       }),
   },
-  search: (query: string) =>
-    get<Pagination<PostResponse>>({ query: query, url: routes.search }),
+  search: ({ query, revalidate, tags }: SearchParams) =>
+    get<Pagination<PostResponse>>({
+      query: '?query=' + encodeURIComponent(query),
+      url: routes.search,
+      revalidate,
+      tags,
+    }),
 } as const;

@@ -8,7 +8,7 @@ type Props = {
 export default function CustomNavigation({ items }: Props) {
   return (
     <nav className="group hidden items-center p-4 sm:flex">
-      <ul className="flex  gap-6">
+      <ul className="flex gap-6">
         {items.length > 0 &&
           items.map((item) => (
             <li
@@ -16,7 +16,7 @@ export default function CustomNavigation({ items }: Props) {
               className="relative data-[slot=action]:*:hover:block"
             >
               <Link
-                className="flex rounded-lg p-4 uppercase transition hover:bg-slate-100 hover:bg-opacity-50 "
+                className="flex rounded-lg p-4 uppercase transition hover:bg-slate-100 hover:bg-opacity-50"
                 href={'?category=' + item.slug}
               >
                 {item.name}

@@ -10,7 +10,6 @@ const FALLBACK_TEXT = 'Сторінка не знайдена';
 export default function NotFound({ text = FALLBACK_TEXT }: Props) {
   return (
     <div className="flex flex-col justify-center">
-   
       <div className="flex justify-center">
         <Image src="/images/404.svg" width="500" height="400" alt="404 image" />
       </div>

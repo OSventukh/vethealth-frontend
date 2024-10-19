@@ -28,14 +28,12 @@ const TEXT_TYPE_TO_FORMAT: Record<TextFormatType | string, number> = {
   superscript: IS_SUPERSCRIPT,
 };
 
-
 const generateRandomKey = () => {
   if (typeof window === 'undefined') {
-    return randomUUID()
+    return randomUUID();
   }
   return window.crypto.getRandomValues(new Uint32Array(1))[0];
 };
-
 
 const hasFormat = (type: TextFormatType, format: number): boolean => {
   return (format & TEXT_TYPE_TO_FORMAT[type]) !== 0;
@@ -84,7 +82,11 @@ const HandleParagraphChildren = ({ items }: any): React.ReactNode => {
     if (child.type === 'link') {
       if (child.url?.startsWith('/')) {
         return (
-          <Link key={generateRandomKey()} href={child.url} className="underline">
+          <Link
+            key={generateRandomKey()}
+            href={child.url}
+            className="underline"
+          >
             {child.children[0]?.text}
           </Link>
         );
@@ -252,13 +254,21 @@ export const ParsedContent = ({
 
   if (excerpt) {
     return (
-      <AppendChildNodeToHtml key={generateRandomKey()} node={topLevelChildren[0]} />
+      <AppendChildNodeToHtml
+        key={generateRandomKey()}
+        node={topLevelChildren[0]}
+      />
     );
   }
   return (
     <>
       {topLevelChildren.map((topLevelNode: any) => {
-        return <AppendChildNodeToHtml key={generateRandomKey()} node={topLevelNode} />;
+        return (
+          <AppendChildNodeToHtml
+            key={generateRandomKey()}
+            node={topLevelNode}
+          />
+        );
       })}
     </>
   );

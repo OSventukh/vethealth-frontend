@@ -46,7 +46,8 @@ async function getPostMetadata(postSlug: string): Promise<Metadata> {
   if (!post) {
     return getTopicMetadata(postSlug);
   }
-  const firstParagraph = JSON.parse(post?.content).root.children[0].children[0].text;
+  const firstParagraph = JSON.parse(post?.content).root.children[0].children[0]
+    .text;
   return {
     title: `${post?.title} | ${SITE_TITLE}`,
     openGraph: { images: post?.featuredImage || [] },

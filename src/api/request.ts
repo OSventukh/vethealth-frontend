@@ -65,6 +65,7 @@ export const get = async <Response>({
       },
     });
     const result = await response.json();
+
     if (!response.ok) {
       return null;
     }
