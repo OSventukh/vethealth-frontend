@@ -25,7 +25,7 @@ export default function PostItem({ post, topic }: Props) {
         )}
         <header>
           <h3
-            className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
+            className={`${raleway.className} my-4 px-4 text-center text-lg font-[600] uppercase`}
           >
             {post.title}
           </h3>
