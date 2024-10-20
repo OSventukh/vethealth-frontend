@@ -16,6 +16,7 @@ export default async function Post({ slug, parentTopicSlug }: Props) {
     tags: ['posts'],
   });
 
+  console.log(post);
   const parentTopic = await api.topics.getOne({
     slug: parentTopicSlug,
     tags: ['topics'],
