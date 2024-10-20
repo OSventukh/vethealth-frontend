@@ -13,7 +13,6 @@
     "type-check": "tsc --project tsconfig.json --pretty --noEmit && echo ",
     "format": "prettier --write 'src/**/*.{ts,js,jsx,tsx}'"
   },
-  
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@lexical/clipboard": "0.18.0",
@@ -26,6 +25,7 @@
     "@lexical/selection": "0.18.0",
     "@lexical/table": "0.18.0",
     "@lexical/utils": "0.18.0",
+    "@next/third-parties": "^14.2.15",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
