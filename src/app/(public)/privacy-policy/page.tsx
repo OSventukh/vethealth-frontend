@@ -32,7 +32,7 @@ export default async function PrivacyPolicyPage() {
             >
               {privacyPolicyPage.title}
             </h2>
-            <div>
+            <div className='prose max-w-none'>
               {privacyPolicyPage?.content && (
                 <ParsedContent content={JSON.parse(privacyPolicyPage.content)} />
               )}
