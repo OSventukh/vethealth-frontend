@@ -43,7 +43,7 @@ export default async function Post({ slug, parentTopicSlug }: Props) {
         >
           {post.title}
         </h2>
-        <div>
+        <div className="prose max-w-none">
           {post?.content && (
             <ParsedContent content={JSON.parse(post.content)} />
           )}
