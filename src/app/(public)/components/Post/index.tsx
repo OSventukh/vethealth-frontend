@@ -16,7 +16,6 @@ export default async function Post({ slug, parentTopicSlug }: Props) {
     tags: ['posts'],
   });
 
-  console.log(post);
   const parentTopic = await api.topics.getOne({
     slug: parentTopicSlug,
     tags: ['topics'],
@@ -38,7 +37,7 @@ export default async function Post({ slug, parentTopicSlug }: Props) {
         ]}
         currentPage={{ label: post?.title || '' }}
       />
-      <div className="mt-4 rounded-xl border-[1px] border-border bg-white p-8">
+      <div className="mt-4 rounded-xl border-[1px] border-border bg-white p-4 md:p-8">
         <h2
           className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
         >

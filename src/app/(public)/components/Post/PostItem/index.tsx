@@ -25,13 +25,13 @@ export default function PostItem({ post, topic }: Props) {
         )}
         <header>
           <h3
-            className={`${raleway.className} my-4 px-4 text-center text-lg font-[600] uppercase`}
+            className={`${raleway.className} my-2 md:my-4 px-4 text-center text-lg font-[600] uppercase`}
           >
             {post.title}
           </h3>
         </header>
         {post?.content && (
-          <div className="px-4">
+          <div className=" px-4 py-0 md:px-8">
             <ParsedContent content={JSON.parse(post.content)} excerpt />
           </div>
         )}
