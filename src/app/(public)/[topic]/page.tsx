@@ -2,6 +2,7 @@ import { api } from '@/api';
 import TopicContent from '../components/topics/TopicContent';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { notFound } from 'next/navigation';
+import { TAGS } from '@/api/constants/tags';
 
 type Props = {
   params: {
@@ -15,8 +16,9 @@ export default async function TopicPage({ params, searchParams }: Props) {
   const topic = await api.topics.getOne({
     slug: params.topic,
     query: { include: 'children' },
-    tags: ['topics'],
+    tags: [TAGS.TOPICS],
   });
+
 
   if (!topic) {
     return notFound();

@@ -6,6 +6,7 @@ import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
 import { CategoryValues } from '@/utils/validators/form.validator';
 import logger from '@/logger';
+import { TAGS } from '@/api/constants/tags';
 
 type ReturnedData = {
   error: boolean;
@@ -34,7 +35,9 @@ export async function saveCategoryAction(
       throw new Error(result.message);
     }
 
-    revalidateTag('categories');
+    revalidateTag(TAGS.CATEGORIES);
+    revalidateTag(TAGS.TOPICS);
+
 
     return {
       success: true,

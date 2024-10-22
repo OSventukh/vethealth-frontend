@@ -9,6 +9,7 @@ import {
   UpdatePasswordValues,
 } from '@/utils/validators/form.validator';
 import logger from '@/logger';
+import { TAGS } from '@/api/constants/tags';
 
 type ReturnedData = {
   error: boolean;
@@ -43,7 +44,7 @@ export async function saveUserAction(
         throw new Error(result.message);
       }
 
-      revalidateTag('users');
+      revalidateTag(TAGS.USERS);
 
       return {
         success: true,

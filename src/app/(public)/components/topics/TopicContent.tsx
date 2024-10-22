@@ -33,6 +33,7 @@ export default function TopicContent({ topic, params, searchParams }: Props) {
         <Page
           parentTopicSlug={topic.slug}
           topic={params?.slug?.[0] || params.topic}
+          slug={params.slug?.[1] || ''}
         />
       ) : (
         <PostList topic={topic.slug} category={searchParams?.category} />

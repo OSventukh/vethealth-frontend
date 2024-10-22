@@ -4,6 +4,7 @@ import { revalidateTag } from 'next/cache';
 import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
+import { TAGS } from '@/api/constants/tags';
 import logger from '@/logger';
 
 type Props = {
@@ -44,7 +45,8 @@ export async function savePageAction(
     if (!response.ok) {
       throw new Error(result.message);
     }
-    revalidateTag('pages');
+    revalidateTag(TAGS.PAGES);
+    revalidateTag(TAGS.TOPICS);
 
     return {
       success: true,

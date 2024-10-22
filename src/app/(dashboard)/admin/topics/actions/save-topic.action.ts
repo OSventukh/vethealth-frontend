@@ -5,6 +5,7 @@ import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
 import { TopicValues } from '@/utils/validators/form.validator';
+import { TAGS } from '@/api/constants/tags';
 
 type ReturnedData = {
   error: boolean;
@@ -33,7 +34,7 @@ export async function saveTopicAction(
       throw new Error(result.message);
     }
 
-    revalidateTag('topics');
+    revalidateTag(TAGS.TOPICS);
 
     return {
       success: true,

@@ -5,6 +5,7 @@ import { auth } from '@/lib/next-auth/auth';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
 import logger from '@/logger';
+import { TAGS } from '@/api/constants/tags';
 
 type Props = {
   id?: string;
@@ -47,7 +48,8 @@ export async function savePostAction(
       throw new Error(result.message);
     }
 
-    revalidateTag('posts');
+    revalidateTag(TAGS.POSTS);
+    revalidateTag(TAGS.TOPICS);
 
     return {
       success: true,

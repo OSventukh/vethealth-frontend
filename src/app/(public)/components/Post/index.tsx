@@ -3,28 +3,33 @@ import { api } from '@/api';
 import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { notFound } from 'next/navigation';
+import { TAGS } from '@/api/constants/tags';
 
 type Props = {
   parentTopicSlug: string;
+  topicSlug?: string;
   slug: string;
 };
 const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
-export default async function Post({ slug, parentTopicSlug }: Props) {
+export default async function Post({ slug, parentTopicSlug, topicSlug }: Props) {
   const post = await api.posts.getOne({
     slug,
-    tags: ['posts'],
+    tags: [TAGS.POSTS],
   });
 
   const parentTopic = await api.topics.getOne({
     slug: parentTopicSlug,
-    tags: ['topics'],
+    tags: [TAGS.TOPICS],
+    query: { include: 'children' },
   });
 
   if (!post || typeof post === 'string') {
     return notFound();
   }
 
+  const topicTitle = parentTopic?.children?.find((topic) => topic.slug === topicSlug)?.title;
+  
   return (
     <>
       <CustomBreadcrumb
@@ -34,6 +39,7 @@ export default async function Post({ slug, parentTopicSlug }: Props) {
             href: '/' + parentTopic?.slug || '',
             label: parentTopic?.description || parentTopic?.title || '',
           },
+          ...(topicSlug ? [{ href: `/${parentTopic?.slug}/${topicSlug}`, label: topicTitle || '' }] : []),
         ]}
         currentPage={{ label: post?.title || '' }}
       />

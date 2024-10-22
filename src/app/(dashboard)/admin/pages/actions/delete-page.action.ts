@@ -3,6 +3,7 @@ import { revalidateTag } from 'next/cache';
 
 import { auth } from '@/lib/next-auth/auth';
 import logger from '@/logger';
+import { TAGS } from '@/api/constants/tags';
 
 type ReturnedData = {
   error: boolean;
@@ -26,7 +27,9 @@ export async function deletePageAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag('pages');
+    revalidateTag(TAGS.PAGES);
+    revalidateTag(TAGS.TOPICS);
+
 
     return {
       success: true,
