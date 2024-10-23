@@ -223,10 +223,8 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
           'grid-cols-1 md:grid-cols-[1fr_1fr]': gridTamplate === '1fr 1fr',
           'grid-cols-1 md:grid-cols-[1fr_3fr]': gridTamplate === '1fr 3fr',
           'md:grid-cols-2 lg:grid-cols-3': gridTamplate === '1fr 1fr 1fr',
-          'md:grid-cols-[1fr 2fr 1fr] grid-cols-1':
-            gridTamplate === '1fr 2fr 1fr',
-          'grid-cols-1 md:grid-cols-[1fr 1fr 1fr 1fr]':
-            gridTamplate === '1fr 1fr 1fr 1fr',
+          'md:grid-cols-[1fr_2fr_1fr] grid-cols-1': gridTamplate === '1fr 2fr 1fr',
+          'grid-cols-1 sm:grid-cols-2 md:grid-cols-4': gridTamplate === '1fr 1fr 1fr 1fr',
         })}
       >
         {gridItems}

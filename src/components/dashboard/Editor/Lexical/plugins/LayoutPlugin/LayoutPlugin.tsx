@@ -18,6 +18,7 @@ import { $insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
 import {
   $createParagraphNode,
   $getNodeByKey,
+  $isParagraphNode,
   COMMAND_PRIORITY_EDITOR,
   createCommand,
 } from 'lexical';
@@ -67,6 +68,10 @@ export function LayoutPlugin(): null {
 
             $insertNodeToNearestRoot(container);
             container.selectStart();
+
+            // Add a paragraph after the layout container
+            const paragraphNode = $createParagraphNode();
+            container.insertAfter(paragraphNode);
           });
 
           return true;
@@ -108,6 +113,12 @@ export function LayoutPlugin(): null {
             }
 
             container.setTemplateColumns(template);
+            // Перевірка і додавання порожнього параграфа після макета
+            const nextSibling = container.getNextSibling();
+            if (!nextSibling || !$isParagraphNode(nextSibling)) {
+              const paragraphNode = $createParagraphNode();
+              container.insertAfter(paragraphNode);
+            }
           });
 
           return true;
