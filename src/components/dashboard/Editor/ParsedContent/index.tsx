@@ -69,7 +69,7 @@ const handleFormatting = (str: string, format: number) => {
   return element;
 };
 
-const HandleParagraphChildren = ({ items }: any): React.ReactNode => {
+const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
   const text = items.map((child: any) => {
     if (child.type === 'text') {
       return <>{handleFormatting(child.text?.trim(), child.format)}</>;
@@ -106,7 +106,7 @@ const HandleListItem = ({ items }: any): React.ReactNode => {
   const list = items.map((item: any) => {
     return (
       <li key={generateRandomKey()}>
-        <HandleParagraphChildren items={item.children} />
+        <HandleTextNodeChildren items={item.children} />
       </li>
     );
   });
@@ -120,30 +120,18 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
   const currentNodeType = node.type;
 
   if (currentNodeType === 'heading') {
-    const tag = node.tag;
-    if (tag === 'h1') {
-      return <h1>{node.children[0].text}</h1>;
-    }
+    const HeadingTag = node.tag;
 
-    if (tag === 'h2') {
-      return <h2>{node.children[0].text}</h2>;
-    }
-
-    if (tag === 'h3') {
-      return <h3>{node?.children[0]?.text}</h3>;
-    }
-
-    if (tag === 'h4') {
-      return <h4>{node.children[0].text}</h4>;
-    }
-
-    if (tag === 'h5') {
-      return <h5>{node.children[0].text}</h5>;
-    }
-
-    if (tag === 'h4') {
-      return <h6>{node.children[0].text}</h6>;
-    }
+    return (
+      <HeadingTag
+        className={clsx('text-left', {
+          'text-center': node.format === 'center',
+          'text-right': node.format === 'right',
+        })}
+      >
+        <HandleTextNodeChildren items={children} />
+      </HeadingTag>
+    );
   }
 
   if (currentNodeType === 'paragraph' && node.children[0]?.type == 'image') {
@@ -187,7 +175,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
           'text-right': node.format === 'right',
         })}
       >
-        <HandleParagraphChildren items={children} />
+        <HandleTextNodeChildren items={children} />
       </p>
     );
   }
@@ -223,8 +211,10 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
           'grid-cols-1 md:grid-cols-[1fr_1fr]': gridTamplate === '1fr 1fr',
           'grid-cols-1 md:grid-cols-[1fr_3fr]': gridTamplate === '1fr 3fr',
           'md:grid-cols-2 lg:grid-cols-3': gridTamplate === '1fr 1fr 1fr',
-          'md:grid-cols-[1fr_2fr_1fr] grid-cols-1': gridTamplate === '1fr 2fr 1fr',
-          'grid-cols-1 sm:grid-cols-2 md:grid-cols-4': gridTamplate === '1fr 1fr 1fr 1fr',
+          'grid-cols-1 md:grid-cols-[1fr_2fr_1fr]':
+            gridTamplate === '1fr 2fr 1fr',
+          'grid-cols-1 sm:grid-cols-2 md:grid-cols-4':
+            gridTamplate === '1fr 1fr 1fr 1fr',
         })}
       >
         {gridItems}

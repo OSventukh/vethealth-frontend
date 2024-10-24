@@ -53,7 +53,7 @@ export default async function Page({ topic, parentTopicSlug, slug }: Props) {
             >
               {page?.title}
             </h2>
-            <div>
+            <div className="prose max-w-none">
               <ParsedContent content={JSON.parse(page?.content || '')} />
             </div>
           </div>
