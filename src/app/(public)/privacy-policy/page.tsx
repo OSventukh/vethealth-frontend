@@ -13,7 +13,6 @@ export default async function PrivacyPolicyPage() {
     slug: 'privacy-policy',
     tags: ['pages'],
   });
-  
 
   if (!privacyPolicyPage) return notFound();
 
@@ -32,9 +31,11 @@ export default async function PrivacyPolicyPage() {
             >
               {privacyPolicyPage.title}
             </h2>
-            <div className='prose max-w-none'>
+            <div className="prose max-w-none">
               {privacyPolicyPage?.content && (
-                <ParsedContent content={JSON.parse(privacyPolicyPage.content)} />
+                <ParsedContent
+                  content={JSON.parse(privacyPolicyPage.content)}
+                />
               )}
             </div>
           </div>

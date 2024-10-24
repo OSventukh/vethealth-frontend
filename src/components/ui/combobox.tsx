@@ -4,9 +4,9 @@ import { CheckIcon, ChevronDown, X } from 'lucide-react';
 import {
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from './command';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { Badge } from '@/components/ui/badge';
@@ -148,13 +148,15 @@ export const Combobox = <T,>({
       >
         <Command>
           <CommandInput placeholder="Search numbers..." className="h-9" />
-          <CommandEmpty>No result found.</CommandEmpty>
-          <CommandGroup>
-            {transformedOptions.map((option, index) => {
+          <CommandList>
+            <CommandEmpty>No result found.</CommandEmpty>
+
+            {transformedOptions.map((option) => {
               const isSelected = selectedValues.has(option.value);
+
               return (
                 <CommandItem
-                  key={index}
+                  key={option.value}
                   onSelect={() => {
                     if (isSelected) {
                       setSelectedValues((prev) => {
@@ -185,7 +187,7 @@ export const Combobox = <T,>({
                 </CommandItem>
               );
             })}
-          </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>

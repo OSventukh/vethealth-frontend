@@ -38,7 +38,6 @@ export async function saveCategoryAction(
     revalidateTag(TAGS.CATEGORIES);
     revalidateTag(TAGS.TOPICS);
 
-
     return {
       success: true,
       redirect: !edit && result.slug,

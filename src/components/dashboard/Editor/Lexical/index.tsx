@@ -75,7 +75,7 @@ export default function Lexical({
           <RichTextPlugin
             contentEditable={
               <div
-                className="relative mt-2 flex-auto resize-y gap-1 prose max-w-none"
+                className="prose relative mt-2 max-w-none flex-auto resize-y gap-1"
                 ref={onRef}
               >
                 <input

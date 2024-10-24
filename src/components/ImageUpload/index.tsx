@@ -58,9 +58,9 @@ export default function ImageUpload({
       <label>
         {imageURL ? (
           <div className="group relative flex aspect-square w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-md">
-            <div className="invisible absolute z-10 flex h-full w-full items-center justify-center bg-slate-500 bg-opacity-50 group-hover:visible">
+            <div className="invisible absolute z-10 flex h-full w-full items-center justify-center bg-slate-500 bg-opacity-50 uppercase group-hover:visible">
               <ImageIcon />
-              CHANGE IMAGE
+              Змінити
             </div>
             <Image
               src={imageURL}
@@ -91,8 +91,12 @@ export default function ImageUpload({
         />
       </label>
       {imageURL && (
-        <Button type="button" onClick={imageDeleteHandler}>
-          <Trash2 /> Delete image
+        <Button
+          type="button"
+          variant="destructive"
+          onClick={imageDeleteHandler}
+        >
+          <Trash2 /> Видалити картинку
         </Button>
       )}
     </div>

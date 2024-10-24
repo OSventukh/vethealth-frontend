@@ -30,7 +30,6 @@ export async function deletePageAction(id: string): Promise<ReturnedData> {
     revalidateTag(TAGS.PAGES);
     revalidateTag(TAGS.TOPICS);
 
-
     return {
       success: true,
       error: false,

@@ -28,7 +28,6 @@ export default async function Page({ topic, parentTopicSlug, slug }: Props) {
     tags: [TAGS.TOPICS],
   });
   if (!topicResponse?.page && !slug) {
-
     return notFound();
   }
 
@@ -59,9 +58,9 @@ export default async function Page({ topic, parentTopicSlug, slug }: Props) {
           </div>
         </>
       )}
-    {
-      slug && <Post slug={slug} parentTopicSlug={parentTopicSlug} topicSlug={topic} />
-    }
+      {slug && (
+        <Post slug={slug} parentTopicSlug={parentTopicSlug} topicSlug={topic} />
+      )}
     </>
   );
 }

@@ -55,7 +55,6 @@ export default function EditTopic({
   const [showParent, setIsShowParent] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition();
-
   const { toast } = useToast();
   const form = useForm<TopicValues>({
     resolver: zodResolver(createTopicSchema),
@@ -306,7 +305,7 @@ export default function EditTopic({
               name="image"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Картинка</FormLabel>
+                  <FormLabel className="hidden">Картинка</FormLabel>
                   <FormControl>
                     <ImageUpload
                       field="topic"

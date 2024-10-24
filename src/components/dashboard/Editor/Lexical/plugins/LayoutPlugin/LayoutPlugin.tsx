@@ -1,6 +1,11 @@
-import type {ElementNode, LexicalCommand, LexicalNode, NodeKey} from 'lexical';
+import type {
+  ElementNode,
+  LexicalCommand,
+  LexicalNode,
+  NodeKey,
+} from 'lexical';
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $findMatchingParent,
   $insertNodeToNearestRoot,
@@ -19,7 +24,7 @@ import {
   KEY_ARROW_RIGHT_COMMAND,
   KEY_ARROW_UP_COMMAND,
 } from 'lexical';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
 import {
   $createLayoutContainerNode,
@@ -38,14 +43,14 @@ export const INSERT_LAYOUT_COMMAND: LexicalCommand<string> =
 export const UPDATE_LAYOUT_COMMAND: LexicalCommand<{
   template: string;
   nodeKey: NodeKey;
-}> = createCommand<{template: string; nodeKey: NodeKey}>();
+}> = createCommand<{ template: string; nodeKey: NodeKey }>();
 
 export function LayoutPlugin(): null {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     if (!editor.hasNodes([LayoutContainerNode, LayoutItemNode])) {
       throw new Error(
-        'LayoutPlugin: LayoutContainerNode, or LayoutItemNode not registered on editor',
+        'LayoutPlugin: LayoutContainerNode, or LayoutItemNode not registered on editor'
       );
     }
 
@@ -58,7 +63,7 @@ export function LayoutPlugin(): null {
       ) {
         const container = $findMatchingParent(
           selection.anchor.getNode(),
-          $isLayoutContainerNode,
+          $isLayoutContainerNode
         );
 
         if ($isLayoutContainerNode(container)) {
@@ -97,12 +102,12 @@ export function LayoutPlugin(): null {
       editor.registerCommand(
         KEY_ARROW_DOWN_COMMAND,
         () => $onEscape(false),
-        COMMAND_PRIORITY_LOW,
+        COMMAND_PRIORITY_LOW
       ),
       editor.registerCommand(
         KEY_ARROW_RIGHT_COMMAND,
         () => $onEscape(false),
-        COMMAND_PRIORITY_LOW,
+        COMMAND_PRIORITY_LOW
       ),
       // When layout is the first child pressing up/left arrow will insert paragraph
       // above it to allow adding more content. It's similar what $insertBlockNode
@@ -111,12 +116,12 @@ export function LayoutPlugin(): null {
       editor.registerCommand(
         KEY_ARROW_UP_COMMAND,
         () => $onEscape(true),
-        COMMAND_PRIORITY_LOW,
+        COMMAND_PRIORITY_LOW
       ),
       editor.registerCommand(
         KEY_ARROW_LEFT_COMMAND,
         () => $onEscape(true),
-        COMMAND_PRIORITY_LOW,
+        COMMAND_PRIORITY_LOW
       ),
       editor.registerCommand(
         INSERT_LAYOUT_COMMAND,
@@ -127,7 +132,7 @@ export function LayoutPlugin(): null {
 
             for (let i = 0; i < itemsCount; i++) {
               container.append(
-                $createLayoutItemNode().append($createParagraphNode()),
+                $createLayoutItemNode().append($createParagraphNode())
               );
             }
 
@@ -137,11 +142,11 @@ export function LayoutPlugin(): null {
 
           return true;
         },
-        COMMAND_PRIORITY_EDITOR,
+        COMMAND_PRIORITY_EDITOR
       ),
       editor.registerCommand(
         UPDATE_LAYOUT_COMMAND,
-        ({template, nodeKey}) => {
+        ({ template, nodeKey }) => {
           editor.update(() => {
             const container = $getNodeByKey<LexicalNode>(nodeKey);
 
@@ -151,14 +156,14 @@ export function LayoutPlugin(): null {
 
             const itemsCount = getItemsCountFromTemplate(template);
             const prevItemsCount = getItemsCountFromTemplate(
-              container.getTemplateColumns(),
+              container.getTemplateColumns()
             );
 
             // Add or remove extra columns if new template does not match existing one
             if (itemsCount > prevItemsCount) {
               for (let i = prevItemsCount; i < itemsCount; i++) {
                 container.append(
-                  $createLayoutItemNode().append($createParagraphNode()),
+                  $createLayoutItemNode().append($createParagraphNode())
                 );
               }
             } else if (itemsCount < prevItemsCount) {
@@ -176,7 +181,7 @@ export function LayoutPlugin(): null {
 
           return true;
         },
-        COMMAND_PRIORITY_EDITOR,
+        COMMAND_PRIORITY_EDITOR
       ),
       // Structure enforcing transformers for each node type. In case nesting structure is not
       // "Container > Item" it'll unwrap nodes and convert it back
@@ -199,7 +204,7 @@ export function LayoutPlugin(): null {
           }
           node.remove();
         }
-      }),
+      })
     );
   }, [editor]);
 

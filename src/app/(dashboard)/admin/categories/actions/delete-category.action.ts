@@ -30,7 +30,6 @@ export async function deleteCategoryAction(id: string): Promise<ReturnedData> {
     revalidateTag(TAGS.CATEGORIES);
     revalidateTag(TAGS.TOPICS);
 
-
     return {
       success: true,
       error: false,

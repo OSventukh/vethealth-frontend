@@ -19,7 +19,6 @@ export default async function TopicPage({ params, searchParams }: Props) {
     tags: [TAGS.TOPICS],
   });
 
-
   if (!topic) {
     return notFound();
   }

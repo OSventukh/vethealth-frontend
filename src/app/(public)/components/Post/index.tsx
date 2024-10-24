@@ -12,7 +12,11 @@ type Props = {
 };
 const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
-export default async function Post({ slug, parentTopicSlug, topicSlug }: Props) {
+export default async function Post({
+  slug,
+  parentTopicSlug,
+  topicSlug,
+}: Props) {
   const post = await api.posts.getOne({
     slug,
     tags: [TAGS.POSTS],
@@ -28,8 +32,10 @@ export default async function Post({ slug, parentTopicSlug, topicSlug }: Props) 
     return notFound();
   }
 
-  const topicTitle = parentTopic?.children?.find((topic) => topic.slug === topicSlug)?.title;
-  
+  const topicTitle = parentTopic?.children?.find(
+    (topic) => topic.slug === topicSlug
+  )?.title;
+
   return (
     <>
       <CustomBreadcrumb
@@ -39,7 +45,14 @@ export default async function Post({ slug, parentTopicSlug, topicSlug }: Props) 
             href: '/' + parentTopic?.slug || '',
             label: parentTopic?.description || parentTopic?.title || '',
           },
-          ...(topicSlug ? [{ href: `/${parentTopic?.slug}/${topicSlug}`, label: topicTitle || '' }] : []),
+          ...(topicSlug
+            ? [
+                {
+                  href: `/${parentTopic?.slug}/${topicSlug}`,
+                  label: topicTitle || '',
+                },
+              ]
+            : []),
         ]}
         currentPage={{ label: post?.title || '' }}
       />

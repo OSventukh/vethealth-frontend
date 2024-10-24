@@ -15,7 +15,10 @@ export default async function EditTopicPage({ params }: Props) {
     query: { include: 'parent,categories,children' },
   });
   const categories = await api.categories.getMany({ tags: ['categories'] });
-  const topics = await api.topics.getMany({ tags: ['topics'] });
+  const topics = await api.topics.getMany({
+    tags: ['topics'],
+    query: { include: 'categories' },
+  });
   const pages = await api.pages.getMany({ tags: ['pages'] });
 
   return (
