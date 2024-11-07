@@ -185,7 +185,7 @@ export function exportTableCellsToHTML(
   return table;
 }
 
-export class TableNode extends DecoratorNode<JSX.Element> {
+export class TableNode extends DecoratorNode<React.ReactElement> {
   __rows: Rows;
 
   static getType(): string {
@@ -377,7 +377,7 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     }
   }
 
-  decorate(_: LexicalEditor, config: EditorConfig): JSX.Element {
+  decorate(_: LexicalEditor, config: EditorConfig): React.ReactElement {
     return (
       <Suspense>
         <TableComponent

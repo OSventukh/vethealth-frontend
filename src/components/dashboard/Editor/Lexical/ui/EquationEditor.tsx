@@ -22,7 +22,7 @@ type BaseEquationEditorProps = {
 function EquationEditor(
   { equation, setEquation, inline }: BaseEquationEditorProps,
   forwardedRef: Ref<HTMLInputElement | HTMLTextAreaElement>
-): JSX.Element {
+): React.ReactElement {
   const onChange = (event: ChangeEvent) => {
     setEquation((event.target as HTMLInputElement).value);
   };

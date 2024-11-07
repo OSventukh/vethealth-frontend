@@ -3,11 +3,12 @@ import { Suspense } from 'react';
 import Forgot from '../components/Forgot';
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     forgotPassword?: string;
-  };
+  }>;
 };
-export default function LoginPage({ searchParams }: Props) {
+export default async function LoginPage(props: Props) {
+  const searchParams = await props.searchParams;
   const { forgotPassword } = searchParams;
   return (
     <Suspense>

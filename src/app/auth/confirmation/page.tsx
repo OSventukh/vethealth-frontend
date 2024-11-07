@@ -3,11 +3,12 @@ import { api } from '@/api';
 import Confirmation from '../components/Confirmation';
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     hash: string;
-  };
+  }>;
 };
-export default async function ConfirmationPage({ searchParams }: Props) {
+export default async function ConfirmationPage(props: Props) {
+  const searchParams = await props.searchParams;
   const { hash } = searchParams;
   try {
     const user = await api.auth.getPendingUser(hash);

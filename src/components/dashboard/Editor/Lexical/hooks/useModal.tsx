@@ -12,12 +12,15 @@ import * as React from 'react';
 import Modal from '../ui/Modal';
 
 export default function useModal(): [
-  JSX.Element | null,
-  (title: string, showModal: (onClose: () => void) => JSX.Element) => void,
+  React.ReactElement | null,
+  (
+    title: string,
+    showModal: (onClose: () => void) => React.ReactElement
+  ) => void,
 ] {
   const [modalContent, setModalContent] = useState<null | {
     closeOnClickOutside: boolean;
-    content: JSX.Element;
+    content: React.ReactElement;
     title: string;
   }>(null);
 
@@ -45,7 +48,7 @@ export default function useModal(): [
     (
       title: string,
       // eslint-disable-next-line no-shadow
-      getContent: (onClose: () => void) => JSX.Element,
+      getContent: (onClose: () => void) => React.ReactElement,
       closeOnClickOutside = false
     ) => {
       setModalContent({

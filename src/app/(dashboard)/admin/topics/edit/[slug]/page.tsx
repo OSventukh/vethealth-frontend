@@ -4,9 +4,10 @@ import { api } from '@/api';
 import { auth } from '@/lib/next-auth/auth';
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
-export default async function EditTopicPage({ params }: Props) {
+export default async function EditTopicPage(props: Props) {
+  const params = await props.params;
   const session = await auth();
   const { slug } = params;
   const topic = await api.topics.getOne({

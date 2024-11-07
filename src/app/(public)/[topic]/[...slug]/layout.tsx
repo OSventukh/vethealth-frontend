@@ -4,10 +4,10 @@ import { SITE_TITLE } from '@/utils/constants/generals';
 import { notFound } from 'next/navigation';
 
 type Props = {
-  params: {
+  params: Promise<{
     topic?: string;
     slug?: string[];
-  };
+  }>;
 };
 
 async function getTopicMetadata(topicSlug: string): Promise<Metadata> {
@@ -55,7 +55,8 @@ async function getPostMetadata(postSlug: string): Promise<Metadata> {
   };
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const { topic, slug } = params;
   if (!topic || !slug) return notFound();
   const topicSlug = topic;

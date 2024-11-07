@@ -3,9 +3,10 @@ import EditCategory from '../../components/EditCategory';
 import { api } from '@/api';
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
-export default async function CategoryCreatePage({ params }: Props) {
+export default async function CategoryCreatePage(props: Props) {
+  const params = await props.params;
   const categories = await api.categories.getMany({});
   const session = await auth();
   const { slug } = params;

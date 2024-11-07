@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -8,7 +6,6 @@
  *
  */
 
-import * as React from 'react';
 import {
   createContext,
   ReactNode,
@@ -38,7 +35,7 @@ export const SharedAutocompleteContext = ({
   children,
 }: {
   children: ReactNode;
-}): JSX.Element => {
+}): React.ReactElement => {
   const context: ContextShape = useMemo(() => {
     let suggestion: Suggestion | null = null;
     const listeners: Set<CallbackFn> = new Set();
@@ -52,7 +49,7 @@ export const SharedAutocompleteContext = ({
       },
       (newSuggestion: Suggestion) => {
         suggestion = newSuggestion;
-        for (const listener of listeners as any) {
+        for (const listener of listeners) {
           listener(newSuggestion);
         }
       },

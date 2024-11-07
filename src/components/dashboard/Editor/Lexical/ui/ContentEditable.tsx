@@ -15,6 +15,6 @@ export default function LexicalContentEditable({
   className,
 }: {
   className?: string;
-}): JSX.Element {
+}): React.ReactElement {
   return <ContentEditable className={className || 'ContentEditable__root'} />;
 }

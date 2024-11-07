@@ -7,16 +7,17 @@ import { topicQuerySchema } from '@/utils/validators/query.validator';
 import CreateButton from '@/components/ui/create-button';
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     size?: string;
     sort?: string;
     orderBy?: string;
     title?: string;
-  };
+  }>;
 };
 
-export default async function TopicsPage({ searchParams }: Props) {
+export default async function TopicsPage(props: Props) {
+  const searchParams = await props.searchParams;
   const topicQueryValidation = topicQuerySchema.safeParse({
     ...searchParams,
     include: 'children',

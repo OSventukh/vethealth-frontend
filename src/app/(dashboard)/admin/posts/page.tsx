@@ -6,17 +6,18 @@ import { PenSquare } from 'lucide-react';
 import CreateButton from '@/components/ui/create-button';
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     size?: string;
     sort?: string;
     orderBy?: string;
     title?: string;
     status?: string;
-  };
+  }>;
 };
 
-export default async function PostsPage({ searchParams }: Props) {
+export default async function PostsPage(props: Props) {
+  const searchParams = await props.searchParams;
   const postQueryValidation = postQuerySchema.safeParse(searchParams);
   const posts = await api.posts.getMany({
     query: {

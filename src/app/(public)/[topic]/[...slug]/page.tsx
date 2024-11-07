@@ -7,12 +7,13 @@ import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { TAGS } from '@/api/constants/tags';
 
 type Props = {
-  params: {
+  params: Promise<{
     topic: string;
     slug: string[];
-  };
+  }>;
 };
-export default async function SlugPage({ params }: Props) {
+export default async function SlugPage(props: Props) {
+  const params = await props.params;
   const topicSlug = params?.slug.length > 0 ? params?.slug[0] : params.topic;
   const topic = await api.topics.getOne({
     slug: topicSlug,

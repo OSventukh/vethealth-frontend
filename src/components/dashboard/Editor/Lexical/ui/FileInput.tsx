@@ -22,7 +22,7 @@ export default function FileInput({
   label,
   onChange,
   'data-test-id': dataTestId,
-}: Props): JSX.Element {
+}: Props): React.ReactElement {
   return (
     <div className="Input__wrapper">
       <label className="Input__label">{label}</label>

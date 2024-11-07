@@ -17,7 +17,7 @@ import {
 type Nav = {
   title: string;
   route: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
 };
 
 const navs: Nav[] = [

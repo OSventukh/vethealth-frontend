@@ -6,16 +6,17 @@ import { categoryQuerySchema } from '@/utils/validators/query.validator';
 import CreateButton from '@/components/ui/create-button';
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     size?: string;
     sort?: string;
     orderBy?: string;
     name?: string;
-  };
+  }>;
 };
 
-export default async function CategoriesPage({ searchParams }: Props) {
+export default async function CategoriesPage(props: Props) {
+  const searchParams = await props.searchParams;
   const categoryQueryValidation = categoryQuerySchema.safeParse({
     ...searchParams,
     include: 'children',

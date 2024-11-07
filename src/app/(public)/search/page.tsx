@@ -7,11 +7,12 @@ import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import Description from '../components/Description';
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     query: string;
-  };
+  }>;
 };
-export default async function SearchPage({ searchParams }: Props) {
+export default async function SearchPage(props: Props) {
+  const searchParams = await props.searchParams;
   const { query } = searchParams;
 
   const posts = await api.search({ query, revalidate: 1 });

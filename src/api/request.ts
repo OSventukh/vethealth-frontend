@@ -72,6 +72,10 @@ export const get = async <Response>({
 
     return result;
   } catch (error) {
+    if (typeof window === 'undefined') {
+      const { default: logger } = await import('@/logger');
+      logger.error(error);
+    }
     return null;
   }
 };

@@ -3,11 +3,10 @@ import Link from 'next/link';
 import { api } from '@/api';
 import { auth } from '@/lib/next-auth/auth';
 
-export default async function UserProfilePage({
-  params,
-}: {
-  params: { id: string };
+export default async function UserProfilePage(props: {
+  params: Promise<{ id: string }>;
 }) {
+  const params = await props.params;
   const session = await auth();
 
   const user = await api.users.getOne({ id: params.id, token: session?.token });

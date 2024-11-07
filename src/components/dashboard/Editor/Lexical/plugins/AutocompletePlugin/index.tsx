@@ -83,7 +83,7 @@ function useQuery(): (searchText: string) => SearchPromise {
   }, []);
 }
 
-export default function AutocompletePlugin(): JSX.Element | null {
+export default function AutocompletePlugin(): React.ReactElement | null {
   const [editor] = useLexicalComposerContext();
   const [, setSuggestion] = useSharedAutocompleteContext();
   const query = useQuery();

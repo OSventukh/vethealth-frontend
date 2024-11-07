@@ -174,7 +174,7 @@ function BlockFormatDropDown({
   // rootType: keyof typeof rootTypeToRootName;
   editor: LexicalEditor;
   disabled?: boolean;
-}): JSX.Element {
+}): React.ReactElement {
   const formatParagraph = () => {
     editor.update(() => {
       const selection = $getSelection();
@@ -280,7 +280,7 @@ function BlockFormatDropDown({
   );
 }
 
-function Divider(): JSX.Element {
+function Divider(): React.ReactElement {
   return <div className="divider" />;
 }
 
@@ -340,7 +340,7 @@ export default function ToolbarPlugin({
   setIsLinkEditMode,
 }: {
   setIsLinkEditMode: Dispatch<boolean>;
-}): JSX.Element {
+}): React.ReactElement {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const [blockType, setBlockType] =

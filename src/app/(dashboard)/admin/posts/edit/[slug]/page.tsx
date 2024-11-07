@@ -2,9 +2,10 @@ import { api } from '@/api';
 import { auth } from '@/lib/next-auth/auth';
 import EditPost from '../../components/EditPost';
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
-export default async function EditPostPage({ params }: Props) {
+export default async function EditPostPage(props: Props) {
+  const params = await props.params;
   const session = await auth();
 
   const { slug } = params;

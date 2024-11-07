@@ -5,14 +5,16 @@ import { notFound } from 'next/navigation';
 import { TAGS } from '@/api/constants/tags';
 
 type Props = {
-  params: {
+  params: Promise<{
     topic: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     category?: string;
-  };
+  }>;
 };
-export default async function TopicPage({ params, searchParams }: Props) {
+export default async function TopicPage(props: Props) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const topic = await api.topics.getOne({
     slug: params.topic,
     query: { include: 'children' },

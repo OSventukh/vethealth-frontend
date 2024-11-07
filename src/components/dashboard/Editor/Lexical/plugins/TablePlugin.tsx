@@ -35,10 +35,10 @@ export type InsertTableCommandPayload = Readonly<{
 
 export type CellContextShape = {
   cellEditorConfig: null | CellEditorConfig;
-  cellEditorPlugins: null | JSX.Element | Array<JSX.Element>;
+  cellEditorPlugins: null | React.ReactElement | Array<React.ReactElement>;
   set: (
     cellEditorConfig: null | CellEditorConfig,
-    cellEditorPlugins: null | JSX.Element | Array<JSX.Element>
+    cellEditorPlugins: null | React.ReactElement | Array<React.ReactElement>
   ) => void;
 };
 
@@ -61,10 +61,10 @@ export const CellContext = createContext<CellContextShape>({
   },
 });
 
-export function TableContext({ children }: { children: JSX.Element }) {
+export function TableContext({ children }: { children: React.ReactElement }) {
   const [contextValue, setContextValue] = useState<{
     cellEditorConfig: null | CellEditorConfig;
-    cellEditorPlugins: null | JSX.Element | Array<JSX.Element>;
+    cellEditorPlugins: null | React.ReactElement | Array<React.ReactElement>;
   }>({
     cellEditorConfig: null,
     cellEditorPlugins: null,
@@ -93,7 +93,7 @@ export function InsertTableDialog({
 }: {
   activeEditor: LexicalEditor;
   onClose: () => void;
-}): JSX.Element {
+}): React.ReactElement {
   const [rows, setRows] = useState('5');
   const [columns, setColumns] = useState('5');
   const [isDisabled, setIsDisabled] = useState(true);
@@ -150,7 +150,7 @@ export function InsertNewTableDialog({
 }: {
   activeEditor: LexicalEditor;
   onClose: () => void;
-}): JSX.Element {
+}): React.ReactElement {
   const [rows, setRows] = useState('');
   const [columns, setColumns] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
@@ -202,8 +202,8 @@ export function TablePlugin({
   children,
 }: {
   cellEditorConfig: CellEditorConfig;
-  children: JSX.Element | Array<JSX.Element>;
-}): JSX.Element | null {
+  children: React.ReactElement | Array<React.ReactElement>;
+}): React.ReactElement | null {
   const [editor] = useLexicalComposerContext();
   const cellContext = useContext(CellContext);
 

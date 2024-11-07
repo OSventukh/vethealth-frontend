@@ -9,7 +9,13 @@ export default function Multiselect<
   return (
     <Select
       classNames={{
-        control: ({ isFocused, isDisabled }) =>
+        control: ({
+          isFocused,
+          isDisabled,
+        }: {
+          isFocused: boolean;
+          isDisabled: boolean;
+        }) =>
           clsx(
             'flex h-10 w-full h-min items-center justify-between rounded-md border border-input bg-background px-8 py-2 text-sm ring-offset-background placeholder:text-muted-foreground [&>span]:line-clamp-1',
             {

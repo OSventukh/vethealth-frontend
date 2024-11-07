@@ -7,16 +7,17 @@ import { auth } from '@/lib/next-auth/auth';
 import CreateButton from '@/components/ui/create-button';
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     size?: string;
     sort?: string;
     orderBy?: string;
     title?: string;
-  };
+  }>;
 };
 
-export default async function UsersPage({ searchParams }: Props) {
+export default async function UsersPage(props: Props) {
+  const searchParams = await props.searchParams;
   const userQueryValidation = userQuerySchema.safeParse(searchParams);
   const session = await auth();
 

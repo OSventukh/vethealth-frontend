@@ -94,7 +94,7 @@ export default function Modal({
   closeOnClickOutside?: boolean;
   onClose: () => void;
   title: string;
-}): JSX.Element {
+}): React.ReactElement {
   return createPortal(
     <PortalImpl
       onClose={onClose}
