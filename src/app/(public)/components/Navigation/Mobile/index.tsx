@@ -5,6 +5,7 @@ import {
   SheetContent,
   SheetTrigger,
   SheetClose,
+  SheetTitle,
 } from '@/components/ui/sheet';
 import { CategoryResponse } from '@/api/types/categories.type';
 import {
@@ -13,6 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 type Props = {
   items: CategoryResponse[];
@@ -24,6 +26,9 @@ export default function MobileNavigation({ items }: Props) {
       <Sheet>
         <SheetTrigger className="sm:hidden">
           <Menu />
+          <VisuallyHidden asChild>
+            <SheetTitle>Меню</SheetTitle>
+          </VisuallyHidden>
         </SheetTrigger>
         <SheetContent side="left">
           <Accordion type="single" collapsible className="mt-4">

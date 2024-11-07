@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Sheet,
+  SheetTitle,
   SheetContent,
   SheetTrigger,
   SheetClose,
@@ -16,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { searchSchema, SearchValues } from '@/utils/validators/form.validator';
@@ -27,6 +29,7 @@ import { Card } from '@/components/ui/card';
 import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
 import Link from 'next/link';
 import { LoadingSpinner } from '@/components/ui/custom/loading';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 export default function SearchBar() {
   const [query, setQuery] = useState('');
@@ -119,6 +122,9 @@ export default function SearchBar() {
         <SheetTrigger>
           <Search />
         </SheetTrigger>
+        <VisuallyHidden asChild>
+        <SheetTitle>Пошук</SheetTitle>
+        </VisuallyHidden>
         <SheetContent side="top" className="bg-[rgb(180,239,232)] px-0">
           <div className="container">
             <Form {...form}>
