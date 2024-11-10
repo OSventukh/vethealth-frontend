@@ -7,7 +7,9 @@ type ImageUploadReturn = {
   message?: string;
   image?: {
     id: string;
+    host: string;
     path: string;
+    relativePath: string;
   };
 };
 
@@ -26,7 +28,6 @@ export const imageUploadAction = async (
     });
 
     const result = await response.json();
-
     if (!response.ok) {
       throw new Error();
     }

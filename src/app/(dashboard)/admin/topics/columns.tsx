@@ -73,6 +73,7 @@ export const topicColumns: ColumnDef<TopicResponse>[] = [
 
     cell: ({ getValue }) => {
       const value = getValue() as ImageType;
+
       return (
         <div className="flex w-10 items-center justify-center overflow-hidden">
           <Image

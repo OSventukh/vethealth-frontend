@@ -98,10 +98,10 @@ export function InsertImageUploadedDialogBody({
         return;
       }
       const formData = new FormData();
-      formData.append('post', files[0]);
+      formData.append('post', files[0]); 
       const result = await imageUploadAction(formData, 'post');
       if (result.image) {
-        setSrc(result.image.path);
+        setSrc(result.image.relativePath);
       }
     });
   };
@@ -243,6 +243,7 @@ img.src = TRANSPARENT_IMAGE;
 
 function onDragStart(event: DragEvent): boolean {
   const node = getImageNodeInSelection();
+
   if (!node) {
     return false;
   }

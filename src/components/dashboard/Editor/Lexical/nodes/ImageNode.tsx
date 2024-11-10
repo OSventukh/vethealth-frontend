@@ -192,10 +192,17 @@ export class ImageNode extends DecoratorNode<React.ReactElement> {
   }
 
   decorate(): React.ReactElement {
+    const isAbsolutePath =
+      this.__src.startsWith('http://') || this.__src.startsWith('https://');
+
+    const src = isAbsolutePath
+      ? this.__src
+      : `${process.env.NEXT_PUBLIC_IMAGE_SERVER}${this.__src}`;
+
     return (
       <Suspense fallback={null}>
         <ImageComponent
-          src={this.__src}
+          src={src}
           altText={this.__altText}
           width={this.__width}
           height={this.__height}
@@ -222,6 +229,7 @@ export function $createImageNode({
   caption,
   key,
 }: ImagePayload): ImageNode {
+
   return $applyNodeReplacement(
     new ImageNode(
       src,

@@ -39,6 +39,7 @@ export async function forgotAction(
 
     if (!response.ok && response.status !== 422 && response.status !== 400) {
       const result = await response.json();
+      console.log(result);
       throw new Error(result.message);
     }
 
@@ -51,6 +52,7 @@ export async function forgotAction(
         'Якщо користувач з таким email існує, він отримає лист з інструкціями по відновленню паролю',
     };
   } catch (error: unknown) {
+    console.log(error);
     let message = 'Щось пішло не так';
     logger.error(
       error instanceof Error ? error.message : JSON.stringify(error)

@@ -28,7 +28,8 @@ export const authOptions: NextAuthOptions = {
           });
           return user as User;
         } catch (error) {
-          throw new Error(error instanceof Error ? error.message : 'Something went wrong');
+          console.log(error);
+          return null;
         }
       },
     }),

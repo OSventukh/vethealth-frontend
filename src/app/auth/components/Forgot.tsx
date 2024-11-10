@@ -1,6 +1,5 @@
 'use client';
-import { useRef } from 'react';
-import { useFormState } from 'react-dom';
+import { useRef, useActionState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,7 @@ import AuthCard from './ui/AuthCard';
 import { forgotAction } from '../actions/forgot.action';
 
 export default function Forgot() {
-  const [formState, formAction] = useFormState(forgotAction, {
+  const [formState, formAction] = useActionState(forgotAction, {
     message: '',
     error: false,
     success: false,
