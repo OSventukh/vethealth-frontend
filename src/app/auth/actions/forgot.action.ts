@@ -39,7 +39,7 @@ export async function forgotAction(
 
     if (!response.ok && response.status !== 422 && response.status !== 400) {
       const result = await response.json();
-      console.log(result);
+      console.log('res', result);
       throw new Error(result.message);
     }
 

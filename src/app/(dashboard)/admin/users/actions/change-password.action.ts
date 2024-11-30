@@ -54,7 +54,7 @@ export async function changePasswordAction(
     logger.error(
       error instanceof Error ? error.message : JSON.stringify(error)
     );
-    console.log('error', error);
+   
     if (error instanceof Error) {
       switch (error.message) {
         case SERVER_ERROR.TITLE_MUST_BE_UNIQUE:
