@@ -24,7 +24,7 @@ export default function MobileNavigation({ items }: Props) {
   return (
     <>
       <Sheet>
-        <SheetTrigger className="sm:hidden">
+        <SheetTrigger className="sm:hidden p-2">
           <Menu />
           <VisuallyHidden asChild>
             <SheetTitle>Меню</SheetTitle>

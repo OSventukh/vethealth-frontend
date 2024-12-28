@@ -119,7 +119,7 @@ export default function SearchBar() {
   return (
     <>
       <Sheet>
-        <SheetTrigger>
+        <SheetTrigger className="p-2 md:p-4" title="Пошук">
           <Search />
         </SheetTrigger>
         <VisuallyHidden asChild>
