@@ -2,6 +2,7 @@ import { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 import { api } from '@/api';
+import { JWT } from 'next-auth/jwt';
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -26,9 +27,8 @@ export const authOptions: NextAuthOptions = {
             email: credentials.email,
             password: credentials.password,
           });
-          return user as User;
+          return user as unknown as User;
         } catch (error) {
-          console.log(error);
           return null;
         }
       },
@@ -38,13 +38,13 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) return { ...token, ...user };
 
-      if (new Date().getTime() < token.tokenExpires) return token;
+      if (new Date().getTime() < token.tokenExpires) return token as JWT;
 
       const newTokens = await api.auth.refresh(token.refreshToken);
       return {
         user: token.user,
         ...newTokens,
-      };
+      } as unknown as JWT;
     },
 
     async session({ token, session }) {

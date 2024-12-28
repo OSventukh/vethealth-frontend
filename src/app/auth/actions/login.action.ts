@@ -1,10 +1,6 @@
-'use server';
-import { revalidateTag } from 'next/cache';
-
-import { auth } from '@/lib/next-auth/auth';
+import { signIn } from 'next-auth/react';
 import { ERROR_MESSAGE } from '@/utils/constants/messages';
 import { SERVER_ERROR } from '@/utils/constants/server-error-responses';
-import { LoginValues } from '@/utils/validators/form.validator';
 import logger from '@/logger';
 
 type ReturnedData = {
@@ -15,30 +11,15 @@ type ReturnedData = {
 };
 
 export async function loginAction(
-  credentials: LoginValues
+  state: ReturnedData,
+  data: FormData
 ): Promise<ReturnedData> {
-  const session = await auth();
   try {
-    const response = await fetch(
-      `${process.env.CLIENT_URL}/api/auth/signin/credentials`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session?.token}`,
-        },
-        body: JSON.stringify(credentials),
-      }
-    );
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.message);
-    }
-
-    revalidateTag('admin_users');
-
+    const response = await signIn('credentials', {
+      email: data.get('email') as string,
+      password: data.get('password') as string,
+      redirect: false,
+    });
     return {
       success: true,
       error: false,
