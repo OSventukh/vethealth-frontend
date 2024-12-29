@@ -4,13 +4,15 @@ import Footer from '../components/Footer';
 import { api } from '@/api';
 import { NOT_FOUND_TITLE, SITE_TITLE } from '@/utils/constants/generals';
 
-type Props = {
+type MetadataProps = {
   params: Promise<{
     topic: string;
   }>;
 };
 
-export async function generateMetadata(props: Props): Promise<Metadata> {
+export async function generateMetadata(
+  props: MetadataProps
+): Promise<Metadata> {
   const params = await props.params;
   const topic = await api.topics.getOne({
     slug: params.topic,
@@ -32,14 +34,16 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
-export default async function TopicLayout(props: {
+type TopicLayoutProps = {
   children: React.ReactNode;
   params: Promise<{
     topic: string;
   }>;
-}) {
+};
+export default async function TopicLayout(props: TopicLayoutProps) {
   const params = await props.params;
 
+  console.log('params', params);
   const { children } = props;
 
   return (

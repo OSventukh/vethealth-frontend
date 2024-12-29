@@ -21,7 +21,9 @@
       }
     ],
     "unused-imports/no-unused-imports": "warn",
-    "unused-imports/no-unused-vars": [
+    "unused-imports/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-expressions": "warn",
+    "@typescript-eslint/no-unused-vars": [
       "warn",
       {
         "vars": "all",

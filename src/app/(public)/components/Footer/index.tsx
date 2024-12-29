@@ -1,4 +1,4 @@
-import React from 'react';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -10,7 +10,7 @@ export default function Footer() {
         <nav className="flex justify-center p-2">
           <ul className="flex text-sm text-gray-600">
             <li>
-              <a href="/privacy-policy">Політика конфіденційності</a>
+              <Link href="/privacy-policy">Політика конфіденційності</Link>
             </li>
           </ul>
         </nav>

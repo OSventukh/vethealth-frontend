@@ -8,6 +8,7 @@ declare module 'next-auth' {
     refreshToken: string;
     tokenExpires: number;
   }
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface User extends LoginResponse {}
 }
 

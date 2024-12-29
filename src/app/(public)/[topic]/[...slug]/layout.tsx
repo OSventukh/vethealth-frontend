@@ -74,9 +74,9 @@ export default function TopicLayout({
   children,
 }: {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     topic: string;
-  };
+  }>;
 }) {
   return <>{children}</>;
 }

@@ -98,7 +98,7 @@ export function InsertImageUploadedDialogBody({
         return;
       }
       const formData = new FormData();
-      formData.append('post', files[0]); 
+      formData.append('post', files[0]);
       const result = await imageUploadAction(formData, 'post');
       if (result.image) {
         setSrc(result.image.relativePath);

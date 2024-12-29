@@ -229,7 +229,6 @@ export function $createImageNode({
   caption,
   key,
 }: ImagePayload): ImageNode {
-
   return $applyNodeReplacement(
     new ImageNode(
       src,

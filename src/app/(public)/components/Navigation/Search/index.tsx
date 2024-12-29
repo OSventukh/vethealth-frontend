@@ -123,7 +123,7 @@ export default function SearchBar() {
           <Search />
         </SheetTrigger>
         <VisuallyHidden asChild>
-        <SheetTitle>Пошук</SheetTitle>
+          <SheetTitle>Пошук</SheetTitle>
         </VisuallyHidden>
         <SheetContent side="top" className="bg-[rgb(180,239,232)] px-0">
           <div className="container">
