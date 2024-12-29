@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import { Menu } from 'lucide-react';
 import {
@@ -15,12 +16,15 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { useParams } from 'next/navigation';
 
 type Props = {
   items: CategoryResponse[];
 };
 
 export default function MobileNavigation({ items }: Props) {
+    const params = useParams();
+    const { topic } = params;
   return (
     <>
       <Sheet>
@@ -40,7 +44,7 @@ export default function MobileNavigation({ items }: Props) {
                     showArrow={item.children && item.children.length > 0}
                   >
                     <SheetClose asChild>
-                      <Link href={`?category=${item.slug}`}>{item.name}</Link>
+                      <Link href={`/${topic}?category=${item.slug}`}>{item.name}</Link>
                     </SheetClose>
                   </AccordionTrigger>
                   {item.children && item.children.length > 0 && (
@@ -49,7 +53,7 @@ export default function MobileNavigation({ items }: Props) {
                         {item.children.map((child) => (
                           <li key={child.id}>
                             <SheetClose asChild>
-                              <Link href={`?category=${child.slug}`}>
+                              <Link href={`/${topic}?category=${child.slug}`}>
                                 {child.name}
                               </Link>
                             </SheetClose>
