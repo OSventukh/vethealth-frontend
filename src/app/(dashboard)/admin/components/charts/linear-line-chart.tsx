@@ -12,7 +12,7 @@ export default function LinearLineChart({
   chartData,
   chartConfig,
 }: {
-  chartData: any;
+  chartData: unknown[];
   chartConfig: ChartConfig;
 }) {
   return (
@@ -34,10 +34,7 @@ export default function LinearLineChart({
             tickMargin={8}
             tickFormatter={(value) => value.slice(0, 3)}
           />
-          <ChartTooltip
-            cursor={false}
-            content={<ChartTooltipContent />}
-          />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
           <Line
             dataKey="visitors"
             type="linear"

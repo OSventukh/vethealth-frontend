@@ -1,5 +1,3 @@
-import { format, parse } from 'date-fns';
-import { uk } from 'date-fns/locale';
 import { ChartConfig } from '@/components/ui/chart';
 import { dataClientReport } from '@/lib/ga/dataclientreport';
 
@@ -23,14 +21,12 @@ export default async function VisitorsByDate({ ...props }: Props) {
     metrics: [{ name: 'activeUsers' }],
     startDate: '7daysAgo',
     endDate: 'yesterday',
-    
   });
   if (!data || !data.rows || data.rows.length === 0) {
     return <div>No data available</div>;
   }
 
   const chartData = data?.rows.map((row) => {
-
     return {
       country: row?.dimensionValues?.[0].value,
       visitors: parseInt(row?.metricValues?.[0].value || '0'),
@@ -48,7 +44,6 @@ export default async function VisitorsByDate({ ...props }: Props) {
     },
   } satisfies ChartConfig;
 
-   const totalVisitors = data.rows[data.rows.length - 1]?.metricValues?.[1]?.value;
   return (
     <Card {...props}>
       <CardHeader>

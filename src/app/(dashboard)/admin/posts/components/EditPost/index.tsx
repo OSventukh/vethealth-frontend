@@ -6,10 +6,8 @@ import { MultiValue, Options } from 'react-select';
 import {
   PanelRightClose,
   PanelRightOpen,
-  Save,
   SaveIcon,
   SendIcon,
-  Settings,
   ViewIcon,
 } from 'lucide-react';
 
@@ -17,22 +15,9 @@ import { CategoryResponse } from '@/api/types/categories.type';
 import { PostResponse } from '@/api/types/posts.type';
 import { TopicResponse } from '@/api/types/topics.type';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Multiselect from '@/components/ui/multiselect';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { Spinner } from '@/components/ui/spinner';

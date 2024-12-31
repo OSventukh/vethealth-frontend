@@ -42,7 +42,7 @@ export default async function VisitorsByDate({ ...props }: Props) {
 
   const chartData = data?.rows.map((row) => {
     const date = parse(
-      row?.dimensionValues?.[0].value!,
+      row?.dimensionValues?.[0]?.value || '',
       'yyyyMMdd',
       new Date()
     );

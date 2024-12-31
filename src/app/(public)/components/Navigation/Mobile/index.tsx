@@ -23,8 +23,8 @@ type Props = {
 };
 
 export default function MobileNavigation({ items }: Props) {
-    const params = useParams();
-    const { topic } = params;
+  const params = useParams();
+  const { topic } = params;
   return (
     <>
       <Sheet>
@@ -44,7 +44,9 @@ export default function MobileNavigation({ items }: Props) {
                     showArrow={item.children && item.children.length > 0}
                   >
                     <SheetClose asChild>
-                      <Link href={`/${topic}?category=${item.slug}`}>{item.name}</Link>
+                      <Link href={`/${topic}?category=${item.slug}`}>
+                        {item.name}
+                      </Link>
                     </SheetClose>
                   </AccordionTrigger>
                   {item.children && item.children.length > 0 && (
