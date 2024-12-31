@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
-import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
+import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
 
 const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 

@@ -1,6 +1,6 @@
 import { Raleway } from 'next/font/google';
 import { api } from '@/api';
-import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
+import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { notFound } from 'next/navigation';
 import { TAGS } from '@/api/constants/tags';

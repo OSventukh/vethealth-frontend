@@ -26,7 +26,7 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PostResponse } from '@/api/types/posts.type';
 import { Card } from '@/components/ui/card';
-import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
+import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
 import Link from 'next/link';
 import { LoadingSpinner } from '@/components/ui/custom/loading';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';

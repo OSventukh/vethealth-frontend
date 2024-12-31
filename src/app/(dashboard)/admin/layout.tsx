@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
-import Header from '@/components/dashboard/Header';
-import Sidebar from '@/components/dashboard/Sidebar';
+import Header from '@/app/(dashboard)/admin/components/layout/Header';
+import Sidebar from '@/app/(dashboard)/admin/components/layout/Sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { auth } from '@/lib/next-auth/auth';
 
@@ -22,7 +22,7 @@ export default async function DashboardLayout({
       <Header className="col-span-2 col-start-1 row-start-1 row-end-2 flex h-full w-full items-center p-3" />
 
       <Sidebar className="relative z-50 col-span-2 col-start-1 row-start-3 row-end-4 h-full w-full md:col-start-1 md:col-end-2 md:row-start-2" />
-      <main className="col-start-1 col-end-2 row-start-2 row-end-3 flex h-[calc(100dvh-7rem)] w-full flex-col items-center overflow-hidden overflow-y-auto rounded-t-3xl border-[1px] border-border bg-blue-50 px-2 py-2 shadow-inner md:col-span-1 md:col-start-2 md:row-start-2 md:row-end-3 md:h-[calc(100dvh-5rem)] md:w-[calc(100vw-5rem)] md:px-10 md:py-5">
+      <main className="col-start-1 col-end-2 row-start-2 row-end-3 flex h-[calc(100dvh-8rem)] w-full flex-col items-center overflow-hidden overflow-y-auto rounded-t-3xl border-[1px] border-border bg-blue-50 px-2 py-2 shadow-inner md:col-span-1 md:col-start-2 md:row-start-2 md:row-end-3 md:h-[calc(100dvh-5rem)] md:w-[calc(100vw-5rem)] md:px-10 md:py-5">
         {children}
       </main>
       <Toaster />

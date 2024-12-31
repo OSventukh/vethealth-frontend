@@ -26,7 +26,7 @@ import { savePageAction } from '../actions/save-page.action';
 import { useToast } from '@/components/ui/use-toast';
 import type { PageResponse } from '@/api/types/pages.type';
 
-const Lexical = dynamic(() => import('@/components/dashboard/Editor/Lexical'), {
+const Lexical = dynamic(() => import('@/app/(dashboard)/admin/components/Editor/Lexical'), {
   ssr: false,
 });
 type Props = {

@@ -1,6 +1,6 @@
 import { Raleway } from 'next/font/google';
 
-import { ParsedContent } from '@/components/dashboard/Editor/ParsedContent';
+import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
 import React from 'react';
 import { api } from '@/api';
 import { notFound } from 'next/navigation';

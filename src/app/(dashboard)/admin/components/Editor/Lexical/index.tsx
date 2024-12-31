@@ -24,12 +24,14 @@ import FloatingTextFormatToolbarPlugin from './plugins/FloatingTextFormatToolbar
 import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditorPlugin';
 import { LayoutPlugin } from './plugins/LayoutPlugin/LayoutPlugin';
 import DraggableBlockPlugin from './plugins/DraggableBlockPlugin';
+import { cn } from '@/lib/utils';
 
 type Props = {
   onChangeTitle?: (title: string) => void;
   onChangeContent?: (content: string) => void;
   initialTitle?: string | undefined;
   initialContent?: InitialEditorStateType | undefined;
+  className?: string;
 };
 
 export default function Lexical({
@@ -37,6 +39,7 @@ export default function Lexical({
   onChangeContent,
   initialContent,
   initialTitle,
+  className,
 }: Props) {
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -49,7 +52,7 @@ export default function Lexical({
   };
 
   return (
-    <div className="relative flex h-[calc(100dvh-7rem)] w-full max-w-screen-lg flex-col gap-2 overflow-auto md:h-[calc(100dvh-10rem)]">
+    <div className={cn("relative flex h-[calc(100dvh-10rem)] w-full max-w-screen-lg flex-col gap-2 overflow-auto md:h-[calc(100dvh-8rem)]", className)}>
       <LexicalComposer
         initialConfig={{
           ...editorInitialConfig,
