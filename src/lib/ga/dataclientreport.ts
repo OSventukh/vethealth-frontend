@@ -22,12 +22,19 @@ export const dataClientReport = async ({
   orderBys,
 }: ReportParams): Promise<ReportResponse> => {
   const propertyId = process.env.GA_PROPERTY_ID;
+  const GA_PRIVATE_KEY_BASE64 = process.env.GA_PRIVATE_KEY;
 
+  if (!GA_PRIVATE_KEY_BASE64) {
+    throw new Error('No private key available');
+  }
+  const GA_PRIVATE_KEY_DECODED =  Buffer.from(GA_PRIVATE_KEY_BASE64, 'base64').toString('utf-8')
+
+  const GA_PRIVATE_KEY = GA_PRIVATE_KEY_DECODED.replace(/\\n/g, '\n');
   try {
     const analyticsDataClient = new BetaAnalyticsDataClient({
       credentials: {
         client_email: process.env.GA_CLIENT_EMAIL,
-        private_key: process.env.GA_PRIVATE_KEY?.replace(/\n/gm, '\n'), // replacing is necessary
+        private_key: GA_PRIVATE_KEY, // replacing is necessary
       },
     });
 
@@ -48,6 +55,7 @@ export const dataClientReport = async ({
       throw new Error('No data available');
     }
     return [null, response];
+
   } catch (error) {
     if (error instanceof Error) {
       return [error, null];
