@@ -10,7 +10,7 @@ interface ReportParams {
 }
 
 type ReportResponse = [
-  error: null | unknown | Error,
+  error: Error | null,
   response: google.analytics.data.v1beta.IRunReportResponse | null,
 ];
 
@@ -49,6 +49,13 @@ export const dataClientReport = async ({
     }
     return [null, response];
   } catch (error) {
-    return [error, null];
+    if (error instanceof Error) {
+      return [error, null];
+    } else {
+      const message =
+        (error as { message: string }).message || 'An error occurred';
+      const errorObject = new Error(message);
+      return [errorObject, null];
+    }
   }
 };

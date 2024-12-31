@@ -23,7 +23,14 @@ export default async function VisitorsByDate({ ...props }: Props) {
     endDate: 'yesterday',
   });
   if (error || !data || !data.rows || data.rows.length === 0) {
-    return <div>No data available</div>;
+    return (
+      <Card {...props}>
+        <CardHeader>
+          <CardTitle>Виникла помилка</CardTitle>
+        </CardHeader>
+        {error && <CardContent>{error.message}</CardContent>}
+      </Card>
+    );
   }
 
   const chartData = data?.rows.map((row) => {
