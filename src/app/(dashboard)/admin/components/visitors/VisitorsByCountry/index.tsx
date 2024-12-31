@@ -16,13 +16,13 @@ type Props = {
 };
 
 export default async function VisitorsByDate({ ...props }: Props) {
-  const data = await dataClientReport({
+  const [error, data] = await dataClientReport({
     dimensions: [{ name: 'country' }],
     metrics: [{ name: 'activeUsers' }],
     startDate: '7daysAgo',
     endDate: 'yesterday',
   });
-  if (!data || !data.rows || data.rows.length === 0) {
+  if (error || !data || !data.rows || data.rows.length === 0) {
     return <div>No data available</div>;
   }
 

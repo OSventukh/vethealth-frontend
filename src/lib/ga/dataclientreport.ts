@@ -9,34 +9,46 @@ interface ReportParams {
   orderBys?: google.analytics.data.v1beta.IOrderBy[] | null;
 }
 
+type ReportResponse = [
+  error: null | unknown | Error,
+  response: google.analytics.data.v1beta.IRunReportResponse | null,
+];
+
 export const dataClientReport = async ({
   dimensions,
   metrics,
   startDate,
   endDate,
   orderBys,
-}: ReportParams) => {
+}: ReportParams): Promise<ReportResponse> => {
   const propertyId = process.env.GA_PROPERTY_ID;
 
-  const analyticsDataClient = new BetaAnalyticsDataClient({
-    credentials: {
-      client_email: process.env.GA_CLIENT_EMAIL,
-      private_key: process.env.GA_PRIVATE_KEY?.replace(/\n/gm, '\n'), // replacing is necessary
-    },
-  });
-
-  const [response] = await analyticsDataClient.runReport({
-    property: `properties/${propertyId}`,
-    dateRanges: [
-      {
-        startDate,
-        endDate,
+  try {
+    const analyticsDataClient = new BetaAnalyticsDataClient({
+      credentials: {
+        client_email: process.env.GA_CLIENT_EMAIL,
+        private_key: process.env.GA_PRIVATE_KEY?.replace(/\n/gm, '\n'), // replacing is necessary
       },
-    ],
-    dimensions,
-    metrics,
-    orderBys,
-  });
+    });
 
-  return response;
+    const [response] = await analyticsDataClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [
+        {
+          startDate,
+          endDate,
+        },
+      ],
+      dimensions,
+      metrics,
+      orderBys,
+    });
+
+    if (!response) {
+      throw new Error('No data available');
+    }
+    return [null, response];
+  } catch (error) {
+    return [error, null];
+  }
 };
