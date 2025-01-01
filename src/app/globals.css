@@ -120,6 +120,7 @@
 @layer base {
   * {
     @apply border-border;
+    font-variant-numeric: lining-nums proportional-nums;
   }
 
   h1 {
