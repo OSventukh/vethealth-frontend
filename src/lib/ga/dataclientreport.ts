@@ -27,7 +27,10 @@ export const dataClientReport = async ({
   if (!GA_PRIVATE_KEY_BASE64) {
     throw new Error('No private key available');
   }
-  const GA_PRIVATE_KEY_DECODED =  Buffer.from(GA_PRIVATE_KEY_BASE64, 'base64').toString('utf-8')
+  const GA_PRIVATE_KEY_DECODED = Buffer.from(
+    GA_PRIVATE_KEY_BASE64,
+    'base64'
+  ).toString('utf-8');
 
   const GA_PRIVATE_KEY = GA_PRIVATE_KEY_DECODED.replace(/\\n/g, '\n');
   try {
@@ -55,7 +58,6 @@ export const dataClientReport = async ({
       throw new Error('No data available');
     }
     return [null, response];
-
   } catch (error) {
     if (error instanceof Error) {
       return [error, null];

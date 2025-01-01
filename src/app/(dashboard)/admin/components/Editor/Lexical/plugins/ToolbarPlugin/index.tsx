@@ -213,7 +213,7 @@ function BlockFormatDropDown({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={toolbarButtonClass} >
+      <DropdownMenuTrigger className={toolbarButtonClass}>
         {blockTypes[blockType].icon} {blockTypes[blockType].title}
         <ChevronDown />
       </DropdownMenuTrigger>
@@ -544,7 +544,6 @@ export default function ToolbarPlugin({
         type="button"
         className={toolbarButtonClass}
         aria-label="Undo"
-        
       >
         <Undo />
       </button>
@@ -571,7 +570,6 @@ export default function ToolbarPlugin({
           onClick={() => {
             activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
           }}
-          
           className={clsx(toolbarButtonClass, { 'bg-blue-200': isBold })}
           title={IS_APPLE ? 'Bold (⌘B)' : 'Bold (Ctrl+B)'}
           type="button"
@@ -586,7 +584,6 @@ export default function ToolbarPlugin({
           onClick={() => {
             activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
           }}
-          
           className={clsx(toolbarButtonClass, { 'bg-blue-200': isItalic })}
           title={IS_APPLE ? 'Italic (⌘I)' : 'Italic (Ctrl+I)'}
           type="button"
@@ -601,7 +598,6 @@ export default function ToolbarPlugin({
           onClick={() => {
             activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
           }}
-          
           className={clsx(toolbarButtonClass, { 'bg-blue-200': isUnderline })}
           title={IS_APPLE ? 'Underline (⌘U)' : 'Underline (Ctrl+U)'}
           type="button"
@@ -614,7 +610,6 @@ export default function ToolbarPlugin({
         <button
           disabled={!isEditable}
           onClick={insertLink}
-          
           className={clsx(toolbarButtonClass, { 'bg-blue-200': isLink })}
           aria-label="Insert link"
           title="Insert link"

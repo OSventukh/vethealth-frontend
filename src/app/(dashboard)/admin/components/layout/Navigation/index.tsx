@@ -1,4 +1,6 @@
+'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Home,
   FileText,
@@ -13,6 +15,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import useTooltipSide from '../../../hooks/useTooltipSide';
+
+import { cn } from '@/lib/utils';
 
 type Nav = {
   title: string;
@@ -54,6 +59,8 @@ const navs: Nav[] = [
 ];
 
 export default function Navigation() {
+  const tooltipSide = useTooltipSide();
+  const pathname = usePathname();
   return (
     <nav className="h-full w-full">
       <ul className="flex h-full w-full items-center md:h-auto md:flex-col">
@@ -67,11 +74,15 @@ export default function Navigation() {
                 <TooltipTrigger className="flex h-full w-full items-center justify-center">
                   <Link
                     href={item.route}
-                    className="flex aspect-square w-[80%] items-center justify-center rounded-xl p-3 transition-all duration-200 hover:bg-primary hover:text-primary-foreground hover:shadow-lg"
+                    className={cn(
+                      'flex aspect-square w-[80%] items-center justify-center rounded-xl p-3 transition-all duration-200 hover:text-primary',
+                      pathname === item.route &&
+                        'bg-primary text-primary-foreground shadow-lg hover:text-primary-foreground'
+                    )}
                   >
                     {item.icon}
                   </Link>
-                  <TooltipContent side="right">
+                  <TooltipContent side={tooltipSide}>
                     <p>{item.title}</p>
                   </TooltipContent>
                 </TooltipTrigger>
