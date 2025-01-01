@@ -18,7 +18,7 @@ export default async function DashboardLayout({
     redirect('http://localhost:3000/api/auth/signin');
   }
   return (
-    <div className="fixed grid max-h-screen w-screen grid-cols-1 grid-rows-[4rem_1fr_4rem] bg-background px-2 md:grid-cols-[4rem_1fr] md:grid-rows-[5rem_1fr] md:pl-0">
+    <div className="fixed grid max-h-dvh w-screen grid-cols-1 grid-rows-[4rem_1fr_4rem] bg-background px-2 md:grid-cols-[4rem_1fr] md:grid-rows-[5rem_1fr] md:pl-0">
       <Header className="col-span-2 col-start-1 row-start-1 row-end-2 flex h-full w-full items-center p-3" />
 
       <Sidebar className="relative z-50 col-span-2 col-start-1 row-start-3 row-end-4 h-full w-full md:col-start-1 md:col-end-2 md:row-start-2" />
