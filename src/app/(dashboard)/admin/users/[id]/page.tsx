@@ -27,6 +27,8 @@ export default async function UserProfilePage(props: {
           <div>{user?.firstname}</div>
           <div>Прізвище:</div>
           <div>{user?.lastname}</div>
+          <div>Роль:</div>
+          <div>{user?.role.name}</div>
           <div>Пошта:</div>
           <div>{user?.email}</div>
         </div>
