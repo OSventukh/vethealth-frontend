@@ -9,6 +9,7 @@ export default function ItemButton({ onClick, icon, children }: Props) {
   return (
     <button
       onClick={onClick}
+      onTouchStart={(e) => e.stopPropagation()}
       className="flex w-full gap-2 rounded-sm p-2 hover:bg-blue-100"
     >
       {icon && icon}

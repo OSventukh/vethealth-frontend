@@ -65,6 +65,15 @@ export default function Lexical({
         }}
       >
         <>
+          <input
+            type="text"
+            placeholder="Заголовок"
+            className="w-full rounded-2xl border-[1px] border-border bg-background px-5 py-2 text-2xl outline-0 placeholder:text-slate-500 md:px-10 md:py-4"
+            onChange={(event) =>
+              onChangeTitle && onChangeTitle(event.target.value)
+            }
+            value={initialTitle}
+          />
           <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
 
           {floatingAnchorElem && (
@@ -82,24 +91,19 @@ export default function Lexical({
 
           <RichTextPlugin
             contentEditable={
-              <div
-                className="prose relative mt-2 max-w-none flex-auto resize-y gap-1"
-                ref={onRef}
-              >
-                <input
-                  type="text"
-                  placeholder="Заголовок"
-                  className="-z-10 w-full rounded-t-2xl border-[1px] border-border bg-background px-5 py-2 text-2xl outline-0 placeholder:text-slate-500 md:px-10 md:py-4"
-                  onChange={(event) =>
-                    onChangeTitle && onChangeTitle(event.target.value)
-                  }
-                  value={initialTitle}
-                />
-                <ContentEditable />
-              </div>
+              <>
+                <div
+                  className="prose relative mt-2 h-full max-w-none resize-y gap-1 overflow-hidden rounded-2xl border-[1px] border-border bg-background text-slate-900 md:h-[calc(100%_-_75px)]"
+                  ref={onRef}
+                >
+                  <div className="relative h-full overflow-auto">
+                    <ContentEditable />
+                  </div>
+                </div>
+              </>
             }
             placeholder={
-              <div className="absolute left-10 top-[9rem] inline-block text-lg text-slate-500">
+              <div className="absolute left-10 top-[10.7rem] inline-block text-lg text-slate-500">
                 <p>Введіть текст...</p>
               </div>
             }

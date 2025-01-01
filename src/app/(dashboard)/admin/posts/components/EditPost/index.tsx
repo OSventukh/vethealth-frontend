@@ -181,7 +181,7 @@ export default function EditPost({
         className={cn(
           'flex-1 rounded-2xl border-[1px] border-border bg-slate-100 p-4 align-middle shadow-sm transition-all',
           isOpenSidebar
-            ? 'w-100 md:w-96'
+            ? 'w-100 md:w-96 md:max-w-96'
             : 'w-12 p-1 md:w-16 md:max-w-16 md:p-2'
         )}
       >
