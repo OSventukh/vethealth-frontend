@@ -31,7 +31,7 @@ export default function PostItem({ post, topic }: Props) {
           </h3>
         </header>
         {post?.content && (
-          <div className="px-4 py-0 md:px-8">
+          <div className="prose px-4 py-0 md:px-8">
             <ParsedContent content={JSON.parse(post.content)} excerpt />
           </div>
         )}
