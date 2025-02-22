@@ -19,7 +19,7 @@ export default function Multiselect<
           clsx(
             'flex h-10 w-full h-min items-center justify-between rounded-md border border-input bg-background px-8 py-2 text-sm ring-offset-background placeholder:text-muted-foreground [&>span]:line-clamp-1',
             {
-              'outline-none ring-2 ring-ring ring-offset-2': isFocused,
+              'outline-hidden ring-2 ring-ring ring-offset-2': isFocused,
             },
             {
               'cursor-not-allowed opacity-50': isDisabled,
@@ -31,7 +31,7 @@ export default function Multiselect<
         multiValueRemove: () => 'hover:opacity-70',
         indicatorsContainer: () => 'h-4 w-4 opacity-50',
         option: () =>
-          'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground',
+          'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 hover:bg-accent hover:text-accent-foreground',
       }}
       placeholder="Вибрати..."
       name="colors"

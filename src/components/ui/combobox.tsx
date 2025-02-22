@@ -88,11 +88,11 @@ export const Combobox = <T,>({
         <Button
           variant="outline"
           className={cn(
-            'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-0 py-0 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+            'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-0 py-0 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
             className
           )}
         >
-          <div className="relative mr-auto flex flex-grow flex-wrap items-center overflow-hidden px-3 py-1">
+          <div className="relative mr-auto flex grow flex-wrap items-center overflow-hidden px-3 py-1">
             {selectedValues?.size > 0 ? (
               transformedOptions &&
               transformedOptions
@@ -123,7 +123,7 @@ export const Combobox = <T,>({
               <span className="mr-auto text-sm">{selectPlaceholder}</span>
             )}
           </div>
-          <div className="flex flex-shrink-0 items-center self-stretch px-1 text-muted-foreground/60">
+          <div className="flex shrink-0 items-center self-stretch px-1 text-muted-foreground/60">
             {selectedValues?.size > 0 && (
               <div
                 onClick={(e) => {

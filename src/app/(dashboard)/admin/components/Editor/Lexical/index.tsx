@@ -54,7 +54,7 @@ export default function Lexical({
   return (
     <div
       className={cn(
-        'relative flex h-[calc(100dvh-10rem)] w-full max-w-screen-lg flex-col gap-2 overflow-auto md:h-[calc(100dvh-8rem)]',
+        'relative flex h-[calc(100dvh-10rem)] w-full max-w-(--breakpoint-lg) flex-col gap-2 overflow-auto md:h-[calc(100dvh-8rem)]',
         className
       )}
     >

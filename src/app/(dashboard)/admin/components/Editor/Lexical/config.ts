@@ -11,7 +11,7 @@ import { LayoutItemNode } from './nodes/LayoutItemNode';
 export const editorInitialConfig: InitialConfigType = {
   namespace: 'VethealthEditor',
   theme: {
-    root: 'min-h-full border-[1px] border-border px-10 py-4 bg-background shadow-sm outline-none text-lg',
+    root: 'min-h-full border-[1px] border-border px-10 py-4 bg-background shadow-xs outline-hidden text-lg',
     text: {
       underline: 'underline underline-offset-2',
       strikethrough: 'line-through',

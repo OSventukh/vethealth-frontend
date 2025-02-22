@@ -18,7 +18,7 @@ export default function CustomNavigation({ items }: Props) {
           items.map((item) => (
             <li
               key={item.id}
-              className="relative data-[slot=action]:*:hover:block"
+              className="relative hover:*:data-[slot=action]:block"
             >
               <Link
                 className="flex rounded-lg p-4 uppercase transition hover:bg-slate-100 hover:bg-opacity-50"

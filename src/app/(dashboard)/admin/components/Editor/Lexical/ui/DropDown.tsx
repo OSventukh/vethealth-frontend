@@ -130,7 +130,7 @@ function DropDownItems({
   return (
     <DropDownContext.Provider value={contextValue}>
       <div
-        className="fixed z-[101] flex flex-col items-start rounded-md border-border bg-background p-4 text-left shadow-sm"
+        className="fixed z-101 flex flex-col items-start rounded-md border-border bg-background p-4 text-left shadow-xs"
         ref={dropDownRef}
         onKeyDown={handleKeyDown}
       >
