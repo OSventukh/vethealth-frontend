@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import styles from './styles.module.css';
 
 import {
   $isAutoLinkNode,
@@ -76,7 +75,7 @@ function FloatingLinkEditor({
     }
     const editorElem = editorRef.current;
     const nativeSelection = window.getSelection();
-    const activeElement = document.activeElement;
+    const activeElement = document.activeElement as HTMLElement;
 
     if (editorElem === null) {
       return;
@@ -98,7 +97,7 @@ function FloatingLinkEditor({
         setFloatingElemPositionForLinkEditor(domRect, editorElem, anchorElem);
       }
       setLastSelection(selection);
-    } else if (!activeElement || activeElement.className !== styles.linkView) {
+    } else if (!activeElement || !activeElement.dataset.linkView) {
       if (rootElement !== null) {
         setFloatingElemPositionForLinkEditor(null, editorElem, anchorElem);
       }
@@ -199,12 +198,16 @@ function FloatingLinkEditor({
   };
 
   return (
-    <div ref={editorRef} className={styles.linkEditor}>
+    <div
+      ref={editorRef}
+      className="absolute top-20 left-0 z-10 flex w-full max-w-[400px] opacity-0 transition-opacity duration-500 will-change-transform"
+    >
       {!isLink ? null : isLinkEditMode ? (
-        <div className={styles.linkWrap}>
+        <div className="border-border bg-background shadow-mdr flex w-full rounded-lg border-[1px] p-2">
           <input
             ref={inputRef}
-            className={styles.linkView}
+            className="mr-1 flex w-full items-center"
+            data-view="linkView"
             value={editedLinkUrl}
             onChange={(event) => {
               setEditedLinkUrl(event.target.value);
@@ -213,9 +216,9 @@ function FloatingLinkEditor({
               monitorInputInteraction(event);
             }}
           />
-          <div className={styles.actions}>
+          <div className="flex">
             <button
-              className={styles.button}
+              className="flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg"
               onClick={() => {
                 setIsLinkEditMode(false);
               }}
@@ -223,24 +226,28 @@ function FloatingLinkEditor({
               <X />
             </button>
 
-            <button className={styles.button} onClick={handleLinkSubmission}>
+            <button
+              className="flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg"
+              onClick={handleLinkSubmission}
+            >
               <Check />
             </button>
           </div>
         </div>
       ) : (
-        <div className={styles.linkWrap}>
+        <div className="border-border bg-background shadow-mdr flex w-full rounded-lg border-[1px] p-2">
           <a
-            className={styles.linkView}
+            className="mr-1 flex w-full items-center"
             href={sanitizeUrl(linkUrl)}
             target="_blank"
+            data-view="linkView"
             rel="noopener noreferrer"
           >
             {linkUrl}
           </a>
-          <div className={styles.actions}>
+          <div className="flex">
             <button
-              className={styles.button}
+              className="flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg"
               onClick={() => {
                 setEditedLinkUrl(linkUrl);
                 setIsLinkEditMode(true);
@@ -249,7 +256,7 @@ function FloatingLinkEditor({
               <Edit />
             </button>
             <button
-              className={styles.button}
+              className="flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg"
               onClick={() => {
                 editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
               }}

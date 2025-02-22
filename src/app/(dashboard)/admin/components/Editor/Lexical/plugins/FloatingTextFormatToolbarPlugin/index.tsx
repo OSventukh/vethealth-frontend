@@ -6,7 +6,6 @@
  *
  */
 
-import styles from './styles.module.css';
 
 import { $isCodeHighlightNode } from '@lexical/code';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
@@ -183,7 +182,7 @@ function TextFormatFloatingToolbar({
   }, [editor, updateTextFormatFloatingToolbar]);
 
   return (
-    <div ref={popupCharStylesEditorRef} className={styles.floatingPopup}>
+    <div ref={popupCharStylesEditorRef} className="">
       {editor.isEditable() && (
         <>
           <button
@@ -191,7 +190,7 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
             }}
-            className={clsx(styles.button, { [styles.buttonActive]: isBold })}
+            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", { ["bg-blue-200"]: isBold })}
             aria-label="Format text as bold"
           >
             <Bold />
@@ -201,7 +200,7 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
             }}
-            className={clsx(styles.button, { [styles.buttonActive]: isItalic })}
+            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", { ["bg-blue-200"]: isItalic })}
             aria-label="Format text as italics"
           >
             <Italic />
@@ -211,8 +210,8 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
             }}
-            className={clsx(styles.button, {
-              [styles.buttonActive]: isUnderline,
+            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", {
+              ["bg-blue-200"]: isUnderline,
             })}
             aria-label="Format text to underlined"
           >
@@ -223,8 +222,8 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
             }}
-            className={clsx(styles.button, {
-              [styles.buttonActive]: isStrikethrough,
+            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", {
+              ["bg-blue-200"]: isStrikethrough,
             })}
             aria-label="Format text with a strikethrough"
           >
@@ -235,8 +234,8 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
             }}
-            className={clsx(styles.button, {
-              [styles.buttonActive]: isSubscript,
+            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", {
+              ["bg-blue-200"]: isSubscript,
             })}
             title="Subscript"
             aria-label="Format Subscript"
@@ -248,8 +247,8 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
             }}
-            className={clsx(styles.button, {
-              [styles.buttonActive]: isSuperscript,
+            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", {
+              ["bg-blue-200"]: isSuperscript,
             })}
             title="Superscript"
             aria-label="Format Superscript"
@@ -259,7 +258,7 @@ function TextFormatFloatingToolbar({
           <button
             type="button"
             onClick={insertLink}
-            className={clsx(styles.button, { [styles.buttonActive]: isLink })}
+            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", { ["bg-blue-200"]: isLink })}
             aria-label="Insert link"
           >
             <Link />
