@@ -21,7 +21,7 @@ export default function CustomNavigation({ items }: Props) {
               className="relative hover:*:data-[slot=action]:block"
             >
               <Link
-                className="flex rounded-lg p-4 uppercase transition hover:bg-slate-100 hover:bg-opacity-50"
+                className="flex rounded-lg p-4 uppercase transition hover:bg-slate-100/50"
                 href={'/' + topic + '?category=' + item.slug}
               >
                 {item.name}
@@ -35,7 +35,7 @@ export default function CustomNavigation({ items }: Props) {
                     item.children.map((child) => (
                       <li key={child.id} className="align-center flex w-full">
                         <Link
-                          className="w-full text-nowrap p-4 uppercase transition hover:text-blue-400"
+                          className="w-full p-4 text-nowrap uppercase transition hover:text-blue-400"
                           href={'/' + topic + '?category=' + child.slug}
                         >
                           {child.name}

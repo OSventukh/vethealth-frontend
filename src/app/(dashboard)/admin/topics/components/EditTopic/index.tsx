@@ -88,7 +88,7 @@ export default function EditTopic({
     });
   };
   return (
-    <div className="mt-5 w-full rounded-2xl border bg-background p-10">
+    <div className="bg-background mt-5 w-full rounded-2xl border p-10">
       <h2>{editMode ? 'Редагувати тему' : 'Створити тему'}</h2>
       <Form {...form}>
         <form

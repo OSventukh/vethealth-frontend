@@ -68,7 +68,7 @@ export default function Lexical({
           <input
             type="text"
             placeholder="Заголовок"
-            className="w-full rounded-2xl border-[1px] border-border bg-background px-5 py-2 text-2xl outline-0 placeholder:text-slate-500 md:px-10 md:py-4"
+            className="border-border bg-background w-full rounded-2xl border-[1px] px-5 py-2 text-2xl outline-0 placeholder:text-slate-500 md:px-10 md:py-4"
             onChange={(event) =>
               onChangeTitle && onChangeTitle(event.target.value)
             }
@@ -93,7 +93,7 @@ export default function Lexical({
             contentEditable={
               <>
                 <div
-                  className="prose relative mt-2 h-full max-w-none resize-y gap-1 overflow-hidden rounded-2xl border-[1px] border-border bg-background text-slate-900 md:h-[calc(100%_-_75px)]"
+                  className="prose border-border bg-background relative mt-2 h-full max-w-none resize-y gap-1 overflow-hidden rounded-2xl border-[1px] text-slate-900 md:h-[calc(100%_-_75px)]"
                   ref={onRef}
                 >
                   <div className="relative h-full overflow-auto">
@@ -103,7 +103,7 @@ export default function Lexical({
               </>
             }
             placeholder={
-              <div className="absolute left-10 top-[10.7rem] inline-block text-lg text-slate-500">
+              <div className="absolute top-[10.7rem] left-10 inline-block text-lg text-slate-500">
                 <p>Введіть текст...</p>
               </div>
             }

@@ -75,9 +75,9 @@ export default function Navigation() {
                   <Link
                     href={item.route}
                     className={cn(
-                      'flex aspect-square w-[80%] items-center justify-center rounded-xl p-3 transition-all duration-200 hover:text-primary',
+                      'hover:text-primary flex aspect-square w-[80%] items-center justify-center rounded-xl p-3 transition-all duration-200',
                       pathname === item.route &&
-                        'bg-primary text-primary-foreground shadow-lg hover:text-primary-foreground'
+                        'bg-primary text-primary-foreground hover:text-primary-foreground shadow-lg'
                     )}
                   >
                     {item.icon}

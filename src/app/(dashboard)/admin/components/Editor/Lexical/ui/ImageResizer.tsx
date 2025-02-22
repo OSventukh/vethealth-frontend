@@ -244,7 +244,7 @@ export default function ImageResizer({
     <div ref={controlWrapperRef}>
       {!showCaption && captionsEnabled && (
         <button
-          className="absolute inset-x-0 bottom-5 mx-auto my-0 block w-[30%] min-w-[100px] cursor-pointer select-none rounded-[5px] border border-solid border-[rgba(255,255,255,0.3)] bg-[#00000080] p-2.5 text-white"
+          className="absolute inset-x-0 bottom-5 mx-auto my-0 block w-[30%] min-w-[100px] cursor-pointer rounded-[5px] border border-solid border-[rgba(255,255,255,0.3)] bg-[#00000080] p-2.5 text-white select-none"
           ref={buttonRef}
           onClick={() => {
             setShowCaption(!showCaption);

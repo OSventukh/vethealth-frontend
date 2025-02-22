@@ -535,7 +535,7 @@ export default function ToolbarPlugin({
   }, [editor, isLink]);
 
   return (
-    <div className="z-20 mt-2 flex min-h-[3rem] touch-auto gap-1 overflow-y-auto rounded-2xl border-[1px] border-border bg-slate-100 p-1 align-middle shadow-xs md:overflow-x-auto md:overflow-y-hidden">
+    <div className="border-border z-20 mt-2 flex min-h-[3rem] touch-auto gap-1 overflow-y-auto rounded-2xl border-[1px] bg-slate-100 p-1 align-middle shadow-xs md:overflow-x-auto md:overflow-y-hidden">
       <button
         onClick={() => {
           activeEditor.dispatchCommand(UNDO_COMMAND, undefined);

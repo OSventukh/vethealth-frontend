@@ -56,7 +56,7 @@ export default async function Post({
         ]}
         currentPage={{ label: post?.title || '' }}
       />
-      <div className="mt-4 rounded-xl border-[1px] border-border bg-white p-4 md:p-8">
+      <div className="border-border mt-4 rounded-xl border-[1px] bg-white p-4 md:p-8">
         <h2
           className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
         >

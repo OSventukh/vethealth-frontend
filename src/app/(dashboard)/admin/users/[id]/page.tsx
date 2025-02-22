@@ -15,12 +15,12 @@ export default async function UserProfilePage(props: {
       <div className="flex w-full justify-start">
         <Link
           href={`edit/${params.id}`}
-          className="flex items-center justify-center gap-2 rounded-xl bg-primary p-3 py-2 text-sm text-white shadow-lg hover:opacity-90"
+          className="bg-primary flex items-center justify-center gap-2 rounded-xl p-3 py-2 text-sm text-white shadow-lg hover:opacity-90"
         >
           Редагувати профіль
         </Link>
       </div>
-      <div className="mt-5 flex w-full flex-col gap-5 rounded-2xl border bg-background p-10">
+      <div className="bg-background mt-5 flex w-full flex-col gap-5 rounded-2xl border p-10">
         <h2>Профіль</h2>
         <div className="grid grid-cols-2 gap-2">
           <div>Ім'я:</div>

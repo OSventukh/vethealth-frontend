@@ -125,7 +125,7 @@ export default function EditPage({ initialData, editMode }: Props) {
             {<Save />}
           </DropdownMenuItem>
         </DropdownMenuContent>
-        <DropdownMenuTrigger className="fixed bottom-20 right-[calc(100vw/7)] flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-slate-400 p-0 opacity-50 shadow-lg transition-all hover:opacity-100 hover:shadow-2xl">
+        <DropdownMenuTrigger className="fixed right-[calc(100vw/7)] bottom-20 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-slate-400 p-0 opacity-50 shadow-lg transition-all hover:opacity-100 hover:shadow-2xl">
           {isPending ? <Spinner /> : <Settings />}
         </DropdownMenuTrigger>
       </DropdownMenu>

@@ -58,7 +58,7 @@ export default function ImageUpload({
       <label>
         {imageURL ? (
           <div className="group relative flex aspect-square w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-md">
-            <div className="invisible absolute z-10 flex h-full w-full items-center justify-center bg-slate-500 bg-opacity-50 uppercase group-hover:visible">
+            <div className="invisible absolute z-10 flex h-full w-full items-center justify-center bg-slate-500/50 uppercase group-hover:visible">
               <ImageIcon />
               Змінити
             </div>
@@ -74,12 +74,7 @@ export default function ImageUpload({
           </div>
         ) : (
           <div className="flex aspect-square w-[200px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-md">
-            <ImageIcon
-              fontSize="large"
-              size={200}
-              // strokeWidth={1}
-              absoluteStrokeWidth
-            />
+            <ImageIcon fontSize="large" size={200} absoluteStrokeWidth />
             <span className="text-center uppercase">Завантажити картинку</span>
           </div>
         )}

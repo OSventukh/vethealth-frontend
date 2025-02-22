@@ -88,7 +88,7 @@ export const Combobox = <T,>({
         <Button
           variant="outline"
           className={cn(
-            'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-0 py-0 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+            'border-input bg-background ring-offset-background placeholder:text-muted-foreground focus:ring-ring flex h-10 w-full items-center justify-between rounded-md border px-0 py-0 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
             className
           )}
         >
@@ -113,7 +113,7 @@ export const Combobox = <T,>({
                           return next;
                         });
                       }}
-                      className="flex items-center rounded-sm px-[1px] hover:bg-accent hover:text-red-500"
+                      className="hover:bg-accent flex items-center rounded-sm px-[1px] hover:text-red-500"
                     >
                       <X size={14} />
                     </span>
@@ -123,7 +123,7 @@ export const Combobox = <T,>({
               <span className="mr-auto text-sm">{selectPlaceholder}</span>
             )}
           </div>
-          <div className="flex shrink-0 items-center self-stretch px-1 text-muted-foreground/60">
+          <div className="text-muted-foreground/60 flex shrink-0 items-center self-stretch px-1">
             {selectedValues?.size > 0 && (
               <div
                 onClick={(e) => {
@@ -135,8 +135,8 @@ export const Combobox = <T,>({
                 <X size={16} />
               </div>
             )}
-            <span className="mx-0.5 my-2 w-[1px] self-stretch bg-border" />
-            <div className="flex items-center self-stretch p-2 hover:text-muted-foreground">
+            <span className="bg-border mx-0.5 my-2 w-[1px] self-stretch" />
+            <div className="hover:text-muted-foreground flex items-center self-stretch p-2">
               <ChevronDown size={16} />
             </div>
           </div>
@@ -175,7 +175,7 @@ export const Combobox = <T,>({
                 >
                   <div
                     className={cn(
-                      'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                      'border-primary mr-2 flex h-4 w-4 items-center justify-center rounded-sm border',
                       isSelected
                         ? 'bg-primary text-primary-foreground'
                         : 'opacity-50 [&_svg]:invisible'

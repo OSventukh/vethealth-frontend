@@ -124,7 +124,7 @@ export function DataTable<TData, TValue>({
     }
   };
   return (
-    <div className="mt-5 flex w-full flex-col gap-5 rounded-2xl border bg-background p-4 md:p-10">
+    <div className="bg-background mt-5 flex w-full flex-col gap-5 rounded-2xl border p-4 md:p-10">
       <TableSearch value={searching} onChange={searchChangeHandler} />
       <div className="w-full rounded-xl border">
         <Table>

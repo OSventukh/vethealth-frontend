@@ -63,11 +63,11 @@ export default async function VisitorsByDate({ ...props }: Props) {
   const chartConfig = {
     date: {
       label: 'Дата',
-      color: 'hsl(var(--chart-1))',
+      color: 'var(--chart-1)',
     },
     visitors: {
       label: 'Користувачі',
-      color: 'hsl(var(--chart-2))',
+      color: 'var(--chart-2)',
     },
   } satisfies ChartConfig;
 

@@ -119,7 +119,7 @@ export default function SearchBar() {
   return (
     <>
       <Sheet>
-        <SheetTrigger className="p-2 md:p-4" title="Пошук">
+        <SheetTrigger className="cursor-pointer p-2 md:p-4" title="Пошук">
           <Search />
         </SheetTrigger>
         <VisuallyHidden asChild>
@@ -141,7 +141,7 @@ export default function SearchBar() {
                       <div className="flex gap-2">
                         <FormControl>
                           <Input
-                            className="border-none bg-white bg-opacity-80"
+                            className="bg-background/80 border-none"
                             placeholder="Пошук"
                             {...field}
                             onChange={(e) => {
@@ -152,7 +152,7 @@ export default function SearchBar() {
                         </FormControl>
                         <div>
                           <Button
-                            className="aspect-square p-1"
+                            className="aspect-square cursor-pointer p-1"
                             variant="default"
                             type="submit"
                           >
@@ -179,7 +179,7 @@ export default function SearchBar() {
             {searchResults.length > 0 && !loading && (
               <>
                 <div className="h-[1px] w-full bg-white" />
-                <ul className="w-100 mt-4 max-h-[calc(100vw+6rem)] space-y-2 overflow-y-auto">
+                <ul className="mt-4 max-h-[calc(100vw+6rem)] w-100 space-y-2 overflow-y-auto">
                   {searchResults.map((item) => (
                     <li key={item.id}>
                       <SheetClose asChild>

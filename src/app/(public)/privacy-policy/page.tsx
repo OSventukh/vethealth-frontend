@@ -25,7 +25,7 @@ export default async function PrivacyPolicyPage() {
             prevPages={[{ href: '/', label: 'Головна' }]}
             currentPage={{ label: 'Політика конфіденційності' }}
           />
-          <div className="mt-4 rounded-xl border-[1px] border-border bg-white p-8">
+          <div className="border-border mt-4 rounded-xl border-[1px] bg-white p-8">
             <h2
               className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
             >

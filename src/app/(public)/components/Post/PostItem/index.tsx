@@ -12,7 +12,7 @@ const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default function PostItem({ post, topic }: Props) {
   return (
-    <article className="w-full overflow-hidden rounded-xl border-[1px] border-border bg-white pb-4 transition-shadow hover:shadow-md">
+    <article className="border-border w-full overflow-hidden rounded-xl border-[1px] bg-white pb-4 transition-shadow hover:shadow-md">
       <Link href={`${topic}/${post.slug}`} className="block h-full w-full">
         {post.featuredImage && (
           <Image

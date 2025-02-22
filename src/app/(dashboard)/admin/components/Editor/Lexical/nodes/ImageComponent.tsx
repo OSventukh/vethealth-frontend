@@ -361,7 +361,7 @@ export default function ImageComponent({
         </div>
         {showCaption && (
           <input
-            className="absolute bottom-0 left-0 w-full bg-card text-center text-gray-800 opacity-70 placeholder:text-gray-700"
+            className="bg-card absolute bottom-0 left-0 w-full text-center text-gray-800 opacity-70 placeholder:text-gray-700"
             ref={captionRef}
             type="text"
             placeholder="Введіть підпис"

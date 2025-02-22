@@ -8,7 +8,7 @@ type Props = {
 export default function AuthCard({ children, title }: Props) {
   return (
     <div className="flex h-dvh w-full items-center justify-center bg-blue-50">
-      <div className="flex h-min w-[90%] overflow-hidden rounded-lg bg-background sm:w-[40rem] md:w-[45rem]">
+      <div className="bg-background flex h-min w-[90%] overflow-hidden rounded-lg sm:w-[40rem] md:w-[45rem]">
         <div className="sm-[50%] flex h-full w-full flex-col justify-between p-5">
           <div className="flex w-full flex-col items-center gap-2">
             <Image

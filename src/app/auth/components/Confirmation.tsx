@@ -127,7 +127,7 @@ export default function Confirmation({ user, token }: Props) {
                       variant="ghost"
                       onClick={() => setShowPassword(!showPassword)}
                       type="button"
-                      className="absolute right-0 top-0 h-full w-14"
+                      className="absolute top-0 right-0 h-full w-14"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -161,7 +161,7 @@ export default function Confirmation({ user, token }: Props) {
                         setShowConfirmPassword(!showConfirmPassword)
                       }
                       type="button"
-                      className="absolute right-0 top-0 h-full w-14"
+                      className="absolute top-0 right-0 h-full w-14"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>

@@ -15,7 +15,7 @@ export default async function ChangePasswordPage(props: Props) {
   const user = await api.users.getOne({ id, token: session?.token });
 
   return (
-    <div className="mt-5 flex w-full flex-col gap-5 rounded-2xl border bg-background p-10">
+    <div className="bg-background mt-5 flex w-full flex-col gap-5 rounded-2xl border p-10">
       {!user && <div>Користувача не знайдено</div>}
       {user && <EditUserPassword user={user} />}
     </div>

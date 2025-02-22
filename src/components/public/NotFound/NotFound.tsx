@@ -13,7 +13,7 @@ export default function NotFound({ text = FALLBACK_TEXT }: Props) {
       <div className="flex justify-center">
         <Image src="/images/404.svg" width="500" height="400" alt="404 image" />
       </div>
-      <h2 className="mt-4 text-center text-xl uppercase text-[rgb(48,100,94)]">
+      <h2 className="mt-4 text-center text-xl text-[rgb(48,100,94)] uppercase">
         {text}
       </h2>
       <div>
