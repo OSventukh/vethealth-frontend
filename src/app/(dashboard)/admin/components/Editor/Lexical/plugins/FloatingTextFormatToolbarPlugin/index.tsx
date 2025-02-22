@@ -6,7 +6,6 @@
  *
  */
 
-
 import { $isCodeHighlightNode } from '@lexical/code';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -182,7 +181,10 @@ function TextFormatFloatingToolbar({
   }, [editor, updateTextFormatFloatingToolbar]);
 
   return (
-    <div ref={popupCharStylesEditorRef} className="">
+    <div
+      ref={popupCharStylesEditorRef}
+      className="bg-background shadow-accent shadow-md border-border border-1 absolute top-0 left-0 z-10 flex rounded-2xl p-1 align-middle opacity-0 transition-opacity duration-500 ease-[cubic-bezier(.4,0,.2,1)] [will-change:transform]"
+    >
       {editor.isEditable() && (
         <>
           <button
@@ -190,8 +192,12 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
             }}
-            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", { ["bg-blue-200"]: isBold })}
+            className={clsx(
+              'flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg',
+              { ['bg-blue-200']: isBold }
+            )}
             aria-label="Format text as bold"
+            title="Жирний"
           >
             <Bold />
           </button>
@@ -200,8 +206,12 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
             }}
-            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", { ["bg-blue-200"]: isItalic })}
+            className={clsx(
+              'flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg',
+              { ['bg-blue-200']: isItalic }
+            )}
             aria-label="Format text as italics"
+            title="Курсив"
           >
             <Italic />
           </button>
@@ -210,10 +220,14 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
             }}
-            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", {
-              ["bg-blue-200"]: isUnderline,
-            })}
+            className={clsx(
+              'flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg',
+              {
+                ['bg-blue-200']: isUnderline,
+              }
+            )}
             aria-label="Format text to underlined"
+            title="Підкреслений"
           >
             <Underline />
           </button>
@@ -222,10 +236,14 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
             }}
-            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", {
-              ["bg-blue-200"]: isStrikethrough,
-            })}
+            className={clsx(
+              'flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg',
+              {
+                ['bg-blue-200']: isStrikethrough,
+              }
+            )}
             aria-label="Format text with a strikethrough"
+            title="Закреслений"
           >
             <Strikethrough />
           </button>
@@ -234,10 +252,13 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
             }}
-            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", {
-              ["bg-blue-200"]: isSubscript,
-            })}
-            title="Subscript"
+            className={clsx(
+              'flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg',
+              {
+                ['bg-blue-200']: isSubscript,
+              }
+            )}
+            title="Підрядковий"
             aria-label="Format Subscript"
           >
             <Subscript />
@@ -247,10 +268,13 @@ function TextFormatFloatingToolbar({
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
             }}
-            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", {
-              ["bg-blue-200"]: isSuperscript,
-            })}
-            title="Superscript"
+            className={clsx(
+              'flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg',
+              {
+                ['bg-blue-200']: isSuperscript,
+              }
+            )}
+            title="Надрядковий"
             aria-label="Format Superscript"
           >
             <Superscript />
@@ -258,8 +282,12 @@ function TextFormatFloatingToolbar({
           <button
             type="button"
             onClick={insertLink}
-            className={clsx("flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg", { ["bg-blue-200"]: isLink })}
+            className={clsx(
+              'flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg',
+              { ['bg-blue-200']: isLink }
+            )}
             aria-label="Insert link"
+            title="Вставити посилання"
           >
             <Link />
           </button>

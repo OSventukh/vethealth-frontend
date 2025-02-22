@@ -108,7 +108,7 @@ export const CAN_USE_DOM: boolean =
   typeof window.document.createElement !== 'undefined';
 
 const toolbarButtonClass: React.ComponentProps<'div'>['className'] =
-  'flex items-center gap-2 px-4 py-2 rounded-2xl hover:bg-blue-200 hover:shadow-lg';
+  'flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-blue-200 hover:shadow-lg';
 
 const blockTypes = {
   bullet: { title: 'Невпорядкований список', icon: <List /> },
