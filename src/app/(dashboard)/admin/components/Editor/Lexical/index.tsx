@@ -11,12 +11,12 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
-import LexicalClickableLinkPlugin from '@lexical/react/LexicalClickableLinkPlugin';
+import { ClickableLinkPlugin } from '@lexical/react/LexicalClickableLinkPlugin';
 import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import LinkPlugin from './plugins/LinkPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import { editorInitialConfig } from './config';
 import ImagesPlugin from './plugins/ImagesPlugin';
@@ -113,14 +113,13 @@ export default function Lexical({
           <AutoFocusPlugin />
           {/* <CharacterLimitPlugin /> */}
           <CheckListPlugin />
-          <LexicalClickableLinkPlugin />
+          <ClickableLinkPlugin />
           <HorizontalRulePlugin />
           <FloatingTextFormatToolbarPlugin />
           <LayoutPlugin />
           <ListPlugin />
           <TablePlugin />
           <LinkPlugin />
-          <LexicalClickableLinkPlugin />
           <OnChangePlugin
             onChange={(state) => {
               const stringifiedContent = JSON.stringify(state);
