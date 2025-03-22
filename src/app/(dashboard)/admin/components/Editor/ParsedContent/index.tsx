@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { randomUUID } from 'crypto';
 import clsx from 'clsx';
+import React from 'react';
 
 const IS_BOLD = 1;
 const IS_ITALIC = 1 << 1;
@@ -70,9 +71,13 @@ const handleFormatting = (str: string, format: number) => {
 };
 
 const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
-  const text = items.map((child: any) => {
+  const text = items.map((child: any, i: number) => {
     if (child.type === 'text') {
-      return <>{handleFormatting(child.text?.trim(), child.format)}</>;
+      return (
+        <React.Fragment key={i}>
+          {handleFormatting(child.text?.trim(), child.format)}
+        </React.Fragment>
+      );
     }
 
     if (child.type === 'linebreak') {
@@ -143,14 +148,15 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
 
     return (
       <figure
-        className={clsx('text-left', {
+        className={clsx({
+          'text-left': !node.format || node.format === 'left',
           'text-center': node.format === 'center',
           'text-right': node.format === 'right',
         })}
       >
         <div className="inline-block">
           <Image
-            className="inline h-auto w-auto"
+            className="inline h-auto w-auto not-prose"
             key={generateRandomKey()}
             src={src}
             width={width}
