@@ -43,6 +43,39 @@ export function middleware(request: NextRequest) {
     .replace(/\s{2,}/g, ' ')
     .trim();
 
+  // Define Permissions-Policy header
+  const permissionsPolicy = `
+  accelerometer=(),
+  ambient-light-sensor=(),
+  autoplay=(),
+  battery=(),
+  camera=(),
+  cross-origin-isolated=(),
+  display-capture=(),
+  document-domain=(),
+  encrypted-media=(),
+  execution-while-not-rendered=(),
+  execution-while-out-of-viewport=(),
+  fullscreen=(self),
+  geolocation=(),
+  gyroscope=(),
+  keyboard-map=(),
+  magnetometer=(),
+  microphone=(),
+  midi=(),
+  navigation-override=(),
+  payment=(),
+  picture-in-picture=(),
+  publickey-credentials-get=(),
+  screen-wake-lock=(),
+  sync-xhr=(self),
+  usb=(),
+  web-share=(),
+  xr-spatial-tracking=()
+`
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
 
@@ -69,6 +102,9 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+  // Add the Permissions-Policy header
+  response.headers.set('Permissions-Policy', permissionsPolicy);
 
   return response;
 }
