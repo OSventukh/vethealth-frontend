@@ -10,12 +10,12 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-
+  const { CLIENT_URL } = process.env;
   if (!session) {
-    await fetch('http://localhost:3000/api/auth/signout', {
+    await fetch(`${CLIENT_URL}/api/auth/signout`, {
       method: 'POST',
     });
-    redirect('http://localhost:3000/api/auth/signin');
+    redirect(`${CLIENT_URL}/api/auth/signin`);
   }
   return (
     <div className="bg-background fixed grid max-h-dvh w-screen grid-cols-1 grid-rows-[4rem_1fr_4rem] px-2 md:grid-cols-[4rem_1fr] md:grid-rows-[5rem_1fr] md:pl-0">
