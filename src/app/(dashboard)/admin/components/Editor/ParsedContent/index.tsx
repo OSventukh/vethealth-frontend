@@ -156,7 +156,7 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
       >
         <div className="inline-block">
           <Image
-            className="inline h-auto w-auto not-prose"
+            className="not-prose inline h-auto w-auto"
             key={generateRandomKey()}
             src={src}
             width={width}

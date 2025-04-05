@@ -2,7 +2,7 @@ import Script from 'next/script';
 import { headers } from 'next/headers';
 
 export default async function AdSense() {
-    const nonce = (await headers()).get('x-nonce');
+  const nonce = (await headers()).get('x-nonce');
   const { ADSENSE_PUBLISHER_ID } = process.env;
 
   if (!ADSENSE_PUBLISHER_ID) return null;
