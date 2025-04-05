@@ -43,7 +43,6 @@ type TopicLayoutProps = {
 export default async function TopicLayout(props: TopicLayoutProps) {
   const params = await props.params;
 
-  console.log('params', params);
   const { children } = props;
 
   return (
