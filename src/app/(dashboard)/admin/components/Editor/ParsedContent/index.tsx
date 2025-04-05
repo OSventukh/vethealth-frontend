@@ -71,11 +71,20 @@ const handleFormatting = (str: string, format: number) => {
 };
 
 const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
-  const text = items.map((child: any, i: number) => {
+  return items.map((child: any, i: number) => {
+    const isLastItem = i === items.length - 1;
+    const nextChild = items[i + 1];
+
     if (child.type === 'text') {
+      const shouldAddSpace =
+        !isLastItem &&
+        nextChild?.type !== 'punctuation' &&
+        !/^[.,!?;:]/.test(nextChild?.text || '');
+
       return (
         <React.Fragment key={i}>
           {handleFormatting(child.text?.trim(), child.format)}
+          {shouldAddSpace && ' '}
         </React.Fragment>
       );
     }
@@ -85,26 +94,28 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
     }
 
     if (child.type === 'link') {
-      if (child.url?.startsWith('/')) {
-        return (
-          <Link
-            key={generateRandomKey()}
-            href={child.url}
-            className="underline"
-          >
-            {child.children[0]?.text}
-          </Link>
-        );
-      }
+      const linkContent = child.children[0]?.text || '';
+      const isInternalLink = child.url?.startsWith('/');
+ 
       return (
-        <a key={generateRandomKey()} href={child.url} className="underline">
-          {child.children[0]?.text}
-        </a>
+        <React.Fragment key={generateRandomKey()}>
+          <span>{i > 0 && ' '}</span>
+          {isInternalLink ? (
+            <Link href={child.url} className="underline">
+              {linkContent}
+            </Link>
+          ) : (
+            <a href={child.url} className="underline">
+              {linkContent}
+            </a>
+          )}
+          <span>{!isLastItem && ' '}</span>
+        </React.Fragment>
       );
     }
-  });
 
-  return text;
+    return null;
+  });
 };
 
 const HandleListItem = ({ items }: any): React.ReactNode => {
