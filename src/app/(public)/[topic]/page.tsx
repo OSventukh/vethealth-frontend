@@ -3,6 +3,7 @@ import { api } from '@/api';
 import TopicContent from '../components/topics/TopicContent';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { TAGS } from '@/api/constants/tags';
+import { CategoryResponse } from '@/api/types/categories.type';
 
 type Props = {
   params: Promise<{
@@ -30,7 +31,10 @@ export default async function TopicPage(props: Props) {
     return notFound();
   }
 
-  const findCategoryBySlug = (slug: string, categoriesList: any[]): any => {
+  const findCategoryBySlug = (
+    slug: string,
+    categoriesList: CategoryResponse[]
+  ): CategoryResponse | null => {
     const foundCategory = categoriesList.find((cat) => cat.slug === slug);
     if (foundCategory) return foundCategory;
 
