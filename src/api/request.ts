@@ -59,6 +59,7 @@ export const get = async <Response>({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
+      cache: 'force-cache',
       next: {
         tags,
         revalidate,
