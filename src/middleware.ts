@@ -29,7 +29,7 @@ export function middleware(request: NextRequest) {
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: https://vethealth.com.ua https://*.vethealth.com.ua https://www.google-analytics.com https://*.googleapis.com https://*.unsplash.com https://images.unsplash.com;
   font-src 'self';
-  connect-src 'self' https://www.google-analytics.com https://*.googleapis.com;
+  connect-src 'self' https://*.vethealth.com.ua https://www.google-analytics.com https://*.googleapis.com;
   frame-src 'self';
   object-src 'none';
   base-uri 'self';
