@@ -187,7 +187,7 @@ export default function SearchBar() {
                           <Card className="overflow-hidden border-none">
                             <div className="flex">
                               <div className="p-2">
-                                <h3 className="text-lg">{item.title}</h3>
+                                <h2 className="text-lg">{item.title}</h2>
                                 <div>
                                   <ParsedContent
                                     content={JSON.parse(item.content)}

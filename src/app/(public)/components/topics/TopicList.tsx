@@ -36,11 +36,11 @@ export default function TopicList({ items, parentSlug }: Props) {
               href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug}
               key={item.slug}
             >
-              <h3
+              <h2
                 className={`${roboto.className} text-center text-sm uppercase`}
               >
                 {item.title}
-              </h3>
+              </h2>
             </Link>
           </div>
         </div>
