@@ -62,7 +62,7 @@ export default async function Post({
         >
           {post.title}
         </h1>
-        <div className="prose max-w-none">
+        <div className="prose prose-headings:text-lg max-w-none">
           {post?.content && (
             <ParsedContent content={JSON.parse(post.content)} />
           )}

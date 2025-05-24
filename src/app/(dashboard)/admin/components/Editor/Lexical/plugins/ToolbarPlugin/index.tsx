@@ -53,7 +53,7 @@ import {
   CaseSensitive,
   ChevronDown,
   Grid2X2,
-  Heading1,
+  Heading4,
   Heading2,
   Heading3,
   Image as ImageIcon,
@@ -113,9 +113,9 @@ const toolbarButtonClass: React.ComponentProps<'div'>['className'] =
 const blockTypes = {
   bullet: { title: 'Невпорядкований список', icon: <List /> },
   check: { title: 'Check List', icon: <ListChecks /> },
-  h1: { title: 'Заголовок 1', icon: <Heading1 /> },
   h2: { title: 'Заголовок 2', icon: <Heading2 /> },
   h3: { title: 'Заголовок 3', icon: <Heading3 /> },
+  h4: { title: 'Заголовок 4', icon: <Heading4 /> },
   number: { title: 'Впорядкоаний список', icon: <ListOrdered /> },
   paragraph: { title: 'Текст', icon: <Type /> },
   quote: { title: 'Цитата', icon: <Quote /> },
@@ -229,16 +229,6 @@ function BlockFormatDropDown({
           </ItemButton>
         </DropdownMenuItem>
         <DropdownMenuItem
-          className={'item ' + dropDownActiveClass(blockType === 'h1')}
-        >
-          <ItemButton
-            onClick={() => formatHeading('h1')}
-            icon={blockTypes.h1.icon}
-          >
-            {blockTypes.h1.title}
-          </ItemButton>
-        </DropdownMenuItem>
-        <DropdownMenuItem
           className={'item ' + dropDownActiveClass(blockType === 'h2')}
         >
           <ItemButton
@@ -256,6 +246,16 @@ function BlockFormatDropDown({
             icon={blockTypes.h3.icon}
           >
             {blockTypes.h3.title}
+          </ItemButton>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={'item ' + dropDownActiveClass(blockType === 'h4')}
+        >
+          <ItemButton
+            onClick={() => formatHeading('h4')}
+            icon={blockTypes.h4.icon}
+          >
+            {blockTypes.h4.title}
           </ItemButton>
         </DropdownMenuItem>
         <DropdownMenuItem
