@@ -57,11 +57,11 @@ export default async function Post({
         currentPage={{ label: post?.title || '' }}
       />
       <div className="border-border mt-4 rounded-xl border-[1px] bg-white p-4 md:p-8">
-        <h2
+        <h1
           className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
         >
           {post.title}
-        </h2>
+        </h1>
         <div className="prose max-w-none">
           {post?.content && (
             <ParsedContent content={JSON.parse(post.content)} />

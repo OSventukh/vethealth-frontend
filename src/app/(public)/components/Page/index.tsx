@@ -47,11 +47,11 @@ export default async function Page({ topic, parentTopicSlug, slug }: Props) {
             currentPage={{ label: topicResponse?.page?.title || '' }}
           />
           <div className="border-border mt-4 rounded-xl border-[1px] bg-white p-8">
-            <h2
+            <h1
               className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
             >
               {page?.title}
-            </h2>
+            </h1>
             <div className="prose max-w-none">
               <ParsedContent content={JSON.parse(page?.content || '')} />
             </div>

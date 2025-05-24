@@ -26,11 +26,11 @@ export default async function PrivacyPolicyPage() {
             currentPage={{ label: 'Політика конфіденційності' }}
           />
           <div className="border-border mt-4 rounded-xl border-[1px] bg-white p-8">
-            <h2
+            <h1
               className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
             >
               {privacyPolicyPage.title}
-            </h2>
+            </h1>
             <div className="prose max-w-none">
               {privacyPolicyPage?.content && (
                 <ParsedContent
