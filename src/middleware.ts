@@ -21,15 +21,31 @@ export const config = {
   ],
 };
 
+const DEV_ORIGINS = ['http://localhost:*'];
+const PROD_ORIGINS = [
+  'https://vethealth.com.ua',
+  'https://www.vethealth.com.ua',
+  'https://*vethealth.com.ua',
+];
+
+function getAllowedOrigins(request: NextRequest) {
+  const host = request.headers.get('host');
+  // Simple check: if host includes localhost, treat as dev
+  if (host && (host.includes('localhost') || host.startsWith('127.'))) {
+    return [...DEV_ORIGINS, ...PROD_ORIGINS].join(' ');
+  }
+  return PROD_ORIGINS.join(' ');
+}
+
 export function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const cspHeader = `
   default-src 'self';
   script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: https://vethealth.com.ua https://*.vethealth.com.ua https://www.google-analytics.com https://*.googleapis.com https://*.unsplash.com https://images.unsplash.com;
+  img-src 'self' data: ${getAllowedOrigins(request)} https://*.unsplash.com https://images.unsplash.com;
   font-src 'self';
-  connect-src 'self' https://*.vethealth.com.ua https://www.google-analytics.com https://*.googleapis.com;
+  connect-src 'self' ${getAllowedOrigins(request)} https://www.google-analytics.com https://*.googleapis.com;
   frame-src 'self';
   object-src 'none';
   base-uri 'self';

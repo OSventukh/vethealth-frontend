@@ -77,7 +77,7 @@ export default function SearchBar() {
       );
 
       const data = await response.json();
-
+      console.log('data from search:', data);
       if (!response.ok) {
         throw new Error(data.message || 'Помилка пошуку');
       }
