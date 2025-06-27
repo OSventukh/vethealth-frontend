@@ -21,11 +21,15 @@ export const config = {
   ],
 };
 
-const DEV_ORIGINS = ['http://localhost:*'];
+// Environment-specific origins grouped together for clarity
+const DEV_ORIGINS = [
+  'http://localhost:*'
+];
+
 const PROD_ORIGINS = [
   'https://vethealth.com.ua',
   'https://www.vethealth.com.ua',
-  'https://*vethealth.com.ua',
+  'https://*.vethealth.com.ua',
 ];
 
 function getAllowedOrigins(request: NextRequest) {
@@ -42,9 +46,9 @@ export function middleware(request: NextRequest) {
   const cspHeader = `
   default-src 'self';
   script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com;
-  style-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' data: ${getAllowedOrigins(request)} https://*.unsplash.com https://images.unsplash.com;
-  font-src 'self';
+  font-src 'self' https://fonts.gstatic.com;
   connect-src 'self' ${getAllowedOrigins(request)} https://www.google-analytics.com https://*.googleapis.com;
   frame-src 'self';
   object-src 'none';
