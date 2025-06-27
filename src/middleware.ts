@@ -23,33 +23,35 @@ export const config = {
 
 // Environment-specific origins grouped together for clarity
 const DEV_ORIGINS = [
-  'http://localhost:*'
+  'http://localhost:*',
+  'http://127.0.0.1:*'
 ];
 
 const PROD_ORIGINS = [
   'https://vethealth.com.ua',
   'https://www.vethealth.com.ua',
-  'https://*.vethealth.com.ua',
+  'https://server.vethealth.com.ua',
 ];
 
 function getAllowedOrigins(request: NextRequest) {
   const host = request.headers.get('host');
-  // Simple check: if host includes localhost, treat as dev
+  // If in development, allow 'self' and explicit localhost origins
   if (host && (host.includes('localhost') || host.startsWith('127.'))) {
-    return [...DEV_ORIGINS, ...PROD_ORIGINS].join(' ');
+    return `'self' ${DEV_ORIGINS.join(' ')} ${PROD_ORIGINS.join(' ')}`;
   }
   return PROD_ORIGINS.join(' ');
 }
-
 export function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const allowedOrigins = getAllowedOrigins(request);
+  console.log('Allowed Origins:', allowedOrigins);
   const cspHeader = `
   default-src 'self';
   script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  img-src 'self' data: ${getAllowedOrigins(request)} https://*.unsplash.com https://images.unsplash.com;
+  img-src 'self' data: ${allowedOrigins} https://*.unsplash.com https://images.unsplash.com;
   font-src 'self' https://fonts.gstatic.com;
-  connect-src 'self' ${getAllowedOrigins(request)} https://www.google-analytics.com https://*.googleapis.com;
+  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com;
   frame-src 'self';
   object-src 'none';
   base-uri 'self';
