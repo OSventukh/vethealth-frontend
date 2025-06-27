@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { api } from '@/api';
 import TopicContent from '../components/topics/TopicContent';
@@ -82,6 +83,7 @@ export default async function TopicPage(props: Props) {
   return (
     <>
       {renderBreadcrumbs()}
+
       <TopicContent
         topic={topic!}
         params={params}

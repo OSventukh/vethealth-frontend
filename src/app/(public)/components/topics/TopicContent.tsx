@@ -28,7 +28,7 @@ export default function TopicContent({ topic, params, searchParams }: Props) {
     <div>
       <Description title={topic?.description} />
       {topic?.children && topic.children.length > 0 ? (
-        <TopicList items={topic.children} parentSlug={parentSlug} />
+        <TopicList items={Promise.resolve(topic.children)} parentSlug={parentSlug} />
       ) : topic.contentType === 'page' ? (
         <Page
           parentTopicSlug={topic.slug}

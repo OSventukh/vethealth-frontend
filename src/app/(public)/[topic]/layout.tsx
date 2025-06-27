@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { api } from '@/api';
 import { NOT_FOUND_TITLE, SITE_TITLE } from '@/utils/constants/generals';
+import { Suspense } from 'react';
 
 type MetadataProps = {
   params: Promise<{
@@ -49,7 +50,9 @@ export default async function TopicLayout(props: TopicLayoutProps) {
     <>
       <Header topic={params.topic} />
       <main>
-        <div className="container">{children}</div>
+        <Suspense>
+          <div className="container">{children}</div>
+        </Suspense>
       </main>
       <Footer />
     </>

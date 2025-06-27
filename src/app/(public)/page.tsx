@@ -4,9 +4,10 @@ import Description from './components/Description';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { TAGS } from '@/api/constants/tags';
+import { Suspense } from 'react';
 
-export default async function Home() {
-  const topics = await api.topics.getMany({
+export default function Home() {
+  const topics = api.topics.getMany({
     tags: [TAGS.TOPICS],
   });
   return (
@@ -15,7 +16,9 @@ export default async function Home() {
       <main>
         <div className="container">
           <Description />
-          <TopicList items={topics?.items || []} />
+          <Suspense>
+            <TopicList topics={topics} />
+          </Suspense>
         </div>
       </main>
       <Footer />

@@ -32,7 +32,7 @@ export default async function SlugPage(props: Props) {
             prevPages={[{ href: '/', label: 'Головна' }]}
             currentPage={{ label: topic?.title || '' }}
           />
-          <TopicList items={topic?.children || []} />
+          <TopicList items={Promise.resolve(topic?.children || [])} />
         </>
       ) : isPage ? (
         <Page
