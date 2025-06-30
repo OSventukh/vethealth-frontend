@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { api } from '@/api';
-import TopicContent from '../components/topics/TopicContent';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { TAGS } from '@/api/constants/tags';
 import { CategoryResponse } from '@/api/types/categories.type';
@@ -9,6 +8,8 @@ import TopicChildrenList from '../components/topics/TopicChildrenList';
 import Page from '../components/Page';
 import PostList from '../components/Post/PostList';
 import Description from '../components/Description';
+import TopicListSkeleton from '../components/Skeletons/TopicListSkeleton';
+import PostListSkeleton from '../components/Skeletons/PostListSkeleton';
 
 type Props = {
   params: Promise<{
@@ -92,7 +93,7 @@ export default async function TopicPage(props: Props) {
       <div>
         <Description title={topic?.description} />
         {topic?.children && topic.children.length > 0 ? (
-          <Suspense>
+          <Suspense fallback={<TopicListSkeleton />}>
             <TopicChildrenList topic={topic} params={params} />
           </Suspense>
         ) : topic.contentType === 'page' ? (
@@ -104,7 +105,7 @@ export default async function TopicPage(props: Props) {
             />
           </Suspense>
         ) : (
-          <Suspense>
+          <Suspense fallback={<PostListSkeleton />}>
             <PostList topic={topic.slug} category={searchParams?.category} />
           </Suspense>
         )}

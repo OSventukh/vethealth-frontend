@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { TAGS } from '@/api/constants/tags';
 import { Suspense } from 'react';
+import TopicListSkeleton from './components/Skeletons/TopicListSkeleton';
 
 export default function Home() {
   const topics = api.topics.getMany({
@@ -16,7 +17,7 @@ export default function Home() {
       <main>
         <div className="container">
           <Description />
-          <Suspense>
+          <Suspense fallback={<TopicListSkeleton />}>
             <TopicList topics={topics} />
           </Suspense>
         </div>
