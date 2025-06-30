@@ -5,10 +5,15 @@ import TopicContent from '../components/topics/TopicContent';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { TAGS } from '@/api/constants/tags';
 import { CategoryResponse } from '@/api/types/categories.type';
+import TopicChildrenList from '../components/topics/TopicChildrenList';
+import Page from '../components/Page';
+import PostList from '../components/Post/PostList';
+import Description from '../components/Description';
 
 type Props = {
   params: Promise<{
     topic: string;
+    slug?: string[];
   }>;
   searchParams: Promise<{
     category?: string;
@@ -84,11 +89,26 @@ export default async function TopicPage(props: Props) {
     <>
       {renderBreadcrumbs()}
 
-      <TopicContent
-        topic={topic!}
-        params={params}
-        searchParams={searchParams}
-      />
+      <div>
+        <Description title={topic?.description} />
+        {topic?.children && topic.children.length > 0 ? (
+          <Suspense>
+            <TopicChildrenList topic={topic} params={params} />
+          </Suspense>
+        ) : topic.contentType === 'page' ? (
+          <Suspense>
+            <Page
+              parentTopicSlug={topic.slug}
+              topic={params?.slug?.[0] || params.topic}
+              slug={params.slug?.[1] || ''}
+            />
+          </Suspense>
+        ) : (
+          <Suspense>
+            <PostList topic={topic.slug} category={searchParams?.category} />
+          </Suspense>
+        )}
+      </div>
     </>
   );
 }
