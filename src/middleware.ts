@@ -22,10 +22,7 @@ export const config = {
 };
 
 // Environment-specific origins grouped together for clarity
-const DEV_ORIGINS = [
-  'http://localhost:*',
-  'http://127.0.0.1:*'
-];
+const DEV_ORIGINS = ['http://localhost:*', 'http://127.0.0.1:*'];
 
 const PROD_ORIGINS = [
   'https://vethealth.com.ua',
