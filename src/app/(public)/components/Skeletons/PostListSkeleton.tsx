@@ -20,6 +20,8 @@ export default function PostListSkeleton({ itemsCount = 4 }: Props) {
                 <p className="h-4 w-full bg-gray-300"></p>
                 <p className="h-4 w-full bg-gray-300"></p>
                 <p className="h-4 w-full bg-gray-300"></p>
+                <p className="h-4 w-full bg-gray-300"></p>
+                <p className="h-4 w-[50%] bg-gray-300"></p>
               </div>
             </div>
           </div>
