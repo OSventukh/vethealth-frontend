@@ -96,7 +96,7 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
     if (child.type === 'link') {
       const linkContent = child.children[0]?.text || '';
       const isInternalLink = child.url?.startsWith('/');
- 
+
       return (
         <React.Fragment key={generateRandomKey()}>
           <span>{i > 0 && ' '}</span>
