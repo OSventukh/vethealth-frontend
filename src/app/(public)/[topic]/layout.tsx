@@ -50,9 +50,7 @@ export default async function TopicLayout(props: TopicLayoutProps) {
     <>
       <Header topic={params.topic} />
       <main>
-        <Suspense>
-          <div className="container">{children}</div>
-        </Suspense>
+        <div className="container">{children}</div>
       </main>
       <Footer />
     </>
