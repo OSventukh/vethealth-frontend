@@ -19,13 +19,7 @@ export default function TopicImage({ src, alt }: Props) {
         alt={alt}
         width={200}
         height={200}
-        className={clsx(
-          'h-[240px] w-[240px] rounded-2xl transition duration-300 ease-in md:hover:scale-110',
-          {
-            'opacity-0': isLoading,
-            'opacity-100': !isLoading,
-          }
-        )}
+        className="h-[240px] w-[240px] rounded-2xl transition duration-300 ease-in md:hover:scale-110"
         priority
         onLoad={() => setIsLoading(false)}
       />
