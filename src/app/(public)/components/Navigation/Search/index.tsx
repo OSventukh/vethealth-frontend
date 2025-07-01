@@ -77,7 +77,7 @@ export default function SearchBar() {
       );
 
       const data = await response.json();
-      console.log('data from search:', data);
+
       if (!response.ok) {
         throw new Error(data.message || 'Помилка пошуку');
       }
@@ -91,7 +91,7 @@ export default function SearchBar() {
     } catch (error: unknown) {
       setLoading(false);
       if (error instanceof Error && error.name === 'AbortError') {
-        console.log('Запит було скасовано');
+        console.error('Запит було скасовано');
       } else {
         console.error('Error fetching search results:', error);
       }

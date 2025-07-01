@@ -45,5 +45,5 @@ export const editorInitialConfig: InitialConfigType = {
     LayoutContainerNode,
     LayoutItemNode,
   ],
-  onError: (error: unknown) => console.log(error),
+  onError: (error: unknown) => console.error(error),
 };

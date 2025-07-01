@@ -41,7 +41,7 @@ function getAllowedOrigins(request: NextRequest) {
 export function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const allowedOrigins = getAllowedOrigins(request);
-  console.log('Allowed Origins:', allowedOrigins);
+
   const cspHeader = `
   default-src 'self';
   script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com;
