@@ -9,6 +9,7 @@ export default function Logo({ className }: { className?: string }) {
       height={200}
       alt="Vethealth"
       className={cn('h-8 w-auto', className)}
+      priority
     />
   );
 }

@@ -41,10 +41,15 @@ function getAllowedOrigins(request: NextRequest) {
 export function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const allowedOrigins = getAllowedOrigins(request);
+  // Check if we're in development mode
+  const host = request.headers.get('host');
+  const isDev =
+    host?.includes('localhost') ||
+    host?.startsWith('127.');
 
   const cspHeader = `
   default-src 'self';
-  script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com;
+  script-src 'self' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : ''} https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' data: ${allowedOrigins} https://*.unsplash.com https://images.unsplash.com;
   font-src 'self' https://fonts.gstatic.com;
