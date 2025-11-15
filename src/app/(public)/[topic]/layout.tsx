@@ -4,7 +4,6 @@ import Footer from '../components/Footer';
 import { api } from '@/api';
 import { NOT_FOUND_TITLE, SITE_TITLE } from '@/utils/constants/generals';
 
-
 type MetadataProps = {
   params: Promise<{
     topic: string;

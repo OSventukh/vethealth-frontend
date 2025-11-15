@@ -43,9 +43,7 @@ export function proxy(request: NextRequest) {
   const allowedOrigins = getAllowedOrigins(request);
   // Check if we're in development mode
   const host = request.headers.get('host');
-  const isDev =
-    host?.includes('localhost') ||
-    host?.startsWith('127.');
+  const isDev = host?.includes('localhost') || host?.startsWith('127.');
 
   const cspHeader = `
   default-src 'self';

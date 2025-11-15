@@ -1,3 +1,4 @@
+import { is } from 'date-fns/locale';
 import { z } from 'zod';
 
 const relativeSchema = z.object({
@@ -23,7 +24,7 @@ export const createTopicSchema = z.object({
   categories: z.array(relativeSchema).optional(),
   page: relativeSchema.optional(),
   parent: relativeSchema
-    .optional()
+    .nullable()
     .or(z.null())
     .transform((value) => (value?.id === 'null' ? null : value)),
 });
@@ -36,7 +37,7 @@ export const createCategorySchema = z.object({
     .min(3, { message: 'Назва повинна мати не менше 3 символів' }),
   slug: z.string().min(2, { message: 'URL повинний мати не менше 2 символів' }),
   parent: relativeSchema
-    .optional()
+    .nullable()
     .or(z.null())
     .transform((value) => (value?.id === 'null' ? null : value)),
 });
@@ -62,11 +63,17 @@ export type UserValues = z.infer<typeof createUserSchema>;
 
 export const loginSchema = z.object({
   email: z
-    .string({ required_error: 'Введіть емейл' })
-    .email({ message: 'Невірний формат пошти' }),
+    .string({
+      error: (issue) =>
+        issue.input === undefined ? 'Введіть емейл' : undefined,
+    })
+    .email({ error: 'Невірний формат пошти' }),
   password: z
-    .string({ required_error: 'Введіть пароль' })
-    .min(6, { message: 'Пароль повинен мати не менше 6 символів' }),
+    .string({
+      error: (issue) =>
+        issue.input === undefined ? 'Введіть пароль' : undefined,
+    })
+    .min(6, { error: 'Пароль повинен мати не менше 6 символів' }),
 });
 
 export type LoginValues = z.infer<typeof loginSchema>;
@@ -76,11 +83,17 @@ export const confirmationSchema = z
     hash: z.string(),
     email: z.string(),
     password: z
-      .string({ required_error: 'Введіть пароль' })
-      .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
+      .string({
+        error: (issue) =>
+          issue.input === undefined ? 'Введіть пароль' : undefined,
+      })
+      .min(6, { error: 'Пароль повинен мати не менше 6 символів' }),
     confirmPassword: z
-      .string({ required_error: 'Підтвердіть пароль' })
-      .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
+      .string({
+        error: (issue) =>
+          issue.input === undefined ? 'Підтвердіть пароль' : undefined,
+      })
+      .min(6, { error: 'Пароль повинен мати не менше 6 символів' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Паролі не співпадають',
@@ -93,11 +106,17 @@ export const updatePasswordSchema = z
   .object({
     email: z.string(),
     password: z
-      .string({ required_error: 'Введіть пароль' })
-      .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
+      .string({
+        error: (issue) =>
+          issue.input === undefined ? 'Введіть пароль' : undefined,
+      })
+      .min(6, { error: 'Пароль повинен мати не менше 6 символів' }),
     confirmPassword: z
-      .string({ required_error: 'Підтвердіть пароль' })
-      .min(6, { message: 'Пароль повинен мати не менше 8 символів' }),
+      .string({
+        error: (issue) =>
+          issue.input === undefined ? 'Підтвердіть пароль' : undefined,
+      })
+      .min(6, { error: 'Пароль повинен мати не менше 6 символів' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Паролі не співпадають',
@@ -108,8 +127,11 @@ export type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>;
 
 export const forgotSchema = z.object({
   email: z
-    .string({ required_error: 'Введіть емейл' })
-    .email({ message: 'Невірний формат пошти' }),
+    .string({
+      error: (issue) =>
+        issue.input === undefined ? 'Введіть емейл' : undefined,
+    })
+    .email({ error: 'Невірний формат пошти' }),
 });
 
 export type ForgotValues = z.infer<typeof forgotSchema>;
