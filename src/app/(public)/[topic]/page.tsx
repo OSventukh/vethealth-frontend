@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { api } from '@/api';
-import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { TAGS } from '@/api/constants/tags';
+import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { CategoryResponse } from '@/api/types/categories.type';
 import TopicChildrenList from '../components/topics/TopicChildrenList';
 import Page from '../components/Page';

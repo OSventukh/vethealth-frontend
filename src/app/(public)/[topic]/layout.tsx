@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { api } from '@/api';
 import { NOT_FOUND_TITLE, SITE_TITLE } from '@/utils/constants/generals';
-import { Suspense } from 'react';
+
 
 type MetadataProps = {
   params: Promise<{
