@@ -27,8 +27,8 @@ export async function deletePageAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag(TAGS.PAGES);
-    revalidateTag(TAGS.TOPICS);
+    revalidateTag(TAGS.PAGES, 'max');
+    revalidateTag(TAGS.TOPICS, 'max');
 
     return {
       success: true,

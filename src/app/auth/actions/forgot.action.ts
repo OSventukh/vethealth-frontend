@@ -42,7 +42,7 @@ export async function forgotAction(
       throw new Error(result.message);
     }
 
-    revalidateTag('admin_users');
+    revalidateTag('admin_users', 'max');
 
     return {
       success: true,

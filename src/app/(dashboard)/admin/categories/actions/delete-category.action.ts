@@ -27,8 +27,8 @@ export async function deleteCategoryAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag(TAGS.CATEGORIES);
-    revalidateTag(TAGS.TOPICS);
+    revalidateTag(TAGS.CATEGORIES, 'max');
+    revalidateTag(TAGS.TOPICS, 'max');
 
     return {
       success: true,

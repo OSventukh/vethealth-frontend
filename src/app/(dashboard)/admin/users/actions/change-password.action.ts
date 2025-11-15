@@ -42,7 +42,7 @@ export async function changePasswordAction(
       throw new Error(result.message);
     }
 
-    revalidateTag(TAGS.USERS);
+    revalidateTag(TAGS.USERS, 'max');
 
     return {
       success: true,

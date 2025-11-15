@@ -45,8 +45,8 @@ export async function savePageAction(
     if (!response.ok) {
       throw new Error(result.message);
     }
-    revalidateTag(TAGS.PAGES);
-    revalidateTag(TAGS.TOPICS);
+    revalidateTag(TAGS.PAGES, 'max');
+    revalidateTag(TAGS.TOPICS, 'max');
 
     return {
       success: true,

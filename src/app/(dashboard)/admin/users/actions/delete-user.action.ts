@@ -27,7 +27,7 @@ export async function deleteUserAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag(TAGS.USERS);
+    revalidateTag(TAGS.USERS, 'max');
 
     return {
       success: true,

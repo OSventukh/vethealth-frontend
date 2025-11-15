@@ -48,8 +48,8 @@ export async function savePostAction(
       throw new Error(result.message);
     }
 
-    revalidateTag(TAGS.POSTS);
-    revalidateTag(TAGS.TOPICS);
+    revalidateTag(TAGS.POSTS, 'max');
+    revalidateTag(TAGS.TOPICS, 'max');
 
     return {
       success: true,

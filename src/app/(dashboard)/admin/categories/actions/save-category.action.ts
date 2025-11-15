@@ -35,8 +35,8 @@ export async function saveCategoryAction(
       throw new Error(result.message);
     }
 
-    revalidateTag(TAGS.CATEGORIES);
-    revalidateTag(TAGS.TOPICS);
+    revalidateTag(TAGS.CATEGORIES, 'max');
+    revalidateTag(TAGS.TOPICS, 'max');
 
     return {
       success: true,

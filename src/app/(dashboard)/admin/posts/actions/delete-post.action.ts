@@ -27,8 +27,8 @@ export async function deletePostAction(id: string): Promise<ReturnedData> {
       throw new Error('Щось пішло не так');
     }
 
-    revalidateTag(TAGS.POSTS);
-    revalidateTag(TAGS.TOPICS);
+    revalidateTag(TAGS.POSTS, 'max');
+    revalidateTag(TAGS.TOPICS, 'max');
 
     return {
       success: true,

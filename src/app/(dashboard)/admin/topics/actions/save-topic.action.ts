@@ -34,7 +34,7 @@ export async function saveTopicAction(
       throw new Error(result.message);
     }
 
-    revalidateTag(TAGS.TOPICS);
+    revalidateTag(TAGS.TOPICS, 'max');
 
     return {
       success: true,
