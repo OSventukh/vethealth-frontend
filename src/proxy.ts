@@ -38,7 +38,7 @@ function getAllowedOrigins(request: NextRequest) {
   }
   return PROD_ORIGINS.join(' ');
 }
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const allowedOrigins = getAllowedOrigins(request);
   // Check if we're in development mode
