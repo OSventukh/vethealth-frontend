@@ -315,7 +315,7 @@ export default function EditTopic({
                       onImage={(value) =>
                         field.onChange({ id: value?.id, path: value?.path })
                       }
-                      value={field.value?.path}
+                      value={field.value?.path || null}
                     />
                   </FormControl>
                   <FormMessage />
