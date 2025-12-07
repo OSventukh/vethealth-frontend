@@ -29,7 +29,8 @@ import {
   ImageNode,
   ImagePayload,
 } from '../../nodes/ImageNode';
-import Button from '../../ui/Button';
+// import Button from '../../ui/Button';
+import { Button } from '@/components/ui/button';
 import { DialogActions, DialogButtonsList } from '../../ui/Dialog';
 import FileInput from '../../ui/FileInput';
 import TextInput from '../../ui/TextInput';

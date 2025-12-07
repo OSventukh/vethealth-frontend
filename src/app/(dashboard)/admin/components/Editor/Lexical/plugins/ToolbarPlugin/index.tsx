@@ -389,7 +389,7 @@ export default function ToolbarPlugin({
       setIsStrikethrough(selection.hasFormat('strikethrough'));
       setIsSubscript(selection.hasFormat('subscript'));
       setIsSuperscript(selection.hasFormat('superscript'));
-      setIsRTL($isParentElementRTL(selection));
+
 
       // Update links
       const node = getSelectedNode(selection);
