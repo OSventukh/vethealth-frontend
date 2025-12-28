@@ -1,6 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
-import { useFormState } from 'react-dom';
+import { useState, useRef, useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -34,7 +33,7 @@ export default function Confirmation({ user, token }: Props) {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
 
-  const [formState, formAction] = useFormState(confirmationAction, {
+  const [formState, formAction] = useActionState(confirmationAction, {
     message: '',
     error: false,
     success: false,
