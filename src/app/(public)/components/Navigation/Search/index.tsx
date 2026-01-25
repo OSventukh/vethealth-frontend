@@ -178,8 +178,8 @@ export default function SearchBar() {
             )}
             {searchResults.length > 0 && !loading && (
               <>
-                <div className="h-[1px] w-full bg-white" />
-                <ul className="mt-4 max-h-[calc(100vw+6rem)] w-full space-y-2 overflow-y-auto">
+                <div className="h-px w-full bg-white" />
+                <ul className="mt-4 max-h-[calc(100vh-9rem)] w-full space-y-2 overflow-y-auto">
                   {searchResults.map((item) => (
                     <li key={item.id}>
                       <SheetClose asChild>
