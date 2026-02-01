@@ -4,6 +4,13 @@ import Link from 'next/link';
 import { randomUUID } from 'crypto';
 import clsx from 'clsx';
 import React from 'react';
+import { Info } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const IS_BOLD = 1;
 const IS_ITALIC = 1 << 1;
@@ -71,7 +78,8 @@ const handleFormatting = (str: string, format: number) => {
 };
 
 const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
-  return items.map((child: any, i: number) => {
+  const hasTooltips = items.some((child: any) => child.type === 'tooltip');
+  const content = items.map((child: any, i: number) => {
     const isLastItem = i === items.length - 1;
     const nextChild = items[i + 1];
 
@@ -84,6 +92,58 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
       return (
         <React.Fragment key={i}>
           {handleFormatting(child.text?.trim(), child.format)}
+          {shouldAddSpace && ' '}
+        </React.Fragment>
+      );
+    }
+
+    if (child.type === 'tooltip') {
+      const shouldAddSpace =
+        !isLastItem &&
+        nextChild?.type !== 'punctuation' &&
+        !/^[.,!?;:]/.test(nextChild?.text || '');
+
+      const formattedText = handleFormatting(child.text?.trim(), child.format);
+      const isInline = child.isInline !== false; // default to true for backward compatibility
+
+      // If tooltip is inline (on selected text), show tooltip on hover over text
+      // If tooltip is after text, show tooltip only on icon
+      if (isInline) {
+        return (
+          <React.Fragment key={i}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-help border-b border-dotted border-gray-400">
+                  {formattedText}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>{child.tooltipText}</span>
+              </TooltipContent>
+            </Tooltip>
+            {shouldAddSpace && ' '}
+          </React.Fragment>
+        );
+      }
+
+      // Tooltip after text - show only on icon
+      return (
+        <React.Fragment key={i}>
+          <TooltipProvider>
+            <span className="inline-flex items-center">
+              {formattedText}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="ml-1 inline-flex cursor-help items-center">
+                    <Info className="h-4 w-4 text-blue-600" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <span>{child.tooltipText}</span>
+                </TooltipContent>
+              </Tooltip>
+            </span>
+          </TooltipProvider>
           {shouldAddSpace && ' '}
         </React.Fragment>
       );
@@ -116,6 +176,12 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
 
     return null;
   });
+
+  if (hasTooltips) {
+    return <TooltipProvider>{content}</TooltipProvider>;
+  }
+
+  return content;
 };
 
 const HandleListItem = ({ items }: any): React.ReactNode => {
