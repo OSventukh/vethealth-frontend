@@ -17,9 +17,9 @@ export default function TopicImage({ src, alt }: Props) {
       <Image
         src={src}
         alt={alt}
-        width={200}
-        height={200}
-        className="h-[240px] w-[240px] rounded-2xl transition duration-300 ease-in md:hover:scale-110"
+        width={240}
+        height={240}
+        className="h-60 w-60 rounded-2xl transition duration-300 ease-in md:hover:scale-110"
         priority
         onLoad={() => setIsLoading(false)}
       />

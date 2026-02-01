@@ -15,7 +15,7 @@ type Props = {
 
 export default function TopicItem({ item, parentSlug }: Props) {
   return (
-    <div>
+    <div className="w-60">
       <Link href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug}>
         <TopicImage src={item.image.path} alt={item.title} />
       </Link>

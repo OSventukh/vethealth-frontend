@@ -30,7 +30,7 @@ export default function CustomNavigation({ items }: Props) {
                 className="absolute hidden pt-3 transition"
                 data-slot="action"
               >
-                <Card className="overflow-hidden bg-[#defffb]">
+                <Card className="overflow-hidden bg-[#defffb] py-0 gap-0 border-none">
                   {item.children &&
                     item.children.map((child) => (
                       <li key={child.id} className="align-center flex w-full">
