@@ -7,6 +7,7 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { ImageNode } from './nodes/ImageNode';
 import { LayoutContainerNode } from './nodes/LayoutContainerNode';
 import { LayoutItemNode } from './nodes/LayoutItemNode';
+import { TooltipNode } from './nodes/TooltipNode';
 
 export const editorInitialConfig: InitialConfigType = {
   namespace: 'VethealthEditor',
@@ -44,6 +45,7 @@ export const editorInitialConfig: InitialConfigType = {
     ImageNode,
     LayoutContainerNode,
     LayoutItemNode,
+    TooltipNode,
   ],
   onError: (error: unknown) => console.error(error),
 };

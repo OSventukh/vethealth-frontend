@@ -24,6 +24,7 @@ import FloatingTextFormatToolbarPlugin from './plugins/FloatingTextFormatToolbar
 import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditorPlugin';
 import { LayoutPlugin } from './plugins/LayoutPlugin/LayoutPlugin';
 import DraggableBlockPlugin from './plugins/DraggableBlockPlugin';
+import TooltipPlugin from './plugins/TooltipPlugin';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -120,6 +121,7 @@ export default function Lexical({
           <ListPlugin />
           <TablePlugin />
           <LinkPlugin />
+          <TooltipPlugin />
           <OnChangePlugin
             onChange={(state) => {
               const stringifiedContent = JSON.stringify(state);
