@@ -57,6 +57,7 @@ import {
   Heading2,
   Heading3,
   Image as ImageIcon,
+  Info,
   Italic,
   Link,
   List,
@@ -88,6 +89,7 @@ import { sanitizeUrl } from '../../utils/url';
 import { InsertImageDialog } from '../ImagesPlugin';
 // import { InsertInlineImageDialog } from '../InlineImagePlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
+import InsertTooltipDialog from '../TooltipPlugin/InsertTooltipDialog';
 // import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
 // import { InsertPollDialog } from '../PollPlugin';
 // import { InsertNewTableDialog, InsertTableDialog } from '../TablePlugin';
@@ -745,6 +747,30 @@ export default function ToolbarPlugin({
                 }}
               >
                 Колонки
+              </ItemButton>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <ItemButton
+                icon={<Info />}
+                onClick={() => {
+                  // Get selected text before opening modal
+                  let selectedText = '';
+                  activeEditor.getEditorState().read(() => {
+                    const selection = $getSelection();
+                    if ($isRangeSelection(selection) && !selection.isCollapsed()) {
+                      selectedText = selection.getTextContent();
+                    }
+                  });
+                  showModal('Додати тултіп', (onClose) => (
+                    <InsertTooltipDialog
+                      activeEditor={activeEditor}
+                      onClose={onClose}
+                      initialText={selectedText}
+                    />
+                  ));
+                }}
+              >
+                Тултіп
               </ItemButton>
             </DropdownMenuItem>
           </DropdownMenuContent>
