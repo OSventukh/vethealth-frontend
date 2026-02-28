@@ -66,7 +66,6 @@ export default function ImageUpload({
               src={imageURL}
               unoptimized
               alt="preview"
-              priority
               fill
               sizes="100%"
               style={{ objectFit: 'contain' }}

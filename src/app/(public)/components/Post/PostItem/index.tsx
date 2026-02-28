@@ -1,14 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Raleway } from 'next/font/google';
 import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
 import type { PostResponse } from '@/api/types/posts.type';
+import { raleway } from '@/lib/fonts';
 
 type Props = {
   post: PostResponse;
   topic: string;
 };
-const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default function PostItem({ post, topic }: Props) {
   return (

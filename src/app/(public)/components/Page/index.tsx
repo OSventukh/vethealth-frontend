@@ -1,5 +1,3 @@
-import { Raleway } from 'next/font/google';
-
 import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
 import React from 'react';
 import { api } from '@/api';
@@ -7,6 +5,7 @@ import { notFound } from 'next/navigation';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { TAGS } from '@/api/constants/tags';
 import Post from '../Post';
+import { raleway } from '@/lib/fonts';
 
 type Props = {
   topic: string;
@@ -14,19 +13,18 @@ type Props = {
   slug: string;
 };
 
-const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
-
 export default async function Page({ topic, parentTopicSlug, slug }: Props) {
-  const topicResponse = await api.topics.getOne({
-    slug: topic,
-    query: { include: 'page' },
-    tags: [TAGS.TOPICS],
-  });
-
-  const parentTopic = await api.topics.getOne({
-    slug: parentTopicSlug,
-    tags: [TAGS.TOPICS],
-  });
+  const [topicResponse, parentTopic] = await Promise.all([
+    api.topics.getOne({
+      slug: topic,
+      query: { include: 'page' },
+      tags: [TAGS.TOPICS],
+    }),
+    api.topics.getOne({
+      slug: parentTopicSlug,
+      tags: [TAGS.TOPICS],
+    }),
+  ]);
   if (!topicResponse?.page && !slug) {
     return notFound();
   }

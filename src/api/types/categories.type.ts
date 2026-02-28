@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 
-import { categoryQuerySchema } from '@/utils/validators/query.validator';
-import { PostResponse } from './posts.type';
-import { TopicResponse } from './topics.type';
+import type { categoryQuerySchema } from '@/utils/validators/query.validator';
+import type { PostResponse } from './posts.type';
+import type { TopicResponse } from './topics.type';
 
 export type CategoryResponse = {
   id: string;

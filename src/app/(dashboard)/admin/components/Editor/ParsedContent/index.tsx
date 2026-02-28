@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from 'next/image';
 import Link from 'next/link';
-import { randomUUID } from 'crypto';
 import clsx from 'clsx';
 import React from 'react';
 import { Info } from 'lucide-react';
@@ -36,11 +35,28 @@ const TEXT_TYPE_TO_FORMAT: Record<TextFormatType | string, number> = {
   superscript: IS_SUPERSCRIPT,
 };
 
-const generateRandomKey = () => {
-  if (typeof window === 'undefined') {
-    return randomUUID();
-  }
-  return window.crypto.getRandomValues(new Uint32Array(1))[0];
+const sanitizeKeyPart = (value: unknown): string => {
+  if (value === null || value === undefined) return 'empty';
+
+  return String(value)
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9-_]/g, '')
+    .slice(0, 40);
+};
+
+const createNodeKey = (node: any, index: number, parentPath: string): string => {
+  const nodeType = sanitizeKeyPart(node?.type || 'node');
+  const identity =
+    node?.key ||
+    node?.id ||
+    node?.url ||
+    node?.src ||
+    node?.text ||
+    node?.tag ||
+    node?.templateColumns ||
+    'item';
+
+  return `${parentPath}-${index}-${nodeType}-${sanitizeKeyPart(identity)}`;
 };
 
 const hasFormat = (type: TextFormatType, format: number): boolean => {
@@ -77,11 +93,18 @@ const handleFormatting = (str: string, format: number) => {
   return element;
 };
 
-const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
+const HandleTextNodeChildren = ({
+  items,
+  nodePath,
+}: {
+  items: any[];
+  nodePath: string;
+}): React.ReactNode => {
   const hasTooltips = items.some((child: any) => child.type === 'tooltip');
   const content = items.map((child: any, i: number) => {
     const isLastItem = i === items.length - 1;
     const nextChild = items[i + 1];
+    const childKey = createNodeKey(child, i, nodePath);
 
     if (child.type === 'text') {
       const shouldAddSpace =
@@ -90,7 +113,7 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
         !/^[.,!?;:]/.test(nextChild?.text || '');
 
       return (
-        <React.Fragment key={i}>
+        <React.Fragment key={childKey}>
           {handleFormatting(child.text?.trim(), child.format)}
           {shouldAddSpace && ' '}
         </React.Fragment>
@@ -110,7 +133,7 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
       // If tooltip is after text, show tooltip only on icon
       if (isInline) {
         return (
-          <React.Fragment key={i}>
+          <React.Fragment key={childKey}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="cursor-help border-b border-dotted border-gray-400">
@@ -128,7 +151,7 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
 
       // Tooltip after text - show only on icon
       return (
-        <React.Fragment key={i}>
+        <React.Fragment key={childKey}>
           <TooltipProvider>
             <span className="inline-flex items-center">
               {formattedText}
@@ -150,7 +173,7 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
     }
 
     if (child.type === 'linebreak') {
-      return <br key={generateRandomKey()} />;
+      return <br key={`${childKey}-linebreak`} />;
     }
 
     if (child.type === 'link') {
@@ -158,7 +181,7 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
       const isInternalLink = child.url?.startsWith('/');
 
       return (
-        <React.Fragment key={generateRandomKey()}>
+        <React.Fragment key={childKey}>
           <span>{i > 0 && ' '}</span>
           {isInternalLink ? (
             <Link href={child.url} className="underline">
@@ -184,11 +207,22 @@ const HandleTextNodeChildren = ({ items }: any): React.ReactNode => {
   return content;
 };
 
-const HandleListItem = ({ items }: any): React.ReactNode => {
-  const list = items.map((item: any) => {
+const HandleListItem = ({
+  items,
+  nodePath,
+}: {
+  items: any[];
+  nodePath: string;
+}): React.ReactNode => {
+  const list = items.map((item: any, i: number) => {
+    const itemKey = createNodeKey(item, i, nodePath);
+
     return (
-      <li key={generateRandomKey()}>
-        <HandleTextNodeChildren items={item.children} />
+      <li key={itemKey}>
+        <HandleTextNodeChildren
+          items={item.children}
+          nodePath={`${itemKey}-children`}
+        />
       </li>
     );
   });
@@ -196,7 +230,13 @@ const HandleListItem = ({ items }: any): React.ReactNode => {
   return list;
 };
 
-const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
+const AppendChildNodeToHtml = ({
+  node,
+  nodePath,
+}: {
+  node: any;
+  nodePath: string;
+}): React.ReactNode => {
   const { children } = node;
 
   const currentNodeType = node.type;
@@ -211,7 +251,10 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
           'text-right': node.format === 'right',
         })}
       >
-        <HandleTextNodeChildren items={children} />
+        <HandleTextNodeChildren
+          items={children}
+          nodePath={`${nodePath}-children`}
+        />
       </HeadingTag>
     );
   }
@@ -234,12 +277,12 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
         <div className="inline-block">
           <Image
             className="not-prose inline h-auto w-auto"
-            key={generateRandomKey()}
             src={src}
             width={width}
             height={height}
             alt={alt}
-            priority
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, 700px"
           />
           {imageNode.showCaption && (
             <figcaption className="mt-1 text-center text-sm text-gray-600">
@@ -258,7 +301,10 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
           'text-right': node.format === 'right',
         })}
       >
-        <HandleTextNodeChildren items={children} />
+        <HandleTextNodeChildren
+          items={children}
+          nodePath={`${nodePath}-children`}
+        />
       </p>
     );
   }
@@ -266,23 +312,28 @@ const AppendChildNodeToHtml = ({ node }: any): React.ReactNode => {
     if (node.tag === 'ol') {
       return (
         <ol className="list-decimal">
-          <HandleListItem items={children} />
+          <HandleListItem items={children} nodePath={`${nodePath}-items`} />
         </ol>
       );
     }
     return (
       <ul className="list-disc">
-        <HandleListItem items={children} />
+        <HandleListItem items={children} nodePath={`${nodePath}-items`} />
       </ul>
     );
   }
 
   if (currentNodeType === 'layout-container') {
     const gridItemsNode = node.children;
-    const gridItems = gridItemsNode.map((gridItemNode: any) => {
+    const gridItems = gridItemsNode.map((gridItemNode: any, i: number) => {
+      const gridItemKey = createNodeKey(gridItemNode, i, `${nodePath}-grid`);
+
       return (
-        <div key={generateRandomKey()}>
-          <ParsedContent content={gridItemNode} />
+        <div key={gridItemKey}>
+          <ParsedContent
+            content={gridItemNode}
+            keyPrefix={`${gridItemKey}-content`}
+          />
         </div>
       );
     });
@@ -312,10 +363,12 @@ type Props = {
     root?: any;
   };
   excerpt?: boolean;
+  keyPrefix?: string;
 };
 export const ParsedContent = ({
   content,
   excerpt = false,
+  keyPrefix = 'parsed-content',
 }: Props): React.ReactNode => {
   if (!content) return <div></div>;
   const topLevelChildren = content?.root?.children || content?.children;
@@ -326,18 +379,21 @@ export const ParsedContent = ({
   if (excerpt) {
     return (
       <AppendChildNodeToHtml
-        key={generateRandomKey()}
         node={topLevelChildren[0]}
+        nodePath={`${keyPrefix}-excerpt-0`}
       />
     );
   }
   return (
     <>
-      {topLevelChildren.map((topLevelNode: any) => {
+      {topLevelChildren.map((topLevelNode: any, i: number) => {
+        const topLevelKey = createNodeKey(topLevelNode, i, `${keyPrefix}-root`);
+
         return (
           <AppendChildNodeToHtml
-            key={generateRandomKey()}
+            key={topLevelKey}
             node={topLevelNode}
+            nodePath={topLevelKey}
           />
         );
       })}

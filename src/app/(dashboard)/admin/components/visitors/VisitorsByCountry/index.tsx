@@ -1,4 +1,5 @@
-import { ChartConfig } from '@/components/ui/chart';
+import dynamic from 'next/dynamic';
+import type { ChartConfig } from '@/components/ui/chart';
 import { dataClientReport } from '@/lib/ga/dataclientreport';
 
 import {
@@ -9,7 +10,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { HorizontalBarChart } from '../../charts/horizontal-bar-chart';
+
+const HorizontalBarChart = dynamic(
+  () =>
+    import('../../charts/horizontal-bar-chart').then(
+      (module) => module.HorizontalBarChart
+    ),
+  {
+    loading: () => <div className="h-[220px] w-full animate-pulse rounded-md bg-slate-100" />,
+  }
+);
 
 type Props = {
   className?: string;

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { api } from '@/api';
 import { TAGS } from '@/api/constants/tags';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
-import { CategoryResponse } from '@/api/types/categories.type';
+import type { CategoryResponse } from '@/api/types/categories.type';
 import TopicChildrenList from '../components/topics/TopicChildrenList';
 import Page from '../components/Page';
 import PostList from '../components/Post/PostList';
@@ -23,16 +23,17 @@ type Props = {
 export default async function TopicPage(props: Props) {
   const searchParams = await props.searchParams;
   const params = await props.params;
-  const topic = await api.topics.getOne({
-    slug: params.topic,
-    query: { include: 'children' },
-    tags: [TAGS.TOPICS],
-  });
-
-  const categories = await api.categories.getMany({
-    query: { include: 'children' },
-    tags: [TAGS.CATEGORIES],
-  });
+  const [topic, categories] = await Promise.all([
+    api.topics.getOne({
+      slug: params.topic,
+      query: { include: 'children' },
+      tags: [TAGS.TOPICS],
+    }),
+    api.categories.getMany({
+      query: { include: 'children' },
+      tags: [TAGS.CATEGORIES],
+    }),
+  ]);
 
   if (!topic) {
     return notFound();
