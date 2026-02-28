@@ -8,7 +8,7 @@ import {
   SheetClose,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { CategoryResponse } from '@/api/types/categories.type';
+import type { CategoryResponse } from '@/api/types/categories.type';
 import {
   Accordion,
   AccordionContent,

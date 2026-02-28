@@ -39,13 +39,19 @@ const queryObjectToString = (query?: unknown) => {
     return '';
   }
 
-  return (
-    '?' +
-    Object.entries(query)
-      .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&')
-  );
+  const searchParams = new URLSearchParams();
+
+  Object.entries(query as Record<string, unknown>).forEach(([key, value]) => {
+    if (value === undefined || value === null) {
+      return;
+    }
+
+    searchParams.append(key, String(value));
+  });
+
+  const queryString = searchParams.toString();
+
+  return queryString ? `?${queryString}` : '';
 };
 
 export const api = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Raleway } from 'next/font/google';
+import { raleway } from '@/lib/fonts';
 
 type Props = {
   title?: string;
@@ -7,12 +7,10 @@ type Props = {
 
 const defaultTitle = 'Лікування та догляд за тваринами';
 
-const releway = Raleway({ subsets: ['latin', 'cyrillic'] });
-
 export default function Description({ title = defaultTitle }: Props) {
   return (
     <h1
-      className={`${releway.className} my-8 text-center text-lg font-normal uppercase`}
+      className={`${raleway.className} my-8 text-center text-lg font-normal uppercase`}
     >
       {title}
     </h1>

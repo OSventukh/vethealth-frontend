@@ -1,8 +1,8 @@
-import { userQuerySchema } from '@/utils/validators/query.validator';
-import { z } from 'zod';
-import { PostResponse } from './posts.type';
-import { TopicResponse } from './topics.type';
-import { Status } from './general.type';
+import type { userQuerySchema } from '@/utils/validators/query.validator';
+import type { z } from 'zod';
+import type { PostResponse } from './posts.type';
+import type { TopicResponse } from './topics.type';
+import type { Status } from './general.type';
 
 export type UserResponse = {
   id: string;
