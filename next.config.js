@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -9,13 +10,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'vethealth.com.ua',
-
       },
       {
         protocol: 'https',
         hostname: '*.vethealth.com.ua',
       },
-      
     ],
   },
 };
