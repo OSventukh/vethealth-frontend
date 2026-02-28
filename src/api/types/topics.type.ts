@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 
-import { topicQuerySchema } from '@/utils/validators/query.validator';
+import type { topicQuerySchema } from '@/utils/validators/query.validator';
 import type { PostResponse } from './posts.type';
 import type { CategoryResponse } from './categories.type';
 import type { Image, Status } from './general.type';
-import { PageResponse } from './pages.type';
+import type { PageResponse } from './pages.type';
 
 export type TopicResponse = {
   id: string;

@@ -1,5 +1,5 @@
 'use client';
-import { CategoryResponse } from '@/api/types/categories.type';
+import type { CategoryResponse } from '@/api/types/categories.type';
 import { Card } from '../card';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';

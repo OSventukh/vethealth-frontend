@@ -23,8 +23,13 @@ export default async function TopicList({
   }
   return (
     <div className="grid grid-cols-1 justify-center justify-items-center gap-8 md:grid-cols-2">
-      {items.map((item) => (
-        <TopicItem key={item.id} item={item} parentSlug={parentSlug} />
+      {items.map((item, i) => (
+        <TopicItem
+          key={item.id}
+          item={item}
+          parentSlug={parentSlug}
+          imagePriority={i < 2}
+        />
       ))}
     </div>
   );

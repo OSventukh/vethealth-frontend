@@ -10,6 +10,26 @@ type PostRequest = {
   method?: 'POST' | 'PATCH';
 };
 
+const parseResponse = async (response: Response): Promise<unknown> => {
+  if (response.status === 204) {
+    return null;
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return response.json();
+  }
+
+  const text = await response.text();
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+};
+
 export const post = async <Response>({
   url,
   query,
@@ -17,22 +37,30 @@ export const post = async <Response>({
   token,
   method,
 }: PostRequest): Promise<Response> => {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    'x-lang': 'ua',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(url + (query || ''), {
     method: method || 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-      'x-lang': 'ua',
-    },
+    headers,
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
+  const result = (await parseResponse(response)) as {
+    message?: string;
+  } | null;
+
   if (!response.ok) {
-    throw new Error(result.message);
+    throw new Error(result?.message || 'Request failed');
   }
 
-  return result;
+  return result as Response;
 };
 
 type GetRequest = {
@@ -53,26 +81,40 @@ export const get = async <Response>({
   revalidate,
 }: GetRequest): Promise<Response | null> => {
   try {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    const isAuthenticated = Boolean(token);
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const nextOptions =
+      !isAuthenticated && (tags || revalidate !== undefined)
+        ? {
+            next: {
+              tags,
+              revalidate,
+            },
+          }
+        : {};
+
     const response = await fetch(url + (id ? `/${id}` : '') + (query || ''), {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      cache: 'force-cache',
-      next: {
-        tags,
-        revalidate,
-      },
+      headers,
+      cache: isAuthenticated || revalidate === false ? 'no-store' : 'force-cache',
+      ...nextOptions,
     });
-    const result = await response.json();
+    const result = (await parseResponse(response)) as Response;
 
     if (!response.ok) {
       return null;
     }
 
     return result;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -88,12 +130,17 @@ export const remove = async <Response>({
   id,
   token,
 }: DeleteRequest): Promise<Response> => {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(url + id, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
   });
 
   if (!response.ok) {
@@ -104,7 +151,7 @@ export const remove = async <Response>({
     throw new Error('Failed to fetch');
   }
 
-  return await response.json();
+  return (await parseResponse(response)) as Response;
 };
 
 type SendFileRequest = {
@@ -118,11 +165,15 @@ export const sendFile = async <Response>({
   data,
   token,
 }: SendFileRequest): Promise<Response> => {
+  const headers: HeadersInit = {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
     body: data,
   });
   if (!response.ok) {
@@ -133,6 +184,5 @@ export const sendFile = async <Response>({
     throw new Error('Failed to fetch');
   }
 
-  const result = await response.json();
-  return result.path;
+  return (await parseResponse(response)) as Response;
 };

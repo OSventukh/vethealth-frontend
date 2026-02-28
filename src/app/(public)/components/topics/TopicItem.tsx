@@ -1,30 +1,36 @@
 import Link from 'next/link';
-import { Roboto } from 'next/font/google';
 import { TopicResponse } from '@/api/types/topics.type';
 import TopicImage from './TopicImage';
-
-const roboto = Roboto({
-  weight: '400',
-  subsets: ['latin', 'cyrillic'],
-});
+import { roboto } from '@/lib/fonts';
 
 type Props = {
   item: TopicResponse;
   parentSlug?: string;
+  imagePriority?: boolean;
 };
 
-export default function TopicItem({ item, parentSlug }: Props) {
+export default function TopicItem({
+  item,
+  parentSlug,
+  imagePriority = false,
+}: Props) {
   return (
-    <div className="w-60">
+    <div>
       <Link href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug}>
-        <TopicImage src={item.image.path} alt={item.title} />
+        <TopicImage
+          src={item.image.path}
+          alt={item.title}
+          priority={imagePriority}
+        />
       </Link>
       <div className="mt-4">
         <Link
           href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug}
           key={item.slug}
         >
-          <h2 className={`${roboto.className} text-center text-sm uppercase`}>
+          <h2
+            className={`${roboto.className} w-60 text-center text-sm uppercase`}
+          >
             {item.title}
           </h2>
         </Link>

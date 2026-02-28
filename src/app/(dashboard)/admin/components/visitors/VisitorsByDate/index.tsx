@@ -1,6 +1,7 @@
 import { format, parse } from 'date-fns';
 import { uk } from 'date-fns/locale';
-import { ChartConfig } from '@/components/ui/chart';
+import dynamic from 'next/dynamic';
+import type { ChartConfig } from '@/components/ui/chart';
 import { dataClientReport } from '@/lib/ga/dataclientreport';
 
 import {
@@ -11,7 +12,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import LinearLineChart from '../../charts/linear-line-chart';
+
+const LinearLineChart = dynamic(() => import('../../charts/linear-line-chart'), {
+  loading: () => <div className="h-[220px] w-full animate-pulse rounded-md bg-slate-100" />,
+});
 
 type Props = {
   className?: string;

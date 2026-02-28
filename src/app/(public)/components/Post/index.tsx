@@ -1,32 +1,32 @@
-import { Raleway } from 'next/font/google';
 import { api } from '@/api';
 import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import { notFound } from 'next/navigation';
 import { TAGS } from '@/api/constants/tags';
+import { raleway } from '@/lib/fonts';
 
 type Props = {
   parentTopicSlug: string;
   topicSlug?: string;
   slug: string;
 };
-const raleway = Raleway({ subsets: ['latin', 'cyrillic'] });
 
 export default async function Post({
   slug,
   parentTopicSlug,
   topicSlug,
 }: Props) {
-  const post = await api.posts.getOne({
-    slug,
-    tags: [TAGS.POSTS],
-  });
-
-  const parentTopic = await api.topics.getOne({
-    slug: parentTopicSlug,
-    tags: [TAGS.TOPICS],
-    query: { include: 'children' },
-  });
+  const [post, parentTopic] = await Promise.all([
+    api.posts.getOne({
+      slug,
+      tags: [TAGS.POSTS],
+    }),
+    api.topics.getOne({
+      slug: parentTopicSlug,
+      tags: [TAGS.TOPICS],
+      query: { include: 'children' },
+    }),
+  ]);
 
   if (!post || typeof post === 'string') {
     return notFound();

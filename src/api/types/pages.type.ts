@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 
-import { postQuerySchema } from '@/utils/validators/query.validator';
+import type { postQuerySchema } from '@/utils/validators/query.validator';
 
 export type PageResponse = {
   id: string;
