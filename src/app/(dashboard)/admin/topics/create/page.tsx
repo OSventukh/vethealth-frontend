@@ -2,9 +2,12 @@ import { api } from '@/api';
 import EditTopic from '../components/EditTopic';
 
 export default async function CreateTopicPage() {
-  const categories = await api.categories.getMany({});
-  const topics = await api.topics.getMany({});
-  const pages = await api.pages.getMany({});
+  const [categories, topics, pages] = await Promise.all([
+    api.categories.getMany({}),
+    api.topics.getMany({}),
+    api.pages.getMany({}),
+  ]);
+
   return (
     <EditTopic
       categories={categories?.items || []}

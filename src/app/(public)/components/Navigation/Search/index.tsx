@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import {
   Sheet,
   SheetTitle,
@@ -25,11 +26,20 @@ import { searchSchema, SearchValues } from '@/utils/validators/form.validator';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PostResponse } from '@/api/types/posts.type';
+import type { PostResponse } from '@/api/types/posts.type';
 import { Card } from '@/components/ui/card';
-import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
 import { LoadingSpinner } from '@/components/ui/custom/loading';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+
+const ParsedContent = dynamic(
+  () =>
+    import('@/app/(dashboard)/admin/components/Editor/ParsedContent').then(
+      (module) => module.ParsedContent
+    ),
+  {
+    ssr: false,
+  }
+);
 
 export default function SearchBar() {
   const [query, setQuery] = useState('');
@@ -49,14 +59,18 @@ export default function SearchBar() {
   });
 
   const submitForm = async (values: SearchValues) => {
-    const { query } = values;
-    if (!query || query.trim() === '') return;
-    router.push(`/search?query=${encodeURIComponent(query)}`);
+    const submittedQuery = values.query?.trim() || '';
+
+    if (submittedQuery.length < 3) return;
+
+    router.push(`/search?query=${encodeURIComponent(submittedQuery)}`);
   };
 
   const getSearchResults = async (query: string) => {
     try {
-      if (query.trim() === '') return;
+      const normalizedQuery = query.trim();
+
+      if (normalizedQuery.length < 3) return;
 
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -66,12 +80,13 @@ export default function SearchBar() {
 
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_SERVER}/search?query=${encodeURIComponent(query)}`,
+        `${process.env.NEXT_PUBLIC_API_SERVER}/search?query=${encodeURIComponent(normalizedQuery)}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
+          cache: 'no-store',
           signal: abortControllerRef.current.signal,
         }
       );
@@ -109,8 +124,10 @@ export default function SearchBar() {
   }, [query]);
 
   useEffect(() => {
-    if (debouncedQuery.length >= 3) {
-      getSearchResults(debouncedQuery);
+    const normalizedQuery = debouncedQuery.trim();
+
+    if (normalizedQuery.length >= 3) {
+      getSearchResults(normalizedQuery);
     } else {
       setSearchResults([]);
     }

@@ -1,13 +1,10 @@
-import { api } from '@/api';
 import DesktopNavigation from './Desktop';
 import MobileNavigation from './Mobile';
 import SearchBar from './Search';
+import { getCategoriesByTopic } from '../../_lib/content-cache';
 
 export default async function Navigation({ topic }: { topic?: string }) {
-  const categories = await api.categories.getMany({
-    query: { include: 'children', topic },
-    tags: ['categories'],
-  });
+  const categories = await getCategoriesByTopic(topic);
 
   const isCategories = topic && categories && categories?.count > 0;
 

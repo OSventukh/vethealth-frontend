@@ -169,11 +169,18 @@ export const api = {
         tags,
       }),
   },
-  search: ({ query, revalidate, tags }: SearchParams) =>
-    get<Pagination<PostResponse>>({
-      query: '?query=' + encodeURIComponent(query),
+  search: ({ query, revalidate, tags }: SearchParams) => {
+    const normalizedQuery = query.trim();
+
+    if (normalizedQuery.length < 3) {
+      return Promise.resolve(null);
+    }
+
+    return get<Pagination<PostResponse>>({
+      query: '?query=' + encodeURIComponent(normalizedQuery),
       url: routes.search,
-      revalidate,
+      revalidate: revalidate ?? 30,
       tags,
-    }),
+    });
+  },
 } as const;
