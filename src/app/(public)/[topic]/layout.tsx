@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { api } from '@/api';
 import { NOT_FOUND_TITLE, SITE_TITLE } from '@/utils/constants/generals';
+import { getTopicBySlug } from '../_lib/content-cache';
 
 type MetadataProps = {
   params: Promise<{
@@ -14,11 +14,7 @@ export async function generateMetadata(
   props: MetadataProps
 ): Promise<Metadata> {
   const params = await props.params;
-  const topic = await api.topics.getOne({
-    slug: params.topic,
-    query: { include: 'children' },
-    tags: ['topics'],
-  });
+  const topic = await getTopicBySlug(params.topic);
 
   if (typeof topic === 'string') {
     return {

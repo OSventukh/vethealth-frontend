@@ -6,15 +6,16 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 export default async function CategoryCreatePage(props: Props) {
-  const params = await props.params;
-  const categories = await api.categories.getMany({});
-  const session = await auth();
+  const [params, session] = await Promise.all([props.params, auth()]);
   const { slug } = params;
-  const category = await api.categories.getOne({
-    slug,
-    token: session?.token,
-    query: { include: 'parent,children' },
-  });
+  const [categories, category] = await Promise.all([
+    api.categories.getMany({}),
+    api.categories.getOne({
+      slug,
+      token: session?.token,
+      query: { include: 'parent,children' },
+    }),
+  ]);
 
   return (
     <EditCategory

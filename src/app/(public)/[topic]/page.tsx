@@ -1,7 +1,5 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { api } from '@/api';
-import { TAGS } from '@/api/constants/tags';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
 import type { CategoryResponse } from '@/api/types/categories.type';
 import TopicChildrenList from '../components/topics/TopicChildrenList';
@@ -10,6 +8,7 @@ import PostList from '../components/Post/PostList';
 import Description from '../components/Description';
 import TopicListSkeleton from '../components/Skeletons/TopicListSkeleton';
 import PostListSkeleton from '../components/Skeletons/PostListSkeleton';
+import { getCategoriesByTopic, getTopicBySlug } from '../_lib/content-cache';
 
 type Props = {
   params: Promise<{
@@ -24,15 +23,8 @@ export default async function TopicPage(props: Props) {
   const searchParams = await props.searchParams;
   const params = await props.params;
   const [topic, categories] = await Promise.all([
-    api.topics.getOne({
-      slug: params.topic,
-      query: { include: 'children' },
-      tags: [TAGS.TOPICS],
-    }),
-    api.categories.getMany({
-      query: { include: 'children' },
-      tags: [TAGS.CATEGORIES],
-    }),
+    getTopicBySlug(params.topic),
+    getCategoriesByTopic(params.topic),
   ]);
 
   if (!topic) {

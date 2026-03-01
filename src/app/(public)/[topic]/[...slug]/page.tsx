@@ -4,7 +4,7 @@ import Post from '../../components/Post';
 import Page from '../../components/Page';
 import TopicList from '../../components/topics/TopicList';
 import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
-import { TAGS } from '@/api/constants/tags';
+import { getTopicBySlug } from '../../_lib/content-cache';
 
 type Props = {
   params: Promise<{
@@ -15,11 +15,7 @@ type Props = {
 export default async function SlugPage(props: Props) {
   const params = await props.params;
   const topicSlug = params?.slug.length > 0 ? params?.slug[0] : params.topic;
-  const topic = await api.topics.getOne({
-    slug: topicSlug,
-    query: { include: 'children,page' },
-    tags: [TAGS.TOPICS],
-  });
+  const topic = await getTopicBySlug(topicSlug);
 
   const hasChildren = topic && topic?.children && topic.children.length > 0;
   const isPage = topic && topic && topic.contentType === 'page';

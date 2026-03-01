@@ -3,9 +3,12 @@ import EditPost from '../components/EditPost';
 import { auth } from '@/lib/next-auth/auth';
 
 export default async function CreatPage() {
-  const session = await auth();
-  const topics = await api.topics.getMany({});
-  const categories = await api.categories.getMany({});
+  const [session, topics, categories] = await Promise.all([
+    auth(),
+    api.topics.getMany({}),
+    api.categories.getMany({}),
+  ]);
+
   return (
     <EditPost
       topics={topics?.items || []}
