@@ -13,9 +13,9 @@ type Props = {
 };
 export default async function SearchPage(props: Props) {
   const searchParams = await props.searchParams;
-  const { query } = searchParams;
+  const query = (searchParams.query || '').trim();
 
-  const posts = await api.search({ query, revalidate: 1 });
+  const posts = query.length >= 3 ? await api.search({ query }) : null;
 
   return (
     <>
