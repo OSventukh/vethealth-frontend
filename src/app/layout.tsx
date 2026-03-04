@@ -4,6 +4,7 @@ import './globals.css';
 import Analytics from '@/components/google/Analytics';
 import AdSense from '@/components/google/AdSense';
 import { inter } from '@/lib/fonts';
+import CRSOptimizer from '@/components/external-scripts/crsoptimizer';
 
 export const metadata: Metadata = {
   title: SITE_TITLE,
@@ -19,6 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <CRSOptimizer />
       <Analytics />
       <AdSense />
       <body className={inter.className} suppressHydrationWarning>
