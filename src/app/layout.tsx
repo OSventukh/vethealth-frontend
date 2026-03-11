@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <CRSOptimizer />
+      {/* <CRSOptimizer /> */}
       <Analytics />
       <AdSense />
       <body className={inter.className} suppressHydrationWarning>
