@@ -28,6 +28,7 @@ const PROD_ORIGINS = [
   'https://vethealth.com.ua',
   'https://www.vethealth.com.ua',
   'https://server.vethealth.com.ua',
+  'https://dev-cdn.vethealth.com.ua'
 ];
 
 function getAllowedOrigins(request: NextRequest) {
