@@ -1,37 +1,37 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react-hooks/recommended",
-    "prettier"
-  ],
-  "plugins": [
-    "prettier",
-    "@typescript-eslint",
-    "react-hooks",
-    "unused-imports"
-  ],
-  "parser": "@typescript-eslint/parser",
-  "rules": {
-    "prettier/prettier": [
-      "warn",
-      {
-        "endOfLine": "auto"
-      }
-    ],
-    "unused-imports/no-unused-imports": "warn",
-    "unused-imports/no-unused-vars": "off",
-    "@typescript-eslint/no-unused-expressions": "warn",
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      {
-        "vars": "all",
-        "varsIgnorePattern": "^_",
-        "args": "after-used",
-        "argsIgnorePattern": "^_"
-      }
-    ]
-  },
-  "root": true
+	"extends": [
+		"next/core-web-vitals",
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:react-hooks/recommended",
+		"prettier"
+	],
+	"plugins": [
+		"prettier",
+		"@typescript-eslint",
+		"react-hooks",
+		"unused-imports"
+	],
+	"parser": "@typescript-eslint/parser",
+	"rules": {
+		"prettier/prettier": [
+			"warn",
+			{
+				"endOfLine": "auto"
+			}
+		],
+		"unused-imports/no-unused-imports": "warn",
+		"unused-imports/no-unused-vars": "off",
+		"@typescript-eslint/no-unused-expressions": "warn",
+		"@typescript-eslint/no-unused-vars": [
+			"warn",
+			{
+				"vars": "all",
+				"varsIgnorePattern": "^_",
+				"args": "after-used",
+				"argsIgnorePattern": "^_"
+			}
+		]
+	},
+	"root": true
 }

@@ -1,186 +1,186 @@
-import { post, get, sendFile } from './request';
-import { routes } from './routes';
+import { get, post, sendFile } from "./request";
+import { routes } from "./routes";
 import type {
-  ConfirmData,
-  FileUploadResponse,
-  ForgotData,
-  LoginData,
-  LoginResponse,
-  PendingUserResponse,
-  RefreshResponse,
-  RegisterData,
-} from './types/auth.type';
-import {
-  CategoryGetManyParams,
-  CategoryGetOneParams,
-  CategoryResponse,
-} from './types/categories.type';
-import { Pagination } from './types/general.type';
-import { PageResponse } from './types/pages.type';
-import {
-  PostGetManyParams,
-  PostGetOneParams,
-  PostResponse,
-} from './types/posts.type';
-import {
-  TopicGetManyParams,
-  TopicGetOneParams,
-  TopicResponse,
-} from './types/topics.type';
-import {
-  SearchParams,
-  UserGetManyParams,
-  UserGetOneParams,
-  UserResponse,
-} from './types/user.type';
+	ConfirmData,
+	FileUploadResponse,
+	ForgotData,
+	LoginData,
+	LoginResponse,
+	PendingUserResponse,
+	RefreshResponse,
+	RegisterData,
+} from "./types/auth.type";
+import type {
+	CategoryGetManyParams,
+	CategoryGetOneParams,
+	CategoryResponse,
+} from "./types/categories.type";
+import type { Pagination } from "./types/general.type";
+import type { PageResponse } from "./types/pages.type";
+import type {
+	PostGetManyParams,
+	PostGetOneParams,
+	PostResponse,
+} from "./types/posts.type";
+import type {
+	TopicGetManyParams,
+	TopicGetOneParams,
+	TopicResponse,
+} from "./types/topics.type";
+import type {
+	SearchParams,
+	UserGetManyParams,
+	UserGetOneParams,
+	UserResponse,
+} from "./types/user.type";
 
 const queryObjectToString = (query?: unknown) => {
-  if (!query) {
-    return '';
-  }
+	if (!query) {
+		return "";
+	}
 
-  const searchParams = new URLSearchParams();
+	const searchParams = new URLSearchParams();
 
-  Object.entries(query as Record<string, unknown>).forEach(([key, value]) => {
-    if (value === undefined || value === null) {
-      return;
-    }
+	Object.entries(query as Record<string, unknown>).forEach(([key, value]) => {
+		if (value === undefined || value === null) {
+			return;
+		}
 
-    searchParams.append(key, String(value));
-  });
+		searchParams.append(key, String(value));
+	});
 
-  const queryString = searchParams.toString();
+	const queryString = searchParams.toString();
 
-  return queryString ? `?${queryString}` : '';
+	return queryString ? `?${queryString}` : "";
 };
 
 export const api = {
-  auth: {
-    register: (data: RegisterData) =>
-      post<LoginResponse>({ url: routes.register, data }),
-    login: (data: LoginData) =>
-      post<LoginResponse>({ url: routes.login, data }),
-    logout: (accessToken: string) =>
-      post({ url: routes.logout, token: accessToken }),
-    refresh: (refreshToken: string) =>
-      post<RefreshResponse>({ url: routes.refresh, token: refreshToken }),
-    forgot: (data: ForgotData) => post<void>({ url: routes.forgot, data }),
-    confirm: (data: ConfirmData, hash?: string) =>
-      post<void>({ url: routes.confirm, data, query: hash }),
-    getPendingUser: (hash: string) =>
-      get<PendingUserResponse>({
-        url: routes.confirm,
-        id: hash,
-        revalidate: 1,
-      }),
-  },
-  file: {
-    upload: (data: FormData, token: string) =>
-      sendFile<FileUploadResponse>({ url: routes.fileUpload, data, token }),
-  },
-  posts: {
-    getOne: ({ slug, token, query, revalidate, tags }: PostGetOneParams) =>
-      get<PostResponse>({
-        url: routes.posts,
-        query: queryObjectToString({ ...query, slug }),
-        token,
-        revalidate,
-        tags,
-      }),
-    getMany: ({ query, token, revalidate, tags }: PostGetManyParams) =>
-      get<Pagination<PostResponse>>({
-        url: routes.posts,
-        query: queryObjectToString(query),
-        token,
-        revalidate,
-        tags,
-      }),
-  },
-  topics: {
-    getOne: ({ slug, query, token, revalidate, tags }: TopicGetOneParams) =>
-      get<TopicResponse>({
-        url: routes.topics,
-        query: queryObjectToString({ ...query, slug }),
-        token,
-        revalidate,
-        tags,
-      }),
-    getMany: ({ query, token, revalidate, tags }: TopicGetManyParams) =>
-      get<Pagination<TopicResponse>>({
-        url: routes.topics,
-        query: queryObjectToString(query),
-        token,
-        revalidate,
-        tags,
-      }),
-  },
-  categories: {
-    getOne: ({ slug, query, token, revalidate, tags }: CategoryGetOneParams) =>
-      get<CategoryResponse>({
-        url: routes.categories,
-        query: queryObjectToString({ ...query, slug }),
-        token,
-        revalidate,
-        tags,
-      }),
-    getMany: ({ query, token, revalidate, tags }: CategoryGetManyParams) =>
-      get<Pagination<CategoryResponse>>({
-        url: routes.categories,
-        query: queryObjectToString(query),
-        token,
-        revalidate,
-        tags,
-      }),
-  },
-  pages: {
-    getOne: ({ slug, token, query, revalidate, tags }: PostGetOneParams) =>
-      get<PageResponse>({
-        url: routes.pages,
-        query: queryObjectToString({ ...query, slug }),
-        token,
-        revalidate,
-        tags,
-      }),
-    getMany: ({ query, token, revalidate, tags }: PostGetManyParams) =>
-      get<Pagination<PageResponse>>({
-        url: routes.pages,
-        query: queryObjectToString(query),
-        token,
-        revalidate,
-        tags,
-      }),
-  },
-  users: {
-    getOne: ({ token, id, query, revalidate, tags }: UserGetOneParams) =>
-      get<UserResponse>({
-        url: routes.users,
-        id: id,
-        query: queryObjectToString(query),
-        token,
-        revalidate,
-        tags,
-      }),
-    getMany: ({ token, query, revalidate, tags }: UserGetManyParams) =>
-      get<Pagination<UserResponse>>({
-        url: routes.users,
-        query: queryObjectToString(query),
-        token,
-        revalidate,
-        tags,
-      }),
-  },
-  search: ({ query, revalidate, tags }: SearchParams) => {
-    const normalizedQuery = query.trim();
+	auth: {
+		register: (data: RegisterData) =>
+			post<LoginResponse>({ url: routes.register, data }),
+		login: (data: LoginData) =>
+			post<LoginResponse>({ url: routes.login, data }),
+		logout: (accessToken: string) =>
+			post({ url: routes.logout, token: accessToken }),
+		refresh: (refreshToken: string) =>
+			post<RefreshResponse>({ url: routes.refresh, token: refreshToken }),
+		forgot: (data: ForgotData) => post<void>({ url: routes.forgot, data }),
+		confirm: (data: ConfirmData, hash?: string) =>
+			post<void>({ url: routes.confirm, data, query: hash }),
+		getPendingUser: (hash: string) =>
+			get<PendingUserResponse>({
+				url: routes.confirm,
+				id: hash,
+				revalidate: 1,
+			}),
+	},
+	file: {
+		upload: (data: FormData, token: string) =>
+			sendFile<FileUploadResponse>({ url: routes.fileUpload, data, token }),
+	},
+	posts: {
+		getOne: ({ slug, token, query, revalidate, tags }: PostGetOneParams) =>
+			get<PostResponse>({
+				url: routes.posts,
+				query: queryObjectToString({ ...query, slug }),
+				token,
+				revalidate,
+				tags,
+			}),
+		getMany: ({ query, token, revalidate, tags }: PostGetManyParams) =>
+			get<Pagination<PostResponse>>({
+				url: routes.posts,
+				query: queryObjectToString(query),
+				token,
+				revalidate,
+				tags,
+			}),
+	},
+	topics: {
+		getOne: ({ slug, query, token, revalidate, tags }: TopicGetOneParams) =>
+			get<TopicResponse>({
+				url: routes.topics,
+				query: queryObjectToString({ ...query, slug }),
+				token,
+				revalidate,
+				tags,
+			}),
+		getMany: ({ query, token, revalidate, tags }: TopicGetManyParams) =>
+			get<Pagination<TopicResponse>>({
+				url: routes.topics,
+				query: queryObjectToString(query),
+				token,
+				revalidate,
+				tags,
+			}),
+	},
+	categories: {
+		getOne: ({ slug, query, token, revalidate, tags }: CategoryGetOneParams) =>
+			get<CategoryResponse>({
+				url: routes.categories,
+				query: queryObjectToString({ ...query, slug }),
+				token,
+				revalidate,
+				tags,
+			}),
+		getMany: ({ query, token, revalidate, tags }: CategoryGetManyParams) =>
+			get<Pagination<CategoryResponse>>({
+				url: routes.categories,
+				query: queryObjectToString(query),
+				token,
+				revalidate,
+				tags,
+			}),
+	},
+	pages: {
+		getOne: ({ slug, token, query, revalidate, tags }: PostGetOneParams) =>
+			get<PageResponse>({
+				url: routes.pages,
+				query: queryObjectToString({ ...query, slug }),
+				token,
+				revalidate,
+				tags,
+			}),
+		getMany: ({ query, token, revalidate, tags }: PostGetManyParams) =>
+			get<Pagination<PageResponse>>({
+				url: routes.pages,
+				query: queryObjectToString(query),
+				token,
+				revalidate,
+				tags,
+			}),
+	},
+	users: {
+		getOne: ({ token, id, query, revalidate, tags }: UserGetOneParams) =>
+			get<UserResponse>({
+				url: routes.users,
+				id: id,
+				query: queryObjectToString(query),
+				token,
+				revalidate,
+				tags,
+			}),
+		getMany: ({ token, query, revalidate, tags }: UserGetManyParams) =>
+			get<Pagination<UserResponse>>({
+				url: routes.users,
+				query: queryObjectToString(query),
+				token,
+				revalidate,
+				tags,
+			}),
+	},
+	search: ({ query, revalidate, tags }: SearchParams) => {
+		const normalizedQuery = query.trim();
 
-    if (normalizedQuery.length < 3) {
-      return Promise.resolve(null);
-    }
+		if (normalizedQuery.length < 3) {
+			return Promise.resolve(null);
+		}
 
-    return get<Pagination<PostResponse>>({
-      query: '?query=' + encodeURIComponent(normalizedQuery),
-      url: routes.search,
-      revalidate: revalidate ?? 30,
-      tags,
-    });
-  },
+		return get<Pagination<PostResponse>>({
+			query: "?query=" + encodeURIComponent(normalizedQuery),
+			url: routes.search,
+			revalidate: revalidate ?? 30,
+			tags,
+		});
+	},
 } as const;

@@ -1,9 +1,9 @@
-import type { CategoryResponse } from '@/api/types/categories.type';
-import CustomNavigation from '@/components/ui/custom/custom-navigation';
+import type { CategoryResponse } from "@/api/types/categories.type";
+import CustomNavigation from "@/components/ui/custom/custom-navigation";
 
 type Props = {
-  items: CategoryResponse[];
+	items: CategoryResponse[];
 };
 export default function DesktopNavigation({ items }: Props) {
-  return <CustomNavigation items={items} />;
+	return <CustomNavigation items={items} />;
 }

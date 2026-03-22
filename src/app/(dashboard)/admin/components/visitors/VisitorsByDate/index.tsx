@@ -1,104 +1,108 @@
-import { format, parse } from 'date-fns';
-import { uk } from 'date-fns/locale';
-import dynamic from 'next/dynamic';
-import type { ChartConfig } from '@/components/ui/chart';
-import { dataClientReport } from '@/lib/ga/dataclientreport';
-
+import { format, parse } from "date-fns";
+import { uk } from "date-fns/locale";
+import dynamic from "next/dynamic";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import type { ChartConfig } from "@/components/ui/chart";
+import { dataClientReport } from "@/lib/ga/dataclientreport";
 
-const LinearLineChart = dynamic(() => import('../../charts/linear-line-chart'), {
-  loading: () => <div className="h-[220px] w-full animate-pulse rounded-md bg-slate-100" />,
-});
+const LinearLineChart = dynamic(
+	() => import("../../charts/linear-line-chart"),
+	{
+		loading: () => (
+			<div className="h-[220px] w-full animate-pulse rounded-md bg-slate-100" />
+		),
+	},
+);
 
 type Props = {
-  className?: string;
+	className?: string;
 };
 export default async function VisitorsByDate({ ...props }: Props) {
-  const [error, data] = await dataClientReport({
-    dimensions: [{ name: 'date' }],
-    metrics: [
-      { name: 'activeUsers' },
-      {
-        name: 'active7DayUsers',
-      },
-    ],
-    startDate: '7daysAgo',
-    endDate: 'yesterday',
-    orderBys: [
-      {
-        dimension: {
-          dimensionName: 'date',
-          orderType: 'ALPHANUMERIC',
-        },
-      },
-    ],
-  });
-  if (error || !data || !data.rows || data.rows.length === 0) {
-    return (
-      <Card {...props}>
-        <CardHeader>
-          <CardTitle>Виникла помилка</CardTitle>
-        </CardHeader>
-        {error && <CardContent>{error.message}</CardContent>}
-      </Card>
-    );
-  }
+	const [error, data] = await dataClientReport({
+		dimensions: [{ name: "date" }],
+		metrics: [
+			{ name: "activeUsers" },
+			{
+				name: "active7DayUsers",
+			},
+		],
+		startDate: "7daysAgo",
+		endDate: "yesterday",
+		orderBys: [
+			{
+				dimension: {
+					dimensionName: "date",
+					orderType: "ALPHANUMERIC",
+				},
+			},
+		],
+	});
+	if (error || !data || !data.rows || data.rows.length === 0) {
+		return (
+			<Card {...props}>
+				<CardHeader>
+					<CardTitle>Виникла помилка</CardTitle>
+				</CardHeader>
+				{error && <CardContent>{error.message}</CardContent>}
+			</Card>
+		);
+	}
 
-  const chartData = data?.rows.map((row) => {
-    const date = parse(
-      row?.dimensionValues?.[0]?.value || '',
-      'yyyyMMdd',
-      new Date()
-    );
-    const formattedDate = format(date, 'dd MMMM', { locale: uk });
-    return {
-      date: formattedDate,
-      visitors: parseInt(row?.metricValues?.[0].value || '0'),
-    };
-  });
+	const chartData = data?.rows.map((row) => {
+		const date = parse(
+			row?.dimensionValues?.[0]?.value || "",
+			"yyyyMMdd",
+			new Date(),
+		);
+		const formattedDate = format(date, "dd MMMM", { locale: uk });
+		return {
+			date: formattedDate,
+			visitors: parseInt(row?.metricValues?.[0].value || "0"),
+		};
+	});
 
-  const chartConfig = {
-    date: {
-      label: 'Дата',
-      color: 'var(--chart-1)',
-    },
-    visitors: {
-      label: 'Користувачі',
-      color: 'var(--chart-2)',
-    },
-  } satisfies ChartConfig;
+	const chartConfig = {
+		date: {
+			label: "Дата",
+			color: "var(--chart-1)",
+		},
+		visitors: {
+			label: "Користувачі",
+			color: "var(--chart-2)",
+		},
+	} satisfies ChartConfig;
 
-  const totalVisitors =
-    data.rows[data.rows.length - 1]?.metricValues?.[1]?.value;
-  return (
-    <Card {...props}>
-      <CardHeader>
-        <CardTitle>Відвідування</CardTitle>
-        <CardDescription>
-          Показано відвідування за останні 7 днів
-          <div className="mt-2 flex gap-2">
-            <div className="rounded border p-2">
-              <div>Всього користувачів</div>
-              <div className="text-center font-bold">
-                {totalVisitors || '0'}
-              </div>
-            </div>
-          </div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <LinearLineChart chartData={chartData} chartConfig={chartConfig} />
-      </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm"></div>
-      </CardFooter>
-    </Card>
-  );
+	const totalVisitors =
+		data.rows[data.rows.length - 1]?.metricValues?.[1]?.value;
+	return (
+		<Card {...props}>
+			<CardHeader>
+				<CardTitle>Відвідування</CardTitle>
+				<CardDescription>
+					Показано відвідування за останні 7 днів
+					<div className="mt-2 flex gap-2">
+						<div className="rounded border p-2">
+							<div>Всього користувачів</div>
+							<div className="text-center font-bold">
+								{totalVisitors || "0"}
+							</div>
+						</div>
+					</div>
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<LinearLineChart chartData={chartData} chartConfig={chartConfig} />
+			</CardContent>
+			<CardFooter>
+				<div className="flex w-full items-start gap-2 text-sm"></div>
+			</CardFooter>
+		</Card>
+	);
 }

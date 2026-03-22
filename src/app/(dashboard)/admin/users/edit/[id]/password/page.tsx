@@ -1,23 +1,23 @@
-import EditUserPassword from '../../../components/EditPassword';
-import { api } from '@/api';
-import { auth } from '@/lib/next-auth/auth';
+import { api } from "@/api";
+import { auth } from "@/lib/next-auth/auth";
+import EditUserPassword from "../../../components/EditPassword";
 
 type Props = {
-  params: Promise<{ id: string }>;
+	params: Promise<{ id: string }>;
 };
 
 export default async function ChangePasswordPage(props: Props) {
-  const params = await props.params;
+	const params = await props.params;
 
-  const { id } = params;
+	const { id } = params;
 
-  const session = await auth();
-  const user = await api.users.getOne({ id, token: session?.token });
+	const session = await auth();
+	const user = await api.users.getOne({ id, token: session?.token });
 
-  return (
-    <div className="bg-background mt-5 flex w-full flex-col gap-5 rounded-2xl border p-10">
-      {!user && <div>Користувача не знайдено</div>}
-      {user && <EditUserPassword user={user} />}
-    </div>
-  );
+	return (
+		<div className="bg-background mt-5 flex w-full flex-col gap-5 rounded-2xl border p-10">
+			{!user && <div>Користувача не знайдено</div>}
+			{user && <EditUserPassword user={user} />}
+		</div>
+	);
 }

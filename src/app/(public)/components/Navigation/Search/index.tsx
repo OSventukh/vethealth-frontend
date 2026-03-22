@@ -1,236 +1,237 @@
-'use client';
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { Search } from "lucide-react";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import type { PostResponse } from "@/api/types/posts.type";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { LoadingSpinner } from "@/components/ui/custom/loading";
 import {
-  Sheet,
-  SheetTitle,
-  SheetContent,
-  SheetTrigger,
-  SheetClose,
-} from '@/components/ui/sheet';
-
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { searchSchema, SearchValues } from '@/utils/validators/form.validator';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import type { PostResponse } from '@/api/types/posts.type';
-import { Card } from '@/components/ui/card';
-import { LoadingSpinner } from '@/components/ui/custom/loading';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetTitle,
+	SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+	type SearchValues,
+	searchSchema,
+} from "@/utils/validators/form.validator";
 
 const ParsedContent = dynamic(
-  () =>
-    import('@/app/(dashboard)/admin/components/Editor/ParsedContent').then(
-      (module) => module.ParsedContent
-    ),
-  {
-    ssr: false,
-  }
+	() =>
+		import("@/app/(dashboard)/admin/components/Editor/ParsedContent").then(
+			(module) => module.ParsedContent,
+		),
+	{
+		ssr: false,
+	},
 );
 
 export default function SearchBar() {
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<PostResponse[]>([]);
-  const [loading, setLoading] = useState(false);
-  const abortControllerRef = useRef<AbortController | null>(null);
+	const [query, setQuery] = useState("");
+	const [debouncedQuery, setDebouncedQuery] = useState("");
+	const [searchResults, setSearchResults] = useState<PostResponse[]>([]);
+	const [loading, setLoading] = useState(false);
+	const abortControllerRef = useRef<AbortController | null>(null);
 
-  const router = useRouter();
+	const router = useRouter();
 
-  const form = useForm<SearchValues>({
-    resolver: zodResolver(searchSchema),
-    mode: 'onChange',
-    defaultValues: {
-      query: '',
-    },
-  });
+	const form = useForm<SearchValues>({
+		resolver: zodResolver(searchSchema),
+		mode: "onChange",
+		defaultValues: {
+			query: "",
+		},
+	});
 
-  const submitForm = async (values: SearchValues) => {
-    const submittedQuery = values.query?.trim() || '';
+	const submitForm = async (values: SearchValues) => {
+		const submittedQuery = values.query?.trim() || "";
 
-    if (submittedQuery.length < 3) return;
+		if (submittedQuery.length < 3) return;
 
-    router.push(`/search?query=${encodeURIComponent(submittedQuery)}`);
-  };
+		router.push(`/search?query=${encodeURIComponent(submittedQuery)}`);
+	};
 
-  const getSearchResults = async (query: string) => {
-    try {
-      const normalizedQuery = query.trim();
+	const getSearchResults = async (query: string) => {
+		try {
+			const normalizedQuery = query.trim();
 
-      if (normalizedQuery.length < 3) return;
+			if (normalizedQuery.length < 3) return;
 
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+			if (abortControllerRef.current) {
+				abortControllerRef.current.abort();
+			}
 
-      abortControllerRef.current = new AbortController();
+			abortControllerRef.current = new AbortController();
 
-      setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_SERVER}/search?query=${encodeURIComponent(normalizedQuery)}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          cache: 'no-store',
-          signal: abortControllerRef.current.signal,
-        }
-      );
+			setLoading(true);
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_SERVER}/search?query=${encodeURIComponent(normalizedQuery)}`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					cache: "no-store",
+					signal: abortControllerRef.current.signal,
+				},
+			);
 
-      const data = await response.json();
+			const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Помилка пошуку');
-      }
+			if (!response.ok) {
+				throw new Error(data.message || "Помилка пошуку");
+			}
 
-      if (data.count > 0) {
-        setSearchResults(data.items);
-      } else {
-        setSearchResults([]);
-      }
-      setLoading(false);
-    } catch (error: unknown) {
-      setLoading(false);
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.error('Запит було скасовано');
-      } else {
-        console.error('Error fetching search results:', error);
-      }
-    }
-  };
+			if (data.count > 0) {
+				setSearchResults(data.items);
+			} else {
+				setSearchResults([]);
+			}
+			setLoading(false);
+		} catch (error: unknown) {
+			setLoading(false);
+			if (error instanceof Error && error.name === "AbortError") {
+				console.error("Запит було скасовано");
+			} else {
+				console.error("Error fetching search results:", error);
+			}
+		}
+	};
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 500);
+	useEffect(() => {
+		const handler = setTimeout(() => {
+			setDebouncedQuery(query);
+		}, 500);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [query]);
+		return () => {
+			clearTimeout(handler);
+		};
+	}, [query]);
 
-  useEffect(() => {
-    const normalizedQuery = debouncedQuery.trim();
+	useEffect(() => {
+		const normalizedQuery = debouncedQuery.trim();
 
-    if (normalizedQuery.length >= 3) {
-      getSearchResults(normalizedQuery);
-    } else {
-      setSearchResults([]);
-    }
-  }, [debouncedQuery]);
+		if (normalizedQuery.length >= 3) {
+			getSearchResults(normalizedQuery);
+		} else {
+			setSearchResults([]);
+		}
+	}, [debouncedQuery]);
 
-  return (
-    <>
-      <Sheet>
-        <SheetTrigger className="cursor-pointer p-2 md:p-4" title="Пошук">
-          <Search />
-        </SheetTrigger>
-        <VisuallyHidden asChild>
-          <SheetTitle>Пошук</SheetTitle>
-        </VisuallyHidden>
-        <SheetContent side="top" className="bg-[rgb(180,239,232)] px-0">
-          <div className="container">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(submitForm)}
-                className="flex flex-col gap-2 sm:gap-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="query"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Пошук:</FormLabel>
-                      <div className="flex gap-2">
-                        <FormControl>
-                          <Input
-                            className="bg-background/80 border-none"
-                            placeholder="Пошук"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setQuery(e.target.value);
-                            }}
-                          />
-                        </FormControl>
-                        <div>
-                          <Button
-                            className="aspect-square cursor-pointer p-1"
-                            variant="default"
-                            type="submit"
-                          >
-                            <Search size={20} />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="h-2">
-                        <FormMessage />
-                      </div>
-                    </FormItem>
-                  )}
-                ></FormField>
-              </form>
-            </Form>
+	return (
+		<>
+			<Sheet>
+				<SheetTrigger className="cursor-pointer p-2 md:p-4" title="Пошук">
+					<Search />
+				</SheetTrigger>
+				<VisuallyHidden asChild>
+					<SheetTitle>Пошук</SheetTitle>
+				</VisuallyHidden>
+				<SheetContent side="top" className="bg-[rgb(180,239,232)] px-0">
+					<div className="container">
+						<Form {...form}>
+							<form
+								onSubmit={form.handleSubmit(submitForm)}
+								className="flex flex-col gap-2 sm:gap-4"
+							>
+								<FormField
+									control={form.control}
+									name="query"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Пошук:</FormLabel>
+											<div className="flex gap-2">
+												<FormControl>
+													<Input
+														className="bg-background/80 border-none"
+														placeholder="Пошук"
+														{...field}
+														onChange={(e) => {
+															field.onChange(e);
+															setQuery(e.target.value);
+														}}
+													/>
+												</FormControl>
+												<div>
+													<Button
+														className="aspect-square cursor-pointer p-1"
+														variant="default"
+														type="submit"
+													>
+														<Search size={20} />
+													</Button>
+												</div>
+											</div>
+											<div className="h-2">
+												<FormMessage />
+											</div>
+										</FormItem>
+									)}
+								></FormField>
+							</form>
+						</Form>
 
-            {loading && (
-              <div className="flex justify-center">
-                <div className="h-[24px] w-[24px]">
-                  <LoadingSpinner />
-                </div>
-              </div>
-            )}
-            {searchResults.length > 0 && !loading && (
-              <>
-                <div className="h-px w-full bg-white" />
-                <ul className="mt-4 max-h-[calc(100vh-9rem)] w-full space-y-2 overflow-y-auto">
-                  {searchResults.map((item) => (
-                    <li key={item.id}>
-                      <SheetClose asChild>
-                        <Link href={`/${item.topics![0].slug}/${item.slug}`}>
-                          <Card className="overflow-hidden border-none">
-                            <div className="flex">
-                              <div className="p-2">
-                                <h2 className="text-lg">{item.title}</h2>
-                                <div>
-                                  <ParsedContent
-                                    content={JSON.parse(item.content)}
-                                    excerpt
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </Card>
-                        </Link>
-                      </SheetClose>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
+						{loading && (
+							<div className="flex justify-center">
+								<div className="h-[24px] w-[24px]">
+									<LoadingSpinner />
+								</div>
+							</div>
+						)}
+						{searchResults.length > 0 && !loading && (
+							<>
+								<div className="h-px w-full bg-white" />
+								<ul className="mt-4 max-h-[calc(100vh-9rem)] w-full space-y-2 overflow-y-auto">
+									{searchResults.map((item) => (
+										<li key={item.id}>
+											<SheetClose asChild>
+												<Link href={`/${item.topics![0].slug}/${item.slug}`}>
+													<Card className="overflow-hidden border-none">
+														<div className="flex">
+															<div className="p-2">
+																<h2 className="text-lg">{item.title}</h2>
+																<div>
+																	<ParsedContent
+																		content={JSON.parse(item.content)}
+																		excerpt
+																	/>
+																</div>
+															</div>
+														</div>
+													</Card>
+												</Link>
+											</SheetClose>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
 
-            {!loading && query.length >= 3 && searchResults.length === 0 && (
-              <>
-                <div className="h-[1px] w-full bg-white" />
-                <div className="mt-2">Результатів немає</div>
-              </>
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-    </>
-  );
+						{!loading && query.length >= 3 && searchResults.length === 0 && (
+							<>
+								<div className="h-[1px] w-full bg-white" />
+								<div className="mt-2">Результатів немає</div>
+							</>
+						)}
+					</div>
+				</SheetContent>
+			</Sheet>
+		</>
+	);
 }
