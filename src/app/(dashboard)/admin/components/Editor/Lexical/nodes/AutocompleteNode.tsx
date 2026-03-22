@@ -6,93 +6,97 @@
  *
  */
 
-import type { Spread } from 'lexical';
+import type { Spread } from "lexical";
 
-import { DecoratorNode, NodeKey, SerializedLexicalNode } from 'lexical';
-import * as React from 'react';
+import {
+	DecoratorNode,
+	type NodeKey,
+	type SerializedLexicalNode,
+} from "lexical";
+import type * as React from "react";
 
-import { useSharedAutocompleteContext } from '../context/SharedAutocompleteContext';
-import { uuid as UUID } from '../plugins/AutocompletePlugin';
+import { useSharedAutocompleteContext } from "../context/SharedAutocompleteContext";
+import { uuid as UUID } from "../plugins/AutocompletePlugin";
 
 declare global {
-  interface Navigator {
-    userAgentData?: {
-      mobile: boolean;
-    };
-  }
+	interface Navigator {
+		userAgentData?: {
+			mobile: boolean;
+		};
+	}
 }
 
 export type SerializedAutocompleteNode = Spread<
-  {
-    uuid: string;
-  },
-  SerializedLexicalNode
+	{
+		uuid: string;
+	},
+	SerializedLexicalNode
 >;
 
 export class AutocompleteNode extends DecoratorNode<React.ReactElement | null> {
-  // TODO add comment
-  __uuid: string;
+	// TODO add comment
+	__uuid: string;
 
-  static clone(node: AutocompleteNode): AutocompleteNode {
-    return new AutocompleteNode(node.__uuid, node.__key);
-  }
+	static clone(node: AutocompleteNode): AutocompleteNode {
+		return new AutocompleteNode(node.__uuid, node.__key);
+	}
 
-  static getType(): 'autocomplete' {
-    return 'autocomplete';
-  }
+	static getType(): "autocomplete" {
+		return "autocomplete";
+	}
 
-  static importJSON(
-    serializedNode: SerializedAutocompleteNode
-  ): AutocompleteNode {
-    const node = $createAutocompleteNode(serializedNode.uuid);
-    return node;
-  }
+	static importJSON(
+		serializedNode: SerializedAutocompleteNode,
+	): AutocompleteNode {
+		const node = $createAutocompleteNode(serializedNode.uuid);
+		return node;
+	}
 
-  exportJSON(): SerializedAutocompleteNode {
-    return {
-      ...super.exportJSON(),
-      type: 'autocomplete',
-      uuid: this.__uuid,
-      version: 1,
-    };
-  }
+	exportJSON(): SerializedAutocompleteNode {
+		return {
+			...super.exportJSON(),
+			type: "autocomplete",
+			uuid: this.__uuid,
+			version: 1,
+		};
+	}
 
-  constructor(uuid: string, key?: NodeKey) {
-    super(key);
-    this.__uuid = uuid;
-  }
+	constructor(uuid: string, key?: NodeKey) {
+		super(key);
+		this.__uuid = uuid;
+	}
 
-  updateDOM(): boolean {
-    return false;
-  }
+	updateDOM(): boolean {
+		return false;
+	}
 
-  createDOM(): HTMLElement {
-    return document.createElement('span');
-  }
+	createDOM(): HTMLElement {
+		return document.createElement("span");
+	}
 
-  decorate(): React.ReactElement | null {
-    if (this.__uuid !== UUID) {
-      return null;
-    }
-    return <AutocompleteComponent />;
-  }
+	decorate(): React.ReactElement | null {
+		if (this.__uuid !== UUID) {
+			return null;
+		}
+		return <AutocompleteComponent />;
+	}
 }
 
 export function $createAutocompleteNode(uuid: string): AutocompleteNode {
-  return new AutocompleteNode(uuid);
+	return new AutocompleteNode(uuid);
 }
 
 function AutocompleteComponent(): React.ReactElement {
-  const [suggestion] = useSharedAutocompleteContext();
-  const userAgentData = window.navigator.userAgentData;
-  const isMobile =
-    userAgentData !== undefined
-      ? userAgentData.mobile
-      : window.innerWidth <= 800 && window.innerHeight <= 600;
-  // TODO Move to theme
-  return (
-    <span style={{ color: '#ccc' }} spellCheck="false">
-      {suggestion} {isMobile ? '(SWIPE \u2B95)' : '(TAB)'}
-    </span>
-  );
+	const [suggestion] = useSharedAutocompleteContext();
+	const userAgentData = window.navigator.userAgentData;
+	const isMobile =
+		userAgentData !== undefined
+			? userAgentData.mobile
+			: window.innerWidth <= 800 && window.innerHeight <= 600;
+	// TODO Move to theme
+	return (
+		<span style={{ color: "#ccc" }} spellCheck="false">
+			{suggestion} {isMobile ? "(SWIPE \u2B95)" : "(TAB)"}
+		</span>
+	);
 }

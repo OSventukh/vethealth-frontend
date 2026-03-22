@@ -6,15 +6,15 @@
  *
  */
 
-import './ContentEditable.css';
+import "./ContentEditable.css";
 
-import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import * as React from 'react';
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import type * as React from "react";
 
 export default function LexicalContentEditable({
-  className,
+	className,
 }: {
-  className?: string;
+	className?: string;
 }): React.ReactElement {
-  return <ContentEditable className={className || 'ContentEditable__root'} />;
+	return <ContentEditable className={className || "ContentEditable__root"} />;
 }

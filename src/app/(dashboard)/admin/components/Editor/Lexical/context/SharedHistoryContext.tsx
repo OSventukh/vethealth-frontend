@@ -6,29 +6,29 @@
  *
  */
 
-import type { HistoryState } from '@lexical/react/LexicalHistoryPlugin';
+import type { HistoryState } from "@lexical/react/LexicalHistoryPlugin";
 
-import { createEmptyHistoryState } from '@lexical/react/LexicalHistoryPlugin';
-import { createContext, ReactNode, useContext, useMemo } from 'react';
+import { createEmptyHistoryState } from "@lexical/react/LexicalHistoryPlugin";
+import { createContext, type ReactNode, useContext, useMemo } from "react";
 
 type ContextShape = {
-  historyState?: HistoryState;
+	historyState?: HistoryState;
 };
 
 const Context: React.Context<ContextShape> = createContext({});
 
 export const SharedHistoryContext = ({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }): React.ReactElement => {
-  const historyContext = useMemo(
-    () => ({ historyState: createEmptyHistoryState() }),
-    []
-  );
-  return <Context.Provider value={historyContext}>{children}</Context.Provider>;
+	const historyContext = useMemo(
+		() => ({ historyState: createEmptyHistoryState() }),
+		[],
+	);
+	return <Context.Provider value={historyContext}>{children}</Context.Provider>;
 };
 
 export const useSharedHistoryContext = (): ContextShape => {
-  return useContext(Context);
+	return useContext(Context);
 };

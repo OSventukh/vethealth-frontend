@@ -1,31 +1,31 @@
-import type { Metadata } from 'next';
-import { SITE_DESCRIPTION, SITE_TITLE } from '@/utils/constants/generals';
-import './globals.css';
-import Analytics from '@/components/google/Analytics';
-import AdSense from '@/components/google/AdSense';
-import { inter } from '@/lib/fonts';
-import CRSOptimizer from '@/components/external-scripts/crsoptimizer';
+import type { Metadata } from "next";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/utils/constants/generals";
+import "./globals.css";
+import CRSOptimizer from "@/components/external-scripts/crsoptimizer";
+import AdSense from "@/components/google/AdSense";
+import Analytics from "@/components/google/Analytics";
+import { inter } from "@/lib/fonts";
 
 export const metadata: Metadata = {
-  title: SITE_TITLE,
-  description: SITE_DESCRIPTION,
-  metadataBase: new URL(process.env.CLIENT_URL!),
-  openGraph: { images: '/social/social.jpg' },
+	title: SITE_TITLE,
+	description: SITE_DESCRIPTION,
+	metadataBase: new URL(process.env.CLIENT_URL!),
+	openGraph: { images: "/social/social.jpg" },
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      {/* <CRSOptimizer /> */}
-      <Analytics />
-      <AdSense />
-      <body className={inter.className} suppressHydrationWarning>
-        {children}
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en">
+			{/* <CRSOptimizer /> */}
+			<Analytics />
+			<AdSense />
+			<body className={inter.className} suppressHydrationWarning>
+				{children}
+			</body>
+		</html>
+	);
 }

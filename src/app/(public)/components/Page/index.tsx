@@ -1,64 +1,64 @@
-import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
-import React from 'react';
-import { api } from '@/api';
-import { notFound } from 'next/navigation';
-import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
-import { TAGS } from '@/api/constants/tags';
-import Post from '../Post';
-import { raleway } from '@/lib/fonts';
+import { notFound } from "next/navigation";
+import React from "react";
+import { api } from "@/api";
+import { TAGS } from "@/api/constants/tags";
+import { ParsedContent } from "@/app/(dashboard)/admin/components/Editor/ParsedContent";
+import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
+import { raleway } from "@/lib/fonts";
+import Post from "../Post";
 
 type Props = {
-  topic: string;
-  parentTopicSlug: string;
-  slug: string;
+	topic: string;
+	parentTopicSlug: string;
+	slug: string;
 };
 
 export default async function Page({ topic, parentTopicSlug, slug }: Props) {
-  const [topicResponse, parentTopic] = await Promise.all([
-    api.topics.getOne({
-      slug: topic,
-      query: { include: 'page' },
-      tags: [TAGS.TOPICS],
-    }),
-    api.topics.getOne({
-      slug: parentTopicSlug,
-      tags: [TAGS.TOPICS],
-    }),
-  ]);
-  if (!topicResponse?.page && !slug) {
-    return notFound();
-  }
+	const [topicResponse, parentTopic] = await Promise.all([
+		api.topics.getOne({
+			slug: topic,
+			query: { include: "page" },
+			tags: [TAGS.TOPICS],
+		}),
+		api.topics.getOne({
+			slug: parentTopicSlug,
+			tags: [TAGS.TOPICS],
+		}),
+	]);
+	if (!topicResponse?.page && !slug) {
+		return notFound();
+	}
 
-  const page = topicResponse?.page;
-  return (
-    <>
-      {page && !slug && (
-        <>
-          <CustomBreadcrumb
-            prevPages={[
-              { href: '/', label: 'Головна' },
-              {
-                href: '/' + parentTopic?.slug || '',
-                label: parentTopic?.description || parentTopic?.title || '',
-              },
-            ]}
-            currentPage={{ label: topicResponse?.page?.title || '' }}
-          />
-          <div className="border-border mt-4 rounded-xl border-[1px] bg-white p-8">
-            <h1
-              className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
-            >
-              {page?.title}
-            </h1>
-            <div className="prose prose-headings:text-lg max-w-none">
-              <ParsedContent content={JSON.parse(page?.content || '')} />
-            </div>
-          </div>
-        </>
-      )}
-      {slug && (
-        <Post slug={slug} parentTopicSlug={parentTopicSlug} topicSlug={topic} />
-      )}
-    </>
-  );
+	const page = topicResponse?.page;
+	return (
+		<>
+			{page && !slug && (
+				<>
+					<CustomBreadcrumb
+						prevPages={[
+							{ href: "/", label: "Головна" },
+							{
+								href: "/" + parentTopic?.slug || "",
+								label: parentTopic?.description || parentTopic?.title || "",
+							},
+						]}
+						currentPage={{ label: topicResponse?.page?.title || "" }}
+					/>
+					<div className="border-border mt-4 rounded-xl border-[1px] bg-white p-8">
+						<h1
+							className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
+						>
+							{page?.title}
+						</h1>
+						<div className="prose prose-headings:text-lg max-w-none">
+							<ParsedContent content={JSON.parse(page?.content || "")} />
+						</div>
+					</div>
+				</>
+			)}
+			{slug && (
+				<Post slug={slug} parentTopicSlug={parentTopicSlug} topicSlug={topic} />
+			)}
+		</>
+	);
 }

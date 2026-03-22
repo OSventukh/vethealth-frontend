@@ -1,9 +1,9 @@
-import { headers } from 'next/headers';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { headers } from "next/headers";
 export default async function Analytics() {
-  const { GOOGLE_ANALYTICS_ID } = process.env;
-  const nonce = (await headers()).get('x-nonce');
-  if (!GOOGLE_ANALYTICS_ID) return null;
+	const { GOOGLE_ANALYTICS_ID } = process.env;
+	const nonce = (await headers()).get("x-nonce");
+	if (!GOOGLE_ANALYTICS_ID) return null;
 
-  return <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} nonce={nonce || ''} />;
+	return <GoogleAnalytics gaId={GOOGLE_ANALYTICS_ID} nonce={nonce || ""} />;
 }

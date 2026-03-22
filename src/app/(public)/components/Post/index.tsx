@@ -1,73 +1,73 @@
-import { api } from '@/api';
-import { ParsedContent } from '@/app/(dashboard)/admin/components/Editor/ParsedContent';
-import CustomBreadcrumb from '@/components/ui/custom/custom-breadcrumb';
-import { notFound } from 'next/navigation';
-import { TAGS } from '@/api/constants/tags';
-import { raleway } from '@/lib/fonts';
+import { notFound } from "next/navigation";
+import { api } from "@/api";
+import { TAGS } from "@/api/constants/tags";
+import { ParsedContent } from "@/app/(dashboard)/admin/components/Editor/ParsedContent";
+import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
+import { raleway } from "@/lib/fonts";
 
 type Props = {
-  parentTopicSlug: string;
-  topicSlug?: string;
-  slug: string;
+	parentTopicSlug: string;
+	topicSlug?: string;
+	slug: string;
 };
 
 export default async function Post({
-  slug,
-  parentTopicSlug,
-  topicSlug,
+	slug,
+	parentTopicSlug,
+	topicSlug,
 }: Props) {
-  const [post, parentTopic] = await Promise.all([
-    api.posts.getOne({
-      slug,
-      tags: [TAGS.POSTS],
-    }),
-    api.topics.getOne({
-      slug: parentTopicSlug,
-      tags: [TAGS.TOPICS],
-      query: { include: 'children' },
-    }),
-  ]);
+	const [post, parentTopic] = await Promise.all([
+		api.posts.getOne({
+			slug,
+			tags: [TAGS.POSTS],
+		}),
+		api.topics.getOne({
+			slug: parentTopicSlug,
+			tags: [TAGS.TOPICS],
+			query: { include: "children" },
+		}),
+	]);
 
-  if (!post || typeof post === 'string') {
-    return notFound();
-  }
+	if (!post || typeof post === "string") {
+		return notFound();
+	}
 
-  const topicTitle = parentTopic?.children?.find(
-    (topic) => topic.slug === topicSlug
-  )?.title;
+	const topicTitle = parentTopic?.children?.find(
+		(topic) => topic.slug === topicSlug,
+	)?.title;
 
-  return (
-    <>
-      <CustomBreadcrumb
-        prevPages={[
-          { href: '/', label: 'Головна' },
-          {
-            href: '/' + parentTopic?.slug || '',
-            label: parentTopic?.description || parentTopic?.title || '',
-          },
-          ...(topicSlug
-            ? [
-                {
-                  href: `/${parentTopic?.slug}/${topicSlug}`,
-                  label: topicTitle || '',
-                },
-              ]
-            : []),
-        ]}
-        currentPage={{ label: post?.title || '' }}
-      />
-      <div className="border-border mt-4 rounded-xl border-[1px] bg-white p-4 md:p-8">
-        <h1
-          className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
-        >
-          {post.title}
-        </h1>
-        <div className="prose prose-headings:text-lg max-w-none">
-          {post?.content && (
-            <ParsedContent content={JSON.parse(post.content)} />
-          )}
-        </div>
-      </div>
-    </>
-  );
+	return (
+		<>
+			<CustomBreadcrumb
+				prevPages={[
+					{ href: "/", label: "Головна" },
+					{
+						href: "/" + parentTopic?.slug || "",
+						label: parentTopic?.description || parentTopic?.title || "",
+					},
+					...(topicSlug
+						? [
+								{
+									href: `/${parentTopic?.slug}/${topicSlug}`,
+									label: topicTitle || "",
+								},
+							]
+						: []),
+				]}
+				currentPage={{ label: post?.title || "" }}
+			/>
+			<div className="border-border mt-4 rounded-xl border-[1px] bg-white p-4 md:p-8">
+				<h1
+					className={`${raleway.className} my-4 text-center text-lg font-[600] uppercase`}
+				>
+					{post.title}
+				</h1>
+				<div className="prose prose-headings:text-lg max-w-none">
+					{post?.content && (
+						<ParsedContent content={JSON.parse(post.content)} />
+					)}
+				</div>
+			</div>
+		</>
+	);
 }

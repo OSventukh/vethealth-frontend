@@ -1,27 +1,27 @@
-import { auth } from '@/lib/next-auth/auth';
-import EditCategory from '../../components/EditCategory';
-import { api } from '@/api';
+import { api } from "@/api";
+import { auth } from "@/lib/next-auth/auth";
+import EditCategory from "../../components/EditCategory";
 
 type Props = {
-  params: Promise<{ slug: string }>;
+	params: Promise<{ slug: string }>;
 };
 export default async function CategoryCreatePage(props: Props) {
-  const [params, session] = await Promise.all([props.params, auth()]);
-  const { slug } = params;
-  const [categories, category] = await Promise.all([
-    api.categories.getMany({}),
-    api.categories.getOne({
-      slug,
-      token: session?.token,
-      query: { include: 'parent,children' },
-    }),
-  ]);
+	const [params, session] = await Promise.all([props.params, auth()]);
+	const { slug } = params;
+	const [categories, category] = await Promise.all([
+		api.categories.getMany({}),
+		api.categories.getOne({
+			slug,
+			token: session?.token,
+			query: { include: "parent,children" },
+		}),
+	]);
 
-  return (
-    <EditCategory
-      initialData={category || null}
-      categories={categories?.items || []}
-      editMode
-    />
-  );
+	return (
+		<EditCategory
+			initialData={category || null}
+			categories={categories?.items || []}
+			editMode
+		/>
+	);
 }

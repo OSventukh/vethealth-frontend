@@ -1,4 +1,4 @@
 export type Params = {
-  topic: string;
-  slug: string[];
+	topic: string;
+	slug: string[];
 };
