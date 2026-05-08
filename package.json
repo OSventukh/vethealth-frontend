@@ -2,6 +2,7 @@
   "name": "frontend-new",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.0.8",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -103,6 +104,11 @@
     "@types/react-dom": "19.2.3"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["sharp", "protobufjs", "msw", "unrs-resolver"]
+    "onlyBuiltDependencies": [
+      "sharp",
+      "protobufjs",
+      "msw",
+      "unrs-resolver"
+    ]
   }
 }
