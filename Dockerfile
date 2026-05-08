@@ -1,12 +1,20 @@
 FROM node:22 AS deps
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 FROM node:22 AS builder
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 WORKDIR /app
 
@@ -15,7 +23,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build
+RUN pnpm run build
 
 FROM node:22 AS runner
 
