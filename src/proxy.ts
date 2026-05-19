@@ -28,6 +28,7 @@ const PROD_ORIGINS = [
 	"https://vethealth.com.ua",
 	"https://www.vethealth.com.ua",
 	"https://server.vethealth.com.ua",
+	"https://stserver.vethealth.com.ua",
 	"https://dev-cdn.vethealth.com.ua",
 	"https://staging-cdn.vethealth.com.ua",
 	"https://cdn.vethealth.com.ua",
