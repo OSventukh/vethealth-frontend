@@ -55,7 +55,7 @@ export function proxy(request: NextRequest) {
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' data: ${allowedOrigins} https://*.unsplash.com https://images.unsplash.com;
   font-src 'self' https://fonts.gstatic.com;
-  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimize.vethealth.com.ua" https://crsoptimizer.conversionrate.store;
+  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimize.vethealth.com.ua https://crsoptimizer.conversionrate.store;
   frame-src 'self';
   object-src 'none';
   base-uri 'self';
