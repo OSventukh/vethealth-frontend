@@ -25,7 +25,7 @@ export const dataClientReport = async ({
 	const GA_PRIVATE_KEY_BASE64 = process.env.GA_PRIVATE_KEY;
 
 	if (!GA_PRIVATE_KEY_BASE64) {
-		throw new Error("No private key available");
+		return [new Error("No private key available"), null];
 	}
 	const GA_PRIVATE_KEY_DECODED = Buffer.from(
 		GA_PRIVATE_KEY_BASE64,
@@ -88,7 +88,8 @@ export const dataRealtimeReport = async ({
 }: RealtimeParams): Promise<RealtimeResponse> => {
 	const propertyId = process.env.GA_PROPERTY_ID;
 	const GA_PRIVATE_KEY_BASE64 = process.env.GA_PRIVATE_KEY;
-	if (!GA_PRIVATE_KEY_BASE64) throw new Error("No private key available");
+	if (!GA_PRIVATE_KEY_BASE64)
+		return [new Error("No private key available"), null];
 
 	const GA_PRIVATE_KEY_DECODED = Buffer.from(
 		GA_PRIVATE_KEY_BASE64,

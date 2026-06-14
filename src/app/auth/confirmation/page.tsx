@@ -16,7 +16,7 @@ export default async function ConfirmationPage(props: Props) {
 			redirect("/auth/login");
 		}
 		return <Confirmation user={user} token={hash} />;
-	} catch (error: unknown) {
+	} catch {
 		redirect("/auth/login");
 	}
 }

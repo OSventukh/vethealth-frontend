@@ -16,6 +16,16 @@ export default async function VisitorsRealtime({ ...props }: Props) {
 		dimensions: [{ name: "country" }],
 		metrics: [{ name: "activeUsers" }],
 	});
+	if (error) {
+		return (
+			<Card {...props}>
+				<CardHeader>
+					<CardTitle>Виникла помилка</CardTitle>
+				</CardHeader>
+				<CardContent>{error.message}</CardContent>
+			</Card>
+		);
+	}
 	const currentOnline =
 		realtime?.rows?.[0]?.metricValues?.[0]?.value ??
 		realtime?.totals?.[0]?.metricValues?.[0]?.value ??

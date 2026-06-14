@@ -56,7 +56,7 @@ export default function EditTopic({
 		defaultValues: {
 			name: initialData?.name || "",
 			slug: initialData?.slug || "",
-			parent: initialData?.parent,
+			parent: initialData?.parent ?? null,
 		},
 		mode: "onChange",
 	});

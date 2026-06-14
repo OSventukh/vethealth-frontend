@@ -77,7 +77,7 @@ export const Combobox = <T,>({
 		const filterValues = Array.from(selectedValues).map((item) => {
 			return { id: item };
 		});
-		onChange && onChange(filterValues);
+		onChange?.(filterValues);
 	}, [selectedValues, onChange]);
 
 	return (

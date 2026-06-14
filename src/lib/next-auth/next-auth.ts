@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
 						password: credentials.password,
 					});
 					return user as unknown as User;
-				} catch (error) {
+				} catch {
 					return null;
 				}
 			},

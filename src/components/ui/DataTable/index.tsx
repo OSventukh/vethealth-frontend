@@ -84,34 +84,42 @@ export function DataTable<TData, TValue>({
 	});
 
 	useEffect(() => {
-		if (sorting.length > 0) {
-			params.set("orderBy", sorting[0].id);
-			params.set("sort", sorting[0].desc ? "desc" : "asc");
-			replace(`${pathname}?${params.toString()}`);
-		}
-		if (pagination) {
-			params.set("page", String(pagination.pageIndex + 1));
-			params.set("size", String(pagination.pageSize));
-			if (pagination.pageIndex === 0) {
-				params.delete("page");
-			}
-			if (pagination.pageSize === 10) {
-				params.delete("size");
-			}
+		const current = searchParams.toString();
+		const next = new URLSearchParams(current);
 
-			replace(`${pathname}?${params.toString()}`, { scroll: false });
+		if (sorting.length > 0) {
+			next.set("orderBy", sorting[0].id);
+			next.set("sort", sorting[0].desc ? "desc" : "asc");
+		}
+
+		if (pagination.pageIndex === 0) {
+			next.delete("page");
+		} else {
+			next.set("page", String(pagination.pageIndex + 1));
+		}
+
+		if (pagination.pageSize === 10) {
+			next.delete("size");
+		} else {
+			next.set("size", String(pagination.pageSize));
 		}
 
 		if (searching) {
-			params.set(searchField, searching);
-			replace(`${pathname}?${params.toString()}`);
+			next.set(searchField, searching);
+		} else {
+			next.delete(searchField);
 		}
 
-		if (searching === "") {
-			params.delete(searchField);
-			replace(`${pathname}?${params.toString()}`);
+		// Only navigate when the query actually changed — otherwise each
+		// replace() re-renders, recreates `searchParams`, and re-fires this
+		// effect, causing an infinite navigation/reload loop.
+		const nextString = next.toString();
+		if (nextString !== current) {
+			replace(`${pathname}${nextString ? `?${nextString}` : ""}`, {
+				scroll: false,
+			});
 		}
-	}, [sorting, pagination, replace, params, pathname, searchField, searching]);
+	}, [sorting, pagination, replace, searchParams, pathname, searchField, searching]);
 
 	const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const value = event.target.value;

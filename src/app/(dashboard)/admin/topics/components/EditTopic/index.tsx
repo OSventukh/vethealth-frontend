@@ -64,7 +64,7 @@ export default function EditTopic({
 			slug: initialData?.slug || "",
 			categories: initialData?.categories,
 			status: initialData?.status,
-			parent: initialData?.parent,
+			parent: initialData?.parent ?? null,
 			page: initialData?.page,
 			contentType: initialData?.contentType || "post",
 			image: initialData?.image,

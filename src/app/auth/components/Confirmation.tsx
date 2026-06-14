@@ -45,7 +45,7 @@ export default function Confirmation({ user, token }: Props) {
 	});
 	const router = useRouter();
 
-	formState.success && router.push("/auth/login");
+	if (formState.success) router.push("/auth/login");
 
 	return (
 		<AuthCard title="Підтвердження паролю">

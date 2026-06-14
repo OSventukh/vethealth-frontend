@@ -15,7 +15,7 @@ export async function loginAction(
 	data: FormData,
 ): Promise<ReturnedData> {
 	try {
-		const response = await signIn("credentials", {
+		await signIn("credentials", {
 			email: data.get("email") as string,
 			password: data.get("password") as string,
 			redirect: false,

@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "nextjs", "typescript", "unicorn", "import"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "typescript/no-explicit-any": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-underscore-dangle": "off",
+    "import/no-unassigned-import": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "ignorePatterns": [
+    "dist",
+    ".next",
+    "node_modules",
+    "src/app/(dashboard)/admin/components/Editor/Lexical"
+  ]
+}

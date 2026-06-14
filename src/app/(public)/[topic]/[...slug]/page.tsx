@@ -1,5 +1,4 @@
 import React from "react";
-import { api } from "@/api";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
 import { getTopicBySlug } from "../../_lib/content-cache";
 import Page from "../../components/Page";

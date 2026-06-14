@@ -20,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Multiselect from "@/components/ui/multiselect";
-import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
@@ -94,7 +93,7 @@ export default function EditPost({
 	const [isOpenSidebar, setIsOpenSidebar] = useState(false);
 	const router = useRouter();
 
-	const [isPending, startTransition] = useTransition();
+	const [_isPending, startTransition] = useTransition();
 	const { toast } = useToast();
 	const titleChangeHandler = (title: string) => {
 		setTitle(title);

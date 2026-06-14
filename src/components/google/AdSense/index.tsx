@@ -5,7 +5,7 @@ export default async function AdSense() {
 	const nonce = (await headers()).get("x-nonce");
 	const { ADSENSE_PUBLISHER_ID } = process.env;
 
-	if (!ADSENSE_PUBLISHER_ID) return null;
+	if (!ADSENSE_PUBLISHER_ID || ADSENSE_PUBLISHER_ID.trim() === "") return null;
 
 	return (
 		<Script
