@@ -6,6 +6,7 @@ export default function CRSOptimizer() {
 			<Script
 				type="text/javascript"
 				src="https://optimize.vethealth.com.ua/comp/5WjEAtrEuS.js"
+				strategy="lazyOnload"
 			/>
 			{/* <Script src="https://crsoptimizer.conversionrate.store/comp/Eja4hwk8eP.js" /> */}
 		</>

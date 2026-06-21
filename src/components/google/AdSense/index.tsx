@@ -12,7 +12,7 @@ export default async function AdSense() {
 			async
 			src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${ADSENSE_PUBLISHER_ID}`}
 			crossOrigin="anonymous"
-			strategy="afterInteractive"
+			strategy="lazyOnload"
 			nonce={nonce || ""}
 		/>
 	);

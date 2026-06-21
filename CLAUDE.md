@@ -22,7 +22,19 @@ pnpm test -- home        # run a single test file by name/path pattern
 pnpm lint                # oxlint --fix   (Oxc; replaced the broken `next lint`)
 pnpm type-check          # tsc --noEmit
 pnpm format              # oxfmt          (Prettier-compatible; 0.x beta — pin version)
+pnpm analyze             # ANALYZE=true next build --webpack (bundle report → .next/analyze/*.html)
 ```
+
+**Bundle analysis gotcha:** `@next/bundle-analyzer` is a **webpack** plugin, but Next 16's
+`next build` defaults to **Turbopack** (and `pnpm build` passes `--turbopack` explicitly), where the
+plugin never fires — the build silently prints *"pass the `--webpack` flag"* and emits **no report and
+no per-route size columns**. The `analyze` script therefore forces `--webpack`. `next.config.js` wraps
+the config with `withBundleAnalyzer({ enabled: process.env.ANALYZE === "true" })`. To map a route to
+its client chunks (sizes aren't printed by `next build` in 16), parse
+`.next/server/app/<route>/page_client-reference-manifest.js` (lists `static/chunks/*.js`) against the
+`window.chartData` JSON embedded in `.next/analyze/client.html`. Heavy editor/admin libs (Lexical,
+Recharts, react-select, TanStack, html-react-parser) are correctly code-split **out** of the public
+bundle — keep them that way; don't import admin/editor components into `(public)` client components.
 
 Tests live in `__test__/` (currently sparse). Husky runs `lint-staged` on commit
 (`oxlint --fix` + `oxfmt` + `type-check`), commitlint on the message, and lint-staged again
@@ -106,5 +118,6 @@ From `.cursor/rules/nextjs-rules.mdc` and the existing code:
 `.env` keys: `NEXT_PUBLIC_API_SERVER` / `API_SERVER` (backend base URL — required, see `routes.ts`),
 `NEXT_PUBLIC_IMAGE_SERVER`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `CLIENT_URL` (used by the admin layout
 for sign-in/out redirects), and the Google integration keys (`GOOGLE_ANALYTICS_ID`, `GA_CLIENT_EMAIL`,
-`GA_PRIVATE_KEY`, `GA_PROPERTY_ID`, `ADSENSE_PUBLISHER_ID`). `next.config.js` allows remote images
-from any `https` host and `*.vethealth.com.ua`. Ships a `Dockerfile`; deployed via Coolify.
+`GA_PRIVATE_KEY`, `GA_PROPERTY_ID`, `ADSENSE_PUBLISHER_ID`). `next.config.js` restricts remote images
+to `vethealth.com.ua` + `*.vethealth.com.ua` (the old `hostname: "*"` open image-proxy was removed —
+don't re-add it; add the specific prod image host instead). Ships a `Dockerfile`; deployed via Coolify.
