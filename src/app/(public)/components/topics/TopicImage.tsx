@@ -17,7 +17,6 @@ export default function TopicImage({ src, alt, priority = false }: Props) {
 				priority={priority}
 				loading={priority ? "eager" : "lazy"}
 				sizes="(max-width: 768px) 240px, 240px"
-				quality={70}
 			/>
 		</div>
 	);
