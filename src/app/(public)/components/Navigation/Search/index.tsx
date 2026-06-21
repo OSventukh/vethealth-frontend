@@ -1,24 +1,14 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Search } from "lucide-react";
 import dynamic from "next/dynamic";
+import Form from "next/form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
 import type { PostResponse } from "@/api/types/posts.type";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/custom/loading";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
 	Sheet,
@@ -27,10 +17,8 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-	type SearchValues,
-	searchSchema,
-} from "@/utils/validators/form.validator";
+
+const MIN_QUERY_LENGTH = 3;
 
 const ParsedContent = dynamic(
 	() =>
@@ -49,29 +37,11 @@ export default function SearchBar() {
 	const [loading, setLoading] = useState(false);
 	const abortControllerRef = useRef<AbortController | null>(null);
 
-	const router = useRouter();
-
-	const form = useForm<SearchValues>({
-		resolver: zodResolver(searchSchema),
-		mode: "onChange",
-		defaultValues: {
-			query: "",
-		},
-	});
-
-	const submitForm = async (values: SearchValues) => {
-		const submittedQuery = values.query?.trim() || "";
-
-		if (submittedQuery.length < 3) return;
-
-		router.push(`/search?query=${encodeURIComponent(submittedQuery)}`);
-	};
-
 	const getSearchResults = async (query: string) => {
 		try {
 			const normalizedQuery = query.trim();
 
-			if (normalizedQuery.length < 3) return;
+			if (normalizedQuery.length < MIN_QUERY_LENGTH) return;
 
 			if (abortControllerRef.current) {
 				abortControllerRef.current.abort();
@@ -127,7 +97,7 @@ export default function SearchBar() {
 	useEffect(() => {
 		const normalizedQuery = debouncedQuery.trim();
 
-		if (normalizedQuery.length >= 3) {
+		if (normalizedQuery.length >= MIN_QUERY_LENGTH) {
 			getSearchResults(normalizedQuery);
 		} else {
 			setSearchResults([]);
@@ -145,46 +115,45 @@ export default function SearchBar() {
 				</VisuallyHidden>
 				<SheetContent side="top" className="bg-[rgb(180,239,232)] px-0">
 					<div className="container">
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit(submitForm)}
-								className="flex flex-col gap-2 sm:gap-4"
-							>
-								<FormField
-									control={form.control}
+						{/* next/form builds `/search?query=…` from the input's `name`
+						    and navigates (prefetch + works without JS). We only block
+						    submits that are too short. */}
+						<Form
+							action="/search"
+							onSubmit={(event) => {
+								if (query.trim().length < MIN_QUERY_LENGTH) {
+									event.preventDefault();
+								}
+							}}
+							className="flex flex-col gap-2 sm:gap-4"
+						>
+							<label htmlFor="search-query" className="text-sm font-medium">
+								Пошук:
+							</label>
+							<div className="flex gap-2">
+								<Input
+									id="search-query"
 									name="query"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Пошук:</FormLabel>
-											<div className="flex gap-2">
-												<FormControl>
-													<Input
-														className="bg-background/80 border-none"
-														placeholder="Пошук"
-														{...field}
-														onChange={(e) => {
-															field.onChange(e);
-															setQuery(e.target.value);
-														}}
-													/>
-												</FormControl>
-												<div>
-													<Button
-														className="aspect-square cursor-pointer p-1"
-														variant="default"
-														type="submit"
-													>
-														<Search size={20} />
-													</Button>
-												</div>
-											</div>
-											<div className="h-2">
-												<FormMessage />
-											</div>
-										</FormItem>
-									)}
-								></FormField>
-							</form>
+									className="bg-background/80 border-none"
+									placeholder="Пошук"
+									value={query}
+									onChange={(e) => setQuery(e.target.value)}
+								/>
+								<div>
+									<Button
+										className="aspect-square cursor-pointer p-1"
+										variant="default"
+										type="submit"
+									>
+										<Search size={20} />
+									</Button>
+								</div>
+							</div>
+							<div className="h-2 text-sm text-red-600">
+								{query.trim().length > 0 &&
+									query.trim().length < MIN_QUERY_LENGTH &&
+									"Введіть щонайменше 3 символи"}
+							</div>
 						</Form>
 
 						{loading && (
@@ -223,12 +192,14 @@ export default function SearchBar() {
 							</>
 						)}
 
-						{!loading && query.length >= 3 && searchResults.length === 0 && (
-							<>
-								<div className="h-[1px] w-full bg-white" />
-								<div className="mt-2">Результатів немає</div>
-							</>
-						)}
+						{!loading &&
+							query.length >= MIN_QUERY_LENGTH &&
+							searchResults.length === 0 && (
+								<>
+									<div className="h-[1px] w-full bg-white" />
+									<div className="mt-2">Результатів немає</div>
+								</>
+							)}
 					</div>
 				</SheetContent>
 			</Sheet>
