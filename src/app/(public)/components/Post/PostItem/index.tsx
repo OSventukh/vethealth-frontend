@@ -19,6 +19,7 @@ export default function PostItem({ post, topic }: Props) {
 						alt={post.title}
 						width={500}
 						height={500}
+						sizes="(max-width: 768px) 100vw, 50vw"
 						className="h-80 w-full object-cover"
 					/>
 				)}

@@ -2,6 +2,11 @@ import type { routes } from "./routes";
 
 type Url = (typeof routes)[keyof typeof routes];
 
+// Time-based safety-net for tag-based ISR: even if a `revalidateTag` call is
+// missed on the admin side, public reads can't stay stale longer than this.
+// Explicit `revalidate` (incl. `false` for no-store) always wins.
+const DEFAULT_REVALIDATE = 3600;
+
 type PostRequest = {
 	url: Url;
 	query?: string;
@@ -91,21 +96,25 @@ export const get = async <Response>({
 			headers.Authorization = `Bearer ${token}`;
 		}
 
-		const nextOptions =
-			!isAuthenticated && (tags || revalidate !== undefined)
-				? {
-						next: {
-							tags,
-							revalidate,
-						},
-					}
-				: {};
+		const effectiveRevalidate =
+			revalidate === undefined ? DEFAULT_REVALIDATE : revalidate;
+
+		const nextOptions = !isAuthenticated
+			? {
+					next: {
+						tags,
+						revalidate: effectiveRevalidate,
+					},
+				}
+			: {};
 
 		const response = await fetch(url + (id ? `/${id}` : "") + (query || ""), {
 			method: "GET",
 			headers,
 			cache:
-				isAuthenticated || revalidate === false ? "no-store" : "force-cache",
+				isAuthenticated || effectiveRevalidate === false
+					? "no-store"
+					: "force-cache",
 			...nextOptions,
 		});
 		const result = (await parseResponse(response)) as Response;
