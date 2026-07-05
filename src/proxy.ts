@@ -1,7 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-export { default } from "next-auth/middleware";
 export const config = {
 	matcher: [
 		/*
@@ -51,11 +50,11 @@ export function proxy(request: NextRequest) {
 
 	const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://optimize.vethealth.com.ua https://crsoptimizer.conversionrate.store https://ab.conversionrate.store;
+  script-src 'self' 'unsafe-eval' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://optimize.vethealth.com.ua;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  img-src 'self' data: ${allowedOrigins} https://*.unsplash.com https://images.unsplash.com;
+  img-src 'self' data: ${allowedOrigins};
   font-src 'self' https://fonts.gstatic.com;
-  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimize.vethealth.com.ua https://crsoptimizer.conversionrate.store;
+  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimize.vethealth.com.ua;
   frame-src 'self';
   object-src 'none';
   base-uri 'self';

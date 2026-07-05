@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import type { CategoryResponse } from "@/api/types/categories.type";
+import type { TopicResponse } from "@/api/types/topics.type";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
 import { getCategoriesByTopic, getTopicBySlug } from "../_lib/content-cache";
 import Description from "../components/Description";
@@ -10,78 +11,99 @@ import PostListSkeleton from "../components/Skeletons/PostListSkeleton";
 import TopicListSkeleton from "../components/Skeletons/TopicListSkeleton";
 import TopicChildrenList from "../components/topics/TopicChildrenList";
 
+type SearchParams = Promise<{
+	category?: string;
+}>;
+
 type Props = {
 	params: Promise<{
 		topic: string;
 		slug?: string[];
 	}>;
-	searchParams: Promise<{
-		category?: string;
-	}>;
+	searchParams: SearchParams;
 };
+
+function findCategoryBySlug(
+	slug: string,
+	categoriesList: CategoryResponse[],
+): CategoryResponse | null {
+	const foundCategory = categoriesList.find((cat) => cat.slug === slug);
+	if (foundCategory) return foundCategory;
+
+	for (const category of categoriesList) {
+		if (category.children && category.children.length > 0) {
+			const foundInChildren = findCategoryBySlug(slug, category.children);
+			if (foundInChildren) return foundInChildren;
+		}
+	}
+
+	return null;
+}
+
+function TopicBreadcrumb({ topic }: { topic: TopicResponse }) {
+	return (
+		<CustomBreadcrumb
+			prevPages={[{ href: "/", label: "Головна" }]}
+			currentPage={{ label: topic?.description || topic?.title }}
+		/>
+	);
+}
+
+async function CategoryBreadcrumb({
+	topic,
+	searchParams,
+}: {
+	topic: TopicResponse;
+	searchParams: SearchParams;
+}) {
+	const { category } = await searchParams;
+	if (!category) {
+		return <TopicBreadcrumb topic={topic} />;
+	}
+
+	const categories = await getCategoriesByTopic(topic.slug);
+	const selectedCategory = categories?.items
+		? findCategoryBySlug(category, categories.items)
+		: null;
+
+	return (
+		<CustomBreadcrumb
+			prevPages={[
+				{ href: "/", label: "Головна" },
+				{
+					href: `/${topic.slug}`,
+					label: topic?.description || topic?.title,
+				},
+			]}
+			currentPage={{ label: selectedCategory?.name || category }}
+		/>
+	);
+}
+
+async function FilteredPostList({
+	topic,
+	searchParams,
+}: {
+	topic: string;
+	searchParams: SearchParams;
+}) {
+	const { category } = await searchParams;
+	return <PostList topic={topic} category={category} />;
+}
+
 export default async function TopicPage(props: Props) {
-	const searchParams = await props.searchParams;
 	const params = await props.params;
-	const [topic, categories] = await Promise.all([
-		getTopicBySlug(params.topic),
-		getCategoriesByTopic(params.topic),
-	]);
+	const topic = await getTopicBySlug(params.topic);
 
 	if (!topic) {
 		return notFound();
 	}
 
-	const findCategoryBySlug = (
-		slug: string,
-		categoriesList: CategoryResponse[],
-	): CategoryResponse | null => {
-		const foundCategory = categoriesList.find((cat) => cat.slug === slug);
-		if (foundCategory) return foundCategory;
-
-		for (const category of categoriesList) {
-			if (category.children && category.children.length > 0) {
-				const foundInChildren = findCategoryBySlug(slug, category.children);
-				if (foundInChildren) return foundInChildren;
-			}
-		}
-
-		return null;
-	};
-
-	const renderBreadcrumbs = () => {
-		if (searchParams.category && categories?.items) {
-			const selectedCategory = findCategoryBySlug(
-				searchParams.category,
-				categories.items,
-			);
-
-			return (
-				<CustomBreadcrumb
-					prevPages={[
-						{ href: "/", label: "Головна" },
-						{
-							href: `/${topic.slug}`,
-							label: topic?.description || topic?.title,
-						},
-					]}
-					currentPage={{
-						label: selectedCategory?.name || searchParams.category,
-					}}
-				/>
-			);
-		}
-
-		return (
-			<CustomBreadcrumb
-				prevPages={[{ href: "/", label: "Головна" }]}
-				currentPage={{ label: topic?.description || topic?.title }}
-			/>
-		);
-	};
-
 	return (
 		<>
-			{renderBreadcrumbs()}
+			<Suspense fallback={<TopicBreadcrumb topic={topic} />}>
+				<CategoryBreadcrumb topic={topic} searchParams={props.searchParams} />
+			</Suspense>
 
 			<div>
 				<Description title={topic?.description} />
@@ -99,7 +121,10 @@ export default async function TopicPage(props: Props) {
 					</Suspense>
 				) : (
 					<Suspense fallback={<PostListSkeleton />}>
-						<PostList topic={topic.slug} category={searchParams?.category} />
+						<FilteredPostList
+							topic={topic.slug}
+							searchParams={props.searchParams}
+						/>
 					</Suspense>
 				)}
 			</div>

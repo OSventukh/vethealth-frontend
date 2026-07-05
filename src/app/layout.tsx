@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/utils/constants/generals";
 import "./globals.css";
-import CRSOptimizer from "@/components/external-scripts/crsoptimizer";
+import Optimizer from "@/components/external-scripts/optimizer";
 import AdSense from "@/components/google/AdSense";
 import Analytics from "@/components/google/Analytics";
 import { inter } from "@/lib/fonts";
@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="uk">
-			<CRSOptimizer />
+			<Optimizer />
 			<Analytics />
 			<AdSense />
 			<body className={inter.className} suppressHydrationWarning>

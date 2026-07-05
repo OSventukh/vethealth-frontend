@@ -7,9 +7,14 @@ import { raleway } from "@/lib/fonts";
 type Props = {
 	post: PostResponse;
 	topic: string;
+	imagePriority?: boolean;
 };
 
-export default function PostItem({ post, topic }: Props) {
+export default function PostItem({
+	post,
+	topic,
+	imagePriority = false,
+}: Props) {
 	return (
 		<article className="border-border w-full overflow-hidden rounded-xl border-[1px] bg-white pb-4 transition-shadow hover:shadow-md">
 			<Link href={`${topic}/${post.slug}`} className="block h-full w-full">
@@ -20,6 +25,7 @@ export default function PostItem({ post, topic }: Props) {
 						width={500}
 						height={500}
 						sizes="(max-width: 768px) 100vw, 50vw"
+						priority={imagePriority}
 						className="h-80 w-full object-cover"
 					/>
 				)}

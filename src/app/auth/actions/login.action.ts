@@ -1,7 +1,6 @@
 import { signIn } from "next-auth/react";
 import logger from "@/logger";
 import { ERROR_MESSAGE } from "@/utils/constants/messages";
-import { SERVER_ERROR } from "@/utils/constants/server-error-responses";
 
 type ReturnedData = {
 	error: boolean;
@@ -15,11 +14,19 @@ export async function loginAction(
 	data: FormData,
 ): Promise<ReturnedData> {
 	try {
-		await signIn("credentials", {
+		const res = await signIn("credentials", {
 			email: data.get("email") as string,
 			password: data.get("password") as string,
 			redirect: false,
 		});
+
+		if (res?.error) {
+			return {
+				error: true,
+				success: false,
+				message: ERROR_MESSAGE.INCORRECT_EMAIL_OR_PASSWORD,
+			};
+		}
 		return {
 			success: true,
 			error: false,
@@ -30,18 +37,6 @@ export async function loginAction(
 		logger.error(
 			error instanceof Error ? error.message : JSON.stringify(error),
 		);
-		if (error instanceof Error) {
-			message = error.message;
-			if (error.message.includes(SERVER_ERROR.TITLE_MUST_BE_UNIQUE)) {
-				message = ERROR_MESSAGE.TITLE_MUST_BE_UNIQUE;
-			} else if (
-				error.message.includes(SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY)
-			) {
-				message = ERROR_MESSAGE.TITLE_SHOULD_BE_NOT_EMPTY;
-			} else if (error.message.includes(SERVER_ERROR.SLUG_SHOULD_BE_UNIQUE)) {
-				message = ERROR_MESSAGE.SLUG_SHOULD_BE_UNIQUE;
-			}
-		}
 
 		return {
 			error: true,

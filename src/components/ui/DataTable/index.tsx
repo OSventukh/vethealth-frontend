@@ -119,7 +119,15 @@ export function DataTable<TData, TValue>({
 				scroll: false,
 			});
 		}
-	}, [sorting, pagination, replace, searchParams, pathname, searchField, searching]);
+	}, [
+		sorting,
+		pagination,
+		replace,
+		searchParams,
+		pathname,
+		searchField,
+		searching,
+	]);
 
 	const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const value = event.target.value;

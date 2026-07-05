@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { TopicResponse } from "@/api/types/topics.type";
-import { roboto } from "@/lib/fonts";
 import TopicImage from "./TopicImage";
 
 type Props = {
@@ -28,11 +27,7 @@ export default function TopicItem({
 					href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug}
 					key={item.slug}
 				>
-					<h2
-						className={`${roboto.className} w-60 text-center text-sm uppercase`}
-					>
-						{item.title}
-					</h2>
+					<h2 className="w-60 text-center text-sm uppercase">{item.title}</h2>
 				</Link>
 			</div>
 		</div>

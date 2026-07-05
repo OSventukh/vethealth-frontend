@@ -6,4 +6,5 @@ export const ERROR_MESSAGE = {
 	SLUG_SHOULD_BE_UNIQUE: "URL адреса повина бути унікальною",
 	PASSWORD_IS_NOT_MATCH:
 		"Пароль повинен містити від 8 до 20 символів і щонайменше одну велику літеру та одну цифру",
+	INCORRECT_EMAIL_OR_PASSWORD: "Невірний email або пароль",
 } as const;

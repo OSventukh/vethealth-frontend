@@ -7,6 +7,10 @@ const nextConfig = {
 	output: "standalone",
 	images: {
 		formats: ["image/avif", "image/webp"],
+		// Post/content uploads get unique filenames, but topic images reuse the
+		// slugified original name — a replaced topic image can stay stale for
+		// up to this TTL, so keep it at days, not months.
+		minimumCacheTTL: 604800,
 		remotePatterns: [
 			{
 				protocol: "https",
