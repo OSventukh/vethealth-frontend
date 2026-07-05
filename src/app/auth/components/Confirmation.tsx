@@ -42,6 +42,12 @@ export default function Confirmation({ user, token }: Props) {
 	const form = useForm<ConfirmationValues>({
 		resolver: zodResolver(confirmationSchema),
 		mode: "onChange",
+		defaultValues: {
+			hash: token,
+			email: user.email,
+			password: "",
+			confirmPassword: "",
+		},
 	});
 	const router = useRouter();
 
@@ -75,7 +81,6 @@ export default function Confirmation({ user, token }: Props) {
 					<FormField
 						control={form.control}
 						name="hash"
-						defaultValue={token}
 						render={({ field }) => (
 							<FormItem className="hidden">
 								<FormControl>
@@ -92,7 +97,6 @@ export default function Confirmation({ user, token }: Props) {
 					<FormField
 						control={form.control}
 						name="email"
-						defaultValue={user.email}
 						render={({ field }) => (
 							<FormItem className="hidden">
 								<FormControl>

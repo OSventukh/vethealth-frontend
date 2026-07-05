@@ -88,6 +88,19 @@ Mutations live in `*.action.ts` files marked `"use server"`, colocated under eac
   ISR cache for the affected resource.
 - Backend error strings are matched against `utils/constants/server-error-responses` and remapped to
   user-facing Ukrainian messages in `utils/constants/messages`.
+- The one shared, non-route-specific action lives in `src/actions/` (`image-upload.action.ts`,
+  used by the Lexical editor).
+
+### Security headers (`src/proxy.ts` — Next 16's middleware)
+Runs on every request except `api/`, `_next/*` and prefetches. It re-exports `next-auth/middleware`
+as the default export and its `proxy()` function sets: a **nonce-based CSP** (nonce forwarded to the
+app via the `x-nonce` request header), HSTS, `X-Frame-Options: DENY`, `X-Content-Type-Options`,
+`Referrer-Policy`, and a deny-most `Permissions-Policy`. Gotchas:
+- **Any new external origin must be allowlisted here** — third-party scripts go in `script-src`,
+  API/analytics endpoints in `connect-src`, image hosts in `img-src` (`PROD_ORIGINS` covers the
+  `vethealth.com.ua` hosts). Git history is full of "fix CSP" commits from forgetting this; a missed
+  entry only breaks in prod-like environments, since localhost gets the looser dev policy.
+- Dev vs prod policy is chosen by sniffing the `host` header for `localhost`/`127.`, not `NODE_ENV`.
 
 ### Logging (`src/logger`)
 Winston, **server-only**. It's dynamically imported behind `typeof window === "undefined"` guards
