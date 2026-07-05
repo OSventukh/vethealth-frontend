@@ -5,6 +5,11 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: "standalone",
+	experimental: {
+		// Inline the (small) global CSS into the HTML — removes a
+		// render-blocking request on the mobile critical path.
+		inlineCss: true,
+	},
 	images: {
 		formats: ["image/avif", "image/webp"],
 		// Post/content uploads get unique filenames, but topic images reuse the

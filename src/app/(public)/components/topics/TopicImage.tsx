@@ -15,6 +15,7 @@ export default function TopicImage({ src, alt, priority = false }: Props) {
 				height={240}
 				className="w-full h-full object-cover"
 				priority={priority}
+				fetchPriority={priority ? "high" : undefined}
 				loading={priority ? "eager" : "lazy"}
 				sizes="(max-width: 768px) 240px, 240px"
 			/>
