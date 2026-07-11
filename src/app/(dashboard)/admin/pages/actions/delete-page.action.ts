@@ -1,7 +1,7 @@
 "use server";
 import { revalidateTag } from "next/cache";
 import { TAGS } from "@/api/constants/tags";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
 
 type ReturnedData = {

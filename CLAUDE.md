@@ -52,10 +52,11 @@ anymore (`prettier-plugin-tailwindcss` gone). Style: **tabs + double quotes**. P
 - `(public)/` — public site. `[topic]/page.tsx` and `[topic]/[...slug]/page.tsx` are the dynamic
   content catch-alls, rendered via ISR (cached fetches). `search/`, `privacy-policy/`, home.
 - `(dashboard)/admin/` — authenticated CMS for categories, pages, posts, topics, users. The
-  `admin/layout.tsx` is the **auth gate**: it calls `auth()` and, if there's no session, signs out
-  and redirects to `/api/auth/signin`. Every admin page is a child of this guarded layout.
+  `admin/layout.tsx` is the **auth gate**: it calls `auth()` and, if there's no session, redirects
+  to `/auth/login`. Every admin page is a child of this guarded layout.
 - `auth/` — login / confirmation / forgot-password flows.
-- `api/auth/[...nextauth]/route.ts` — the only API route (NextAuth handler).
+- There are **no API routes** — auth is handled by iron-session cookies + server actions, not a
+  NextAuth route handler.
 
 ### API client (`src/api`) — the most important subsystem
 - `routes.ts` builds endpoint URLs from `NEXT_PUBLIC_API_SERVER` || `API_SERVER`, and **throws at
@@ -71,14 +72,23 @@ anymore (`prettier-plugin-tailwindcss` gone). Style: **tabs + double quotes**. P
   by Server Components and server actions. `api.search` short-circuits to `null` for queries under
   3 chars. Types live in `src/api/types/*`.
 
-### Auth (`src/lib/next-auth`)
-- NextAuth v4, single **Credentials** provider that calls `api.auth.login` against the backend.
-- The `jwt` callback stores the backend access/refresh tokens and **auto-refreshes** via
-  `api.auth.refresh` once `token.tokenExpires` passes. The `session` callback exposes the backend
-  bearer as `session.token`.
-- Use the `auth()` helper (`auth.ts`, wraps `getServerSession`) in Server Components / actions to
-  get the session and `session.token` for authenticated backend calls. Session type augmentation is
-  in `types/next-auth.d.ts`.
+### Auth (`src/lib/session`) — iron-session
+
+Migrated off NextAuth v4 to **iron-session** (the backend NestJS API stays the source of truth;
+the frontend just transports its JWTs in an encrypted, stateless cookie).
+- `session.config.ts` — the `SessionData` shape (`user`, `token`, `refreshToken`, `tokenExpires`)
+  and `sessionOptions` (cookie name `vethealth_session`, `password: process.env.AUTH_SECRET` — must
+  be **≥32 chars**, `maxAge` = backend refresh-token TTL of 7d).
+- `auth.ts` — the `auth()` helper reads the cookie via `getIronSession(await cookies(), …)` and
+  returns the session or `null` (mirrors the old `getServerSession` contract, so the ~24 call sites
+  doing `session?.token` / `session?.user` are unchanged). **Read-only** — it never writes cookies.
+- **Login/logout are server actions** (`auth/actions/login.action.ts`, `auth/actions/logout.action.ts`):
+  they call `api.auth.login` / `api.auth.logout`, then `session.save()` / `session.destroy()`.
+- **Token auto-refresh lives in `src/proxy.ts`** (the Next 16 proxy, formerly `middleware.ts`), NOT
+  in `auth()`: cookies cannot be written during a Server Component render, so the proxy checks
+  `tokenExpires` and rotates via `api.auth.refresh`, writing the new cookie onto its response. The
+  proxy always runs on the **Node.js runtime**, so the server-only `api` client (which dynamically
+  imports winston) is safe there.
 
 ### Server actions (`actions/` dirs colocated with routes)
 Mutations live in `*.action.ts` files marked `"use server"`, colocated under each route
@@ -92,10 +102,10 @@ Mutations live in `*.action.ts` files marked `"use server"`, colocated under eac
   used by the Lexical editor).
 
 ### Security headers (`src/proxy.ts` — Next 16's middleware)
-Runs on every request except `api/`, `_next/*` and prefetches. It re-exports `next-auth/middleware`
-as the default export and its `proxy()` function sets: a **nonce-based CSP** (nonce forwarded to the
-app via the `x-nonce` request header), HSTS, `X-Frame-Options: DENY`, `X-Content-Type-Options`,
-`Referrer-Policy`, and a deny-most `Permissions-Policy`. Gotchas:
+Runs on every request except `api/`, `_next/*` and prefetches. Its `proxy()` function sets a
+**nonce-based CSP** (nonce forwarded to the app via the `x-nonce` request header), HSTS,
+`X-Frame-Options: DENY`, `X-Content-Type-Options`, `Referrer-Policy`, and a deny-most
+`Permissions-Policy`; it also rotates the backend access token (see the Auth section). Gotchas:
 - **Any new external origin must be allowlisted here** — third-party scripts go in `script-src`,
   API/analytics endpoints in `connect-src`, image hosts in `img-src` (`PROD_ORIGINS` covers the
   `vethealth.com.ua` hosts). Git history is full of "fix CSP" commits from forgetting this; a missed
@@ -129,8 +139,9 @@ From `.cursor/rules/nextjs-rules.mdc` and the existing code:
 ## Environment
 
 `.env` keys: `NEXT_PUBLIC_API_SERVER` / `API_SERVER` (backend base URL — required, see `routes.ts`),
-`NEXT_PUBLIC_IMAGE_SERVER`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `CLIENT_URL` (used by the admin layout
-for sign-in/out redirects), and the Google integration keys (`GOOGLE_ANALYTICS_ID`, `GA_CLIENT_EMAIL`,
+`NEXT_PUBLIC_IMAGE_SERVER`, `AUTH_SECRET` (iron-session cookie encryption key — **≥32 chars**;
+replaced the old `NEXTAUTH_SECRET`/`NEXTAUTH_URL`), `CLIENT_URL` (`metadataBase` in the root layout +
+auth redirects), and the Google integration keys (`GOOGLE_ANALYTICS_ID`, `GA_CLIENT_EMAIL`,
 `GA_PRIVATE_KEY`, `GA_PROPERTY_ID`, `ADSENSE_PUBLISHER_ID`). Third-party scripts are env-gated:
 AdSense renders only when `ADSENSE_PUBLISHER_ID` is set (ads are currently OFF — the var is unset
 everywhere), and the CRO optimizer script (the owner's local copy, served from

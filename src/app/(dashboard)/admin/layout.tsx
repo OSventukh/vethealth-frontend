@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Header from "@/app/(dashboard)/admin/components/layout/Header";
 import Sidebar from "@/app/(dashboard)/admin/components/layout/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 
 export default async function DashboardLayout({
 	children,
@@ -10,12 +10,8 @@ export default async function DashboardLayout({
 	children: React.ReactNode;
 }) {
 	const session = await auth();
-	const { CLIENT_URL } = process.env;
 	if (!session) {
-		await fetch(`${CLIENT_URL}/api/auth/signout`, {
-			method: "POST",
-		});
-		redirect(`${CLIENT_URL}/api/auth/signin`);
+		redirect("/auth/login");
 	}
 	return (
 		<div className="bg-background fixed grid max-h-dvh w-screen grid-cols-1 grid-rows-[4rem_1fr_4rem] px-2 md:grid-cols-[4rem_1fr] md:grid-rows-[5rem_1fr] md:pl-0">

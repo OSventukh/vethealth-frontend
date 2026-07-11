@@ -1,5 +1,8 @@
+import { getIronSession, sealData } from "iron-session";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { api } from "@/api";
+import { type SessionData, sessionOptions } from "@/lib/session/session.config";
 
 export const config = {
 	matcher: [
@@ -41,7 +44,7 @@ function getAllowedOrigins(request: NextRequest) {
 	}
 	return PROD_ORIGINS.join(" ");
 }
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
 	const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 	const allowedOrigins = getAllowedOrigins(request);
 	// Check if we're in development mode
@@ -130,6 +133,42 @@ export function proxy(request: NextRequest) {
 
 	// Add the Permissions-Policy header
 	response.headers.set("Permissions-Policy", permissionsPolicy);
+
+	// Rotate the backend access token when it has expired. This runs here (in the
+	// proxy) because cookies cannot be written during a Server Component render.
+	// The proxy always runs on the Node.js runtime, so the server-only `api`
+	// client (which dynamically imports winston) is safe to use.
+	const session = await getIronSession<SessionData>(
+		request,
+		response,
+		sessionOptions,
+	);
+	if (session.token && Date.now() >= session.tokenExpires) {
+		// Write the cookie via response.cookies, NOT session.save()/destroy():
+		// iron-session appends a raw Set-Cookie header, which Next.js does not
+		// mirror into `x-middleware-set-cookie`, so `cookies()` during THIS
+		// request's render would still see the old (expired) tokens.
+		// response.cookies.set()/delete() updates both the browser and the render.
+		try {
+			const tokens = await api.auth.refresh(session.refreshToken);
+			const sealed = await sealData(
+				{
+					user: session.user,
+					token: tokens.token,
+					refreshToken: tokens.refreshToken,
+					tokenExpires: tokens.tokenExpires,
+				} satisfies SessionData,
+				{ password: sessionOptions.password, ttl: sessionOptions.ttl },
+			);
+			response.cookies.set(
+				sessionOptions.cookieName,
+				sealed,
+				sessionOptions.cookieOptions,
+			);
+		} catch {
+			response.cookies.delete(sessionOptions.cookieName);
+		}
+	}
 
 	return response;
 }

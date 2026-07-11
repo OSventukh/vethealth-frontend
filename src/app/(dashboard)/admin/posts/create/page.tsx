@@ -1,5 +1,5 @@
 import { api } from "@/api";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 import EditPost from "../components/EditPost";
 
 export default async function CreatPage() {

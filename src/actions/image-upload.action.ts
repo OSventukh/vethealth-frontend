@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 
 type ImageUploadReturn = {
 	error: boolean;

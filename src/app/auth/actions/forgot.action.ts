@@ -2,7 +2,7 @@
 import { revalidateTag } from "next/cache";
 import { routes } from "@/api/routes";
 import type { ForgotData } from "@/api/types/auth.type";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
 import { ERROR_MESSAGE } from "@/utils/constants/messages";
 import { SERVER_ERROR } from "@/utils/constants/server-error-responses";

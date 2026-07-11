@@ -1,7 +1,7 @@
 import Link from "next/link";
 import UserMenu from "@/app/(dashboard)/admin/users/components/UserMenu";
 import Logo from "@/components/logo";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 
 type Props = {
 	className?: string;

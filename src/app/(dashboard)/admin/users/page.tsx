@@ -2,7 +2,7 @@ import { UserPlus } from "lucide-react";
 import { api } from "@/api";
 import CreateButton from "@/components/ui/create-button";
 import { DataTable } from "@/components/ui/DataTable";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 import { userQuerySchema } from "@/utils/validators/query.validator";
 import { userColumns } from "./columns";
 
