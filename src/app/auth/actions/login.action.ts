@@ -1,7 +1,9 @@
-import { signIn } from "next-auth/react";
+"use server";
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
+import { api } from "@/api";
+import { type SessionData, sessionOptions } from "@/lib/session/session.config";
 import logger from "@/logger";
-import { ERROR_MESSAGE } from "@/utils/constants/messages";
-import { SERVER_ERROR } from "@/utils/constants/server-error-responses";
 
 type ReturnedData = {
 	error: boolean;
@@ -11,42 +13,45 @@ type ReturnedData = {
 };
 
 export async function loginAction(
-	state: ReturnedData,
+	_state: ReturnedData,
 	data: FormData,
 ): Promise<ReturnedData> {
 	try {
-		await signIn("credentials", {
+		const result = await api.auth.login({
 			email: data.get("email") as string,
 			password: data.get("password") as string,
-			redirect: false,
 		});
+
+		const session = await getIronSession<SessionData>(
+			await cookies(),
+			sessionOptions,
+		);
+		session.user = {
+			id: result.user.id,
+			firstname: result.user.firstname,
+			lastname: result.user.lastname,
+			role: result.user.role,
+			status: result.user.status,
+		};
+		session.token = result.token;
+		session.refreshToken = result.refreshToken;
+		session.tokenExpires = result.tokenExpires;
+		await session.save();
+
 		return {
 			success: true,
 			error: false,
 			message: "Success",
 		};
 	} catch (error: unknown) {
-		let message = "Щось пішло не так";
 		logger.error(
 			error instanceof Error ? error.message : JSON.stringify(error),
 		);
-		if (error instanceof Error) {
-			message = error.message;
-			if (error.message.includes(SERVER_ERROR.TITLE_MUST_BE_UNIQUE)) {
-				message = ERROR_MESSAGE.TITLE_MUST_BE_UNIQUE;
-			} else if (
-				error.message.includes(SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY)
-			) {
-				message = ERROR_MESSAGE.TITLE_SHOULD_BE_NOT_EMPTY;
-			} else if (error.message.includes(SERVER_ERROR.SLUG_SHOULD_BE_UNIQUE)) {
-				message = ERROR_MESSAGE.SLUG_SHOULD_BE_UNIQUE;
-			}
-		}
 
 		return {
 			error: true,
 			success: false,
-			message,
+			message: "Невірний пароль або email",
 		};
 	}
 }

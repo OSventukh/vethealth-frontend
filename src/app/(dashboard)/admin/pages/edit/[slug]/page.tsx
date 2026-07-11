@@ -1,5 +1,5 @@
 import { api } from "@/api";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 import EditPage from "../../components";
 
 type Props = { params: Promise<{ slug: string }> };

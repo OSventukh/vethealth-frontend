@@ -2,9 +2,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Eye } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { loginAction } from "@/app/auth/actions/login.action";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,20 +44,20 @@ export default function SignIn() {
 	};
 
 	const submitForm = async (values: LoginValues) => {
-		try {
-			const response = await signIn("credentials", {
-				email: values.email,
-				password: values.password,
-				redirect: false,
-			});
+		const formData = new FormData();
+		formData.set("email", values.email);
+		formData.set("password", values.password);
 
-			if (response && response.status === 401) {
-				throw new Error("Невірний пароль або email");
-			}
-			router.push(searchParams.get("callbackUrl") || "/admin");
-		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : "Помилка авторизації");
+		const response = await loginAction(
+			{ error: false, success: false, message: "" },
+			formData,
+		);
+
+		if (response.error) {
+			setError(response.message || "Помилка авторизації");
+			return;
 		}
+		router.push(searchParams.get("callbackUrl") || "/admin");
 	};
 
 	return (

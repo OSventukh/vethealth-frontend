@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
 import { api } from "@/api";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 
 export default async function UserProfilePage(props: {
 	params: Promise<{ id: string }>;

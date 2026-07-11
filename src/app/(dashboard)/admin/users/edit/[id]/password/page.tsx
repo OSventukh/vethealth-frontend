@@ -1,5 +1,5 @@
 import { api } from "@/api";
-import { auth } from "@/lib/next-auth/auth";
+import { auth } from "@/lib/session/auth";
 import EditUserPassword from "../../../components/EditPassword";
 
 type Props = {
