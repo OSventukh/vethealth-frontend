@@ -1,5 +1,6 @@
-import type * as LabelPrimitive from "@radix-ui/react-label";
-import { Slot } from "@radix-ui/react-slot";
+"use client";
+
+import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
 import {
 	Controller,
@@ -84,8 +85,8 @@ const FormItem = React.forwardRef<
 FormItem.displayName = "FormItem";
 
 const FormLabel = React.forwardRef<
-	React.ElementRef<typeof LabelPrimitive.Root>,
-	React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
+	React.ComponentRef<typeof Label>,
+	React.ComponentPropsWithoutRef<typeof Label>
 >(({ className, ...props }, ref) => {
 	const { error, formItemId } = useFormField();
 
@@ -101,25 +102,26 @@ const FormLabel = React.forwardRef<
 FormLabel.displayName = "FormLabel";
 
 const FormControl = React.forwardRef<
-	React.ElementRef<typeof Slot>,
-	React.ComponentPropsWithoutRef<typeof Slot>
->(({ ...props }, ref) => {
+	HTMLElement,
+	React.ComponentPropsWithoutRef<"div">
+>(({ children, ...props }, ref) => {
 	const { error, formItemId, formDescriptionId, formMessageId } =
 		useFormField();
 
-	return (
-		<Slot
-			ref={ref}
-			id={formItemId}
-			aria-describedby={
-				!error
-					? `${formDescriptionId}`
-					: `${formDescriptionId} ${formMessageId}`
-			}
-			aria-invalid={!!error}
-			{...props}
-		/>
-	);
+	// Base UI's useRender replaces Radix's <Slot> — it merges the injected id /
+	// aria props (and ref) onto the single child element the consumer passes.
+	return useRender({
+		render: (children ?? <div />) as React.ReactElement,
+		ref,
+		props: {
+			id: formItemId,
+			"aria-describedby": !error
+				? `${formDescriptionId}`
+				: `${formDescriptionId} ${formMessageId}`,
+			"aria-invalid": !!error,
+			...props,
+		},
+	});
 });
 FormControl.displayName = "FormControl";
 

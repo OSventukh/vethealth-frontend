@@ -1,16 +1,64 @@
 "use client";
 
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const Accordion = AccordionPrimitive.Root;
+type AccordionProps = Omit<
+	AccordionPrimitive.Root.Props,
+	"value" | "defaultValue" | "onValueChange"
+> & {
+	type?: "single" | "multiple";
+	collapsible?: boolean;
+	value?: string | string[];
+	defaultValue?: string | string[];
+	onValueChange?: ((value: string) => void) | ((value: string[]) => void);
+};
+
+function toArray(value: string | string[] | undefined): string[] | undefined {
+	if (value === undefined) return undefined;
+	return Array.isArray(value) ? value : [value];
+}
+
+const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
+	(
+		{
+			type = "single",
+			collapsible: _collapsible,
+			value,
+			defaultValue,
+			onValueChange,
+			...props
+		},
+		ref,
+	) => (
+		<AccordionPrimitive.Root
+			ref={ref}
+			multiple={type === "multiple"}
+			value={toArray(value)}
+			defaultValue={toArray(defaultValue)}
+			onValueChange={
+				onValueChange
+					? (newValue: string[]) => {
+							if (type === "multiple") {
+								(onValueChange as (value: string[]) => void)(newValue);
+							} else {
+								(onValueChange as (value: string) => void)(newValue[0] ?? "");
+							}
+						}
+					: undefined
+			}
+			{...props}
+		/>
+	),
+);
+Accordion.displayName = "Accordion";
 
 const AccordionItem = React.forwardRef<
-	React.ElementRef<typeof AccordionPrimitive.Item>,
-	React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
+	React.ComponentRef<typeof AccordionPrimitive.Item>,
+	AccordionPrimitive.Item.Props
 >(({ className, ...props }, ref) => (
 	<AccordionPrimitive.Item
 		ref={ref}
@@ -20,21 +68,19 @@ const AccordionItem = React.forwardRef<
 ));
 AccordionItem.displayName = "AccordionItem";
 
-type AccordionTriggerProps = React.ComponentPropsWithoutRef<
-	typeof AccordionPrimitive.Trigger
-> & {
+type AccordionTriggerProps = AccordionPrimitive.Trigger.Props & {
 	showArrow?: boolean;
 };
 
 const AccordionTrigger = React.forwardRef<
-	React.ElementRef<typeof AccordionPrimitive.Trigger>,
+	React.ComponentRef<typeof AccordionPrimitive.Trigger>,
 	AccordionTriggerProps
 >(({ className, children, showArrow = true, ...props }, ref) => (
 	<AccordionPrimitive.Header className="flex">
 		<AccordionPrimitive.Trigger
 			ref={ref}
 			className={cn(
-				"flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+				"flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-panel-open]>svg]:rotate-180",
 				className,
 			)}
 			{...props}
@@ -46,21 +92,28 @@ const AccordionTrigger = React.forwardRef<
 		</AccordionPrimitive.Trigger>
 	</AccordionPrimitive.Header>
 ));
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
+AccordionTrigger.displayName = "AccordionTrigger";
 
 const AccordionContent = React.forwardRef<
-	React.ElementRef<typeof AccordionPrimitive.Content>,
-	React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
+	React.ComponentRef<typeof AccordionPrimitive.Panel>,
+	AccordionPrimitive.Panel.Props
 >(({ className, children, ...props }, ref) => (
-	<AccordionPrimitive.Content
+	<AccordionPrimitive.Panel
 		ref={ref}
-		className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm transition-all"
+		className="overflow-hidden text-sm"
 		{...props}
 	>
-		<div className={cn("pt-0 pb-4", className)}>{children}</div>
-	</AccordionPrimitive.Content>
+		<div
+			className={cn(
+				"h-(--accordion-panel-height) pb-4 pt-0 transition-all duration-200 ease-out data-starting-style:h-0 data-ending-style:h-0",
+				className,
+			)}
+		>
+			{children}
+		</div>
+	</AccordionPrimitive.Panel>
 ));
 
-AccordionContent.displayName = AccordionPrimitive.Content.displayName;
+AccordionContent.displayName = "AccordionContent";
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };

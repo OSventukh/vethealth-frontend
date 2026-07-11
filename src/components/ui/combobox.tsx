@@ -140,10 +140,7 @@ export const Combobox = <T,>({
 					</div>
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent
-				className="w-[var(--radix-popover-trigger-width)] p-0"
-				align="start"
-			>
+			<PopoverContent className="w-[var(--anchor-width)] p-0" align="start">
 				<Command>
 					<CommandInput placeholder="Search numbers..." className="h-9" />
 					<CommandList>

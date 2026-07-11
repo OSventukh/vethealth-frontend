@@ -81,7 +81,6 @@ import { IS_APPLE } from "../../utils/environment";
 
 // import { $createStickyNode } from '../../nodes/StickyNode';
 
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import clsx from "clsx";
 // import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
 // import { InsertPollDialog } from '../PollPlugin';
@@ -89,6 +88,7 @@ import clsx from "clsx";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useModal from "../../hooks/useModal";

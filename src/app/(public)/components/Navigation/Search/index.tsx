@@ -1,5 +1,4 @@
 "use client";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Search } from "lucide-react";
 import dynamic from "next/dynamic";
 import Form from "next/form";
@@ -110,9 +109,7 @@ export default function SearchBar() {
 				<SheetTrigger className="cursor-pointer p-2 md:p-4" title="Пошук">
 					<Search />
 				</SheetTrigger>
-				<VisuallyHidden asChild>
-					<SheetTitle>Пошук</SheetTitle>
-				</VisuallyHidden>
+				<SheetTitle className="sr-only">Пошук</SheetTitle>
 				<SheetContent side="top" className="bg-[rgb(180,239,232)] px-0">
 					<div className="container">
 						{/* next/form builds `/search?query=…` from the input's `name`

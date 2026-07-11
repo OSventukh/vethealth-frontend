@@ -1,4 +1,5 @@
-import { Slot } from "@radix-ui/react-slot";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 import * as React from "react";
 
@@ -41,20 +42,18 @@ BreadcrumbItem.displayName = "BreadcrumbItem";
 
 const BreadcrumbLink = React.forwardRef<
 	HTMLAnchorElement,
-	React.ComponentPropsWithoutRef<"a"> & {
-		asChild?: boolean;
-	}
->(({ asChild, className, ...props }, ref) => {
-	const Comp = asChild ? Slot : "a";
-
-	return (
-		<Comp
-			ref={ref}
-			className={cn("hover:text-foreground transition-colors", className)}
-			{...props}
-		/>
-	);
-});
+	useRender.ComponentProps<"a">
+>(({ className, render, ...props }, ref) =>
+	useRender({
+		defaultTagName: "a",
+		render,
+		ref,
+		props: mergeProps<"a">(
+			{ className: cn("hover:text-foreground transition-colors", className) },
+			props,
+		),
+	}),
+);
 BreadcrumbLink.displayName = "BreadcrumbLink";
 
 const BreadcrumbPage = React.forwardRef<

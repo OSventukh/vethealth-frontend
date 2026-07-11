@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeft } from "lucide-react";
 import * as React from "react";
@@ -17,6 +17,21 @@ import {
 } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+
+// Base UI has no Slot primitive; this useRender-based shim mirrors Radix's
+// <Slot> — it merges the given props (and ref) onto the single child element,
+// which is exactly what the `asChild` branches below rely on.
+const Slot = React.forwardRef<
+	HTMLElement,
+	React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
+>(({ children, ...props }, ref) =>
+	useRender({
+		render: children as React.ReactElement,
+		ref,
+		props: props as Record<string, unknown>,
+	}),
+);
+Slot.displayName = "Slot";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -138,7 +153,7 @@ const SidebarProvider = React.forwardRef<
 
 		return (
 			<SidebarContext.Provider value={contextValue}>
-				<TooltipProvider delayDuration={0}>
+				<TooltipProvider delay={0}>
 					<div
 						style={
 							{

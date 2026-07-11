@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot";
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
@@ -36,20 +36,41 @@ const buttonVariants = cva(
 
 export interface ButtonProps
 	extends
-		React.ButtonHTMLAttributes<HTMLButtonElement>,
+		Omit<ButtonPrimitive.Props, "className">,
 		VariantProps<typeof buttonVariants> {
+	className?: string;
+	/**
+	 * Radix-compat: renders the single child element instead of a `<button>`.
+	 * Prefer Base UI's `render` prop for new code.
+	 */
 	asChild?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-	({ className, variant, size, asChild = false, ...props }, ref) => {
-		const Comp = asChild ? Slot : "button";
+	({ className, variant, size, asChild = false, children, ...props }, ref) => {
+		if (asChild) {
+			return (
+				<ButtonPrimitive
+					className={cn(buttonVariants({ variant, size, className }))}
+					ref={ref as React.Ref<HTMLElement>}
+					nativeButton={false}
+					render={
+						React.Children.only(children) as React.ReactElement<
+							Record<string, unknown>
+						>
+					}
+					{...props}
+				/>
+			);
+		}
 		return (
-			<Comp
+			<ButtonPrimitive
 				className={cn(buttonVariants({ variant, size, className }))}
-				ref={ref}
+				ref={ref as React.Ref<HTMLElement>}
 				{...props}
-			/>
+			>
+				{children}
+			</ButtonPrimitive>
 		);
 	},
 );

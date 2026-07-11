@@ -1,5 +1,4 @@
 "use client";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -30,9 +29,7 @@ export default function MobileNavigation({ items }: Props) {
 			<Sheet>
 				<SheetTrigger className="p-2 sm:hidden">
 					<Menu />
-					<VisuallyHidden asChild>
-						<SheetTitle>Меню</SheetTitle>
-					</VisuallyHidden>
+					<SheetTitle className="sr-only">Меню</SheetTitle>
 				</SheetTrigger>
 				<SheetContent side="left">
 					<Accordion type="single" collapsible className="mt-4">
