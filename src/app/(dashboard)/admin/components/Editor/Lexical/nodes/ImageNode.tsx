@@ -12,7 +12,6 @@ import type {
 import { $applyNodeReplacement, DecoratorNode } from "lexical";
 import * as React from "react";
 import { Suspense } from "react";
-import { isAbsoluteImageSrc, repairImageSrc } from "@/utils/image-src";
 
 const ImageComponent = React.lazy(() => import("./ImageComponent"));
 
@@ -198,8 +197,11 @@ export class ImageNode extends DecoratorNode<React.ReactElement> {
 	}
 
 	decorate(): React.ReactElement {
-		const src = isAbsoluteImageSrc(this.__src)
-			? repairImageSrc(this.__src)
+		const isAbsolutePath =
+			this.__src.startsWith("http://") || this.__src.startsWith("https://");
+
+		const src = isAbsolutePath
+			? this.__src
 			: `${process.env.NEXT_PUBLIC_IMAGE_SERVER}${this.__src}`;
 
 		return (
