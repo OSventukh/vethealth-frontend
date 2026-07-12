@@ -89,6 +89,8 @@ const SelectContent = React.forwardRef<
 		ref,
 	) => (
 		<SelectPrimitive.Portal>
+			{/* z-50 — інакше попап селекта опиняється ПІД діалогом (Dialog має
+			    z-50, а позиціонер без z-index програє йому в stacking order) */}
 			<SelectPrimitive.Positioner
 				side={side}
 				sideOffset={sideOffset}
@@ -97,6 +99,7 @@ const SelectContent = React.forwardRef<
 				alignItemWithTrigger={
 					alignItemWithTrigger ?? position === "item-aligned"
 				}
+				className="isolate z-50"
 			>
 				<SelectPrimitive.Popup
 					ref={ref}

@@ -9,6 +9,13 @@ const nextConfig = {
 		// Inline the (small) global CSS into the HTML — removes a
 		// render-blocking request on the mobile critical path.
 		inlineCss: true,
+		serverActions: {
+			// Картинки вантажаться через server action (image-upload.action);
+			// дефолтний ліміт 1 MB тихо ріже все більше за нього. Backend
+			// приймає до 5 MB (FILE_MAX_SIZE) — тримаємо трохи вище, щоб
+			// авторитетним лишався backend-ліміт.
+			bodySizeLimit: "6mb",
+		},
 	},
 	images: {
 		formats: ["image/avif", "image/webp"],

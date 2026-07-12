@@ -29,7 +29,7 @@ export const imageUploadAction = async (
 
 		const result = await response.json();
 		if (!response.ok) {
-			throw new Error();
+			throw new Error(result?.message || response.statusText);
 		}
 		return {
 			error: false,

@@ -11,7 +11,7 @@ export default async function EditPostPage(props: Props) {
 	const [post, topics, categories] = await Promise.all([
 		api.posts.getOne({
 			slug,
-			query: { include: "categories,topics" },
+			query: { include: "categories,topics,metadata" },
 			token: session?.token,
 		}),
 		api.topics.getMany({

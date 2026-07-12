@@ -1,4 +1,5 @@
 export const SITE_NAME = "VetHealth";
+export const SITE_HOST = "vethealth.com.ua";
 export const SITE_TITLE = `${SITE_NAME} - Лікування та догляд за тваринами`;
 export const NOT_FOUND_TITLE = `Сторінка не знайдена | ${SITE_NAME}`;
 export const SITE_DESCRIPTION =

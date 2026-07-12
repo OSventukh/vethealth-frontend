@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import type { imageUploadAction } from "@/actions/image-upload.action";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 
 interface ImageUploadProps {
 	width?: string | number;
@@ -38,10 +39,25 @@ export default function ImageUpload({
 		formData.append(field, enteredImage[0]);
 
 		startTransition(async () => {
-			const response = await uploadAction(formData, field);
-			if (response.image) {
+			try {
+				const response = await uploadAction(formData, field);
+				if (response.error || !response.image) {
+					toast({
+						variant: "destructive",
+						description: response.message || "Не вдалося завантажити картинку",
+					});
+					return;
+				}
 				setImageURL(response.image.path);
 				onImage(response.image);
+			} catch {
+				// Server action міг упасти ще до виконання (наприклад,
+				// перевищено bodySizeLimit) — тоді проміс реджектиться.
+				toast({
+					variant: "destructive",
+					description:
+						"Не вдалося завантажити картинку (можливо, файл завеликий)",
+				});
 			}
 		});
 	};

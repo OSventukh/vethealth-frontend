@@ -9,7 +9,7 @@ import type { PageResponse } from "@/api/types/pages.type";
 import type { TopicResponse } from "@/api/types/topics.type";
 import ImageUpload from "@/components/ImageUpload";
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
+import { MultiCombobox } from "@/components/ui/multi-combobox";
 import {
 	Form,
 	FormControl,
@@ -237,12 +237,12 @@ export default function EditTopic({
 								<FormItem>
 									<FormLabel>Категорії</FormLabel>
 									<FormControl>
-										<Combobox
-											onChange={field.onChange}
+										<MultiCombobox
 											options={categories}
 											value={field.value}
-											valueKey="id"
+											onChange={field.onChange}
 											labelKey="name"
+											placeholder="Виберіть категорії…"
 										/>
 									</FormControl>
 									<FormDescription>

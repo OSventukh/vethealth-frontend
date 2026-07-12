@@ -43,6 +43,53 @@ export const createCategorySchema = z.object({
 
 export type CategoryValues = z.infer<typeof createCategorySchema>;
 
+export const postMetadataSchema = z.object({
+	metaTitle: z
+		.string()
+		.max(70, { message: "Не більше 70 символів" })
+		.optional()
+		.or(z.literal("")),
+	metaDescription: z
+		.string()
+		.max(180, { message: "Не більше 180 символів" })
+		.optional()
+		.or(z.literal("")),
+	metaKeywords: z.string().optional().or(z.literal("")),
+	ogTitle: z.string().optional().or(z.literal("")),
+	ogDescription: z.string().optional().or(z.literal("")),
+	ogImage: z.string().optional().or(z.literal("")),
+	twitterCard: z.enum(["summary", "summary_large_image"]),
+	canonicalUrl: z
+		.string()
+		.url({ message: "Невірний формат URL" })
+		.optional()
+		.or(z.literal("")),
+	indexable: z.boolean(),
+	followable: z.boolean(),
+});
+
+export const createPostSchema = z.object({
+	title: z
+		.string()
+		.min(3, { message: "Назва повинна мати не менше 3 символів" })
+		.max(80, { message: "Не більше 80 символів" }),
+	slug: z.string().optional().or(z.literal("")),
+	content: z.string(),
+	featuredImageFile: z
+		.object({
+			id: z.string(),
+			path: z.string(),
+		})
+		.nullable()
+		.optional(),
+	featuredImageUrl: z.string().optional().or(z.literal("")).nullable(),
+	topics: z.array(relativeSchema),
+	categories: z.array(relativeSchema),
+	metadata: postMetadataSchema,
+});
+
+export type PostValues = z.infer<typeof createPostSchema>;
+
 export const createUserSchema = z.object({
 	firstname: z
 		.string()

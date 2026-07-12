@@ -1,39 +1,28 @@
 "use client";
-import {
-	PanelRightClose,
-	PanelRightOpen,
-	SaveIcon,
-	SendIcon,
-	ViewIcon,
-} from "lucide-react";
-import dynamic from "next/dynamic";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import type React from "react";
 import { useState, useTransition } from "react";
-import type { MultiValue, Options } from "react-select";
-import { imageUploadAction } from "@/actions/image-upload.action";
+import { useForm, type FieldErrors } from "react-hook-form";
 import type { CategoryResponse } from "@/api/types/categories.type";
 import type { PostResponse } from "@/api/types/posts.type";
 import type { TopicResponse } from "@/api/types/topics.type";
-import ImageUpload from "@/components/ImageUpload";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Multiselect from "@/components/ui/multiselect";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Form } from "@/components/ui/form";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
-import { UserRoleEnum } from "@/utils/enums/user.enum";
 import type { UserSession } from "@/utils/types/user.type";
-import { PostStatusEnum } from "../../actions/post-status.enum";
+import {
+	createPostSchema,
+	type PostValues,
+} from "@/utils/validators/form.validator";
+import type { PostStatusEnum } from "../../actions/post-status.enum";
 import { savePostAction } from "../../actions/save-post.action";
-
-const Lexical = dynamic(
-	() => import("@/app/(dashboard)/admin/components/Editor/Lexical"),
-	{
-		ssr: false,
-	},
-);
+import { ClassificationCard } from "./classification-card";
+import { ContentTab } from "./content-tab";
+import { CoverCard } from "./cover-card";
+import { PostEditorHeader } from "./post-editor-header";
+import { PublishCard } from "./publish-card";
+import { SeoTab } from "./seo-tab";
+import { SettingsTab } from "./settings-tab";
 
 type Props = {
 	initialData?: PostResponse | null;
@@ -43,21 +32,27 @@ type Props = {
 	user?: UserSession;
 };
 
-type FeaturedImageFile = { id: string; path: string } | null | undefined;
+type EditorTab = "content" | "seo" | "settings";
 
-const getLabelAndValue = <T,>(
-	items: T[] | undefined,
-	{ valueKey, labelKey }: { valueKey: keyof T; labelKey: keyof T },
-): {
-	value: string;
-	label: string;
-}[] => {
-	if (!items) return [];
-	return items.map((item) => ({
-		value: String(item[valueKey]),
-		label: String(item[labelKey]),
-	}));
-};
+const TWITTER_CARDS = ["summary", "summary_large_image"] as const;
+
+const toIds = (items?: { id: string }[] | null): { id: string }[] =>
+	items?.map(({ id }) => ({ id })) || [];
+
+/** Порожні рядки → undefined: `forbidNonWhitelisted`-бекенд відхиляє
+ * невідомі поля, а `@IsUrl()` на canonicalUrl падає на "". */
+const cleanMetadata = (metadata: PostValues["metadata"]) => ({
+	metaTitle: metadata.metaTitle?.trim() || undefined,
+	metaDescription: metadata.metaDescription?.trim() || undefined,
+	metaKeywords: metadata.metaKeywords?.trim() || undefined,
+	ogTitle: metadata.ogTitle?.trim() || undefined,
+	ogDescription: metadata.ogDescription?.trim() || undefined,
+	ogImage: metadata.ogImage?.trim() || undefined,
+	twitterCard: metadata.twitterCard,
+	canonicalUrl: metadata.canonicalUrl?.trim() || undefined,
+	indexable: metadata.indexable,
+	followable: metadata.followable,
+});
 
 export default function EditPost({
 	initialData,
@@ -66,348 +61,131 @@ export default function EditPost({
 	editMode,
 	user,
 }: Props) {
-	const initialTopics = getLabelAndValue<TopicResponse>(initialData?.topics, {
-		valueKey: "id",
-		labelKey: "title",
-	});
-	const initialCategories = getLabelAndValue<CategoryResponse>(
-		initialData?.categories,
-		{
-			valueKey: "id",
-			labelKey: "name",
-		},
-	);
-	const [title, setTitle] = useState(initialData?.title || "");
-	const [content, setContent] = useState(initialData?.content || null);
-	const [slug, setSlug] = useState<string>(initialData?.slug || "");
-	const [featuredImageFile, setFeaturedImageFile] = useState<FeaturedImageFile>(
-		initialData?.featuredImageFile || null,
-	);
-	const [featuredImageUrl, setFeaturedImageUrl] = useState<string | null>(
-		initialData?.featuredImageUrl || null,
-	);
-	const [topics, setTopics] =
-		useState<Options<{ label: string; value: string }>>(initialTopics);
-	const [categories, setCategories] =
-		useState<Options<{ label: string; value: string }>>(initialCategories);
-	const [isOpenSidebar, setIsOpenSidebar] = useState(false);
 	const router = useRouter();
-
-	const [_isPending, startTransition] = useTransition();
 	const { toast } = useToast();
-	const titleChangeHandler = (title: string) => {
-		setTitle(title);
-	};
+	const [isPending, startTransition] = useTransition();
+	const [activeTab, setActiveTab] = useState<EditorTab>("content");
+	const [stats, setStats] = useState({ words: 0, chars: 0 });
 
-	const contentChangeHandler = (content: string) => {
-		setContent(content);
-	};
+	const form = useForm<PostValues>({
+		resolver: zodResolver(createPostSchema),
+		defaultValues: {
+			title: initialData?.title || "",
+			slug: initialData?.slug || "",
+			content: initialData?.content || "",
+			featuredImageFile: initialData?.featuredImageFile || null,
+			featuredImageUrl: initialData?.featuredImageUrl || "",
+			topics: toIds(initialData?.topics),
+			categories: toIds(initialData?.categories),
+			metadata: {
+				metaTitle: initialData?.metadata?.metaTitle || "",
+				metaDescription: initialData?.metadata?.metaDescription || "",
+				metaKeywords: initialData?.metadata?.metaKeywords || "",
+				ogTitle: initialData?.metadata?.ogTitle || "",
+				ogDescription: initialData?.metadata?.ogDescription || "",
+				ogImage: initialData?.metadata?.ogImage || "",
+				twitterCard: TWITTER_CARDS.includes(
+					initialData?.metadata?.twitterCard as (typeof TWITTER_CARDS)[number],
+				)
+					? (initialData?.metadata
+							?.twitterCard as (typeof TWITTER_CARDS)[number])
+					: "summary_large_image",
+				canonicalUrl: initialData?.metadata?.canonicalUrl || "",
+				indexable: initialData?.metadata?.indexable ?? true,
+				followable: initialData?.metadata?.followable ?? true,
+			},
+		},
+		mode: "onChange",
+	});
 
-	const imageUploadHandler = (image: FeaturedImageFile) => {
-		setFeaturedImageFile(image);
-	};
-
-	const imageUrlChangeHandler = (
-		event: React.ChangeEvent<HTMLInputElement>,
-	) => {
-		const value = event.target.value;
-		setFeaturedImageUrl(value);
-	};
-
-	const saveHandler = (status: PostStatusEnum) => {
-		startTransition(async () => {
-			const res = await savePostAction(
-				{
-					id: initialData?.id,
-					title: title,
-					content: content || "",
-					featuredImageFile: featuredImageFile
-						? { id: featuredImageFile?.id }
-						: null,
-					featuredImageUrl: featuredImageUrl || null,
-					topics: topics.map((item) => ({ id: item.value })),
-					categories: categories.map((item) => ({ id: item.value })),
-					slug,
-					status: {
-						id: status,
-					},
-				},
-				editMode,
-			);
-			toast({
-				variant: res.error ? "destructive" : "success",
-				description: res.success ? "Стаття збережена" : res.message,
-			});
-			if (res.success && res.redirect) {
-				router.replace(`edit/${res.redirect}`, { scroll: false });
-			}
+	const onInvalid = (errors: FieldErrors<PostValues>) => {
+		const contentTabErrors = errors.title || errors.content || errors.slug;
+		setActiveTab(contentTabErrors ? "content" : "seo");
+		toast({
+			variant: "destructive",
+			description: "Перевірте виділені поля форми",
 		});
 	};
 
-	const topicsChangeHandler = (
-		selectedOptions: MultiValue<{ label: string; value: string }>,
-	) => {
-		setTopics(selectedOptions);
-	};
-
-	const categoriesChangeHandler = (
-		selectedOptions: MultiValue<{ label: string; value: string }>,
-	) => {
-		setCategories(selectedOptions);
-	};
-
-	const slugChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const value = event.target.value;
-		setSlug(value);
+	const saveHandler = (status: PostStatusEnum) => {
+		form.handleSubmit((values) => {
+			startTransition(async () => {
+				const res = await savePostAction(
+					{
+						id: initialData?.id,
+						title: values.title,
+						content: values.content || "",
+						slug: values.slug || "",
+						featuredImageFile: values.featuredImageFile
+							? { id: values.featuredImageFile.id }
+							: null,
+						featuredImageUrl: values.featuredImageUrl || null,
+						topics: values.topics,
+						categories: values.categories,
+						status: { id: status },
+						metadata: cleanMetadata(values.metadata),
+					},
+					editMode,
+				);
+				toast({
+					variant: res.error ? "destructive" : "success",
+					description: res.success ? "Стаття збережена" : res.message,
+				});
+				if (res.success && res.redirect && res.redirect !== initialData?.slug) {
+					router.replace(`/admin/posts/edit/${res.redirect}`, {
+						scroll: false,
+					});
+				}
+			});
+		}, onInvalid)();
 	};
 
 	return (
-		<div
-			className={cn(
-				"flex w-full justify-center gap-2 md:gap-5",
-				isOpenSidebar && "gap-0 md:gap-5",
-			)}
-		>
-			<Lexical
-				initialContent={content}
-				initialTitle={title}
-				onChangeTitle={titleChangeHandler}
-				onChangeContent={contentChangeHandler}
-				className={cn("transition-all", isOpenSidebar && "w-0 md:w-auto")}
-			/>
-			<div
-				className={cn(
-					"border-border flex-1 rounded-2xl border-[1px] bg-slate-100 p-4 align-middle shadow-xs transition-all",
-					isOpenSidebar
-						? "w-100 md:w-96 md:max-w-96"
-						: "w-12 p-1 md:w-16 md:max-w-16 md:p-2",
-				)}
+		<Form {...form}>
+			<Tabs
+				value={activeTab}
+				onValueChange={(value) => setActiveTab(value as EditorTab)}
+				className="w-full max-w-[1400px]"
 			>
-				<div className="flex flex-col gap-5">
-					<div className="flex w-full justify-start">
-						<Button
-							title="Меню"
-							className={cn(
-								"aspect-square max-w-full",
-								!isOpenSidebar && "p-2",
-							)}
-							variant="ghost"
-							onClick={() => setIsOpenSidebar((state) => !state)}
-						>
-							{isOpenSidebar ? <PanelRightClose /> : <PanelRightOpen />}
-						</Button>
-					</div>
-					<div className="flex flex-col justify-between gap-2">
-						{user?.role.name === UserRoleEnum.Administrator ||
-						user?.role.name === UserRoleEnum.SuperAdmininstrator ? (
-							<Button
-								title="Опублікувати"
-								className={cn("gap-2", !isOpenSidebar && "p-2")}
-								onClick={() => saveHandler(PostStatusEnum.Published)}
-							>
-								<SendIcon /> {isOpenSidebar && <span>Опублікувати</span>}
-							</Button>
-						) : (
-							<Button
-								title="На перегляд"
-								className={cn("gap-2", !isOpenSidebar && "p-2")}
-								onClick={() => saveHandler(PostStatusEnum.OnReview)}
-							>
-								<ViewIcon />
-								{isOpenSidebar && <span>На перегляд</span>}
-							</Button>
-						)}
-						<Button
-							title="Зберегти як чернетку"
-							className={cn("gap-2", !isOpenSidebar && "p-2")}
-							variant="secondary"
-							onClick={() => saveHandler(PostStatusEnum.Draft)}
-						>
-							<SaveIcon /> {isOpenSidebar && <span>Зберегти як чернетку</span>}
-						</Button>
-					</div>
-					{isOpenSidebar && (
-						<>
-							<div>
-								<Label htmlFor="topics">Тема</Label>
-								<Multiselect
-									id="topics"
-									isMulti
-									defaultValue={topics}
-									options={getLabelAndValue<TopicResponse>(topicsOptions, {
-										valueKey: "id",
-										labelKey: "title",
-									})}
-									onChange={topicsChangeHandler}
-								/>
-							</div>
+				<PostEditorHeader editMode={editMode} />
 
-							<div>
-								<Label htmlFor="categories">Категорія</Label>
-								<Multiselect
-									id="categories"
-									isMulti
-									defaultValue={categories}
-									options={getLabelAndValue<CategoryResponse>(
-										categoriesOptions,
-										{
-											valueKey: "id",
-											labelKey: "name",
-										},
-									)}
-									onChange={categoriesChangeHandler}
-								/>
-							</div>
-							<div>
-								<Label htmlFor="slug">URL адреса</Label>
-								<Input id="slug" value={slug} onChange={slugChangeHandler} />
-							</div>
-							<div>
-								<p>Закріпленна картика</p>
-								<Tabs
-									defaultValue={featuredImageFile ? "upload" : "url"}
-									className="w-full"
-								>
-									<TabsList>
-										<TabsTrigger value="url">Ввести url адресу</TabsTrigger>
-										<TabsTrigger value="upload">Завантажити</TabsTrigger>
-									</TabsList>
-									<TabsContent value="url" className="">
-										<Label htmlFor="imageUrl">URL адреса картинки</Label>
-										<Input
-											id="imageUrl"
-											value={featuredImageUrl || ""}
-											onChange={imageUrlChangeHandler}
-										/>
-									</TabsContent>
-									<TabsContent value="upload" className="">
-										<ImageUpload
-											onImage={(image) => imageUploadHandler(image)}
-											value={featuredImageFile?.path || null}
-											width={500}
-											height={500}
-											field="post-featured"
-											uploadAction={imageUploadAction}
-										/>
-									</TabsContent>
-								</Tabs>
-							</div>
-						</>
-					)}
+				<div className="flex w-full flex-col items-start gap-5 lg:flex-row">
+					<div className="w-full min-w-0 flex-1">
+						<TabsContent value="content" keepMounted className="mt-0">
+							<ContentTab
+								initialContent={initialData?.content}
+								topicsOptions={topicsOptions}
+								stats={stats}
+								onStatsChange={setStats}
+							/>
+						</TabsContent>
+						<TabsContent value="seo" keepMounted className="mt-0">
+							<SeoTab words={stats.words} topicsOptions={topicsOptions} />
+						</TabsContent>
+						<TabsContent value="settings" keepMounted className="mt-0">
+							<SettingsTab
+								editMode={editMode}
+								postId={initialData?.id}
+								postTitle={initialData?.title}
+							/>
+						</TabsContent>
+					</div>
+
+					<aside className="flex w-full flex-col gap-4 lg:sticky lg:top-0 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[340px]">
+						<PublishCard
+							status={initialData?.status}
+							user={user}
+							isPending={isPending}
+							onSave={saveHandler}
+						/>
+						<ClassificationCard
+							topicsOptions={topicsOptions}
+							categoriesOptions={categoriesOptions}
+						/>
+						<CoverCard />
+					</aside>
 				</div>
-			</div>
-		</div>
+			</Tabs>
+		</Form>
 	);
-	// return (
-	//   <Sheet>
-	//     <Lexical
-	//       initialContent={content}
-	//       initialTitle={title}
-	//       onChangeTitle={titleChangeHandler}
-	//       onChangeContent={contentChangeHandler}
-	//     />
-
-	//     <SheetContent showOverlay={false} className="overflow-y-auto">
-	//       <SheetHeader>
-	//         <SheetTitle>Налаштування статті</SheetTitle>
-	//       </SheetHeader>
-	//       <div className="mt-5 flex flex-col gap-5">
-	//         <div className="flex justify-between">
-	//           {user?.role.name === UserRoleEnum.Administrator ||
-	//           user?.role.name === UserRoleEnum.SuperAdmininstrator ? (
-	//             <Button onClick={() => saveHandler(PostStatusEnum.Published)}>
-	//               Опублікувати
-	//             </Button>
-	//           ) : (
-	//             <Button onClick={() => saveHandler(PostStatusEnum.OnReview)}>
-	//               На перегляд
-	//             </Button>
-	//           )}
-	//           <Button onClick={() => saveHandler(PostStatusEnum.Draft)}>
-	//             Зберегти як чернетку
-	//           </Button>
-	//         </div>
-	//         <div>
-	//           <Label htmlFor="topics">Тема</Label>
-	//           <Multiselect
-	//             id="topics"
-	//             isMulti
-	//             defaultValue={topics}
-	//             options={getLabelAndValue<TopicResponse>(topicsOptions, {
-	//               valueKey: 'id',
-	//               labelKey: 'title',
-	//             })}
-	//             onChange={topicsChangeHandler}
-	//           />
-	//         </div>
-	//         <div>
-	//           <Label htmlFor="categories">Категорія</Label>
-	//           <Multiselect
-	//             id="categories"
-	//             isMulti
-	//             defaultValue={categories}
-	//             options={getLabelAndValue<CategoryResponse>(categoriesOptions, {
-	//               valueKey: 'id',
-	//               labelKey: 'name',
-	//             })}
-	//             onChange={categoriesChangeHandler}
-	//           />
-	//         </div>
-	//         <div>
-	//           <Label htmlFor="slug">URL адреса</Label>
-	//           <Input id="slug" value={slug} onChange={slugChangeHandler} />
-	//         </div>
-	//         <div>
-	//           <p>Закріпленна картика</p>
-	//           <Tabs
-	//             defaultValue={featuredImageFile ? 'upload' : 'url'}
-	//             className="w-full"
-	//           >
-	//             <TabsList>
-	//               <TabsTrigger value="url">Ввести url адресу</TabsTrigger>
-	//               <TabsTrigger value="upload">Завантажити</TabsTrigger>
-	//             </TabsList>
-	//             <TabsContent value="url" className="">
-	//               <Label htmlFor="imageUrl">URL адреса картинки</Label>
-	//               <Input
-	//                 id="imageUrl"
-	//                 value={featuredImageUrl || ''}
-	//                 onChange={imageUrlChangeHandler}
-	//               />
-	//             </TabsContent>
-	//             <TabsContent value="upload" className="">
-	//               <ImageUpload
-	//                 onImage={(image) => imageUploadHandler(image)}
-	//                 value={featuredImageFile?.path || null}
-	//                 width={500}
-	//                 height={500}
-	//                 field="post-featured"
-	//                 uploadAction={imageUploadAction}
-	//               />
-	//             </TabsContent>
-	//           </Tabs>
-	//         </div>
-	//       </div>
-	//     </SheetContent>
-	//     <DropdownMenu>
-	//       <DropdownMenuContent className="mb-4 flex flex-col items-center justify-center gap-2 border-none bg-transparent shadow-none">
-	//         <DropdownMenuItem className="focus:bg-transparent" title="Меню">
-	//           <SheetTrigger className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500 p-0 shadow-lg hover:opacity-90">
-	//             <PanelRightOpen />
-	//           </SheetTrigger>
-	//         </DropdownMenuItem>
-	//         <DropdownMenuItem
-	//           title="Зберегти"
-	//           className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-2xl bg-green-600 p-0 shadow-lg hover:opacity-90 focus:bg-green-600"
-	//           onClick={() => saveHandler(PostStatusEnum.Draft)}
-	//         >
-	//           {<Save />}
-	//         </DropdownMenuItem>
-	//       </DropdownMenuContent>
-	//       <DropdownMenuTrigger className="fixed bottom-20 right-[calc(100vw/7)] flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-slate-400 p-0 opacity-50 shadow-lg transition-all hover:opacity-100 hover:shadow-2xl">
-	//         {isPending ? <Spinner /> : <Settings />}
-	//       </DropdownMenuTrigger>
-	//     </DropdownMenu>
-	//   </Sheet>
-	// );
 }

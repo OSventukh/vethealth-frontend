@@ -5,8 +5,14 @@ import EditPost from "../components/EditPost";
 export default async function CreatPage() {
 	const [session, topics, categories] = await Promise.all([
 		auth(),
-		api.topics.getMany({}),
-		api.categories.getMany({}),
+		api.topics.getMany({
+			query: { showAll: true },
+			tags: ["topics"],
+		}),
+		api.categories.getMany({
+			query: { showAll: true },
+			tags: ["categories"],
+		}),
 	]);
 
 	return (

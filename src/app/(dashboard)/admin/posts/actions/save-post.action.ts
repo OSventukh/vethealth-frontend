@@ -6,6 +6,19 @@ import logger from "@/logger";
 import { ERROR_MESSAGE } from "@/utils/constants/messages";
 import { SERVER_ERROR } from "@/utils/constants/server-error-responses";
 
+type PostMetadataProps = {
+	metaTitle?: string;
+	metaDescription?: string;
+	metaKeywords?: string;
+	ogTitle?: string;
+	ogDescription?: string;
+	ogImage?: string;
+	twitterCard?: string;
+	canonicalUrl?: string;
+	indexable?: boolean;
+	followable?: boolean;
+};
+
 type Props = {
 	id?: string;
 	title: string;
@@ -18,6 +31,7 @@ type Props = {
 	status: {
 		id: number;
 	};
+	metadata?: PostMetadataProps;
 };
 
 type ReturnedData = {
@@ -52,7 +66,7 @@ export async function savePostAction(
 
 		return {
 			success: true,
-			redirect: !edit && result.slug,
+			redirect: result.slug,
 			error: false,
 			message: "Success",
 		};
@@ -68,6 +82,9 @@ export async function savePostAction(
 					break;
 				case SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY:
 					message = ERROR_MESSAGE.TITLE_SHOULD_BE_NOT_EMPTY;
+					break;
+				case SERVER_ERROR.SLUG_MUST_BE_UNIQUE:
+					message = ERROR_MESSAGE.SLUG_SHOULD_BE_UNIQUE;
 					break;
 			}
 		}

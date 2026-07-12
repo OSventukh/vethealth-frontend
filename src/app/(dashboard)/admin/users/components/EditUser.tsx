@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import type { TopicResponse } from "@/api/types/topics.type";
 import type { UserResponse } from "@/api/types/user.type";
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
+import { MultiCombobox } from "@/components/ui/multi-combobox";
 import {
 	Form,
 	FormControl,
@@ -210,12 +210,12 @@ export default function EditUser({ initialData, topics, editMode }: Props) {
 									<FormItem>
 										<FormLabel>Теми</FormLabel>
 										<FormControl>
-											<Combobox
-												onChange={field.onChange}
+											<MultiCombobox
 												options={topics}
 												value={field.value}
-												valueKey="id"
+												onChange={field.onChange}
 												labelKey="title"
+												placeholder="Виберіть теми…"
 											/>
 										</FormControl>
 										<FormDescription>
