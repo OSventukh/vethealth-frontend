@@ -10,7 +10,7 @@ export default function ItemButton({ onClick, icon, children }: Props) {
 		<button
 			onClick={onClick}
 			onTouchStart={(e) => e.stopPropagation()}
-			className="flex w-full gap-2 rounded-sm p-2 hover:bg-blue-100"
+			className="flex w-full items-center gap-2 text-sm [&_svg]:size-4 [&_svg]:shrink-0"
 		>
 			{icon && icon}
 			{children}

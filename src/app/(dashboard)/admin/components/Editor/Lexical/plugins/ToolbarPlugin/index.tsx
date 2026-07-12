@@ -7,11 +7,12 @@ import {
 	ListNode,
 	REMOVE_LIST_COMMAND,
 } from "@lexical/list";
+import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/extension";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $isDecoratorBlockNode } from "@lexical/react/LexicalDecoratorBlockNode";
-import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import {
 	$createHeadingNode,
+	$createQuoteNode,
 	$isHeadingNode,
 	$isQuoteNode,
 	type HeadingTagType,
@@ -36,7 +37,8 @@ import {
 	type ElementFormatType,
 	FORMAT_ELEMENT_COMMAND,
 	FORMAT_TEXT_COMMAND,
-	KEY_MODIFIER_COMMAND,
+	isExactShortcutMatch,
+	KEY_DOWN_COMMAND,
 	type LexicalEditor,
 	type NodeKey,
 	REDO_COMMAND,
@@ -93,6 +95,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import useModal from "../../hooks/useModal";
 import ItemButton from "../../ui/ItemButton";
+import {
+	toolbarActiveClass,
+	toolbarButtonClass,
+	toolbarMenuItemClass,
+	toolbarSelectClass,
+} from "../../ui/toolbar-styles";
 import { getSelectedNode } from "../../utils/getSelectedNode";
 import { sanitizeUrl } from "../../utils/url";
 // import { EmbedConfigs } from '../AutoEmbedPlugin';
@@ -108,9 +116,6 @@ export const CAN_USE_DOM: boolean =
 	typeof window !== "undefined" &&
 	typeof window.document !== "undefined" &&
 	typeof window.document.createElement !== "undefined";
-
-const toolbarButtonClass: React.ComponentProps<"div">["className"] =
-	"flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-blue-200 hover:shadow-lg";
 
 const blockTypes = {
 	bullet: { title: "Невпорядкований список", icon: <List /> },
@@ -164,7 +169,7 @@ const ELEMENT_FORMAT_OPTIONS: {
 };
 
 function dropDownActiveClass(active: boolean) {
-	if (active) return "bg-blue-200 rounded-sm";
+	if (active) return "bg-primary/10 text-primary rounded-md";
 	else return "";
 }
 
@@ -213,15 +218,26 @@ function BlockFormatDropDown({
 		}
 	};
 
+	const formatQuote = () => {
+		editor.update(() => {
+			const selection = $getSelection();
+			if ($isRangeSelection(selection)) {
+				$setBlocksType(selection, () =>
+					blockType === "quote" ? $createParagraphNode() : $createQuoteNode(),
+				);
+			}
+		});
+	};
+
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger className={toolbarButtonClass}>
+			<DropdownMenuTrigger className={toolbarSelectClass}>
 				{blockTypes[blockType].icon} {blockTypes[blockType].title}
-				<ChevronDown />
+				<ChevronDown className="opacity-60" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
 				<DropdownMenuItem
-					className={"item " + dropDownActiveClass(blockType === "paragraph")}
+					className={toolbarMenuItemClass + " " + dropDownActiveClass(blockType === "paragraph")}
 				>
 					<ItemButton
 						onClick={formatParagraph}
@@ -231,7 +247,7 @@ function BlockFormatDropDown({
 					</ItemButton>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className={"item " + dropDownActiveClass(blockType === "h2")}
+					className={toolbarMenuItemClass + " " + dropDownActiveClass(blockType === "h2")}
 				>
 					<ItemButton
 						onClick={() => formatHeading("h2")}
@@ -241,7 +257,7 @@ function BlockFormatDropDown({
 					</ItemButton>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className={"item " + dropDownActiveClass(blockType === "h3")}
+					className={toolbarMenuItemClass + " " + dropDownActiveClass(blockType === "h3")}
 				>
 					<ItemButton
 						onClick={() => formatHeading("h3")}
@@ -251,7 +267,7 @@ function BlockFormatDropDown({
 					</ItemButton>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className={"item " + dropDownActiveClass(blockType === "h4")}
+					className={toolbarMenuItemClass + " " + dropDownActiveClass(blockType === "h4")}
 				>
 					<ItemButton
 						onClick={() => formatHeading("h4")}
@@ -261,14 +277,14 @@ function BlockFormatDropDown({
 					</ItemButton>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className={"item " + dropDownActiveClass(blockType === "bullet")}
+					className={toolbarMenuItemClass + " " + dropDownActiveClass(blockType === "bullet")}
 				>
 					<ItemButton onClick={formatBulletList} icon={blockTypes.bullet.icon}>
 						{blockTypes.bullet.title}
 					</ItemButton>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className={"item " + dropDownActiveClass(blockType === "number")}
+					className={toolbarMenuItemClass + " " + dropDownActiveClass(blockType === "number")}
 				>
 					<ItemButton
 						onClick={formatNumberedList}
@@ -277,13 +293,20 @@ function BlockFormatDropDown({
 						{blockTypes.number.title}
 					</ItemButton>
 				</DropdownMenuItem>
+				<DropdownMenuItem
+					className={toolbarMenuItemClass + " " + dropDownActiveClass(blockType === "quote")}
+				>
+					<ItemButton onClick={formatQuote} icon={blockTypes.quote.icon}>
+						{blockTypes.quote.title}
+					</ItemButton>
+				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
 }
 
 function Divider(): React.ReactElement {
-	return <div className="divider" />;
+	return <div aria-hidden className="bg-border mx-1 h-5 w-px shrink-0" />;
 }
 
 function ElementFormatDropdown({
@@ -297,12 +320,12 @@ function ElementFormatDropdown({
 }) {
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger className={toolbarButtonClass}>
+			<DropdownMenuTrigger className={clsx(toolbarSelectClass, "px-2")}>
 				{ELEMENT_FORMAT_OPTIONS[value].icon}
-				<ChevronDown />
+				<ChevronDown className="opacity-60" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
-				<DropdownMenuItem>
+				<DropdownMenuItem className={toolbarMenuItemClass}>
 					<ItemButton
 						icon={ELEMENT_FORMAT_OPTIONS.left.icon}
 						onClick={() =>
@@ -312,7 +335,7 @@ function ElementFormatDropdown({
 						{ELEMENT_FORMAT_OPTIONS.left.name}
 					</ItemButton>
 				</DropdownMenuItem>
-				<DropdownMenuItem>
+				<DropdownMenuItem className={toolbarMenuItemClass}>
 					<ItemButton
 						icon={ELEMENT_FORMAT_OPTIONS.center.icon}
 						onClick={() =>
@@ -322,7 +345,7 @@ function ElementFormatDropdown({
 						{ELEMENT_FORMAT_OPTIONS.center.name}
 					</ItemButton>
 				</DropdownMenuItem>
-				<DropdownMenuItem>
+				<DropdownMenuItem className={toolbarMenuItemClass}>
 					<ItemButton
 						icon={ELEMENT_FORMAT_OPTIONS.right.icon}
 						onClick={() =>
@@ -332,7 +355,6 @@ function ElementFormatDropdown({
 						{ELEMENT_FORMAT_OPTIONS.right.name}
 					</ItemButton>
 				</DropdownMenuItem>
-				<DropdownMenuItem></DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
@@ -464,12 +486,14 @@ export default function ToolbarPlugin({
 
 	useEffect(() => {
 		return activeEditor.registerCommand(
-			KEY_MODIFIER_COMMAND,
-			(payload) => {
-				const event: KeyboardEvent = payload;
-				const { code, ctrlKey, metaKey } = event;
-
-				if (code === "KeyK" && (ctrlKey || metaKey)) {
+			KEY_DOWN_COMMAND,
+			(event) => {
+				if (
+					isExactShortcutMatch(event, "k", {
+						ctrlKey: !IS_APPLE,
+						metaKey: IS_APPLE,
+					})
+				) {
 					event.preventDefault();
 					if (!isLink) {
 						setIsLinkEditMode(true);
@@ -535,8 +559,48 @@ export default function ToolbarPlugin({
 		}
 	}, [editor, isLink]);
 
+	const formatHeading = (headingSize: HeadingTagType) => {
+		editor.update(() => {
+			const selection = $getSelection();
+			if ($isRangeSelection(selection)) {
+				$setBlocksType(selection, () =>
+					blockType === headingSize
+						? $createParagraphNode()
+						: $createHeadingNode(headingSize),
+				);
+			}
+		});
+	};
+
+	const formatQuote = () => {
+		editor.update(() => {
+			const selection = $getSelection();
+			if ($isRangeSelection(selection)) {
+				$setBlocksType(selection, () =>
+					blockType === "quote" ? $createParagraphNode() : $createQuoteNode(),
+				);
+			}
+		});
+	};
+
+	const formatBulletList = () => {
+		if (blockType !== "bullet") {
+			editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+		} else {
+			editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+		}
+	};
+
+	const formatNumberedList = () => {
+		if (blockType !== "number") {
+			editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+		} else {
+			editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+		}
+	};
+
 	return (
-		<div className="border-border z-20 mt-2 flex min-h-[3rem] touch-auto gap-1 overflow-y-auto rounded-2xl border-[1px] bg-slate-100 p-1 align-middle shadow-xs md:overflow-x-auto md:overflow-y-hidden">
+		<div className="border-border bg-card z-20 flex touch-auto flex-wrap items-center gap-1 rounded-xl border-[1px] p-1.5 shadow-sm">
 			<button
 				onClick={() => {
 					activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
@@ -568,10 +632,37 @@ export default function ToolbarPlugin({
 				<Divider />
 				<button
 					disabled={!isEditable}
+					onClick={() => formatHeading("h2")}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: blockType === "h2",
+					})}
+					title="Заголовок 2"
+					type="button"
+					aria-label="Заголовок 2"
+				>
+					<Heading2 />
+				</button>
+				<button
+					disabled={!isEditable}
+					onClick={() => formatHeading("h3")}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: blockType === "h3",
+					})}
+					title="Заголовок 3"
+					type="button"
+					aria-label="Заголовок 3"
+				>
+					<Heading3 />
+				</button>
+				<Divider />
+				<button
+					disabled={!isEditable}
 					onClick={() => {
 						activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
 					}}
-					className={clsx(toolbarButtonClass, { "bg-blue-200": isBold })}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: isBold,
+					})}
 					title={IS_APPLE ? "Bold (⌘B)" : "Bold (Ctrl+B)"}
 					type="button"
 					aria-label={`Format text as bold. Shortcut: ${
@@ -585,7 +676,9 @@ export default function ToolbarPlugin({
 					onClick={() => {
 						activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
 					}}
-					className={clsx(toolbarButtonClass, { "bg-blue-200": isItalic })}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: isItalic,
+					})}
 					title={IS_APPLE ? "Italic (⌘I)" : "Italic (Ctrl+I)"}
 					type="button"
 					aria-label={`Format text as italics. Shortcut: ${
@@ -599,7 +692,9 @@ export default function ToolbarPlugin({
 					onClick={() => {
 						activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
 					}}
-					className={clsx(toolbarButtonClass, { "bg-blue-200": isUnderline })}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: isUnderline,
+					})}
 					title={IS_APPLE ? "Underline (⌘U)" : "Underline (Ctrl+U)"}
 					type="button"
 					aria-label={`Format text to underlined. Shortcut: ${
@@ -610,8 +705,62 @@ export default function ToolbarPlugin({
 				</button>
 				<button
 					disabled={!isEditable}
+					onClick={() => {
+						activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+					}}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: isStrikethrough,
+					})}
+					title="Закреслений"
+					type="button"
+					aria-label="Format text with a strikethrough"
+				>
+					<Strikethrough />
+				</button>
+				<Divider />
+				<button
+					disabled={!isEditable}
+					onClick={formatBulletList}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: blockType === "bullet",
+					})}
+					title="Невпорядкований список"
+					type="button"
+					aria-label="Невпорядкований список"
+				>
+					<List />
+				</button>
+				<button
+					disabled={!isEditable}
+					onClick={formatNumberedList}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: blockType === "number",
+					})}
+					title="Впорядкований список"
+					type="button"
+					aria-label="Впорядкований список"
+				>
+					<ListOrdered />
+				</button>
+				<button
+					disabled={!isEditable}
+					onClick={formatQuote}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: blockType === "quote",
+					})}
+					title="Цитата"
+					type="button"
+					aria-label="Цитата"
+				>
+					<Quote />
+				</button>
+				<Divider />
+				<button
+					disabled={!isEditable}
 					onClick={insertLink}
-					className={clsx(toolbarButtonClass, { "bg-blue-200": isLink })}
+					className={clsx(toolbarButtonClass, {
+						[toolbarActiveClass]: isLink,
+					})}
 					aria-label="Insert link"
 					title="Insert link"
 					type="button"
@@ -619,30 +768,13 @@ export default function ToolbarPlugin({
 					<Link />
 				</button>
 				<DropdownMenu>
-					<DropdownMenuTrigger className={toolbarButtonClass}>
+					<DropdownMenuTrigger className={clsx(toolbarSelectClass, "px-2")}>
 						<CaseSensitive />
-						<ChevronDown />
+						<ChevronDown className="opacity-60" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
 						<DropdownMenuItem
-							className={"item " + dropDownActiveClass(isStrikethrough)}
-							title="Strikethrough"
-							aria-label="Format text with a strikethrough"
-						>
-							<ItemButton
-								onClick={() => {
-									activeEditor.dispatchCommand(
-										FORMAT_TEXT_COMMAND,
-										"strikethrough",
-									);
-								}}
-								icon={<Strikethrough />}
-							>
-								Strikethrough
-							</ItemButton>
-						</DropdownMenuItem>
-						<DropdownMenuItem
-							className={"item " + dropDownActiveClass(isSubscript)}
+							className={toolbarMenuItemClass + " " + dropDownActiveClass(isSubscript)}
 							title="Subscript"
 							aria-label="Format text with a subscript"
 						>
@@ -659,7 +791,7 @@ export default function ToolbarPlugin({
 							</ItemButton>
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							className={"item " + dropDownActiveClass(isSuperscript)}
+							className={toolbarMenuItemClass + " " + dropDownActiveClass(isSuperscript)}
 							title="Superscript"
 							aria-label="Format text with a superscript"
 						>
@@ -676,7 +808,7 @@ export default function ToolbarPlugin({
 							</ItemButton>
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							className="item"
+							className={toolbarMenuItemClass}
 							title="Clear text formatting"
 							aria-label="Clear all text formatting"
 						>
@@ -688,13 +820,13 @@ export default function ToolbarPlugin({
 				</DropdownMenu>
 				<Divider />
 				<DropdownMenu>
-					<DropdownMenuTrigger className={toolbarButtonClass}>
+					<DropdownMenuTrigger className={toolbarSelectClass}>
 						<Plus />
 						Вставити
-						<ChevronDown />
+						<ChevronDown className="opacity-60" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuItem>
+						<DropdownMenuItem className={toolbarMenuItemClass}>
 							<ItemButton
 								icon={<Rows />}
 								onClick={() => {
@@ -717,7 +849,7 @@ export default function ToolbarPlugin({
               <span className="text">Page Break</span>
             </DropdownMenuItem> */}
 
-						<DropdownMenuItem>
+						<DropdownMenuItem className={toolbarMenuItemClass}>
 							<ItemButton
 								icon={<ImageIcon />}
 								onClick={() => {
@@ -733,7 +865,7 @@ export default function ToolbarPlugin({
 							</ItemButton>
 						</DropdownMenuItem>
 
-						<DropdownMenuItem>
+						<DropdownMenuItem className={toolbarMenuItemClass}>
 							<ItemButton
 								icon={<Grid2X2 />}
 								onClick={() => {
@@ -748,7 +880,7 @@ export default function ToolbarPlugin({
 								Колонки
 							</ItemButton>
 						</DropdownMenuItem>
-						<DropdownMenuItem>
+						<DropdownMenuItem className={toolbarMenuItemClass}>
 							<ItemButton
 								icon={<Info />}
 								onClick={() => {

@@ -6,7 +6,6 @@
  *
  */
 
-import {$isCodeHighlightNode} from '@lexical/code';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
@@ -33,6 +32,10 @@ import { clsx } from "clsx";
 import type * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import {
+	toolbarActiveClass,
+	toolbarButtonClass,
+} from "../../ui/toolbar-styles";
 import { getDOMRangeRect } from "../../utils/getDOMRangeRect";
 import { getSelectedNode } from "../../utils/getSelectedNode";
 import { setFloatingElemPosition } from "../../utils/setFloatingElemPosition";
@@ -182,7 +185,7 @@ function TextFormatFloatingToolbar({
 	return (
 		<div
 			ref={popupCharStylesEditorRef}
-			className="bg-background shadow-accent border-border absolute top-0 left-0 z-10 flex rounded-2xl border-1 p-1 align-middle opacity-0 shadow-md transition-opacity duration-500 ease-[cubic-bezier(.4,0,.2,1)] [will-change:transform]"
+			className="bg-card border-border absolute top-0 left-0 z-10 flex items-center gap-1 rounded-xl border-1 p-1 opacity-0 shadow-md transition-opacity duration-500 ease-[cubic-bezier(.4,0,.2,1)] [will-change:transform]"
 		>
 			{editor.isEditable() && (
 				<>
@@ -191,10 +194,9 @@ function TextFormatFloatingToolbar({
 						onClick={() => {
 							editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
 						}}
-						className={clsx(
-							"flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg",
-							{ ["bg-blue-200"]: isBold },
-						)}
+						className={clsx(toolbarButtonClass, {
+							[toolbarActiveClass]: isBold,
+						})}
 						aria-label="Format text as bold"
 						title="Жирний"
 					>
@@ -205,10 +207,9 @@ function TextFormatFloatingToolbar({
 						onClick={() => {
 							editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
 						}}
-						className={clsx(
-							"flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg",
-							{ ["bg-blue-200"]: isItalic },
-						)}
+						className={clsx(toolbarButtonClass, {
+							[toolbarActiveClass]: isItalic,
+						})}
 						aria-label="Format text as italics"
 						title="Курсив"
 					>
@@ -219,12 +220,9 @@ function TextFormatFloatingToolbar({
 						onClick={() => {
 							editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
 						}}
-						className={clsx(
-							"flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg",
-							{
-								["bg-blue-200"]: isUnderline,
-							},
-						)}
+						className={clsx(toolbarButtonClass, {
+							[toolbarActiveClass]: isUnderline,
+						})}
 						aria-label="Format text to underlined"
 						title="Підкреслений"
 					>
@@ -235,12 +233,9 @@ function TextFormatFloatingToolbar({
 						onClick={() => {
 							editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
 						}}
-						className={clsx(
-							"flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg",
-							{
-								["bg-blue-200"]: isStrikethrough,
-							},
-						)}
+						className={clsx(toolbarButtonClass, {
+							[toolbarActiveClass]: isStrikethrough,
+						})}
 						aria-label="Format text with a strikethrough"
 						title="Закреслений"
 					>
@@ -251,12 +246,9 @@ function TextFormatFloatingToolbar({
 						onClick={() => {
 							editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
 						}}
-						className={clsx(
-							"flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg",
-							{
-								["bg-blue-200"]: isSubscript,
-							},
-						)}
+						className={clsx(toolbarButtonClass, {
+							[toolbarActiveClass]: isSubscript,
+						})}
 						title="Підрядковий"
 						aria-label="Format Subscript"
 					>
@@ -267,12 +259,9 @@ function TextFormatFloatingToolbar({
 						onClick={() => {
 							editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
 						}}
-						className={clsx(
-							"flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg",
-							{
-								["bg-blue-200"]: isSuperscript,
-							},
-						)}
+						className={clsx(toolbarButtonClass, {
+							[toolbarActiveClass]: isSuperscript,
+						})}
 						title="Надрядковий"
 						aria-label="Format Superscript"
 					>
@@ -281,10 +270,9 @@ function TextFormatFloatingToolbar({
 					<button
 						type="button"
 						onClick={insertLink}
-						className={clsx(
-							"flex items-center gap-2 rounded-xl px-2 py-2 hover:bg-blue-200 hover:shadow-lg",
-							{ ["bg-blue-200"]: isLink },
-						)}
+						className={clsx(toolbarButtonClass, {
+							[toolbarActiveClass]: isLink,
+						})}
 						aria-label="Insert link"
 						title="Вставити посилання"
 					>
@@ -353,10 +341,9 @@ function useFloatingTextFormatToolbar(
 				setIsLink(false);
 			}
 
-			if (
-				!$isCodeHighlightNode(selection.anchor.getNode()) &&
-				selection.getTextContent() !== ""
-			) {
+			// No CodeNode/CodeHighlightNode is registered in this editor, so the
+			// playground's $isCodeHighlightNode guard was dropped here.
+			if (selection.getTextContent() !== "") {
 				setIsText($isTextNode(node) || $isParagraphNode(node));
 			} else {
 				setIsText(false);

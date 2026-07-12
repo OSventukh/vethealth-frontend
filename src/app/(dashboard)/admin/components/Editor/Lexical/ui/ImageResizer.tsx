@@ -1,3 +1,4 @@
+import { calculateZoomLevel } from "@lexical/utils";
 import type { LexicalEditor } from "lexical";
 import type React from "react";
 import { useRef } from "react";
@@ -141,14 +142,15 @@ export default function ImageResizer({
 		if (image !== null && controlWrapper !== null) {
 			event.preventDefault();
 			const { width, height } = image.getBoundingClientRect();
+			const zoom = calculateZoomLevel(image);
 			const positioning = positioningRef.current;
 			positioning.startWidth = width;
 			positioning.startHeight = height;
 			positioning.ratio = width / height;
 			positioning.currentWidth = width;
 			positioning.currentHeight = height;
-			positioning.startX = event.clientX;
-			positioning.startY = event.clientY;
+			positioning.startX = event.clientX / zoom;
+			positioning.startY = event.clientY / zoom;
 			positioning.isResizing = true;
 			positioning.direction = direction;
 
@@ -173,9 +175,10 @@ export default function ImageResizer({
 			positioning.direction & (Direction.south | Direction.north);
 
 		if (image !== null && positioning.isResizing) {
+			const zoom = calculateZoomLevel(image);
 			// Corner cursor
 			if (isHorizontal && isVertical) {
-				let diff = Math.floor(positioning.startX - event.clientX);
+				let diff = Math.floor(positioning.startX - event.clientX / zoom);
 				diff = positioning.direction & Direction.east ? -diff : diff;
 
 				const width = clamp(
@@ -190,7 +193,7 @@ export default function ImageResizer({
 				positioning.currentHeight = height;
 				positioning.currentWidth = width;
 			} else if (isVertical) {
-				let diff = Math.floor(positioning.startY - event.clientY);
+				let diff = Math.floor(positioning.startY - event.clientY / zoom);
 				diff = positioning.direction & Direction.south ? -diff : diff;
 
 				const height = clamp(
@@ -202,7 +205,7 @@ export default function ImageResizer({
 				image.style.height = `${height}px`;
 				positioning.currentHeight = height;
 			} else {
-				let diff = Math.floor(positioning.startX - event.clientX);
+				let diff = Math.floor(positioning.startX - event.clientX / zoom);
 				diff = positioning.direction & Direction.east ? -diff : diff;
 
 				const width = clamp(

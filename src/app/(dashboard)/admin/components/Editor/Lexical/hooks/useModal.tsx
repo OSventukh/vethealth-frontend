@@ -9,7 +9,12 @@
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 
-import Modal from "../ui/Modal";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function useModal(): [
 	React.ReactElement | null,
@@ -19,7 +24,6 @@ export default function useModal(): [
 	) => void,
 ] {
 	const [modalContent, setModalContent] = useState<null | {
-		closeOnClickOutside: boolean;
 		content: React.ReactElement;
 		title: string;
 	}>(null);
@@ -32,15 +36,23 @@ export default function useModal(): [
 		if (modalContent === null) {
 			return null;
 		}
-		const { title, content, closeOnClickOutside } = modalContent;
+		const { title, content } = modalContent;
 		return (
-			<Modal
-				onClose={onClose}
-				title={title}
-				closeOnClickOutside={closeOnClickOutside}
+			<Dialog
+				open
+				onOpenChange={(open) => {
+					if (!open) {
+						onClose();
+					}
+				}}
 			>
-				{content}
-			</Modal>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>{title}</DialogTitle>
+					</DialogHeader>
+					{content}
+				</DialogContent>
+			</Dialog>
 		);
 	}, [modalContent, onClose]);
 
@@ -49,10 +61,8 @@ export default function useModal(): [
 			title: string,
 			// eslint-disable-next-line no-shadow
 			getContent: (onClose: () => void) => React.ReactElement,
-			closeOnClickOutside = false,
 		) => {
 			setModalContent({
-				closeOnClickOutside,
 				content: getContent(onClose),
 				title,
 			});

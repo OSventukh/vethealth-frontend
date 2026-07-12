@@ -21,17 +21,17 @@ import {
 import type * as React from "react";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { imageUploadAction } from "@/actions/image-upload.action";
-// import Button from '../../ui/Button';
 import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/use-toast";
 import {
 	$createImageNode,
 	$isImageNode,
 	ImageNode,
 	type ImagePayload,
 } from "../../nodes/ImageNode";
-import { DialogActions, DialogButtonsList } from "../../ui/Dialog";
-import FileInput from "../../ui/FileInput";
-import TextInput from "../../ui/TextInput";
 import { CAN_USE_DOM } from "../../utils/canUseDOM";
 
 export type InsertImagePayload = Readonly<ImagePayload>;
@@ -54,29 +54,38 @@ export function InsertImageUriDialogBody({
 
 	return (
 		<>
-			<TextInput
-				label="Image URL"
-				placeholder="i.e. https://source.unsplash.com/random"
-				onChange={setSrc}
-				value={src}
-				data-test-id="image-modal-url-input"
-			/>
-			<TextInput
-				label="Alt Text"
-				placeholder="Random unsplash image"
-				onChange={setAltText}
-				value={altText}
-				data-test-id="image-modal-alt-text-input"
-			/>
-			<DialogActions>
+			<div className="grid gap-4 py-2">
+				<div className="grid gap-2">
+					<Label htmlFor="image-url">URL картинки</Label>
+					<Input
+						id="image-url"
+						autoFocus
+						placeholder="https://…"
+						value={src}
+						onChange={(e) => setSrc(e.target.value)}
+						data-test-id="image-modal-url-input"
+					/>
+				</div>
+				<div className="grid gap-2">
+					<Label htmlFor="image-alt">Альтернативний текст</Label>
+					<Input
+						id="image-alt"
+						placeholder="Опис зображення"
+						value={altText}
+						onChange={(e) => setAltText(e.target.value)}
+						data-test-id="image-modal-alt-text-input"
+					/>
+				</div>
+			</div>
+			<DialogFooter>
 				<Button
 					data-test-id="image-modal-confirm-btn"
 					disabled={isDisabled}
 					onClick={() => onClick({ altText, src })}
 				>
-					Confirm
+					Підтвердити
 				</Button>
-			</DialogActions>
+			</DialogFooter>
 		</>
 	);
 }
@@ -98,36 +107,65 @@ export function InsertImageUploadedDialogBody({
 			}
 			const formData = new FormData();
 			formData.append("post", files[0]);
-			const result = await imageUploadAction(formData, "post");
-			if (result.image) {
-				setSrc(result.image.relativePath);
+			try {
+				const result = await imageUploadAction(formData, "post");
+				if (result.error || !result.image) {
+					toast({
+						variant: "destructive",
+						description:
+							result.message || "Не вдалося завантажити картинку",
+					});
+					return;
+				}
+				// path — завжди публічний URL (local → backendDomain/…,
+				// R2 → CDN). relativePath у R2-режимі — голий ключ бакета
+				// ("uploads/…"), який браузер резолвить відносно сторінки
+				// адмінки → 404, картинка «невидима».
+				setSrc(result.image.path);
+			} catch {
+				// Server action міг упасти ще до виконання (наприклад,
+				// перевищено bodySizeLimit) — тоді проміс реджектиться.
+				toast({
+					variant: "destructive",
+					description:
+						"Не вдалося завантажити картинку (можливо, файл завеликий)",
+				});
 			}
 		});
 	};
 	return (
 		<>
-			<FileInput
-				label="Картинка"
-				onChange={loadImage}
-				accept="image/*"
-				data-test-id="image-modal-file-upload"
-			/>
-			<TextInput
-				label="Альтернативний текст"
-				placeholder="Descriptive alternative text"
-				onChange={setAltText}
-				value={altText}
-				data-test-id="image-modal-alt-text-input"
-			/>
-			<DialogActions>
+			<div className="grid gap-4 py-2">
+				<div className="grid gap-2">
+					<Label htmlFor="image-file">Картинка</Label>
+					<Input
+						id="image-file"
+						type="file"
+						accept="image/*"
+						onChange={(e) => loadImage(e.target.files)}
+						data-test-id="image-modal-file-upload"
+					/>
+				</div>
+				<div className="grid gap-2">
+					<Label htmlFor="image-file-alt">Альтернативний текст</Label>
+					<Input
+						id="image-file-alt"
+						placeholder="Опис зображення"
+						value={altText}
+						onChange={(e) => setAltText(e.target.value)}
+						data-test-id="image-modal-alt-text-input"
+					/>
+				</div>
+			</div>
+			<DialogFooter>
 				<Button
 					data-test-id="image-modal-file-upload-btn"
 					disabled={isDisabled}
 					onClick={() => onClick({ altText, src })}
 				>
-					{isPending ? "Завантаження" : "Підтвердити"}
+					{isPending ? "Завантаження…" : "Підтвердити"}
 				</Button>
-			</DialogActions>
+			</DialogFooter>
 		</>
 	);
 }
@@ -161,20 +199,22 @@ export function InsertImageDialog({
 	return (
 		<>
 			{!mode && (
-				<DialogButtonsList>
+				<div className="grid grid-cols-2 gap-2 py-2">
 					<Button
+						variant="outline"
 						data-test-id="image-modal-option-url"
 						onClick={() => setMode("url")}
 					>
-						URL
+						URL-адреса
 					</Button>
 					<Button
+						variant="outline"
 						data-test-id="image-modal-option-file"
 						onClick={() => setMode("file")}
 					>
-						File
+						Завантажити файл
 					</Button>
-				</DialogButtonsList>
+				</div>
 			)}
 			{mode === "url" && <InsertImageUriDialogBody onClick={onClick} />}
 			{mode === "file" && <InsertImageUploadedDialogBody onClick={onClick} />}
@@ -343,7 +383,9 @@ function canDropImage(event: DragEvent): boolean {
 		target instanceof HTMLElement &&
 		!target.closest("code, span.editor-image") &&
 		target.parentElement &&
-		target.parentElement.closest("div.ContentEditable__root")
+		// The playground matches its own `div.ContentEditable__root` class here;
+		// our editor root doesn't have it, so match Lexical's own root attribute.
+		target.parentElement.closest('[data-lexical-editor="true"]')
 	);
 }
 

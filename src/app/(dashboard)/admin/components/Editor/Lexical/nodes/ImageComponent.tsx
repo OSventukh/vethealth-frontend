@@ -29,30 +29,25 @@ import {
 	KEY_ESCAPE_COMMAND,
 	SELECTION_CHANGE_COMMAND,
 } from "lexical";
+import { PencilLine } from "lucide-react";
 import type * as React from "react";
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import useModal from "../hooks/useModal";
 import ImageResizer from "../ui/ImageResizer";
+import EditAltTextDialog from "./EditAltTextDialog";
 import { $isImageNode } from "./ImageNode";
-
-const imageCache = new Set();
 
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
 	createCommand("RIGHT_CLICK_IMAGE_COMMAND");
 
-function useSuspenseImage(src: string) {
-	if (!imageCache.has(src)) {
-		throw new Promise((resolve) => {
-			const img = new Image();
-			img.src = src;
-			img.onload = () => {
-				imageCache.add(src);
-				resolve(null);
-			};
-		});
-	}
-}
-
-function LazyImage({
+/**
+ * Рендерить <img> напряму, без suspense-прелоада з playground-версії.
+ * Той прелоад створював `new Image()` поза DOM і «підвішував» компонент до
+ * onload: Firefox скасовує такі осиротілі запити (NS_BINDING_ABORTED), onload
+ * не настає — і картинка назавжди лишалася в Suspense-фолбеку (тобто невидимою).
+ * Браузер сам завантажує <img> у DOM; скасовувати нема чого.
+ */
+function EditorImage({
 	altText,
 	className,
 	imageRef,
@@ -69,7 +64,6 @@ function LazyImage({
 	src: string;
 	width: "inherit" | number;
 }): React.ReactElement {
-	useSuspenseImage(src);
 	return (
 		// eslint-disable-next-line @next/next/no-img-element
 		<img
@@ -119,6 +113,7 @@ export default function ImageComponent({
 	const [selection, setSelection] = useState<
 		RangeSelection | NodeSelection | BaseSelection | null
 	>(null);
+	const [modal, showModal] = useModal();
 	const activeEditorRef = useRef<LexicalEditor | null>(null);
 	const captionRef = useRef<HTMLInputElement>(null);
 	const onDelete = useCallback(
@@ -343,49 +338,92 @@ export default function ImageComponent({
 		setIsResizing(true);
 	};
 
+	const setAltTextOnNode = (nextAltText: string) => {
+		editor.update(() => {
+			const node = $getNodeByKey(nodeKey);
+			if ($isImageNode(node)) {
+				node.setAltText(nextAltText);
+			}
+		});
+	};
+
+	const openAltTextDialog = () => {
+		showModal("Альтернативний текст", (onModalClose) => (
+			<EditAltTextDialog
+				initialAltText={altText}
+				onSave={setAltTextOnNode}
+				onClose={onModalClose}
+			/>
+		));
+	};
+
 	const draggable = isSelected && $isNodeSelection(selection) && !isResizing;
 	const isFocused = isSelected || isResizing;
 	return (
-		<Suspense fallback={null}>
-			<>
-				<div draggable={draggable}>
-					<LazyImage
-						className={clsx("h-auto w-auto", {
-							"outline outline-2 outline-blue-700": isFocused,
-							"cursor-grab": $isNodeSelection(selection),
-						})}
-						src={src}
-						altText={altText}
-						imageRef={imageRef}
-						width={width}
-						height={height}
-						maxWidth={maxWidth}
-					/>
-				</div>
+		<>
+			<div className="relative inline-block" draggable={draggable}>
+				<EditorImage
+					className={clsx("h-auto w-auto", {
+						"outline outline-2 outline-blue-700": isFocused,
+						"cursor-grab": $isNodeSelection(selection),
+					})}
+					src={src}
+					altText={altText}
+					imageRef={imageRef}
+					width={width}
+					height={height}
+					maxWidth={maxWidth}
+				/>
+				{isFocused && (
+					<button
+						type="button"
+						// Інакше mousedown у редакторі знімає виділення з картинки
+						// і кнопка зникає раніше, ніж настане click.
+						onMouseDown={(event) => event.preventDefault()}
+						onClick={openAltTextDialog}
+						title={
+							altText
+								? `Alt-текст: ${altText}`
+								: "Додати альтернативний текст"
+						}
+						className={clsx(
+							"absolute top-2 left-2 z-10 inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold shadow-sm transition-colors",
+							altText
+								? "bg-background/90 text-foreground hover:bg-background"
+								: // Порожній alt — проблема для SEO та доступності,
+									// тож підсвічуємо як попередження.
+									"bg-amber-500/95 text-white hover:bg-amber-500",
+						)}
+					>
+						<PencilLine size={13} />
+						{altText ? "Alt-текст" : "Додати alt-текст"}
+					</button>
+				)}
+			</div>
+			{modal}
 				{showCaption && (
-					<input
-						className="bg-card absolute bottom-0 left-0 w-full text-center text-gray-800 opacity-70 placeholder:text-gray-700"
-						ref={captionRef}
-						type="text"
-						placeholder="Введіть підпис"
-						defaultValue={caption}
-						onChange={onCaptionChange}
-					/>
-				)}
-				{resizable && $isNodeSelection(selection) && isFocused && (
-					<ImageResizer
-						showCaption={showCaption}
-						setShowCaption={setShowCaption}
-						editor={editor}
-						buttonRef={buttonRef}
-						imageRef={imageRef}
-						maxWidth={maxWidth}
-						onResizeStart={onResizeStart}
-						onResizeEnd={onResizeEnd}
-						captionsEnabled={captionsEnabled}
-					/>
-				)}
-			</>
-		</Suspense>
+				<input
+					className="bg-card absolute bottom-0 left-0 w-full text-center text-gray-800 opacity-70 placeholder:text-gray-700"
+					ref={captionRef}
+					type="text"
+					placeholder="Введіть підпис"
+					defaultValue={caption}
+					onChange={onCaptionChange}
+				/>
+			)}
+			{resizable && $isNodeSelection(selection) && isFocused && (
+				<ImageResizer
+					showCaption={showCaption}
+					setShowCaption={setShowCaption}
+					editor={editor}
+					buttonRef={buttonRef}
+					imageRef={imageRef}
+					maxWidth={maxWidth}
+					onResizeStart={onResizeStart}
+					onResizeEnd={onResizeEnd}
+					captionsEnabled={captionsEnabled}
+				/>
+			)}
+		</>
 	);
 }

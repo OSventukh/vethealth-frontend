@@ -1,20 +1,13 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
-	$findMatchingParent,
 	$insertNodeToNearestRoot,
+	$onEscapeDown,
+	$onEscapeUp,
 	mergeRegister,
 } from "@lexical/utils";
-import type {
-	ElementNode,
-	LexicalCommand,
-	LexicalNode,
-	NodeKey,
-} from "lexical";
 import {
 	$createParagraphNode,
 	$getNodeByKey,
-	$getSelection,
-	$isRangeSelection,
 	COMMAND_PRIORITY_EDITOR,
 	COMMAND_PRIORITY_LOW,
 	createCommand,
@@ -22,6 +15,8 @@ import {
 	KEY_ARROW_LEFT_COMMAND,
 	KEY_ARROW_RIGHT_COMMAND,
 	KEY_ARROW_UP_COMMAND,
+	type LexicalCommand,
+	type NodeKey,
 } from "lexical";
 import { useEffect } from "react";
 
@@ -44,6 +39,29 @@ export const UPDATE_LAYOUT_COMMAND: LexicalCommand<{
 	nodeKey: NodeKey;
 }> = createCommand<{ template: string; nodeKey: NodeKey }>();
 
+function getItemsCountFromTemplate(template: string): number {
+	return template.trim().split(/\s+/).length;
+}
+
+const $fillLayoutItemIfEmpty = (node: LayoutItemNode) => {
+	if (node.isEmpty()) {
+		node.append($createParagraphNode());
+	}
+};
+
+const $removeIsolatedLayoutItem = (node: LayoutItemNode): boolean => {
+	const parent = node.getParent();
+	if (!$isLayoutContainerNode(parent)) {
+		const children = node.getChildren();
+		for (const child of children) {
+			node.insertBefore(child);
+		}
+		node.remove();
+		return true;
+	}
+	return false;
+};
+
 export function LayoutPlugin(): null {
 	const [editor] = useLexicalComposerContext();
 	useEffect(() => {
@@ -53,73 +71,29 @@ export function LayoutPlugin(): null {
 			);
 		}
 
-		const $onEscape = (before: boolean) => {
-			const selection = $getSelection();
-			if (
-				$isRangeSelection(selection) &&
-				selection.isCollapsed() &&
-				selection.anchor.offset === 0
-			) {
-				const container = $findMatchingParent(
-					selection.anchor.getNode(),
-					$isLayoutContainerNode,
-				);
-
-				if ($isLayoutContainerNode(container)) {
-					const parent = container.getParent<ElementNode>();
-					const child =
-						parent &&
-						(before
-							? parent.getFirstChild<LexicalNode>()
-							: parent?.getLastChild<LexicalNode>());
-					const descendant = before
-						? container.getFirstDescendant<LexicalNode>()?.getKey()
-						: container.getLastDescendant<LexicalNode>()?.getKey();
-
-					if (
-						parent !== null &&
-						child === container &&
-						selection.anchor.key === descendant
-					) {
-						if (before) {
-							container.insertBefore($createParagraphNode());
-						} else {
-							container.insertAfter($createParagraphNode());
-						}
-					}
-				}
-			}
-
-			return false;
-		};
-
 		return mergeRegister(
-			// When layout is the last child pressing down/right arrow will insert paragraph
-			// below it to allow adding more content. It's similar what $insertBlockNode
-			// (mainly for decorators), except it'll always be possible to continue adding
-			// new content even if trailing paragraph is accidentally deleted
+			// When layout is the last child pressing down/right arrow will insert
+			// a paragraph below it, mirroring `$insertBlockNode`. Continues to
+			// work even if a trailing paragraph is accidentally deleted.
 			editor.registerCommand(
 				KEY_ARROW_DOWN_COMMAND,
-				() => $onEscape(false),
+				(event) => $onEscapeDown($isLayoutContainerNode, event),
 				COMMAND_PRIORITY_LOW,
 			),
 			editor.registerCommand(
 				KEY_ARROW_RIGHT_COMMAND,
-				() => $onEscape(false),
+				(event) => $onEscapeDown($isLayoutContainerNode, event),
 				COMMAND_PRIORITY_LOW,
 			),
-			// When layout is the first child pressing up/left arrow will insert paragraph
-			// above it to allow adding more content. It's similar what $insertBlockNode
-			// (mainly for decorators), except it'll always be possible to continue adding
-			// new content even if leading paragraph is accidentally deleted
+			// Inverse: leading paragraph escape on up/left.
 			editor.registerCommand(
 				KEY_ARROW_UP_COMMAND,
-				() => $onEscape(true),
+				(event) => $onEscapeUp($isLayoutContainerNode, event),
 				COMMAND_PRIORITY_LOW,
 			),
 			editor.registerCommand(
 				KEY_ARROW_LEFT_COMMAND,
-				() => $onEscape(true),
+				(event) => $onEscapeUp($isLayoutContainerNode, event),
 				COMMAND_PRIORITY_LOW,
 			),
 			editor.registerCommand(
@@ -147,7 +121,7 @@ export function LayoutPlugin(): null {
 				UPDATE_LAYOUT_COMMAND,
 				({ template, nodeKey }) => {
 					editor.update(() => {
-						const container = $getNodeByKey<LexicalNode>(nodeKey);
+						const container = $getNodeByKey(nodeKey);
 
 						if (!$isLayoutContainerNode(container)) {
 							return;
@@ -158,7 +132,7 @@ export function LayoutPlugin(): null {
 							container.getTemplateColumns(),
 						);
 
-						// Add or remove extra columns if new template does not match existing one
+						// Add or remove columns to match the new template.
 						if (itemsCount > prevItemsCount) {
 							for (let i = prevItemsCount; i < itemsCount; i++) {
 								container.append(
@@ -167,7 +141,7 @@ export function LayoutPlugin(): null {
 							}
 						} else if (itemsCount < prevItemsCount) {
 							for (let i = prevItemsCount - 1; i >= itemsCount; i--) {
-								const layoutItem = container.getChildAtIndex<LexicalNode>(i);
+								const layoutItem = container.getChildAtIndex(i);
 
 								if ($isLayoutItemNode(layoutItem)) {
 									layoutItem.remove();
@@ -182,21 +156,18 @@ export function LayoutPlugin(): null {
 				},
 				COMMAND_PRIORITY_EDITOR,
 			),
-			// Structure enforcing transformers for each node type. In case nesting structure is not
-			// "Container > Item" it'll unwrap nodes and convert it back
-			// to regular content.
+			// Structure-enforcing transforms. If nesting isn't `Container > Item`,
+			// unwrap and treat the content as regular blocks.
 			editor.registerNodeTransform(LayoutItemNode, (node) => {
-				const parent = node.getParent<ElementNode>();
-				if (!$isLayoutContainerNode(parent)) {
-					const children = node.getChildren<LexicalNode>();
-					for (const child of children) {
-						node.insertBefore(child);
-					}
-					node.remove();
+				const isRemoved = $removeIsolatedLayoutItem(node);
+
+				if (!isRemoved) {
+					// Layout items should never be empty; backfill with a paragraph.
+					$fillLayoutItemIfEmpty(node);
 				}
 			}),
 			editor.registerNodeTransform(LayoutContainerNode, (node) => {
-				const children = node.getChildren<LexicalNode>();
+				const children = node.getChildren();
 				if (!children.every($isLayoutItemNode)) {
 					for (const child of children) {
 						node.insertBefore(child);
@@ -208,8 +179,4 @@ export function LayoutPlugin(): null {
 	}, [editor]);
 
 	return null;
-}
-
-function getItemsCountFromTemplate(template: string): number {
-	return template.trim().split(/\s+/).length;
 }

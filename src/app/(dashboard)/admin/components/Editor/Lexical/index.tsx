@@ -1,49 +1,70 @@
 "use client";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
-import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin";
-import {
-	type InitialEditorStateType,
-	LexicalComposer,
-} from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { LexicalExtensionComposer } from "@lexical/react/LexicalExtensionComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
-import { useState } from "react";
+import {
+	$getRoot,
+	defineExtension,
+	type InitialEditorStateType,
+} from "lexical";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { editorInitialConfig } from "./config";
+import { editorExtension } from "./config";
 import DraggableBlockPlugin from "./plugins/DraggableBlockPlugin";
 import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin";
 import FloatingTextFormatToolbarPlugin from "./plugins/FloatingTextFormatToolbarPlugin";
 import ImagesPlugin from "./plugins/ImagesPlugin";
 import { LayoutPlugin } from "./plugins/LayoutPlugin/LayoutPlugin";
-import LinkPlugin from "./plugins/LinkPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import TooltipPlugin from "./plugins/TooltipPlugin";
 
 type Props = {
 	onChangeTitle?: (title: string) => void;
 	onChangeContent?: (content: string) => void;
+	onChangeText?: (text: string) => void;
 	initialTitle?: string | undefined;
 	initialContent?: InitialEditorStateType | undefined;
 	className?: string;
+	hideTitle?: boolean;
+	toolbarWrapperClassName?: string;
+	contentClassName?: string;
+	footer?: React.ReactNode;
 };
 
 export default function Lexical({
 	onChangeTitle,
 	onChangeContent,
+	onChangeText,
 	initialContent,
 	initialTitle,
 	className,
+	hideTitle,
+	toolbarWrapperClassName,
+	contentClassName,
+	footer,
 }: Props) {
 	const [floatingAnchorElem, setFloatingAnchorElem] =
 		useState<HTMLDivElement | null>(null);
 	const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(true);
+
+	// Freeze the initial content at mount (LexicalComposer's initialConfig had
+	// the same read-once semantics) so a re-render never recreates the editor.
+	const [initialEditorState] = useState(() => initialContent);
+	const extension = useMemo(
+		() =>
+			defineExtension({
+				dependencies: [editorExtension],
+				name: "[root]",
+				// Omit the field when there is no content: an explicit `null`
+				// disables InitialStateExtension's default initializer, leaving
+				// the root without the empty paragraph on first load (the caret
+				// then sits above the placeholder until the first keystroke).
+				...(initialEditorState != null
+					? { $initialEditorState: initialEditorState }
+					: {}),
+			}),
+		[initialEditorState],
+	);
 
 	const onRef = (_floatingAnchorElem: HTMLDivElement) => {
 		if (_floatingAnchorElem !== null) {
@@ -58,13 +79,8 @@ export default function Lexical({
 				className,
 			)}
 		>
-			<LexicalComposer
-				initialConfig={{
-					...editorInitialConfig,
-					editorState: initialContent,
-				}}
-			>
-				<>
+			<LexicalExtensionComposer extension={extension} contentEditable={null}>
+				{!hideTitle && (
 					<input
 						type="text"
 						placeholder="Заголовок"
@@ -74,61 +90,65 @@ export default function Lexical({
 						}
 						value={initialTitle}
 					/>
+				)}
+				{toolbarWrapperClassName ? (
+					<div className={toolbarWrapperClassName}>
+						<ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
+					</div>
+				) : (
 					<ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
+				)}
 
-					{floatingAnchorElem && (
-						<>
-							<DraggableBlockPlugin anchorElem={floatingAnchorElem} />
-							<FloatingLinkEditorPlugin
-								anchorElem={floatingAnchorElem}
-								isLinkEditMode={isLinkEditMode}
-								setIsLinkEditMode={setIsLinkEditMode}
-							/>
-						</>
+				{floatingAnchorElem && (
+					<>
+						<DraggableBlockPlugin anchorElem={floatingAnchorElem} />
+						<FloatingLinkEditorPlugin
+							anchorElem={floatingAnchorElem}
+							isLinkEditMode={isLinkEditMode}
+							setIsLinkEditMode={setIsLinkEditMode}
+						/>
+					</>
+				)}
+
+				<ImagesPlugin />
+
+				<div
+					className={cn(
+						"prose border-border bg-background relative mt-2 h-full max-w-none resize-y gap-1 overflow-hidden rounded-2xl border-[1px] text-slate-900 md:h-[calc(100%_-_75px)]",
+						contentClassName,
 					)}
-
-					<ImagesPlugin />
-
-					<RichTextPlugin
-						contentEditable={
-							<>
-								<div
-									className="prose border-border bg-background relative mt-2 h-full max-w-none resize-y gap-1 overflow-hidden rounded-2xl border-[1px] text-slate-900 md:h-[calc(100%_-_75px)]"
-									ref={onRef}
-								>
-									<div className="relative h-full overflow-auto">
-										<ContentEditable />
-									</div>
+					ref={onRef}
+				>
+					{/* flex-1 інертний у дефолтному блоковому контейнері; працює лише
+					    коли contentClassName робить контейнер flex-col (редактор
+					    постів) — тоді зона редагування розтягується, а footer
+					    притискається до низу картки. */}
+					<div className="relative h-full flex-1 overflow-auto">
+						<ContentEditable
+							aria-placeholder="Введіть текст..."
+							placeholder={
+								<div className="pointer-events-none absolute top-4 left-10 inline-block text-lg text-slate-500">
+									<p>Введіть текст...</p>
 								</div>
-							</>
+							}
+						/>
+					</div>
+					{footer}
+				</div>
+
+				<FloatingTextFormatToolbarPlugin />
+				<LayoutPlugin />
+				<TooltipPlugin />
+				<OnChangePlugin
+					onChange={(state) => {
+						const stringifiedContent = JSON.stringify(state);
+						onChangeContent && onChangeContent(stringifiedContent);
+						if (onChangeText) {
+							onChangeText(state.read(() => $getRoot().getTextContent()));
 						}
-						placeholder={
-							<div className="absolute top-[10.7rem] left-10 inline-block text-lg text-slate-500">
-								<p>Введіть текст...</p>
-							</div>
-						}
-						ErrorBoundary={LexicalErrorBoundary}
-					/>
-					<HistoryPlugin />
-					<AutoFocusPlugin />
-					{/* <CharacterLimitPlugin /> */}
-					<CheckListPlugin />
-					<ClickableLinkPlugin />
-					<HorizontalRulePlugin />
-					<FloatingTextFormatToolbarPlugin />
-					<LayoutPlugin />
-					<ListPlugin />
-					<TablePlugin />
-					<LinkPlugin />
-					<TooltipPlugin />
-					<OnChangePlugin
-						onChange={(state) => {
-							const stringifiedContent = JSON.stringify(state);
-							onChangeContent && onChangeContent(stringifiedContent);
-						}}
-					/>
-				</>
-			</LexicalComposer>
+					}}
+				/>
+			</LexicalExtensionComposer>
 		</div>
 	);
 }

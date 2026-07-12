@@ -8,11 +8,11 @@ import {
 } from "lexical";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { $createTooltipNode } from "../../nodes/TooltipNode";
-import { DialogButtonsList } from "../../ui/Dialog";
 
 type Props = {
 	activeEditor: LexicalEditor;
@@ -139,7 +139,7 @@ export default function InsertTooltipDialog({
 					/>
 				</div>
 			</div>
-			<DialogButtonsList>
+			<DialogFooter>
 				<Button type="button" variant="outline" onClick={onClose}>
 					Скасувати
 				</Button>
@@ -150,7 +150,7 @@ export default function InsertTooltipDialog({
 				>
 					Додати
 				</Button>
-			</DialogButtonsList>
+			</DialogFooter>
 		</>
 	);
 }

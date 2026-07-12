@@ -6,16 +6,19 @@
  *
  */
 
-import { addClassNamesToElement } from "@lexical/utils";
-import type {
-	DOMConversionMap,
-	EditorConfig,
-	LexicalNode,
-	NodeKey,
-	SerializedElementNode,
-	Spread,
+import {
+	addClassNamesToElement,
+	type DOMConversionMap,
+	type DOMConversionOutput,
+	type DOMExportOutput,
+	type EditorConfig,
+	ElementNode,
+	type LexicalNode,
+	type LexicalUpdateJSON,
+	type NodeKey,
+	type SerializedElementNode,
+	type Spread,
 } from "lexical";
-import { ElementNode } from "lexical";
 
 export type SerializedLayoutContainerNode = Spread<
 	{
@@ -49,19 +52,52 @@ export class LayoutContainerNode extends ElementNode {
 		return dom;
 	}
 
-	updateDOM(prevNode: LayoutContainerNode, dom: HTMLElement): boolean {
+	exportDOM(): DOMExportOutput {
+		const element = document.createElement("div");
+		element.style.gridTemplateColumns = this.__templateColumns;
+		element.setAttribute("data-lexical-layout-container", "true");
+		return { element };
+	}
+
+	updateDOM(prevNode: this, dom: HTMLElement): boolean {
 		if (prevNode.__templateColumns !== this.__templateColumns) {
 			dom.style.gridTemplateColumns = this.__templateColumns;
 		}
 		return false;
 	}
 
+	// Upstream registers this via the DOMImportExtension pipeline; we stay on
+	// the legacy importDOM path.
 	static importDOM(): DOMConversionMap | null {
-		return {};
+		return {
+			div: (domNode: HTMLElement) => {
+				if (
+					domNode.getAttribute("data-lexical-layout-container") !== "true"
+				) {
+					return null;
+				}
+				return {
+					conversion: $convertLayoutContainerElement,
+					priority: 2,
+				};
+			},
+		};
 	}
 
 	static importJSON(json: SerializedLayoutContainerNode): LayoutContainerNode {
-		return $createLayoutContainerNode(json.templateColumns);
+		return $createLayoutContainerNode().updateFromJSON(json);
+	}
+
+	updateFromJSON(
+		serializedNode: LexicalUpdateJSON<SerializedLayoutContainerNode>,
+	): this {
+		return super
+			.updateFromJSON(serializedNode)
+			.setTemplateColumns(serializedNode.templateColumns);
+	}
+
+	isShadowRoot(): boolean {
+		return true;
 	}
 
 	canBeEmpty(): boolean {
@@ -72,8 +108,6 @@ export class LayoutContainerNode extends ElementNode {
 		return {
 			...super.exportJSON(),
 			templateColumns: this.__templateColumns,
-			type: "layout-container",
-			version: 1,
 		};
 	}
 
@@ -81,13 +115,24 @@ export class LayoutContainerNode extends ElementNode {
 		return this.getLatest().__templateColumns;
 	}
 
-	setTemplateColumns(templateColumns: string) {
-		this.getWritable().__templateColumns = templateColumns;
+	setTemplateColumns(templateColumns: string): this {
+		const self = this.getWritable();
+		self.__templateColumns = templateColumns;
+		return self;
 	}
 }
 
+function $convertLayoutContainerElement(
+	domNode: HTMLElement,
+): DOMConversionOutput {
+	// exportDOM writes the template as an inline style; pasted nodes are
+	// detached, so computed styles are not available here.
+	const node = $createLayoutContainerNode(domNode.style.gridTemplateColumns);
+	return { node };
+}
+
 export function $createLayoutContainerNode(
-	templateColumns: string,
+	templateColumns: string = "",
 ): LayoutContainerNode {
 	return new LayoutContainerNode(templateColumns);
 }

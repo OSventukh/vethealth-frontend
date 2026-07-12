@@ -167,6 +167,11 @@ export class ImageNode extends DecoratorNode<React.ReactElement> {
 		writable.__caption = caption;
 	}
 
+	setAltText(altText: string): void {
+		const writable = this.getWritable();
+		writable.__altText = altText;
+	}
+
 	// View
 
 	createDOM(config: EditorConfig): HTMLElement {
