@@ -27,13 +27,20 @@ import {
 	type RangeSelection,
 	SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import { Check, Edit, Trash, X } from "lucide-react";
+import { Check, SquarePen, Trash, X } from "lucide-react";
 import type * as React from "react";
 import { type Dispatch, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { getSelectedNode } from "../../utils/getSelectedNode";
 import { setFloatingElemPositionForLinkEditor } from "../../utils/setFloatingElemPositionForLinkEditor";
 import { sanitizeUrl } from "../../utils/url";
+
+// `not-prose` — панель портується всередину контейнера з класом `prose`, інакше
+// типографіка Tailwind перебиває стилі посилання й кнопок.
+const panelClassName =
+	"not-prose bg-popover text-popover-foreground flex w-full items-center gap-1 rounded-md border p-1 shadow-md";
 
 function FloatingLinkEditor({
 	editor,
@@ -199,13 +206,16 @@ function FloatingLinkEditor({
 	return (
 		<div
 			ref={editorRef}
-			className="absolute top-20 left-0 z-10 flex w-full max-w-[400px] opacity-0 transition-opacity duration-500 will-change-transform"
+			// top/left мають лишатись нульові: позицію задає лише transform із
+			// setFloatingElemPositionForLinkEditor (він рахує зсув відносно
+			// посилання), а будь-який top-* додається до неї зверху.
+			className="absolute top-0 left-0 z-10 flex w-full max-w-[400px] opacity-0 transition-opacity duration-500 will-change-transform"
 		>
 			{!isLink ? null : isLinkEditMode ? (
-				<div className="border-border bg-background shadow-mdr flex w-full rounded-lg border-[1px] p-2">
-					<input
+				<div className={panelClassName}>
+					<Input
 						ref={inputRef}
-						className="mr-1 flex w-full items-center"
+						className="h-8 flex-1 border-0 px-2 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 						data-view="linkView"
 						value={editedLinkUrl}
 						onChange={(event) => {
@@ -215,54 +225,68 @@ function FloatingLinkEditor({
 							monitorInputInteraction(event);
 						}}
 					/>
-					<div className="flex">
-						<button
-							className="flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg"
-							onClick={() => {
-								setIsLinkEditMode(false);
-							}}
-						>
-							<X />
-						</button>
-
-						<button
-							className="flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg"
-							onClick={handleLinkSubmission}
-						>
-							<Check />
-						</button>
-					</div>
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="size-8 shrink-0"
+						aria-label="Скасувати"
+						onClick={() => {
+							setIsLinkEditMode(false);
+						}}
+					>
+						<X className="size-4" />
+					</Button>
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="size-8 shrink-0"
+						aria-label="Зберегти посилання"
+						onClick={handleLinkSubmission}
+					>
+						<Check className="size-4" />
+					</Button>
 				</div>
 			) : (
-				<div className="border-border bg-background shadow-mdr flex w-full rounded-lg border-[1px] p-2">
+				<div className={panelClassName}>
+					{/* Довгі URL (напр. посилання на PDF у джерелах) інакше
+					    переносяться на кілька рядків і роздувають панель. */}
 					<a
-						className="mr-1 flex w-full items-center"
+						className="text-primary min-w-0 flex-1 truncate px-2 text-sm underline-offset-4 hover:underline"
 						href={sanitizeUrl(linkUrl)}
 						target="_blank"
+						title={linkUrl}
 						data-view="linkView"
 						rel="noopener noreferrer"
 					>
 						{linkUrl}
 					</a>
-					<div className="flex">
-						<button
-							className="flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg"
-							onClick={() => {
-								setEditedLinkUrl(linkUrl);
-								setIsLinkEditMode(true);
-							}}
-						>
-							<Edit />
-						</button>
-						<button
-							className="flex items-center gap-2 rounded-sm px-2 py-2 hover:bg-blue-200 hover:shadow-lg"
-							onClick={() => {
-								editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-							}}
-						>
-							<Trash />
-						</button>
-					</div>
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="size-8 shrink-0"
+						aria-label="Редагувати посилання"
+						onClick={() => {
+							setEditedLinkUrl(linkUrl);
+							setIsLinkEditMode(true);
+						}}
+					>
+						<SquarePen className="size-4" />
+					</Button>
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="size-8 shrink-0"
+						aria-label="Видалити посилання"
+						onClick={() => {
+							editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+						}}
+					>
+						<Trash className="size-4" />
+					</Button>
 				</div>
 			)}
 		</div>

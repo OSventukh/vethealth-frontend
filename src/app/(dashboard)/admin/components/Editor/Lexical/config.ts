@@ -3,7 +3,7 @@ import {
 	HorizontalRuleExtension,
 } from "@lexical/extension";
 import { HistoryExtension } from "@lexical/history";
-import { AutoLinkNode, ClickableLinkExtension, LinkExtension } from "@lexical/link";
+import { AutoLinkNode, LinkExtension } from "@lexical/link";
 import { CheckListExtension, ListExtension } from "@lexical/list";
 import { RichTextExtension } from "@lexical/rich-text";
 import { TableExtension } from "@lexical/table";
@@ -30,9 +30,11 @@ export const editorExtension = defineExtension({
 		AutoFocusExtension,
 		HorizontalRuleExtension,
 		configExtension(LinkExtension, { validateUrl }),
-		// The legacy ClickableLinkPlugin defaulted to newTab: true; the
-		// extension defaults to false, so keep the old behavior explicitly.
-		configExtension(ClickableLinkExtension, { newTab: true }),
+		// ClickableLinkExtension свідомо НЕ підключаємо: воно відкриває URL на
+		// будь-який клік по <a> (без перевірки на editable) і призначене для
+		// нередагованих редакторів. Тут клік по посиланню має ставити курсор і
+		// відкривати плаваючу панель для редагування; перейти за адресою можна
+		// Ctrl/Cmd+кліком (FloatingLinkEditorPlugin) або з самої панелі.
 	],
 	nodes: [AutoLinkNode, ImageNode, LayoutContainerNode, LayoutItemNode, TooltipNode],
 	theme: {
