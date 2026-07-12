@@ -553,11 +553,13 @@ export default function ToolbarPlugin({
 
 	const insertLink = useCallback(() => {
 		if (!isLink) {
+			setIsLinkEditMode(true);
 			editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl("https://"));
 		} else {
+			setIsLinkEditMode(false);
 			editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
 		}
-	}, [editor, isLink]);
+	}, [editor, isLink, setIsLinkEditMode]);
 
 	const formatHeading = (headingSize: HeadingTagType) => {
 		editor.update(() => {

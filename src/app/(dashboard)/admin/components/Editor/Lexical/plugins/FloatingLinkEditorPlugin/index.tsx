@@ -277,9 +277,21 @@ function useFloatingLinkEditorToolbar(
 ): React.ReactElement | null {
 	const [activeEditor, setActiveEditor] = useState(editor);
 	const [isLink, setIsLink] = useState(false);
+	// AutoFocusExtension при монтуванні ставить курсор у кінець документа. Якщо
+	// пост закінчується посиланням (список джерел), селекція одразу опиняється
+	// всередині LinkNode і панель відкривається сама собою. Тому селекцію
+	// враховуємо лише після першої дії користувача в області редагування.
+	const hasUserInteracted = useRef(false);
 
 	useEffect(() => {
+		const markInteracted = () => {
+			hasUserInteracted.current = true;
+		};
+
 		function updateToolbar() {
+			if (!hasUserInteracted.current) {
+				return;
+			}
 			const selection = $getSelection();
 			if ($isRangeSelection(selection)) {
 				const node = getSelectedNode(selection);
@@ -294,6 +306,12 @@ function useFloatingLinkEditorToolbar(
 			}
 		}
 		return mergeRegister(
+			editor.registerRootListener((rootElement, prevRootElement) => {
+				prevRootElement?.removeEventListener("pointerdown", markInteracted);
+				prevRootElement?.removeEventListener("keydown", markInteracted);
+				rootElement?.addEventListener("pointerdown", markInteracted);
+				rootElement?.addEventListener("keydown", markInteracted);
+			}),
 			editor.registerUpdateListener(({ editorState }) => {
 				editorState.read(() => {
 					updateToolbar();

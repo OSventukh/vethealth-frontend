@@ -45,7 +45,7 @@ export default function Lexical({
 }: Props) {
 	const [floatingAnchorElem, setFloatingAnchorElem] =
 		useState<HTMLDivElement | null>(null);
-	const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(true);
+	const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
 
 	// Freeze the initial content at mount (LexicalComposer's initialConfig had
 	// the same read-once semantics) so a re-render never recreates the editor.
