@@ -11,6 +11,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { repairImageSrc } from "@/utils/image-src";
 
 const IS_BOLD = 1;
 const IS_ITALIC = 1 << 1;
@@ -266,7 +267,9 @@ const AppendChildNodeToHtml = ({
 
 	if (currentNodeType === "paragraph" && node.children[0]?.type == "image") {
 		const imageNode = node.children[0];
-		const src = imageNode.src;
+		// Старий контент може містити покалічене "https//host/…" — next/image
+		// падає на такому src ще на парсингу.
+		const src = repairImageSrc(imageNode.src);
 		const width = imageNode.width || 500;
 		const height = imageNode.height || 500;
 		const alt = imageNode.altText;
