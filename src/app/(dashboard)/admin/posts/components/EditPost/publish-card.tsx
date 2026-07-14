@@ -25,6 +25,7 @@ const STATUS_BADGE: Record<
 
 export function PublishCard({ status, user, isPending, onSave }: Props) {
 	const badge = STATUS_BADGE[status || "Draft"];
+	const isPublished = status === "Published";
 	const isAdmin =
 		user?.role.name === UserRoleEnum.Administrator ||
 		user?.role.name === UserRoleEnum.SuperAdmininstrator;
@@ -50,7 +51,8 @@ export function PublishCard({ status, user, isPending, onSave }: Props) {
 						disabled={isPending}
 						onClick={() => onSave(PostStatusEnum.Published)}
 					>
-						<SendIcon size={16} /> Опублікувати
+						{isPublished ? <SaveIcon size={16} /> : <SendIcon size={16} />}{" "}
+						{isPublished ? "Зберегти" : "Опублікувати"}
 					</Button>
 				) : (
 					<Button
