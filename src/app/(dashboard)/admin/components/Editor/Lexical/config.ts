@@ -8,6 +8,7 @@ import { CheckListExtension, ListExtension } from "@lexical/list";
 import { RichTextExtension } from "@lexical/rich-text";
 import { TableExtension } from "@lexical/table";
 import { configExtension, defineExtension } from "lexical";
+import { ChartNode } from "./nodes/ChartNode";
 import { ImageNode } from "./nodes/ImageNode";
 import { LayoutContainerNode } from "./nodes/LayoutContainerNode";
 import { LayoutItemNode } from "./nodes/LayoutItemNode";
@@ -36,7 +37,14 @@ export const editorExtension = defineExtension({
 		// відкривати плаваючу панель для редагування; перейти за адресою можна
 		// Ctrl/Cmd+кліком (FloatingLinkEditorPlugin) або з самої панелі.
 	],
-	nodes: [AutoLinkNode, ImageNode, LayoutContainerNode, LayoutItemNode, TooltipNode],
+	nodes: [
+		AutoLinkNode,
+		ChartNode,
+		ImageNode,
+		LayoutContainerNode,
+		LayoutItemNode,
+		TooltipNode,
+	],
 	theme: {
 		root: "min-h-full border-[1px] border-border px-10 py-4 bg-background shadow-xs outline-hidden text-lg",
 		text: {
@@ -56,6 +64,7 @@ export const editorExtension = defineExtension({
 		layoutContainer: "grid gap-10",
 		layoutItem: "border-[1px] border-slate-600 border-dashed",
 		image: "inline-block relative",
+		chart: "my-4 block select-none",
 		// TableExtension вмикає горизонтальний скрол таблиць і вимагає клас
 		// для обгортки — без нього сипле dev-попередження в консоль.
 		tableScrollableWrapper: "overflow-x-auto",

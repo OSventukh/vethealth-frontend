@@ -21,11 +21,13 @@ export default function useModal(): [
 	(
 		title: string,
 		showModal: (onClose: () => void) => React.ReactElement,
+		contentClassName?: string,
 	) => void,
 ] {
 	const [modalContent, setModalContent] = useState<null | {
 		content: React.ReactElement;
 		title: string;
+		contentClassName?: string;
 	}>(null);
 
 	const onClose = useCallback(() => {
@@ -36,7 +38,7 @@ export default function useModal(): [
 		if (modalContent === null) {
 			return null;
 		}
-		const { title, content } = modalContent;
+		const { title, content, contentClassName } = modalContent;
 		return (
 			<Dialog
 				open
@@ -46,7 +48,7 @@ export default function useModal(): [
 					}
 				}}
 			>
-				<DialogContent>
+				<DialogContent className={contentClassName}>
 					<DialogHeader>
 						<DialogTitle>{title}</DialogTitle>
 					</DialogHeader>
@@ -61,10 +63,12 @@ export default function useModal(): [
 			title: string,
 			// eslint-disable-next-line no-shadow
 			getContent: (onClose: () => void) => React.ReactElement,
+			contentClassName?: string,
 		) => {
 			setModalContent({
 				content: getContent(onClose),
 				title,
+				contentClassName,
 			});
 		},
 		[onClose],

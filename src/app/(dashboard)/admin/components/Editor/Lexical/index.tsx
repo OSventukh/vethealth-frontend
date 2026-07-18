@@ -10,6 +10,7 @@ import {
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { editorExtension } from "./config";
+import ChartsPlugin from "./plugins/ChartsPlugin";
 import DraggableBlockPlugin from "./plugins/DraggableBlockPlugin";
 import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin";
 import FloatingTextFormatToolbarPlugin from "./plugins/FloatingTextFormatToolbarPlugin";
@@ -139,6 +140,7 @@ export default function Lexical({
 				<FloatingTextFormatToolbarPlugin />
 				<LayoutPlugin />
 				<TooltipPlugin />
+				<ChartsPlugin />
 				<OnChangePlugin
 					onChange={(state) => {
 						const stringifiedContent = JSON.stringify(state);

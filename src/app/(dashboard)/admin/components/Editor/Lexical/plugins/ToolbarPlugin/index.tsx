@@ -53,6 +53,7 @@ import {
 	AlignRight,
 	Bold,
 	CaseSensitive,
+	ChartColumn,
 	ChevronDown,
 	Grid2X2,
 	Heading2,
@@ -107,6 +108,8 @@ import { sanitizeUrl } from "../../utils/url";
 // import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
 // import { InsertEquationDialog } from '../EquationsPlugin';
 // import { INSERT_EXCALIDRAW_COMMAND } from '../ExcalidrawPlugin';
+import { INSERT_CHART_COMMAND } from "../ChartsPlugin";
+import InsertChartDialog from "../ChartsPlugin/InsertChartDialog";
 import { InsertImageDialog } from "../ImagesPlugin";
 // import { InsertInlineImageDialog } from '../InlineImagePlugin';
 import InsertLayoutDialog from "../LayoutPlugin/InsertLayoutDialog";
@@ -907,6 +910,30 @@ export default function ToolbarPlugin({
 								}}
 							>
 								Тултіп
+							</ItemButton>
+						</DropdownMenuItem>
+						<DropdownMenuItem className={toolbarMenuItemClass}>
+							<ItemButton
+								icon={<ChartColumn />}
+								onClick={() => {
+									showModal(
+										"Вставити діаграму",
+										(onClose) => (
+											<InsertChartDialog
+												onClose={onClose}
+												onSubmit={(data) => {
+													activeEditor.dispatchCommand(
+														INSERT_CHART_COMMAND,
+														data,
+													);
+												}}
+											/>
+										),
+										"max-w-3xl",
+									);
+								}}
+							>
+								Діаграма
 							</ItemButton>
 						</DropdownMenuItem>
 					</DropdownMenuContent>

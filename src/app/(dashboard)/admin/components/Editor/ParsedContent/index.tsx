@@ -5,6 +5,7 @@ import { Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { ChartBlock } from "@/components/chart-block";
 import {
 	Tooltip,
 	TooltipContent,
@@ -328,6 +329,25 @@ const AppendChildNodeToHtml = ({
 		);
 	}
 
+	if (currentNodeType === "chart") {
+		// ChartBlock — "use client"-острівець (Recharts клієнтський); його чанк
+		// вантажиться лише на сторінках, де діаграма реально відрендерена.
+		return (
+			<ChartBlock
+				data={{
+					chartType: node.chartType,
+					title: node.title,
+					categoryLabel: node.categoryLabel,
+					donut: node.donut,
+					valueSuffix: node.valueSuffix,
+					showValues: node.showValues,
+					series: node.series || [],
+					rows: node.rows || [],
+				}}
+			/>
+		);
+	}
+
 	if (currentNodeType === "layout-container") {
 		const gridItemsNode = node.children;
 		const gridItems = gridItemsNode.map((gridItemNode: any, i: number) => {
@@ -382,9 +402,17 @@ export const ParsedContent = ({
 	}
 
 	if (excerpt) {
+		// В анонсах (списки постів) діаграму не рендеримо — беремо перший
+		// не-діаграмний блок, щоб картки не тягнули Recharts.
+		const firstNode = topLevelChildren.find(
+			(child: any) => child?.type !== "chart",
+		);
+		if (!firstNode) {
+			return <div></div>;
+		}
 		return (
 			<AppendChildNodeToHtml
-				node={topLevelChildren[0]}
+				node={firstNode}
 				nodePath={`${keyPrefix}-excerpt-0`}
 			/>
 		);
