@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useRef, useState } from "react";
 import {
 	Area,
 	AreaChart,
@@ -127,6 +128,42 @@ export function wrapTickLabel(value: string): string[] {
 	return lines;
 }
 
+// Підписи (категорії під віссю X і значення при showValues) на вузьких
+// екранах налазять один на одного — горизонтального місця на категорію
+// замало. Ширину контейнера відстежуємо через ResizeObserver і, коли
+// найдовший підпис не вміщається у свій слот, повертаємо всі підписи цієї
+// групи вертикально (читаються знизу вгору).
+const VALUE_LABEL_FONT_SIZE = 12;
+// Консервативна оцінка ширини символа при fontSize 12 — точність тут не
+// потрібна, важливо не лишити підписи горизонтальними, коли вже тісно.
+const LABEL_CHAR_PX = 7;
+const VALUE_LABEL_OFFSET = 8;
+const X_MARGIN = 12;
+const Y_AXIS_WIDTH = 48;
+
+function useContainerWidth(): [(el: HTMLDivElement | null) => void, number] {
+	const [width, setWidth] = useState(0);
+	const observerRef = useRef<ResizeObserver | null>(null);
+	// Callback-ref замість useEffect: переживає перемонтування контейнера
+	// (наприклад, зміну типу діаграми в редакторі).
+	const ref = useCallback((el: HTMLDivElement | null) => {
+		observerRef.current?.disconnect();
+		observerRef.current = null;
+		if (!el) {
+			return;
+		}
+		const observer = new ResizeObserver((entries) => {
+			const next = entries[0]?.contentRect.width;
+			if (next !== undefined) {
+				setWidth(next);
+			}
+		});
+		observer.observe(el);
+		observerRef.current = observer;
+	}, []);
+	return [ref, width];
+}
+
 // Проп tick у recharts приймає елемент і сам передає йому x/y/payload.
 function WrappedAxisTick({
 	x,
@@ -138,13 +175,43 @@ function WrappedAxisTick({
 	payload?: { value?: string | number };
 }) {
 	const lines = wrapTickLabel(String(payload?.value ?? ""));
+	// Зсув першого рядка — на tspan, не на <text>: у SVG dy найглибшого
+	// елемента перекриває батьківський, тож dy на <text> просто ігнорувався б.
 	return (
-		<text x={x} y={y} dy={12} textAnchor="middle" fontSize={12}>
+		<text x={x} y={y} textAnchor="middle" fontSize={12}>
 			{lines.map((line, i) => (
-				<tspan key={`${line}-${i}`} x={x} dy={i === 0 ? 0 : 14}>
+				<tspan key={`${line}-${i}`} x={x} dy={i === 0 ? 12 : 14}>
 					{line}
 				</tspan>
 			))}
+		</text>
+	);
+}
+
+// Вертикальний варіант тика осі X: категорія одним рядком, повернута на
+// -90° навколо точки тика (textAnchor="end" → текст звисає під вісь і
+// читається знизу вгору).
+function VerticalAxisTick({
+	x,
+	y,
+	payload,
+}: {
+	x?: number;
+	y?: number;
+	payload?: { value?: string | number };
+}) {
+	const cx = x ?? 0;
+	const cy = (y ?? 0) + 4;
+	return (
+		<text
+			x={cx}
+			y={cy}
+			transform={`rotate(-90, ${cx}, ${cy})`}
+			textAnchor="end"
+			dominantBaseline="central"
+			fontSize={12}
+		>
+			{String(payload?.value ?? "")}
 		</text>
 	);
 }
@@ -158,6 +225,7 @@ export function ChartRenderer({
 }) {
 	const { chartType, series, rows, donut, showValues } = data;
 	const suffix = data.valueSuffix || "";
+	const [containerRef, containerWidth] = useContainerWidth();
 
 	// Захист від зіпсованих даних (наприклад, вручну відредагований JSON).
 	if (rows.length === 0 || series.length === 0) {
@@ -173,7 +241,11 @@ export function ChartRenderer({
 		const pieSeries = series[0];
 		const pieConfig = toPieConfig(rows, pieSeries.label);
 		return (
-			<ChartContainer config={pieConfig} className={containerClassName}>
+			<ChartContainer
+				ref={containerRef}
+				config={pieConfig}
+				className={containerClassName}
+			>
 				<PieChart accessibilityLayer>
 					<ChartTooltip
 						content={
@@ -205,14 +277,48 @@ export function ChartRenderer({
 	const chartRows = toRechartsRows(rows, series);
 	const config = toChartConfig(series);
 	const showLegend = series.length > 1;
-	// Підписи над точками/стовпцями впираються у верхній край без запасу.
-	const margin = { top: showValues ? 24 : 4, left: 12, right: 12 };
 
-	// Висота осі X залежить від найдовшого (у рядках) підпису категорії.
-	const maxTickLines = Math.max(
-		1,
-		...rows.map((row) => wrapTickLabel(row.category).length),
-	);
+	// Найдовший підпис значення (у пікселях) проти слота, який припадає на
+	// один підпис по горизонталі (для групованих стовпців слот ділять серії).
+	const maxValueLabelPx = showValues
+		? Math.max(
+				...rows.flatMap((row) =>
+					series.map((s) => formatValue(row.values[s.key] ?? 0).length),
+				),
+			) * LABEL_CHAR_PX
+		: 0;
+	const innerWidth = containerWidth - 2 * X_MARGIN - Y_AXIS_WIDTH;
+	const labelSlot =
+		innerWidth /
+		(chartType === "bar" ? rows.length * series.length : rows.length);
+	const verticalValueLabels =
+		showValues && containerWidth > 0 && maxValueLabelPx > labelSlot - 4;
+
+	// Підписи над точками/стовпцями впираються у верхній край без запасу;
+	// вертикальним потрібен запас на всю довжину тексту.
+	const margin = {
+		top: verticalValueLabels
+			? maxValueLabelPx + VALUE_LABEL_OFFSET + 4
+			: showValues
+				? 24
+				: 4,
+		left: X_MARGIN,
+		right: X_MARGIN,
+	};
+
+	// Те саме для категорій під віссю X: якщо навіть найдовший уже
+	// перенесений рядок не вміщається у слот категорії — тики стають
+	// вертикальними (назва цілком, без переносів), а висота осі росте під
+	// найдовшу назву. Інакше висота залежить від кількості рядків переносу.
+	const tickLines = rows.map((row) => wrapTickLabel(row.category));
+	const maxTickLines = Math.max(1, ...tickLines.map((lines) => lines.length));
+	const maxTickLinePx =
+		Math.max(0, ...tickLines.flat().map((line) => line.length)) *
+		LABEL_CHAR_PX;
+	const verticalTicks =
+		containerWidth > 0 && maxTickLinePx > innerWidth / rows.length - 4;
+	const maxCategoryPx =
+		Math.max(0, ...rows.map((row) => row.category.length)) * LABEL_CHAR_PX;
 	// САМЕ масив, не фрагмент: recharts не розгортає React.Fragment серед
 	// children і мовчки викидає загорнуті в нього осі/сітку.
 	const axes = [
@@ -222,17 +328,19 @@ export function ChartRenderer({
 			dataKey="category"
 			tickLine={false}
 			axisLine={false}
-			tickMargin={4}
+			// Горизонтальним підписам — більший відступ від діаграми (вертикальні
+			// й так звисають нижче осі); висота осі росте на ту саму величину.
+			tickMargin={verticalTicks ? 4 : 12}
 			interval={0}
-			height={maxTickLines * 14 + 16}
-			tick={<WrappedAxisTick />}
+			height={verticalTicks ? maxCategoryPx + 12 : maxTickLines * 14 + 24}
+			tick={verticalTicks ? <VerticalAxisTick /> : <WrappedAxisTick />}
 		/>,
 		<YAxis
 			key="y"
 			tickLine={false}
 			axisLine={false}
 			tickMargin={8}
-			width={48}
+			width={Y_AXIS_WIDTH}
 			tickFormatter={formatValue}
 		/>,
 	];
@@ -246,18 +354,54 @@ export function ChartRenderer({
 			}
 		/>
 	);
+	// Кастомний content для вертикальних підписів: <text>, повернутий на -90°
+	// навколо точки над стовпцем/точкою (textAnchor="start" → текст росте
+	// вгору). Для Bar приходить x лівого краю + width, для Line/Area — x
+	// самої точки без width.
+	const renderVerticalValueLabel = (props: unknown) => {
+		const { x, y, width, value } = props as {
+			x?: number | string;
+			y?: number | string;
+			width?: number | string;
+			value?: number | string;
+		};
+		const cx = Number(x ?? 0) + Number(width ?? 0) / 2;
+		const cy = Number(y ?? 0) - VALUE_LABEL_OFFSET;
+		return (
+			<text
+				x={cx}
+				y={cy}
+				transform={`rotate(-90 ${cx} ${cy})`}
+				textAnchor="start"
+				dominantBaseline="central"
+				className="fill-foreground"
+				fontSize={VALUE_LABEL_FONT_SIZE}
+			>
+				{formatValue(value ?? 0)}
+			</text>
+		);
+	};
+
 	const valueLabels = showValues ? (
-		<LabelList
-			position="top"
-			offset={8}
-			className="fill-foreground"
-			fontSize={12}
-			formatter={formatValue}
-		/>
+		verticalValueLabels ? (
+			<LabelList content={renderVerticalValueLabel} />
+		) : (
+			<LabelList
+				position="top"
+				offset={VALUE_LABEL_OFFSET}
+				className="fill-foreground"
+				fontSize={VALUE_LABEL_FONT_SIZE}
+				formatter={formatValue}
+			/>
+		)
 	) : null;
 
 	return (
-		<ChartContainer config={config} className={containerClassName}>
+		<ChartContainer
+			ref={containerRef}
+			config={config}
+			className={containerClassName}
+		>
 			{chartType === "bar" ? (
 				<BarChart accessibilityLayer data={chartRows} margin={margin}>
 					{axes}
