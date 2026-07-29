@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { api } from "@/api";
-import { ParsedContent } from "@/app/(dashboard)/admin/components/Editor/ParsedContent";
+import { PageContent } from "@/components/page-blocks/page-content";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
 import { raleway } from "@/lib/fonts";
 import Footer from "../components/Footer";
@@ -29,13 +29,10 @@ export default async function PrivacyPolicyPage() {
 						>
 							{privacyPolicyPage.title}
 						</h1>
-						<div className="prose prose-headings:text-sm max-w-none">
-							{privacyPolicyPage?.content && (
-								<ParsedContent
-									content={JSON.parse(privacyPolicyPage.content)}
-								/>
-							)}
-						</div>
+						<PageContent
+							content={privacyPolicyPage?.content}
+							proseClassName="prose prose-headings:text-sm max-w-none"
+						/>
 					</div>
 				</div>
 			</main>

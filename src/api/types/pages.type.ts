@@ -2,6 +2,17 @@ import type { z } from "zod";
 
 import type { postQuerySchema } from "@/utils/validators/query.validator";
 
+export type PageMetadataResponse = {
+	id: string;
+	metaTitle: string | null;
+	metaDescription: string | null;
+	metaKeywords: string | null;
+	ogImage: string | null;
+	canonicalUrl: string | null;
+	indexable: boolean;
+	followable: boolean;
+};
+
 export type PageResponse = {
 	id: string;
 	title: string;
@@ -10,7 +21,8 @@ export type PageResponse = {
 	featuredImage: string | null;
 	createdAt: string;
 	updatedAt?: string;
-	status?: "Draft" | "Published";
+	status?: "Draft" | "Published" | "OnReview";
+	metadata?: PageMetadataResponse | null;
 };
 
 export type PageGetOneParams = {

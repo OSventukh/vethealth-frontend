@@ -313,8 +313,7 @@ export function ChartRenderer({
 	const tickLines = rows.map((row) => wrapTickLabel(row.category));
 	const maxTickLines = Math.max(1, ...tickLines.map((lines) => lines.length));
 	const maxTickLinePx =
-		Math.max(0, ...tickLines.flat().map((line) => line.length)) *
-		LABEL_CHAR_PX;
+		Math.max(0, ...tickLines.flat().map((line) => line.length)) * LABEL_CHAR_PX;
 	const verticalTicks =
 		containerWidth > 0 && maxTickLinePx > innerWidth / rows.length - 4;
 	const maxCategoryPx =

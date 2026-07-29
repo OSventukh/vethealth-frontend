@@ -6,6 +6,15 @@ import logger from "@/logger";
 import { ERROR_MESSAGE } from "@/utils/constants/messages";
 import { SERVER_ERROR } from "@/utils/constants/server-error-responses";
 
+type MetadataProps = {
+	metaTitle?: string;
+	metaDescription?: string;
+	canonicalUrl?: string;
+	ogImage?: string;
+	indexable?: boolean;
+	followable?: boolean;
+};
+
 type Props = {
 	id?: string;
 	title: string;
@@ -16,6 +25,7 @@ type Props = {
 	status: {
 		id: number;
 	};
+	metadata?: MetadataProps;
 };
 
 type ReturnedData = {

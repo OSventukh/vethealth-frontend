@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import React from "react";
 import { api } from "@/api";
 import { TAGS } from "@/api/constants/tags";
-import { ParsedContent } from "@/app/(dashboard)/admin/components/Editor/ParsedContent";
+import { PageContent } from "@/components/page-blocks/page-content";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
 import { raleway } from "@/lib/fonts";
 import Post from "../Post";
@@ -50,9 +50,7 @@ export default async function Page({ topic, parentTopicSlug, slug }: Props) {
 						>
 							{page?.title}
 						</h1>
-						<div className="prose prose-headings:text-lg max-w-none">
-							<ParsedContent content={JSON.parse(page?.content || "")} />
-						</div>
+						<PageContent content={page?.content} />
 					</div>
 				</>
 			)}

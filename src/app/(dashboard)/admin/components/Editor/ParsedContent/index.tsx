@@ -12,6 +12,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { isSafeExternalUrl } from "@/lib/safe-url";
 
 const IS_BOLD = 1;
 const IS_ITALIC = 1 << 1;
@@ -193,10 +194,12 @@ const HandleTextNodeChildren = ({
 						<Link href={child.url} className="underline">
 							{linkContent}
 						</Link>
-					) : (
-						<a href={child.url} className="underline">
+					) : isSafeExternalUrl(child.url || "") ? (
+						<a href={child.url} rel="noopener noreferrer" className="underline">
 							{linkContent}
 						</a>
+					) : (
+						<span>{linkContent}</span>
 					)}
 					<span>{!isLastItem && " "}</span>
 				</React.Fragment>

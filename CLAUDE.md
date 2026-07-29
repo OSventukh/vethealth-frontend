@@ -58,6 +58,27 @@ anymore (`prettier-plugin-tailwindcss` gone). Style: **tabs + double quotes**. P
 - There are **no API routes** — auth is handled by iron-session cookies + server actions, not a
   NextAuth route handler.
 
+### Page builder (pages = block documents, 2026-07)
+
+Pages (адмінка `admin/pages` + публічний рендеринг) працюють через **конструктор блоків**, а не
+"один великий Lexical" (так лишилось тільки в постах):
+- **Модель**: `pages.content` зберігає JSON `{version: 1, blocks: [{id, type, data}]}` —
+  типи/парсинг у `src/lib/page-builder/` (`parsePageDocument` повертає `null` для легасі
+  Lexical-контенту; `createDocumentFromLegacy` загортає його в один `richtext`-блок).
+  11 типів блоків: hero, heading, richtext (Lexical), stats, services, team, gallery, image,
+  cta, faq, contacts. Реєстр міток/дефолтів — `lib/page-builder/defaults.ts`.
+- **Публічний рендеринг**: `src/components/page-blocks/` — по одному JSX-компоненту на блок
+  (server-safe; ті самі компоненти рендеряться в канвасі адмінки). `PageContent` — точка входу:
+  builder-документ → блоки, легасі-рядок → `ParsedContent` (fallback лишається назавжди — на
+  випадок невідмігрованих рядків). Не імпортувати сюди адмінських/Lexical-редакторських модулів.
+- **Адмін-редактор** (`admin/pages/components/`): канвас з превʼю (реальні блок-компоненти,
+  richtext = інлайновий Lexical), панель «Структура», інспектор блоку, пікер секцій (Dialog),
+  таби Блоки / SEO (SEO мапиться на бекендову `metadata`-сутність; PATCH шле metadata без id —
+  бекенд каскадно створює новий рядок). Статуси збережено як було: «Опублікувати» → OnReview(3),
+  «Чернетка» → Draft(2).
+- Бекенд-міграція `PagesBuilderContent` загорнула наявні сторінки в richtext-блок і розширила
+  `pages.content` до MEDIUMTEXT; `?include=metadata` дозволено в `PageQueryDto`.
+
 ### API client (`src/api`) — the most important subsystem
 - `routes.ts` builds endpoint URLs from `NEXT_PUBLIC_API_SERVER` || `API_SERVER`, and **throws at
   import time if neither is set**.

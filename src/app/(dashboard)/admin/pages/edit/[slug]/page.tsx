@@ -12,6 +12,7 @@ export default async function EditPagePage(props: Props) {
 	const page = await api.pages.getOne({
 		slug,
 		token: session?.token,
+		query: { include: "metadata" },
 		tags: ["admin_pages"],
 	});
 	return <EditPage initialData={page || null} editMode />;
