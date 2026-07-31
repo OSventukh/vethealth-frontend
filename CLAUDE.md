@@ -79,6 +79,35 @@ Pages (адмінка `admin/pages` + публічний рендеринг) п�
 - Бекенд-міграція `PagesBuilderContent` загорнула наявні сторінки в richtext-блок і розширила
   `pages.content` до MEDIUMTEXT; `?include=metadata` дозволено в `PageQueryDto`.
 
+### SEO layer (2026-07)
+
+Публічні роути мають окремий SEO-шар у `src/app/(public)/_lib/`:
+- **`resolve-path.ts`** — єдине джерело істини «чи існує URL»: валідує ланцюжок тем
+  (кожен сегмент, крім останнього, — тема; parent→child збігається з URL, перша тема коренева)
+  і належність поста останній темі шляху. Повертає `{type: "post"|"page", …}` або `null`.
+  Особливий випадок — **hub-пости**: пост зі слагом, що збігається зі слагом однойменної підтеми
+  (`/drugs/antiparasitic-drugs`) — приймається, якщо пост прив'язаний або до батьківської, або до
+  однойменної теми. Пости без тем взагалі — пропускаються (толерантність до старих даних).
+- **`seo.ts`** — `buildContentMetadata()` (пріоритет: SEO-поля з адмінської `metadata`-сутності →
+  фолбеки з контенту; завжди ставить canonical, og:images, siteName/locale) та
+  `extractDescription()` (текст з Lexical, обрізаний до ~160 символів).
+- **Справжні 404**: валідація викликається в **layout-компонентах** (`[topic]/layout.tsx`,
+  `[topic]/[...slug]/layout.tsx`), бо layout рендериться до першого flush — `notFound()` звідти дає
+  реальний HTTP 404. `notFound()` зі стрімленої сторінки (за межею loading.tsx) віддає 200 (soft-404).
+  **Тому `[topic]/loading.tsx` видалено і його не можна повертати** — він створює Suspense-межу
+  навколо всього сегмента `[...slug]`, і статус фіксується як 200 до валідації.
+  `[...slug]/loading.tsx` лишився — він нижче валідуючого layout і безпечний.
+- **`content-cache.ts`**: include-параметри зафіксовані (`children,parent,metadata` для тем,
+  `topics,metadata` для постів) — однакові аргументи в усіх викликах = один запит на рендер
+  (React.cache). Не міняти include в одному місці без інших.
+- **`app/sitemap.ts`** — `force-dynamic`, але всі фетчі йдуть через Data Cache (force-cache + tags),
+  тож оновлюється одразу після `revalidateTag` з адмінки. Hub-пости не дублюють слаг у URL.
+  `app/robots.ts` віддає `Sitemap:` лише в production.
+- Canonical на сторінках тем ігнорує `?category=` (metadata генерується в layout, який не бачить
+  searchParams — це навмисно). `/search` — `noindex, follow`.
+- Внутрішні посилання (`PostItem`, `TopicItem`) — **тільки абсолютні** (`/topic/slug`): відносні
+  href без слеша створювали дублікати довільної глибини, які тепер 404.
+
 ### API client (`src/api`) — the most important subsystem
 - `routes.ts` builds endpoint URLs from `NEXT_PUBLIC_API_SERVER` || `API_SERVER`, and **throws at
   import time if neither is set**.

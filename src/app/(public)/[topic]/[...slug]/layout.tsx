@@ -1,109 +1,66 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SITE_TITLE } from "@/utils/constants/generals";
-import { getPostBySlug, getTopicBySlug } from "../../_lib/content-cache";
+import { NOT_FOUND_TITLE } from "@/utils/constants/generals";
+import { resolvePath } from "../../_lib/resolve-path";
+import { buildContentMetadata, extractDescription } from "../../_lib/seo";
 
 type Props = {
 	params: Promise<{
-		topic?: string;
-		slug?: string[];
+		topic: string;
+		slug: string[];
 	}>;
 };
 
-async function getTopicMetadata(topicSlug: string): Promise<Metadata> {
-	const topic = await getTopicBySlug(topicSlug);
-
-	if (!topic) {
-		return notFound();
-	}
-
-	const hasChildren = topic?.children && topic.children.length > 0;
-	const isPage = topic?.contentType === "page";
-
-	if (hasChildren || isPage) {
-		return {
-			title: `${topic?.title} | ${SITE_TITLE}`,
-			description: topic?.description,
-			openGraph: {
-				images: topic?.image.path || [],
-			},
-		};
-	}
-
-	return { title: `${topic?.title} | ${SITE_TITLE}` };
-}
-
-function getFirstParagraph(content: string): string | undefined {
-	try {
-		const parsed = JSON.parse(content);
-		const firstNode = parsed?.root?.children?.[0];
-		const firstText = firstNode?.children?.[0]?.text;
-
-		if (typeof firstText === "string" && firstText.trim()) {
-			return firstText;
-		}
-
-		return undefined;
-	} catch {
-		return undefined;
-	}
-}
-
-async function getPostOrTopicMetadata({
-	postSlug,
-	topicSlug,
-}: {
-	postSlug: string;
-	topicSlug: string;
-}): Promise<Metadata> {
-	const [post, nestedTopic] = await Promise.all([
-		getPostBySlug(postSlug),
-		getTopicBySlug(postSlug),
-	]);
-
-	if (post) {
-		return {
-			title: `${post?.title} | ${SITE_TITLE}`,
-			openGraph: { images: post?.featuredImage || [] },
-			description: getFirstParagraph(post.content),
-		};
-	}
-
-	if (nestedTopic) {
-		return {
-			title: `${nestedTopic?.title} | ${SITE_TITLE}`,
-			description: nestedTopic?.description,
-			openGraph: {
-				images: nestedTopic?.image.path || [],
-			},
-		};
-	}
-
-	return getTopicMetadata(topicSlug);
-}
-
 export async function generateMetadata(props: Props): Promise<Metadata> {
-	const params = await props.params;
-	const { topic, slug } = params;
-	if (!topic || !slug) return notFound();
-	const topicSlug = topic;
-	const isRootSlug = slug.length < 1;
+	const { topic, slug } = await props.params;
+	const resolved = await resolvePath(topic, slug ?? []);
 
-	if (isRootSlug) {
-		return getTopicMetadata(topicSlug);
-	} else {
-		const postSlug = slug[slug.length - 1];
-		return getPostOrTopicMetadata({ postSlug, topicSlug });
+	if (!resolved) {
+		return {
+			title: NOT_FOUND_TITLE,
+		};
 	}
+
+	const canonicalPath = `/${[topic, ...slug].join("/")}`;
+
+	if (resolved.type === "post") {
+		const { post } = resolved;
+		return buildContentMetadata({
+			title: post.title,
+			description: extractDescription(post.content),
+			image: post.featuredImage,
+			canonicalPath,
+			meta: post.metadata,
+			article: {
+				publishedTime: post.createdAt,
+				modifiedTime: post.updatedAt,
+			},
+		});
+	}
+
+	return buildContentMetadata({
+		title: resolved.topic.title,
+		description: resolved.topic.description,
+		image: resolved.topic.image?.path,
+		canonicalPath,
+		meta: resolved.topic.metadata,
+	});
 }
 
-export default function TopicLayout({
+export default async function SlugLayout({
 	children,
-}: {
+	params,
+}: Props & {
 	children: React.ReactNode;
-	params: Promise<{
-		topic: string;
-	}>;
 }) {
+	const { topic, slug } = await params;
+
+	// Валідація до першого flush (див. коментар у ../layout.tsx):
+	// неіснуючий пост, чужа тема в шляху чи зайва глибина → HTTP 404.
+	const resolved = await resolvePath(topic, slug ?? []);
+	if (!resolved) {
+		notFound();
+	}
+
 	return <>{children}</>;
 }

@@ -1,9 +1,8 @@
 import React from "react";
-import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
-import { getTopicBySlug } from "../../_lib/content-cache";
+import { notFound } from "next/navigation";
+import { resolvePath } from "../../_lib/resolve-path";
 import Page from "../../components/Page";
 import Post from "../../components/Post";
-import TopicList from "../../components/topics/TopicList";
 
 type Props = {
 	params: Promise<{
@@ -13,34 +12,30 @@ type Props = {
 };
 export default async function SlugPage(props: Props) {
 	const params = await props.params;
-	const topicSlug = params?.slug.length > 0 ? params?.slug[0] : params.topic;
-	const topic = await getTopicBySlug(topicSlug);
+	const resolved = await resolvePath(params.topic, params.slug ?? []);
 
-	const hasChildren = topic && topic?.children && topic.children.length > 0;
-	const isPage = topic && topic && topic.contentType === "page";
-	const isRootSlug = params.slug.length < 1;
+	if (!resolved) {
+		return notFound();
+	}
+
+	if (resolved.type === "page") {
+		return (
+			<Page
+				parentTopicSlug={params.topic}
+				topic={resolved.topic.slug}
+				slug=""
+			/>
+		);
+	}
+
+	const topicSlug =
+		params.slug.length > 1 ? params.slug[params.slug.length - 2] : undefined;
+
 	return (
-		<>
-			{hasChildren && isRootSlug ? (
-				<>
-					<CustomBreadcrumb
-						prevPages={[{ href: "/", label: "Головна" }]}
-						currentPage={{ label: topic?.title || "" }}
-					/>
-					<TopicList items={Promise.resolve(topic?.children || [])} />
-				</>
-			) : isPage ? (
-				<Page
-					parentTopicSlug={params.topic}
-					topic={params.slug[0]}
-					slug={params.slug[1]}
-				/>
-			) : (
-				<Post
-					parentTopicSlug={params.topic}
-					slug={params.slug[params.slug.length - 1]}
-				/>
-			)}
-		</>
+		<Post
+			parentTopicSlug={params.topic}
+			topicSlug={topicSlug}
+			slug={params.slug[params.slug.length - 1]}
+		/>
 	);
 }

@@ -1,16 +1,38 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { api } from "@/api";
 import { PageContent } from "@/components/page-blocks/page-content";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
 import { raleway } from "@/lib/fonts";
+import { NOT_FOUND_TITLE } from "@/utils/constants/generals";
+import { buildContentMetadata } from "../_lib/seo";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-export default async function PrivacyPolicyPage() {
-	const privacyPolicyPage = await api.pages.getOne({
+const getPrivacyPolicyPage = cache(() =>
+	api.pages.getOne({
 		slug: "privacy-policy",
+		query: { include: "metadata" },
 		tags: ["pages"],
+	}),
+);
+
+export async function generateMetadata(): Promise<Metadata> {
+	const page = await getPrivacyPolicyPage();
+
+	if (!page) {
+		return { title: NOT_FOUND_TITLE };
+	}
+	return buildContentMetadata({
+		title: page.title,
+		canonicalPath: "/privacy-policy",
+		meta: page.metadata,
 	});
+}
+
+export default async function PrivacyPolicyPage() {
+	const privacyPolicyPage = await getPrivacyPolicyPage();
 
 	if (!privacyPolicyPage) return notFound();
 

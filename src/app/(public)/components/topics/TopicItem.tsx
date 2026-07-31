@@ -15,7 +15,7 @@ export default function TopicItem({
 }: Props) {
 	return (
 		<div>
-			<Link href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug}>
+			<Link href={parentSlug ? `/${parentSlug}/${item.slug}` : `/${item.slug}`}>
 				<TopicImage
 					src={item.image.path}
 					alt={item.title}
@@ -24,7 +24,7 @@ export default function TopicItem({
 			</Link>
 			<div className="mt-4">
 				<Link
-					href={parentSlug ? `${parentSlug}/${item.slug}` : item.slug}
+					href={parentSlug ? `/${parentSlug}/${item.slug}` : `/${item.slug}`}
 					key={item.slug}
 				>
 					<h2 className="w-60 text-center text-sm uppercase">{item.title}</h2>

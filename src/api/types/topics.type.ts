@@ -4,7 +4,7 @@ import type { topicQuerySchema } from "@/utils/validators/query.validator";
 import type { CategoryResponse } from "./categories.type";
 import type { Image, Status } from "./general.type";
 import type { PageResponse } from "./pages.type";
-import type { PostResponse } from "./posts.type";
+import type { PostMetadataResponse, PostResponse } from "./posts.type";
 
 export type TopicResponse = {
 	id: string;
@@ -22,6 +22,7 @@ export type TopicResponse = {
 	users?: [];
 	parent?: TopicResponse;
 	children?: TopicResponse[];
+	metadata?: PostMetadataResponse | null;
 };
 
 export type TopicGetOneParams = {

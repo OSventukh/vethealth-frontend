@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { SITE_DESCRIPTION, SITE_TITLE } from "@/utils/constants/generals";
+import {
+	SITE_DESCRIPTION,
+	SITE_NAME,
+	SITE_TITLE,
+} from "@/utils/constants/generals";
 import "./globals.css";
 import Optimizer from "@/components/external-scripts/optimizer";
 import AdSense from "@/components/google/AdSense";
@@ -11,7 +15,12 @@ export const metadata: Metadata = {
 	title: SITE_TITLE,
 	description: SITE_DESCRIPTION,
 	metadataBase: new URL(process.env.CLIENT_URL!),
-	openGraph: { images: "/social/social.jpg" },
+	openGraph: {
+		type: "website",
+		siteName: SITE_NAME,
+		locale: "uk_UA",
+		images: "/social/social.jpg",
+	},
 };
 
 export default function RootLayout({

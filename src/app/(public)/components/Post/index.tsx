@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
-import { api } from "@/api";
-import { TAGS } from "@/api/constants/tags";
 import { ParsedContent } from "@/app/(dashboard)/admin/components/Editor/ParsedContent";
+import {
+	getPostBySlug,
+	getTopicBySlug,
+} from "@/app/(public)/_lib/content-cache";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
 import { raleway } from "@/lib/fonts";
 
@@ -17,15 +19,8 @@ export default async function Post({
 	topicSlug,
 }: Props) {
 	const [post, parentTopic] = await Promise.all([
-		api.posts.getOne({
-			slug,
-			tags: [TAGS.POSTS],
-		}),
-		api.topics.getOne({
-			slug: parentTopicSlug,
-			tags: [TAGS.TOPICS],
-			query: { include: "children" },
-		}),
+		getPostBySlug(slug),
+		getTopicBySlug(parentTopicSlug),
 	]);
 
 	if (!post || typeof post === "string") {
@@ -42,7 +37,7 @@ export default async function Post({
 				prevPages={[
 					{ href: "/", label: "Головна" },
 					{
-						href: "/" + parentTopic?.slug || "",
+						href: `/${parentTopic?.slug || ""}`,
 						label: parentTopic?.description || parentTopic?.title || "",
 					},
 					...(topicSlug
