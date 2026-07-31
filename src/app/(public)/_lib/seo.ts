@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
 import type { PostMetadataResponse } from "@/api/types/posts.type";
-import { SITE_NAME, SITE_TITLE } from "@/utils/constants/generals";
+import { SITE_HOST, SITE_NAME, SITE_TITLE } from "@/utils/constants/generals";
 
 export const SOCIAL_FALLBACK_IMAGE = "/social/social.jpg";
+
+export function getBaseUrl(): string {
+	return (process.env.CLIENT_URL || `https://${SITE_HOST}`).replace(/\/+$/, "");
+}
+
+export function absoluteUrl(path: string): string {
+	if (path.startsWith("http")) {
+		return path;
+	}
+	return `${getBaseUrl()}${path.startsWith("/") ? "" : "/"}${path}`;
+}
 
 const DESCRIPTION_LIMIT = 160;
 

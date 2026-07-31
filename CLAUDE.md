@@ -107,6 +107,22 @@ Pages (адмінка `admin/pages` + публічний рендеринг) п�
   searchParams — це навмисно). `/search` — `noindex, follow`.
 - Внутрішні посилання (`PostItem`, `TopicItem`) — **тільки абсолютні** (`/topic/slug`): відносні
   href без слеша створювали дублікати довільної глибини, які тепер 404.
+- **5xx ≠ 404 (`src/api/request.ts`)**: `get()` повертає `null` лише на 4xx; мережеві помилки та
+  5xx **кидаються** далі (падіння бекенду не має виглядати як масові 404 → деіндексація) і ловляться
+  root `app/error.tsx` (статус 500). Закешовані сторінки при лежачому бекенді далі віддаються з
+  Data Cache. Не повертати `get()` до «ніколи не кидає».
+- **JSON-LD** (`src/components/seo/json-ld.tsx` — data-блок, CSP-nonce не потрібен): Article у
+  `Post/index.tsx`, BreadcrumbList у `custom-breadcrumb.tsx`, WebSite+SearchAction+Organization на
+  головній, FAQPage у `faq-block.tsx`. Абсолютні URL — через `absoluteUrl()`/`getBaseUrl()` з
+  `_lib/seo.ts` (CLIENT_URL).
+- **Пагінація тем**: `?page=` у `[topic]/page.tsx` (`generateMetadata` дає self-canonical для
+  сторінок 2+; для `?category=` canonical лишається `/topic`), UI — `PostList/PaginationNav.tsx`
+  (справжні `<a>`). Без неї пости після 10-го в темі були недосяжні для краулерів.
+- **`app/llms.txt/route.ts`** — markdown-огляд для AI-краулерів (дані з `src/lib/content-index.ts`,
+  спільного з sitemap). `robots.ts` має окрему allow-групу AI-ботів (GPTBot, ClaudeBot,
+  PerplexityBot, Google-Extended тощо) — політика проєкту: контент відкритий для LLM-видач.
+- Favicon-набір і `site.webmanifest` з `public/favicon/` підключені через `icons`/`manifest`
+  у root layout.
 
 ### API client (`src/api`) — the most important subsystem
 - `routes.ts` builds endpoint URLs from `NEXT_PUBLIC_API_SERVER` || `API_SERVER`, and **throws at

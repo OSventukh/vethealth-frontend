@@ -77,6 +77,13 @@ type GetRequest = {
 	tags?: string[];
 };
 
+const logServerError = async (message: string) => {
+	if (typeof window === "undefined") {
+		const { default: logger } = await import("@/logger");
+		logger.error(message);
+	}
+};
+
 export const get = async <Response>({
 	url,
 	id,
@@ -85,30 +92,33 @@ export const get = async <Response>({
 	tags,
 	revalidate,
 }: GetRequest): Promise<Response | null> => {
+	const headers: HeadersInit = {
+		"Content-Type": "application/json",
+	};
+
+	const isAuthenticated = Boolean(token);
+
+	if (token) {
+		headers.Authorization = `Bearer ${token}`;
+	}
+
+	const effectiveRevalidate =
+		revalidate === undefined ? DEFAULT_REVALIDATE : revalidate;
+
+	const nextOptions = !isAuthenticated
+		? {
+				next: {
+					tags,
+					revalidate: effectiveRevalidate,
+				},
+			}
+		: {};
+
+	const target = url + (id ? `/${id}` : "") + (query || "");
+
+	let response: globalThis.Response;
 	try {
-		const headers: HeadersInit = {
-			"Content-Type": "application/json",
-		};
-
-		const isAuthenticated = Boolean(token);
-
-		if (token) {
-			headers.Authorization = `Bearer ${token}`;
-		}
-
-		const effectiveRevalidate =
-			revalidate === undefined ? DEFAULT_REVALIDATE : revalidate;
-
-		const nextOptions = !isAuthenticated
-			? {
-					next: {
-						tags,
-						revalidate: effectiveRevalidate,
-					},
-				}
-			: {};
-
-		const response = await fetch(url + (id ? `/${id}` : "") + (query || ""), {
+		response = await fetch(target, {
 			method: "GET",
 			headers,
 			cache:
@@ -117,16 +127,27 @@ export const get = async <Response>({
 					: "force-cache",
 			...nextOptions,
 		});
-		const result = (await parseResponse(response)) as Response;
+	} catch (error) {
+		// Мережева помилка ≠ «контенту немає»: якщо повернути null, кожен
+		// каллер зробить notFound() і падіння бекенду виглядатиме для
+		// краулерів як масові 404 (ризик деіндексації). Кидаємо далі —
+		// error boundary віддасть 500.
+		await logServerError(`GET ${target} network error: ${String(error)}`);
+		throw error;
+	}
 
-		if (!response.ok) {
-			return null;
+	const result = (await parseResponse(response)) as Response;
+
+	if (!response.ok) {
+		if (response.status >= 500) {
+			await logServerError(`GET ${target} responded ${response.status}`);
+			throw new Error(`API responded ${response.status}`);
 		}
-
-		return result;
-	} catch {
+		// 4xx — семантична відсутність контенту, каллери маплять на notFound()
 		return null;
 	}
+
+	return result;
 };
 
 type DeleteRequest = {

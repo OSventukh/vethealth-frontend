@@ -4,8 +4,15 @@ import {
 	getPostBySlug,
 	getTopicBySlug,
 } from "@/app/(public)/_lib/content-cache";
+import {
+	absoluteUrl,
+	extractDescription,
+	getBaseUrl,
+} from "@/app/(public)/_lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
 import { raleway } from "@/lib/fonts";
+import { SITE_NAME } from "@/utils/constants/generals";
 
 type Props = {
 	parentTopicSlug: string;
@@ -31,8 +38,41 @@ export default async function Post({
 		(topic) => topic.slug === topicSlug,
 	)?.title;
 
+	const canonicalPath = `/${[parentTopicSlug, topicSlug, slug]
+		.filter(Boolean)
+		.join("/")}`;
+	const description = extractDescription(post.content);
+	const articleJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "Article",
+		headline: post.title,
+		...(description ? { description } : {}),
+		...(post.featuredImage ? { image: absoluteUrl(post.featuredImage) } : {}),
+		datePublished: post.createdAt,
+		dateModified: post.updatedAt || post.createdAt,
+		inLanguage: "uk",
+		mainEntityOfPage: {
+			"@type": "WebPage",
+			"@id": absoluteUrl(canonicalPath),
+		},
+		author: {
+			"@type": "Organization",
+			name: SITE_NAME,
+			url: getBaseUrl(),
+		},
+		publisher: {
+			"@type": "Organization",
+			name: SITE_NAME,
+			logo: {
+				"@type": "ImageObject",
+				url: absoluteUrl("/favicon/android-chrome-512x512.png"),
+			},
+		},
+	};
+
 	return (
 		<>
+			<JsonLd data={articleJsonLd} />
 			<CustomBreadcrumb
 				prevPages={[
 					{ href: "/", label: "Головна" },
