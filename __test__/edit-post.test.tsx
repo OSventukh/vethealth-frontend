@@ -29,6 +29,9 @@ jest.mock(
 		deletePostAction: jest.fn(),
 	}),
 );
+jest.mock("../src/app/(dashboard)/admin/actions/generate-seo.action", () => ({
+	generateSeoAction: jest.fn().mockResolvedValue({ success: true }),
+}));
 jest.mock("next/navigation", () => ({
 	useRouter: () => ({ replace: jest.fn(), push: jest.fn() }),
 }));

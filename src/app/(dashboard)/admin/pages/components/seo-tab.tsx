@@ -1,7 +1,11 @@
 "use client";
+import type { GeneratedSeoMetadata } from "@/app/(dashboard)/admin/actions/generate-seo.action";
+import { GenerateSeoButton } from "@/app/(dashboard)/admin/components/generate-seo-button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { extractPageBlocksText } from "@/lib/content-text";
+import type { PageBlock } from "@/lib/page-builder/types";
 import { Field } from "./fields";
 import { ImageField } from "./image-field";
 
@@ -17,15 +21,49 @@ export interface PageMetadataState {
 interface Props {
 	pageTitle: string;
 	slug: string;
+	blocks: PageBlock[];
 	metadata: PageMetadataState;
 	onChange: (patch: Partial<PageMetadataState>) => void;
 }
 
-export function SeoTab({ pageTitle, slug, metadata, onChange }: Props) {
+export function SeoTab({ pageTitle, slug, blocks, metadata, onChange }: Props) {
 	const previewTitle = metadata.metaTitle || pageTitle || "Заголовок сторінки";
+
+	// Заповнює лише порожні поля: ручні значення не перетираються.
+	const applyGenerated = (generated: GeneratedSeoMetadata): number => {
+		const patch: Partial<PageMetadataState> = {};
+		if (!metadata.metaTitle.trim() && generated.metaTitle?.trim()) {
+			patch.metaTitle = generated.metaTitle.trim();
+		}
+		if (!metadata.metaDescription.trim() && generated.metaDescription?.trim()) {
+			patch.metaDescription = generated.metaDescription.trim();
+		}
+		const applied = Object.keys(patch).length;
+		if (applied > 0) {
+			onChange(patch);
+		}
+		return applied;
+	};
 
 	return (
 		<div className="flex max-w-2xl flex-col gap-4">
+			<div className="border-border flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-white p-4 shadow-sm">
+				<div>
+					<div className="text-sm font-bold">ШІ-заповнення мета-полів</div>
+					<p className="text-muted-foreground text-sm">
+						Згенерує порожні Meta Title і Meta Description з контенту сторінки.
+					</p>
+				</div>
+				<GenerateSeoButton
+					getInput={() => ({
+						title: pageTitle,
+						text: extractPageBlocksText(blocks),
+						entityType: "page" as const,
+					})}
+					onGenerated={applyGenerated}
+				/>
+			</div>
+
 			<div className="border-border rounded-xl border bg-white p-4 shadow-sm">
 				<div className="mb-3 text-sm font-bold">Превʼю в Google</div>
 				<div className="border-border rounded-lg border p-4">

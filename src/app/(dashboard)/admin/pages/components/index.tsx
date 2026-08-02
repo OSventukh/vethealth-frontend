@@ -328,6 +328,7 @@ export default function EditPage({ initialData, editMode }: Props) {
 						<SeoTab
 							pageTitle={title}
 							slug={slug}
+							blocks={blocks}
 							metadata={metadata}
 							onChange={(patch) =>
 								setMetadata((current) => ({ ...current, ...patch }))

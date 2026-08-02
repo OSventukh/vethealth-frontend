@@ -124,6 +124,23 @@ Pages (адмінка `admin/pages` + публічний рендеринг) п�
 - Favicon-набір і `site.webmanifest` з `public/favicon/` підключені через `icons`/`manifest`
   у root layout.
 
+### ШІ-генерація SEO-мета в адмінці (2026-08)
+
+Кнопка **«Заповнити з ШІ»** в SEO-вкладках постів і сторінок генерує metaTitle/metaDescription/
+metaKeywords/ogTitle/ogDescription з тексту контенту:
+- `admin/components/generate-seo-button.tsx` (спільна кнопка) + `admin/actions/generate-seo.action.ts`
+  (server action → `POST /ai/seo-metadata` бекенда з bearer-токеном). Бекенд-провайдер/модель
+  налаштовуються env-ами бекенда (`AI_PROVIDER`: anthropic|openai|google); без API-ключа бекенд
+  віддає 503 і юзер бачить тост «ШІ не налаштовано».
+- Заповнюються **лише порожні** поля форми (ручні значення не перетираються); нічого не
+  автозберігається — редактор переглядає і тисне «Зберегти».
+- Текст витягується `src/lib/content-text.ts`: `extractLexicalText` (пости; повний текст, не
+  160-символьний `extractDescription` з `(public)/_lib/seo.ts`) і `extractPageBlocksText`
+  (сторінки; рекурсивно збирає рядкові поля блоків, пропускає url-подібні ключі).
+- **Тести, що монтують редактори, мають мокати `generate-seo.action`** (див. `edit-post.test.tsx`,
+  `edit-page-builder.test.tsx`): без мока jest падає на ESM-залежності iron-session
+  (`uncrypto`) через ланцюжок імпортів кнопка → action → `auth()`.
+
 ### API client (`src/api`) — the most important subsystem
 - `routes.ts` builds endpoint URLs from `NEXT_PUBLIC_API_SERVER` || `API_SERVER`, and **throws at
   import time if neither is set**.
@@ -131,8 +148,8 @@ Pages (адмінка `admin/pages` + публічний рендеринг) п�
   - **Caching is decided by auth**: unauthenticated `get` uses `cache: "force-cache"` plus Next
     `{ next: { tags, revalidate } }` (ISR). Any request with a `token`, or `revalidate: false`,
     uses `cache: "no-store"`. Don't pass a token to data you want cached.
-  - `get` **never throws** — it catches everything and returns `null` on error or non-OK. Callers
-    must null-check. `post` / `remove` / `sendFile` **do throw** on non-OK.
+  - `get` returns `null` on 4xx (callers must null-check) but **throws** on network errors and 5xx
+    (see "5xx ≠ 404" in the SEO layer section). `post` / `remove` / `sendFile` **do throw** on non-OK.
   - All `post` requests hardcode `x-lang: "ua"` (the backend resolves i18n from this header).
 - `index.ts` exposes the typed `api.*` facade (`api.posts.getMany`, `api.auth.login`, …) consumed
   by Server Components and server actions. `api.search` short-circuits to `null` for queries under
