@@ -3,7 +3,7 @@
  * richtext-блок, пікер додає нові блоки, SEO-таб показує метадані,
  * панель публікації присутня завжди.
  */
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import EditPage from "@/app/(dashboard)/admin/pages/components";
 import type { PageResponse } from "@/api/types/pages.type";
@@ -88,5 +88,51 @@ describe("EditPage (конструктор сторінок)", () => {
 		expect(screen.getByText("Превʼю в Google")).toBeInTheDocument();
 		expect(screen.getByDisplayValue("Мета заголовок")).toBeInTheDocument();
 		expect(screen.getByText("Індексація")).toBeInTheDocument();
+	});
+
+	it("ШІ-генерація не перетирає поле, заповнене вручну під час генерації", async () => {
+		const { generateSeoAction } = jest.requireMock(
+			"../src/app/(dashboard)/admin/actions/generate-seo.action",
+		) as { generateSeoAction: jest.Mock };
+		let resolveGeneration: (value: unknown) => void = () => {};
+		generateSeoAction.mockImplementationOnce(
+			() =>
+				new Promise((resolve) => {
+					resolveGeneration = resolve;
+				}),
+		);
+
+		const emptyMetaPage = {
+			...page,
+			metadata: { ...page.metadata!, metaTitle: null },
+		};
+		render(<EditPage initialData={emptyMetaPage} editMode />);
+		fireEvent.click(screen.getByText("SEO та метадані"));
+
+		// Старт генерації, поки Meta Title порожній…
+		fireEvent.click(screen.getByText("Заповнити з ШІ"));
+		// …і поки ШІ «думає», редактор вводить заголовок вручну.
+		const metaTitleInput = screen.getByPlaceholderText("Про клініку");
+		fireEvent.change(metaTitleInput, {
+			target: { value: "Ручний заголовок" },
+		});
+
+		resolveGeneration({
+			success: true,
+			data: {
+				metaTitle: "ШІ заголовок",
+				metaDescription: "ШІ опис",
+				metaKeywords: "ключі",
+				ogTitle: "ОГ",
+				ogDescription: "ОГ опис",
+			},
+		});
+
+		// Порожній Meta Description заповнився, а ручний Meta Title — вцілів.
+		await waitFor(() => {
+			expect(screen.getByDisplayValue("ШІ опис")).toBeInTheDocument();
+		});
+		expect(screen.getByDisplayValue("Ручний заголовок")).toBeInTheDocument();
+		expect(screen.queryByDisplayValue("ШІ заголовок")).not.toBeInTheDocument();
 	});
 });

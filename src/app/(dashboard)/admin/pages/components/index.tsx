@@ -10,8 +10,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import type { PageResponse } from "@/api/types/pages.type";
+import type { GeneratedSeoMetadata } from "@/app/(dashboard)/admin/actions/generate-seo.action";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { createDefaultBlockData } from "@/lib/page-builder/defaults";
@@ -74,6 +75,31 @@ export default function EditPage({ initialData, editMode }: Props) {
 
 	const router = useRouter();
 	const { toast } = useToast();
+
+	// Актуальні метадані для колбека ШІ-генерації: колбек завершується
+	// асинхронно (і SeoTab може встигнути розмонтуватися при перемиканні
+	// вкладок), тому перевіряти порожність полів треба по ref, а не по
+	// значенню, захопленому замиканням на момент кліку.
+	const metadataRef = useRef(metadata);
+	metadataRef.current = metadata;
+
+	// Заповнює лише порожні поля: ручні значення редактора не перетираються,
+	// навіть якщо їх ввели, поки тривала генерація.
+	const applyGeneratedMetadata = (generated: GeneratedSeoMetadata): number => {
+		const current = metadataRef.current;
+		const patch: Partial<PageMetadataState> = {};
+		if (!current.metaTitle.trim() && generated.metaTitle?.trim()) {
+			patch.metaTitle = generated.metaTitle.trim();
+		}
+		if (!current.metaDescription.trim() && generated.metaDescription?.trim()) {
+			patch.metaDescription = generated.metaDescription.trim();
+		}
+		const applied = Object.keys(patch).length;
+		if (applied > 0) {
+			setMetadata((prev) => ({ ...prev, ...patch }));
+		}
+		return applied;
+	};
 
 	const addBlock = (index: number, type: PageBlockType) => {
 		const block = {
@@ -333,6 +359,7 @@ export default function EditPage({ initialData, editMode }: Props) {
 							onChange={(patch) =>
 								setMetadata((current) => ({ ...current, ...patch }))
 							}
+							onApplyGenerated={applyGeneratedMetadata}
 						/>
 					</div>
 					<aside className="flex w-full shrink-0 flex-col gap-4 self-start lg:w-80">

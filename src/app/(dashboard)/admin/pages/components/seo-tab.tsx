@@ -24,26 +24,24 @@ interface Props {
 	blocks: PageBlock[];
 	metadata: PageMetadataState;
 	onChange: (patch: Partial<PageMetadataState>) => void;
+	/**
+	 * Застосовує згенеровані ШІ поля. Живе в батьківському EditPage (там
+	 * порожність полів перевіряється по актуальному стану через ref) — інакше
+	 * колбек, захоплений на момент кліку, перетер би значення, введені вручну
+	 * під час генерації.
+	 */
+	onApplyGenerated: (generated: GeneratedSeoMetadata) => number;
 }
 
-export function SeoTab({ pageTitle, slug, blocks, metadata, onChange }: Props) {
+export function SeoTab({
+	pageTitle,
+	slug,
+	blocks,
+	metadata,
+	onChange,
+	onApplyGenerated,
+}: Props) {
 	const previewTitle = metadata.metaTitle || pageTitle || "Заголовок сторінки";
-
-	// Заповнює лише порожні поля: ручні значення не перетираються.
-	const applyGenerated = (generated: GeneratedSeoMetadata): number => {
-		const patch: Partial<PageMetadataState> = {};
-		if (!metadata.metaTitle.trim() && generated.metaTitle?.trim()) {
-			patch.metaTitle = generated.metaTitle.trim();
-		}
-		if (!metadata.metaDescription.trim() && generated.metaDescription?.trim()) {
-			patch.metaDescription = generated.metaDescription.trim();
-		}
-		const applied = Object.keys(patch).length;
-		if (applied > 0) {
-			onChange(patch);
-		}
-		return applied;
-	};
 
 	return (
 		<div className="flex max-w-2xl flex-col gap-4">
@@ -60,7 +58,7 @@ export function SeoTab({ pageTitle, slug, blocks, metadata, onChange }: Props) {
 						text: extractPageBlocksText(blocks),
 						entityType: "page" as const,
 					})}
-					onGenerated={applyGenerated}
+					onGenerated={onApplyGenerated}
 				/>
 			</div>
 
