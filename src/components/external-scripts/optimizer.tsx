@@ -11,7 +11,7 @@ export default function Optimizer() {
 		<>
 			<Script
 				type="text/javascript"
-				src="https://optimize.vethealth.com.ua/comp/5WjEAtrEuS.js"
+				src="https://optimize.vethealth.com.ua/optimize.js?code=5WjEAtrEuS"
 				strategy="lazyOnload"
 			/>
 		</>
