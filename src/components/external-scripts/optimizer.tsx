@@ -15,9 +15,7 @@ export default function Optimizer() {
 		<>
 			<link rel="preconnect" href={CRS_URL} crossOrigin="anonymous" />
 			<Script
-				src="/js/optimize.js"
-				data-code="Eja4hwk8eP"
-				data-crs-url={CRS_URL}
+				src="/js/optimize.js?code=Eja4hwk8eP"
 				strategy="lazyOnload"
 			/>
 		</>
