@@ -11,6 +11,7 @@ export default function Home() {
 	const topics = api.topics.getMany({
 		tags: [TAGS.TOPICS],
 	});
+	
 	return (
 		<>
 			<Header />
