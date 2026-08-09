@@ -36,14 +36,17 @@ type TopicLayoutProps = {
 		topic: string;
 	}>;
 };
-export default async function TopicLayout(props: TopicLayoutProps) {
-	const params = await props.params;
-
+export default function TopicLayout(props: TopicLayoutProps) {
 	const { children } = props;
+
+	// Forwarded as a promise, not awaited: awaiting `params` here would make the
+	// whole layout request-time and keep the site chrome out of the static shell.
+	// Navigation awaits it inside its own <Suspense>.
+	const topic = props.params.then((params) => params.topic);
 
 	return (
 		<>
-			<Header topic={params.topic} />
+			<Header topic={topic} />
 			<main>
 				<div className="container">{children}</div>
 			</main>

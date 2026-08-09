@@ -3,10 +3,15 @@ import DesktopNavigation from "./Desktop";
 import MobileNavigation from "./Mobile";
 import SearchBar from "./Search";
 
-export default async function Navigation({ topic }: { topic?: string }) {
-	const categories = await getCategoriesByTopic(topic);
+export default async function Navigation({
+	topic,
+}: {
+	topic?: string | Promise<string>;
+}) {
+	const topicSlug = await topic;
+	const categories = await getCategoriesByTopic(topicSlug);
 
-	const isCategories = topic && categories && categories?.count > 0;
+	const isCategories = topicSlug && categories && categories?.count > 0;
 
 	return (
 		<div className="flex items-center">
