@@ -3,7 +3,11 @@ import { Suspense } from "react";
 import Logo from "@/components/logo";
 import Navigation from "../Navigation";
 
-export default function Header({ topic }: { topic?: string | Promise<string> }) {
+export default function Header({
+	topic,
+}: {
+	topic?: string | Promise<string>;
+}) {
 	return (
 		<header className="max-h-40 bg-[rgb(180,239,232)]">
 			<div className="container flex justify-between gap-8 py-8">

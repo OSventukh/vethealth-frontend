@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import {
 	Card,
 	CardContent,
@@ -12,6 +13,10 @@ type Props = {
 };
 
 export default async function VisitorsRealtime({ ...props }: Props) {
+	// Live analytics for the signed-in admin: marks this card request-time so the
+	// report — and the chart it renders — is never pulled into the prerendered shell.
+	await connection();
+
 	const [error, realtime] = await dataRealtimeReport({
 		dimensions: [{ name: "country" }],
 		metrics: [{ name: "activeUsers" }],

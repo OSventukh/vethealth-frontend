@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { format, parse } from "date-fns";
 import { uk } from "date-fns/locale";
 import dynamic from "next/dynamic";
@@ -25,6 +26,10 @@ type Props = {
 	className?: string;
 };
 export default async function VisitorsByDate({ ...props }: Props) {
+	// Live analytics for the signed-in admin: marks this card request-time so the
+	// report — and the chart it renders — is never pulled into the prerendered shell.
+	await connection();
+
 	const [error, data] = await dataClientReport({
 		dimensions: [{ name: "date" }],
 		metrics: [
