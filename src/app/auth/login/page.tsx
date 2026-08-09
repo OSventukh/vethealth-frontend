@@ -1,19 +1,23 @@
 import { Suspense } from "react";
 import SignIn from "@/app/auth/components/SignIn";
 import Forgot from "../components/Forgot";
+import AuthCardFallback from "../components/ui/AuthCardFallback";
 
 type Props = {
 	searchParams: Promise<{
 		forgotPassword?: string;
 	}>;
 };
-export default async function LoginPage(props: Props) {
-	const searchParams = await props.searchParams;
-	const { forgotPassword } = searchParams;
+
+async function LoginForm({ searchParams }: Props) {
+	const { forgotPassword } = await searchParams;
+	return forgotPassword ? <Forgot /> : <SignIn />;
+}
+
+export default function LoginPage(props: Props) {
 	return (
-		<Suspense>
-			{!forgotPassword && <SignIn />}
-			{forgotPassword && <Forgot />}
+		<Suspense fallback={<AuthCardFallback />}>
+			<LoginForm searchParams={props.searchParams} />
 		</Suspense>
 	);
 }
