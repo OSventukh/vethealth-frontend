@@ -4,6 +4,13 @@ import Sidebar from "@/app/(dashboard)/admin/components/layout/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { auth } from "@/lib/session/auth";
 
+// instant = false: kept on purpose. Every route under this layout sits behind
+// the same session gate below, so there is no useful static shell to prerender —
+// wrapping the gate in <Suspense> would only render admin chrome to visitors who
+// are about to be redirected. Relocating the check to src/proxy.ts would be an
+// architectural change, not a Cache Components one.
+export const instant = false;
+
 export default async function DashboardLayout({
 	children,
 }: {

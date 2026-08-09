@@ -1,8 +1,11 @@
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
 	children: React.ReactNode;
-	title: string;
+	// Omitted by AuthCardFallback: which form is shown depends on request data,
+	// so the prerendered shell can't know the title yet.
+	title?: string;
 };
 
 export default function AuthCard({ children, title }: Props) {
@@ -19,7 +22,11 @@ export default function AuthCard({ children, title }: Props) {
 							className="w-12"
 							loading="eager"
 						/>
-						<h1 className="text-xl font-light uppercase">{title}</h1>
+						{title ? (
+							<h1 className="text-xl font-light uppercase">{title}</h1>
+						) : (
+							<Skeleton className="h-7 w-48" />
+						)}
 					</div>
 					{children}
 				</div>

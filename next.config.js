@@ -5,6 +5,8 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: "standalone",
+	 	cacheComponents: true,
+		partialPrefetching: true,
 	experimental: {
 		// Inline the (small) global CSS into the HTML — removes a
 		// render-blocking request on the mobile critical path.

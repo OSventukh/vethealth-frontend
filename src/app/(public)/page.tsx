@@ -23,8 +23,7 @@ export default function Home() {
 		query: { size: 100 },
 		tags: [TAGS.TOPICS],
 	});
-	const base = getBaseUrl();
-
+	
 	return (
 		<>
 			<JsonLd

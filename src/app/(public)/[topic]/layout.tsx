@@ -38,24 +38,17 @@ type TopicLayoutProps = {
 		topic: string;
 	}>;
 };
-export default async function TopicLayout(props: TopicLayoutProps) {
-	const params = await props.params;
-
-	// Валідація тут, а не в page: layout рендериться до першого flush,
-	// тож notFound() дає справжній HTTP 404. notFound() зі стрімленої
-	// сторінки (за Suspense-межею loading.tsx) віддає 200 — soft-404.
-	// Підтеми за кореневим URL (topic.parent) — теж 404: їхній контент
-	// живе за повним шляхом /батько/підтема.
-	const topic = await getTopicBySlug(params.topic);
-	if (!topic || topic.parent) {
-		notFound();
-	}
-
+export default function TopicLayout(props: TopicLayoutProps) {
 	const { children } = props;
+
+	// Forwarded as a promise, not awaited: awaiting `params` here would make the
+	// whole layout request-time and keep the site chrome out of the static shell.
+	// Navigation awaits it inside its own <Suspense>.
+	const topic = props.params.then((params) => params.topic);
 
 	return (
 		<>
-			<Header topic={params.topic} />
+			<Header topic={topic} />
 			<main>
 				<div className="container">{children}</div>
 			</main>
