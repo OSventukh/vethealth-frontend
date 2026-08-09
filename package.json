@@ -2,7 +2,7 @@
   "name": "frontend-new",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@11.0.8",
+  "packageManager": "pnpm@11.20.0",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -37,7 +37,7 @@
     "iron-session": "^8.0.4",
     "lexical": "0.47.0",
     "lucide-react": "^0.577.0",
-    "next": "16.2.6",
+    "next": "16.3.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-hook-form": "^7.72.0",
@@ -72,7 +72,7 @@
     "postcss": "^8",
     "shadcn": "^4.1.0",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5"
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "@types/react": "19.2.14",
