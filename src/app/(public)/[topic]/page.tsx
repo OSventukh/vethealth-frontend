@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import type { CategoryResponse } from "@/api/types/categories.type";
 import type { TopicResponse } from "@/api/types/topics.type";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
+import { SITE_TITLE } from "@/utils/constants/generals";
 import { getCategoriesByTopic, getTopicBySlug } from "../_lib/content-cache";
 import Description from "../components/Description";
 import Page from "../components/Page";
@@ -13,6 +15,7 @@ import TopicChildrenList from "../components/topics/TopicChildrenList";
 
 type SearchParams = Promise<{
 	category?: string;
+	page?: string;
 }>;
 
 type Props = {
@@ -22,6 +25,37 @@ type Props = {
 	}>;
 	searchParams: SearchParams;
 };
+
+function parsePage(value?: string): number {
+	const parsed = Number.parseInt(value ?? "1", 10);
+	return Number.isNaN(parsed) || parsed < 1 ? 1 : parsed;
+}
+
+// Сторінки 2+ мають self-canonical (?page=N), інакше canonical з layout
+// (/topic) склеїв би всю пагінацію в одну сторінку і Google бачив би
+// лише перші 10 постів. Для ?category= лишається canonical /topic.
+export async function generateMetadata(props: Props): Promise<Metadata> {
+	const [params, searchParams] = await Promise.all([
+		props.params,
+		props.searchParams,
+	]);
+	const page = parsePage(searchParams.page);
+
+	if (searchParams.category || page <= 1) {
+		return {};
+	}
+
+	const topic = await getTopicBySlug(params.topic);
+	if (!topic) {
+		return {};
+	}
+	return {
+		title: `${topic.title} — сторінка ${page} | ${SITE_TITLE}`,
+		alternates: {
+			canonical: `/${params.topic}?page=${page}`,
+		},
+	};
+}
 
 function findCategoryBySlug(
 	slug: string,
@@ -87,8 +121,8 @@ async function FilteredPostList({
 	topic: string;
 	searchParams: SearchParams;
 }) {
-	const { category } = await searchParams;
-	return <PostList topic={topic} category={category} />;
+	const { category, page } = await searchParams;
+	return <PostList topic={topic} category={category} page={parsePage(page)} />;
 }
 
 export default async function TopicPage(props: Props) {

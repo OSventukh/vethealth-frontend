@@ -12,7 +12,20 @@ export const metadata: Metadata = {
 	title: SITE_TITLE,
 	description: SITE_DESCRIPTION,
 	metadataBase: new URL(process.env.CLIENT_URL!),
-	openGraph: { images: "/social/social.jpg" },
+	openGraph: {
+		type: "website",
+		siteName: SITE_NAME,
+		locale: "uk_UA",
+		images: "/social/social.jpg",
+	},
+	icons: {
+		icon: [
+			{ url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+			{ url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+		],
+		apple: "/favicon/apple-touch-icon.png",
+	},
+	manifest: "/favicon/site.webmanifest",
 };
 
 export default function RootLayout({

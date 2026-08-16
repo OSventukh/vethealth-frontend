@@ -1,10 +1,21 @@
+import type { Metadata } from "next";
 import React from "react";
 import { api } from "@/api";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
+import { SITE_TITLE } from "@/utils/constants/generals";
 import Description from "../components/Description";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import PostItem from "../components/Post/PostItem";
+
+export const metadata: Metadata = {
+	title: `Пошук | ${SITE_TITLE}`,
+	// Сторінки пошуку з довільним ?query= не мають потрапляти в індекс.
+	robots: {
+		index: false,
+		follow: true,
+	},
+};
 
 type Props = {
 	searchParams: Promise<{

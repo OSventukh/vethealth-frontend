@@ -38,7 +38,7 @@ export default async function Page({ topic, parentTopicSlug, slug }: Props) {
 						prevPages={[
 							{ href: "/", label: "Головна" },
 							{
-								href: "/" + parentTopic?.slug || "",
+								href: `/${parentTopic?.slug || ""}`,
 								label: parentTopic?.description || parentTopic?.title || "",
 							},
 						]}

@@ -1,3 +1,4 @@
+import { JsonLd } from "@/components/seo/json-ld";
 import {
 	Accordion,
 	AccordionContent,
@@ -11,6 +12,20 @@ export function FaqBlock({ data }: { data: FaqBlockData }) {
 	if (!data.items.length) return null;
 	return (
 		<section className="mx-auto max-w-3xl py-10">
+			<JsonLd
+				data={{
+					"@context": "https://schema.org",
+					"@type": "FAQPage",
+					mainEntity: data.items.map((item) => ({
+						"@type": "Question",
+						name: item.question,
+						acceptedAnswer: {
+							"@type": "Answer",
+							text: item.answer,
+						},
+					})),
+				}}
+			/>
 			{data.title && (
 				<h2
 					className={`${raleway.className} mb-6 text-center text-2xl font-bold md:text-3xl`}

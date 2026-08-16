@@ -1,6 +1,8 @@
 import Link from "next/link";
 import React from "react";
 
+import { absoluteUrl } from "@/app/(public)/_lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -15,8 +17,27 @@ type Props = {
 };
 
 export default function CustomBreadcrumb({ prevPages, currentPage }: Props) {
+	const breadcrumbJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "BreadcrumbList",
+		itemListElement: [
+			...prevPages.map((item, index) => ({
+				"@type": "ListItem",
+				position: index + 1,
+				name: item.label,
+				item: absoluteUrl(item.href),
+			})),
+			{
+				"@type": "ListItem",
+				position: prevPages.length + 1,
+				name: currentPage.label,
+			},
+		],
+	};
+
 	return (
 		<div className="mt-4 flex lg:justify-center">
+			<JsonLd data={breadcrumbJsonLd} />
 			<Breadcrumb>
 				<BreadcrumbList>
 					{prevPages.map((item, index) => (

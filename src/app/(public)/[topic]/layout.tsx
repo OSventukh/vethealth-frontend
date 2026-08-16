@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { NOT_FOUND_TITLE, SITE_TITLE } from "@/utils/constants/generals";
+import { notFound } from "next/navigation";
+import { NOT_FOUND_TITLE } from "@/utils/constants/generals";
 import { getTopicBySlug } from "../_lib/content-cache";
+import { buildContentMetadata } from "../_lib/seo";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
@@ -16,18 +18,18 @@ export async function generateMetadata(
 	const params = await props.params;
 	const topic = await getTopicBySlug(params.topic);
 
-	if (typeof topic === "string") {
+	if (!topic || topic.parent) {
 		return {
 			title: NOT_FOUND_TITLE,
 		};
 	}
-	return {
-		title: `${topic?.title} | ${SITE_TITLE}`,
-		description: topic?.description,
-		openGraph: {
-			images: topic?.image.path || [],
-		},
-	};
+	return buildContentMetadata({
+		title: topic.title,
+		description: topic.description,
+		image: topic.image?.path,
+		canonicalPath: `/${topic.slug}`,
+		meta: topic.metadata,
+	});
 }
 
 type TopicLayoutProps = {

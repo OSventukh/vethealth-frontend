@@ -17,7 +17,7 @@ export default function PostItem({
 }: Props) {
 	return (
 		<article className="border-border w-full overflow-hidden rounded-xl border-[1px] bg-white pb-4 transition-shadow hover:shadow-md">
-			<Link href={`${topic}/${post.slug}`} className="block h-full w-full">
+			<Link href={`/${topic}/${post.slug}`} className="block h-full w-full">
 				{post.featuredImage && (
 					<Image
 						src={post.featuredImage}

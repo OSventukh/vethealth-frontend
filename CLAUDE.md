@@ -79,6 +79,76 @@ Pages (адмінка `admin/pages` + публічний рендеринг) п�
 - Бекенд-міграція `PagesBuilderContent` загорнула наявні сторінки в richtext-блок і розширила
   `pages.content` до MEDIUMTEXT; `?include=metadata` дозволено в `PageQueryDto`.
 
+### SEO layer (2026-07)
+
+Публічні роути мають окремий SEO-шар у `src/app/(public)/_lib/`:
+- **`resolve-path.ts`** — єдине джерело істини «чи існує URL»: валідує ланцюжок тем
+  (кожен сегмент, крім останнього, — тема; parent→child збігається з URL, перша тема коренева)
+  і належність поста останній темі шляху. Повертає `{type: "post"|"page", …}` або `null`.
+  Особливий випадок — **hub-пости**: пост зі слагом, що збігається зі слагом однойменної підтеми
+  (`/drugs/antiparasitic-drugs`) — приймається, якщо пост прив'язаний або до батьківської, або до
+  однойменної теми. Пости без тем взагалі — пропускаються (толерантність до старих даних).
+- **`seo.ts`** — `buildContentMetadata()` (пріоритет: SEO-поля з адмінської `metadata`-сутності →
+  фолбеки з контенту; завжди ставить canonical, og:images, siteName/locale) та
+  `extractDescription()` (текст з Lexical, обрізаний до ~160 символів).
+- **Справжні 404**: валідація викликається в **layout-компонентах** (`[topic]/layout.tsx`,
+  `[topic]/[...slug]/layout.tsx`), бо layout рендериться до першого flush — `notFound()` звідти дає
+  реальний HTTP 404. `notFound()` зі стрімленої сторінки (за межею loading.tsx) віддає 200 (soft-404).
+  **Тому `[topic]/loading.tsx` видалено і його не можна повертати** — він створює Suspense-межу
+  навколо всього сегмента `[...slug]`, і статус фіксується як 200 до валідації.
+  `[...slug]/loading.tsx` лишився — він нижче валідуючого layout і безпечний.
+- **`content-cache.ts`**: include-параметри зафіксовані (`children,parent,metadata` для тем,
+  `topics,metadata` для постів) — однакові аргументи в усіх викликах = один запит на рендер
+  (React.cache). Не міняти include в одному місці без інших.
+- **`app/sitemap.ts`** — `force-dynamic`, але всі фетчі йдуть через Data Cache (force-cache + tags),
+  тож оновлюється одразу після `revalidateTag` з адмінки. Hub-пости не дублюють слаг у URL.
+  `app/robots.ts` віддає `Sitemap:` лише в production.
+- Canonical на сторінках тем ігнорує `?category=` (metadata генерується в layout, який не бачить
+  searchParams — це навмисно). `/search` — `noindex, follow`.
+- Внутрішні посилання (`PostItem`, `TopicItem`) — **тільки абсолютні** (`/topic/slug`): відносні
+  href без слеша створювали дублікати довільної глибини, які тепер 404.
+- **5xx ≠ 404 (`src/api/request.ts`)**: `get()` повертає `null` лише на 4xx; мережеві помилки та
+  5xx **кидаються** далі (падіння бекенду не має виглядати як масові 404 → деіндексація) і ловляться
+  root `app/error.tsx` (статус 500). Закешовані сторінки при лежачому бекенді далі віддаються з
+  Data Cache. Не повертати `get()` до «ніколи не кидає».
+- **JSON-LD** (`src/components/seo/json-ld.tsx` — data-блок, CSP-nonce не потрібен): Article у
+  `Post/index.tsx`, BreadcrumbList у `custom-breadcrumb.tsx`, WebSite+SearchAction+Organization на
+  головній, FAQPage у `faq-block.tsx`. Абсолютні URL — через `absoluteUrl()`/`getBaseUrl()` з
+  `_lib/seo.ts` (CLIENT_URL).
+- **Пагінація тем**: `?page=` у `[topic]/page.tsx` (`generateMetadata` дає self-canonical для
+  сторінок 2+; для `?category=` canonical лишається `/topic`), UI — `PostList/PaginationNav.tsx`
+  (справжні `<a>`). Без неї пости після 10-го в темі були недосяжні для краулерів.
+- **`app/llms.txt/route.ts`** — markdown-огляд для AI-краулерів (дані з `src/lib/content-index.ts`,
+  спільного з sitemap). `robots.ts` має окрему allow-групу AI-ботів (GPTBot, ClaudeBot,
+  PerplexityBot, Google-Extended тощо) — політика проєкту: контент відкритий для LLM-видач.
+- Favicon-набір і `site.webmanifest` з `public/favicon/` підключені через `icons`/`manifest`
+  у root layout.
+
+### ШІ-генерація SEO-мета в адмінці (2026-08)
+
+Кнопка **«Заповнити з ШІ»** в SEO-вкладках постів і сторінок генерує metaTitle/metaDescription/
+metaKeywords/ogTitle/ogDescription з тексту контенту:
+- `admin/components/generate-seo-button.tsx` (спільна кнопка) + `admin/actions/generate-seo.action.ts`
+  (server action → `POST /ai/seo-metadata` бекенда з bearer-токеном). Бекенд-провайдер/модель
+  налаштовуються env-ами бекенда (`AI_PROVIDER`: anthropic|openai|google); без API-ключа бекенд
+  віддає 503 і юзер бачить тост «ШІ не налаштовано».
+- Заповнюються **лише порожні** поля форми (ручні значення не перетираються); нічого не
+  автозберігається — редактор переглядає і тисне «Зберегти».
+- **Перевірка порожності — по актуальному стану на момент завершення генерації, не по
+  замиканню з моменту кліку** (інакше значення, введене вручну під час генерації,
+  перетирається): у постів це `form.getValues()` всередині `applyGenerated`; у сторінок —
+  колбек `applyGeneratedMetadata` живе в батьківському `EditPage` (`pages/components/index.tsx`)
+  і читає `metadataRef` (сам `SeoTab` розмонтовується при перемиканні вкладок, тому ref у
+  ньому не допоміг би). Регресійний тест — в `edit-page-builder.test.tsx`.
+- server action має 45-с таймаут (`AbortSignal.timeout`) — трохи довший за 30-с таймаут
+  генерації на бекенді, щоб штатний 502 приходив раніше за обрив з'єднання.
+- Текст витягується `src/lib/content-text.ts`: `extractLexicalText` (пости; повний текст, не
+  160-символьний `extractDescription` з `(public)/_lib/seo.ts`) і `extractPageBlocksText`
+  (сторінки; рекурсивно збирає рядкові поля блоків, пропускає url-подібні ключі).
+- **Тести, що монтують редактори, мають мокати `generate-seo.action`** (див. `edit-post.test.tsx`,
+  `edit-page-builder.test.tsx`): без мока jest падає на ESM-залежності iron-session
+  (`uncrypto`) через ланцюжок імпортів кнопка → action → `auth()`.
+
 ### API client (`src/api`) — the most important subsystem
 - `routes.ts` builds endpoint URLs from `NEXT_PUBLIC_API_SERVER` || `API_SERVER`, and **throws at
   import time if neither is set**.
@@ -86,8 +156,8 @@ Pages (адмінка `admin/pages` + публічний рендеринг) п�
   - **Caching is decided by auth**: unauthenticated `get` uses `cache: "force-cache"` plus Next
     `{ next: { tags, revalidate } }` (ISR). Any request with a `token`, or `revalidate: false`,
     uses `cache: "no-store"`. Don't pass a token to data you want cached.
-  - `get` **never throws** — it catches everything and returns `null` on error or non-OK. Callers
-    must null-check. `post` / `remove` / `sendFile` **do throw** on non-OK.
+  - `get` returns `null` on 4xx (callers must null-check) but **throws** on network errors and 5xx
+    (see "5xx ≠ 404" in the SEO layer section). `post` / `remove` / `sendFile` **do throw** on non-OK.
   - All `post` requests hardcode `x-lang: "ua"` (the backend resolves i18n from this header).
 - `index.ts` exposes the typed `api.*` facade (`api.posts.getMany`, `api.auth.login`, …) consumed
   by Server Components and server actions. `api.search` short-circuits to `null` for queries under
