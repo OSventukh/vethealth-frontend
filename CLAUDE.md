@@ -91,15 +91,37 @@ Pages (адмінка `admin/pages` + публічний рендеринг) п�
 - **`seo.ts`** — `buildContentMetadata()` (пріоритет: SEO-поля з адмінської `metadata`-сутності →
   фолбеки з контенту; завжди ставить canonical, og:images, siteName/locale) та
   `extractDescription()` (текст з Lexical, обрізаний до ~160 символів).
-- **Справжні 404**: валідація викликається в **layout-компонентах** (`[topic]/layout.tsx`,
-  `[topic]/[...slug]/layout.tsx`), бо layout рендериться до першого flush — `notFound()` звідти дає
-  реальний HTTP 404. `notFound()` зі стрімленої сторінки (за межею loading.tsx) віддає 200 (soft-404).
-  **Тому `[topic]/loading.tsx` видалено і його не можна повертати** — він створює Suspense-межу
-  навколо всього сегмента `[...slug]`, і статус фіксується як 200 до валідації.
-  `[...slug]/loading.tsx` лишився — він нижче валідуючого layout і безпечний.
+- **Справжні 404 робить `proxy.ts`, а не рендер (2026-08-16).** Під `cacheComponents: true`
+  валідація в layout/page більше не може виставити статус: shell (`app/layout.tsx` + чрома
+  `(public)`) пререндериться і флашиться ПЕРШИМ, тож 200 зафіксовано ще до того, як сторінка
+  дійде до `notFound()`. Заміряно на standalone-сервері: неіснуючі URL віддавали **200**
+  однаково і з `export const instant = false` на роуті, і без нього. Тому:
+  - проксі до рендера перевіряє контентні URL (`src/lib/content-path.ts`) і на неіснуючих
+    робить `rewrite` на внутрішній **`/_not-found`** — саме цей роут віддає HTTP 404.
+    `rewrite(url, { status: 404 })` **не працює**: Next бере статус із того, що відрендерилось.
+  - `src/app/not-found.tsx` (кореневий) існує лише заради цього: без нього на `/_not-found`
+    показувався б дефолтний англомовний екран Next замість сторінки сайту.
+  - валідацію прибрано з `[...slug]/layout.tsx` (вона блокувала пререндер shell і при цьому
+    не давала обіцяного 404); `resolvePath` + `notFound()` лишились у `page.tsx` — вони й далі
+    малюють «Сторінка не знайдена», якщо URL проскочив повз проксі.
+  - **Правила валідації одні на двох**: `resolvePathWith(fetchers, …)` у `_lib/resolve-path.ts`.
+    Рендер передає кешовані фетчери, проксі — прямі (в проксі немає ні Data Cache, ні
+    "use cache"). Не дублювати цю логіку — розбіжність означала б 404 на живій сторінці.
+  - **Fail-open**: будь-яка помилка бекенда трактується як «сторінка існує» (заміряно: з
+    лежачим бекендом URL віддають 200, не 404) — інакше збій бекенда викосив би сайт з індексу.
+  - Кеш у памʼяті процесу: 60 с на позитивні відповіді, 15 с на негативні (щойно опублікований
+    пост не має 404-итись довго). Заміряно: 5 однакових запитів = 1 звернення до бекенда.
+  - Новий топ-рівневий роут або тека в `public/` **мусять** потрапити в `RESERVED_SEGMENTS`
+    (`src/lib/content-path.ts`), інакше проксі віддасть на них 404. Стереже
+    `__test__/content-path.test.ts`.
 - **`content-cache.ts`**: include-параметри зафіксовані (`children,parent,metadata` для тем,
-  `topics,metadata` для постів) — однакові аргументи в усіх викликах = один запит на рендер
-  (React.cache). Не міняти include в одному місці без інших.
+  `topics,metadata` для постів) — однакові аргументи в усіх викликах = один запит на рендер.
+  Не міняти include в одному місці без інших. З 2026-08-16 це не `React.cache`, а **`"use cache"`
+  + обовʼязковий `cacheTag(TAGS.*)`**: без тега `revalidateTag` з адмінки не дістав би до цих
+  записів і публікація не зʼявлялася б на сайті. Саме ці кеш-межі дозволяють публічним роутам
+  пререндеритись під `cacheComponents` (те саме зроблено для `privacy-policy`).
+  У jest `next/cache` підмінено стабом (`__mocks__/next-cache.js` через `moduleNameMapper`) —
+  інакше серверні модулі Next тягнуть у jsdom `Request`/`TextEncoder`, яких там немає.
 - **`app/sitemap.ts`** — `force-dynamic`, але всі фетчі йдуть через Data Cache (force-cache + tags),
   тож оновлюється одразу після `revalidateTag` з адмінки. Hub-пости не дублюють слаг у URL.
   `app/robots.ts` віддає `Sitemap:` лише в production.
@@ -141,7 +163,13 @@ metaKeywords/ogTitle/ogDescription з тексту контенту:
   і читає `metadataRef` (сам `SeoTab` розмонтовується при перемиканні вкладок, тому ref у
   ньому не допоміг би). Регресійний тест — в `edit-page-builder.test.tsx`.
 - server action має 45-с таймаут (`AbortSignal.timeout`) — трохи довший за 30-с таймаут
-  генерації на бекенді, щоб штатний 502 приходив раніше за обрив з'єднання.
+  генерації на бекенді, щоб штатний **504** приходив раніше за обрив з'єднання.
+- **`STATUS_MESSAGES` — дзеркало маппінгу статусів бекенда** (`AiService` → `classify`):
+  **429** ліміт (наш тротлер 10/хв або ліміт провайдера; бекенд додає `Retry-After`),
+  **502** провайдер відповів помилкою або промазав по схемі, **503** САМЕ «не налаштовано»
+  (нема ключа / провайдер його відхилив), **504** таймаут генерації. Міняючи статуси на
+  бекенді — правити і цю мапу, інакше редактор побачить чужу пораду
+  (напр. «додайте API-ключ» на тимчасовий 429).
 - Текст витягується `src/lib/content-text.ts`: `extractLexicalText` (пости; повний текст, не
   160-символьний `extractDescription` з `(public)/_lib/seo.ts`) і `extractPageBlocksText`
   (сторінки; рекурсивно збирає рядкові поля блоків, пропускає url-подібні ключі).
@@ -196,7 +224,9 @@ Mutations live in `*.action.ts` files marked `"use server"`, colocated under eac
 Runs on every request except `api/`, `_next/*` and prefetches. Its `proxy()` function sets a
 **nonce-based CSP** (nonce forwarded to the app via the `x-nonce` request header), HSTS,
 `X-Frame-Options: DENY`, `X-Content-Type-Options`, `Referrer-Policy`, and a deny-most
-`Permissions-Policy`; it also rotates the backend access token (see the Auth section). Gotchas:
+`Permissions-Policy`; it rotates the backend access token (see the Auth section); and it
+emits **справжні HTTP 404** для неіснуючих контентних URL (див. «Справжні 404» вище —
+там же чому це не можна зробити в рендері). Gotchas:
 - **Any new external origin must be allowlisted here** — third-party scripts go in `script-src`,
   API/analytics endpoints in `connect-src`, image hosts in `img-src` (`PROD_ORIGINS` covers the
   `vethealth.com.ua` hosts). Git history is full of "fix CSP" commits from forgetting this; a missed

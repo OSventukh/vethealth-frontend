@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { NOT_FOUND_TITLE } from "@/utils/constants/generals";
 import { getTopicBySlug } from "../_lib/content-cache";
 import { buildContentMetadata } from "../_lib/seo";

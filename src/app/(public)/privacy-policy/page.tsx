@@ -1,7 +1,8 @@
+import { cacheTag } from "next/cache";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cache } from "react";
 import { api } from "@/api";
+import { TAGS } from "@/api/constants/tags";
 import { PageContent } from "@/components/page-blocks/page-content";
 import CustomBreadcrumb from "@/components/ui/custom/custom-breadcrumb";
 import { raleway } from "@/lib/fonts";
@@ -10,13 +11,16 @@ import { buildContentMetadata } from "../_lib/seo";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-const getPrivacyPolicyPage = cache(() =>
-	api.pages.getOne({
+async function getPrivacyPolicyPage() {
+	"use cache";
+	cacheTag(TAGS.PAGES);
+
+	return api.pages.getOne({
 		slug: "privacy-policy",
 		query: { include: "metadata" },
-		tags: ["pages"],
-	}),
-);
+		tags: [TAGS.PAGES],
+	});
+}
 
 export async function generateMetadata(): Promise<Metadata> {
 	const page = await getPrivacyPolicyPage();

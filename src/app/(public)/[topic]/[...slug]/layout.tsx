@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { NOT_FOUND_TITLE } from "@/utils/constants/generals";
 import { resolvePath } from "../../_lib/resolve-path";
 import { buildContentMetadata, extractDescription } from "../../_lib/seo";
@@ -47,20 +46,14 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 	});
 }
 
-export default async function SlugLayout({
+// Валідація живе в page.tsx (той самий resolvePath + notFound). Тут її
+// більше немає: `await params` у layout робив увесь shell request-time, а
+// обіцяного «404 до першого flush» він при cacheComponents уже не давав —
+// заміряно: невідомий URL віддавав 200 і з блокуючим layout.
+export default function SlugLayout({
 	children,
-	params,
-}: Props & {
+}: {
 	children: React.ReactNode;
 }) {
-	const { topic, slug } = await params;
-
-	// Валідація до першого flush (див. коментар у ../layout.tsx):
-	// неіснуючий пост, чужа тема в шляху чи зайва глибина → HTTP 404.
-	const resolved = await resolvePath(topic, slug ?? []);
-	if (!resolved) {
-		notFound();
-	}
-
 	return <>{children}</>;
 }

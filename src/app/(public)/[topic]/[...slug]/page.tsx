@@ -1,8 +1,9 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { resolvePath } from "../../_lib/resolve-path";
 import Page from "../../components/Page";
 import Post from "../../components/Post";
+import Loading from "./loading";
 
 type Props = {
 	params: Promise<{
@@ -10,7 +11,16 @@ type Props = {
 		slug: string[];
 	}>;
 };
-export default async function SlugPage(props: Props) {
+
+export default function SlugPage(props: Props) {
+	return (
+		<Suspense fallback={<Loading />}>
+			<SlugPageBody {...props} />
+		</Suspense>
+	);
+}
+
+async function SlugPageBody(props: Props) {
 	const params = await props.params;
 	const resolved = await resolvePath(params.topic, params.slug ?? []);
 

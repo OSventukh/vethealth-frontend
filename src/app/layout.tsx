@@ -1,5 +1,9 @@
 import { Suspense } from "react";
-import { SITE_DESCRIPTION, SITE_TITLE } from "@/utils/constants/generals";
+import {
+	SITE_DESCRIPTION,
+	SITE_NAME,
+	SITE_TITLE,
+} from "@/utils/constants/generals";
 import Optimizer from "@/components/external-scripts/optimizer";
 import AdSense from "@/components/google/AdSense";
 import Analytics from "@/components/google/Analytics";

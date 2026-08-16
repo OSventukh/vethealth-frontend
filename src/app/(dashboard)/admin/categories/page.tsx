@@ -1,32 +1,17 @@
 import { PenSquare } from "lucide-react";
-import { api } from "@/api";
+import { Suspense } from "react";
 import CreateButton from "@/components/ui/create-button";
-import { DataTable } from "@/components/ui/DataTable";
-import { categoryQuerySchema } from "@/utils/validators/query.validator";
-import { categoryColumns } from "./columns";
+import { DataTableSkeleton } from "@/components/ui/DataTable/TableSkeleton";
+import {
+	type CategoriesSearchParams,
+	CategoriesTable,
+} from "./categories-table";
 
 type Props = {
-	searchParams: Promise<{
-		page?: string;
-		size?: string;
-		sort?: string;
-		orderBy?: string;
-		name?: string;
-	}>;
+	searchParams: Promise<CategoriesSearchParams>;
 };
 
-export default async function CategoriesPage(props: Props) {
-	const searchParams = await props.searchParams;
-	const categoryQueryValidation = categoryQuerySchema.safeParse({
-		...searchParams,
-		include: "children",
-	});
-	const categories = await api.categories.getMany({
-		query: categoryQueryValidation.success
-			? categoryQueryValidation.data
-			: undefined,
-		tags: ["categories"],
-	});
+export default function CategoriesPage(props: Props) {
 	return (
 		<>
 			<CreateButton
@@ -34,13 +19,10 @@ export default async function CategoriesPage(props: Props) {
 				icon={<PenSquare size={20} />}
 				text="Нова категорія"
 			/>
-			<DataTable
-				columns={categoryColumns}
-				data={categories?.items || []}
-				pageCount={categories?.totalPages || 1}
-				searchField="name"
-				childrenProp={"children"}
-			/>
+
+			<Suspense fallback={<DataTableSkeleton columnCount={3} />}>
+				<CategoriesTable searchParams={props.searchParams} />
+			</Suspense>
 		</>
 	);
 }

@@ -5,7 +5,8 @@ import { SITE_DESCRIPTION, SITE_NAME } from "@/utils/constants/generals";
 
 // llms.txt (llmstxt.org): markdown-огляд сайту для AI-краулерів, які не
 // виконують JS і не ходять углиб — короткий зміст з прямими посиланнями.
-export const dynamic = "force-dynamic";
+// Як і sitemap, рендериться на кожен запит поверх Data Cache — при
+// cacheComponents це дефолт, а `export const dynamic` заборонений.
 
 export async function GET() {
 	const base = getBaseUrl();

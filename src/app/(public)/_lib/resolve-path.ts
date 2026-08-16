@@ -9,15 +9,29 @@ export type ResolvedPath =
 	| null;
 
 /**
+ * Звідки брати контент. Рендер ходить через `content-cache` ("use cache"),
+ * а проксі — напряму в API: "use cache" живе в рендер-пайплайні, якого в
+ * проксі немає. Правила валідації при цьому мусять лишатися одні на двох,
+ * інакше проксі 404-ив би те, що сторінка успішно рендерить.
+ */
+export interface ContentFetchers {
+	getTopicBySlug: (slug: string) => Promise<TopicResponse | null>;
+	getPostBySlug: (slug: string) => Promise<PostResponse | null>;
+}
+
+/**
  * Кожен сегмент шляху, крім останнього, має бути темою, що ланцюжком
  * parent→child відповідає URL (перша — кореневою). Інакше той самий
  * пост відкривався б за URL будь-якої глибини й під будь-якою темою —
  * дубльований контент зі статусом 200.
  */
 async function getValidatedTopicChain(
+	fetchers: ContentFetchers,
 	slugs: string[],
 ): Promise<TopicResponse[] | null> {
-	const topics = await Promise.all(slugs.map((slug) => getTopicBySlug(slug)));
+	const topics = await Promise.all(
+		slugs.map((slug) => fetchers.getTopicBySlug(slug)),
+	);
 	const chain: TopicResponse[] = [];
 
 	for (const [i, topic] of topics.entries()) {
@@ -33,47 +47,55 @@ async function getValidatedTopicChain(
 	return chain;
 }
 
-export const resolvePath = cache(
-	async (topicSlug: string, slug: string[]): Promise<ResolvedPath> => {
-		const pathSlugs = [topicSlug, ...slug];
-		const lastSlug = pathSlugs[pathSlugs.length - 1];
-		const chainSlugs = pathSlugs.slice(0, -1);
+export const resolvePathWith = async (
+	fetchers: ContentFetchers,
+	topicSlug: string,
+	slug: string[],
+): Promise<ResolvedPath> => {
+	const pathSlugs = [topicSlug, ...slug];
+	const lastSlug = pathSlugs[pathSlugs.length - 1];
+	const chainSlugs = pathSlugs.slice(0, -1);
 
-		const [post, lastTopic, topicChain] = await Promise.all([
-			getPostBySlug(lastSlug),
-			getTopicBySlug(lastSlug),
-			getValidatedTopicChain(chainSlugs),
-		]);
+	const [post, lastTopic, topicChain] = await Promise.all([
+		fetchers.getPostBySlug(lastSlug),
+		fetchers.getTopicBySlug(lastSlug),
+		getValidatedTopicChain(fetchers, chainSlugs),
+	]);
 
-		if (!topicChain) {
-			return null;
-		}
-		const parentTopic = topicChain[topicChain.length - 1];
-
-		if (post) {
-			// Старі пости можуть не мати тем — такий URL не рвемо. Якщо
-			// теми є, пост мусить належати темі, під якою його відкрили.
-			// Окремий випадок — hub-пост: його слаг збігається зі слагом
-			// однойменної підтеми (/drugs/antiparasitic-drugs), і він може
-			// бути прив'язаний до неї, а не до батьківської теми.
-			const belongsToPath =
-				!post.topics?.length ||
-				post.topics.some((topic) => topic.slug === parentTopic.slug) ||
-				(lastTopic?.parent?.slug === parentTopic.slug &&
-					post.topics.some((topic) => topic.slug === lastSlug));
-			if (belongsToPath) {
-				return { type: "post", post, topicChain };
-			}
-		}
-
-		if (
-			lastTopic &&
-			lastTopic.contentType === "page" &&
-			lastTopic.parent?.slug === parentTopic.slug
-		) {
-			return { type: "page", topic: lastTopic, topicChain };
-		}
-
+	if (!topicChain) {
 		return null;
-	},
+	}
+	const parentTopic = topicChain[topicChain.length - 1];
+
+	if (post) {
+		// Старі пости можуть не мати тем — такий URL не рвемо. Якщо
+		// теми є, пост мусить належати темі, під якою його відкрили.
+		// Окремий випадок — hub-пост: його слаг збігається зі слагом
+		// однойменної підтеми (/drugs/antiparasitic-drugs), і він може
+		// бути прив'язаний до неї, а не до батьківської теми.
+		const belongsToPath =
+			!post.topics?.length ||
+			post.topics.some((topic) => topic.slug === parentTopic.slug) ||
+			(lastTopic?.parent?.slug === parentTopic.slug &&
+				post.topics.some((topic) => topic.slug === lastSlug));
+		if (belongsToPath) {
+			return { type: "post", post, topicChain };
+		}
+	}
+
+	if (
+		lastTopic &&
+		lastTopic.contentType === "page" &&
+		lastTopic.parent?.slug === parentTopic.slug
+	) {
+		return { type: "page", topic: lastTopic, topicChain };
+	}
+
+	return null;
+};
+
+// Рендер-сторона: ті самі правила поверх кешованих фетчерів.
+export const resolvePath = cache(
+	(topicSlug: string, slug: string[]): Promise<ResolvedPath> =>
+		resolvePathWith({ getTopicBySlug, getPostBySlug }, topicSlug, slug),
 );

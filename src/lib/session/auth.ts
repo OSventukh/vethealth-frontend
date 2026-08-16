@@ -1,5 +1,6 @@
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { type SessionData, sessionOptions } from "./session.config";
 
 /**
@@ -12,6 +13,8 @@ import { type SessionData, sessionOptions } from "./session.config";
  * render in the App Router.
  */
 export async function auth() {
+	await connection();
+
 	const session = await getIronSession<SessionData>(
 		await cookies(),
 		sessionOptions,

@@ -2,6 +2,7 @@ import { getIronSession, sealData } from "iron-session";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { api } from "@/api";
+import { contentPathExists, isContentPath } from "@/lib/content-path";
 import { type SessionData, sessionOptions } from "@/lib/session/session.config";
 
 export const config = {
@@ -22,6 +23,9 @@ export const config = {
 		},
 	],
 };
+
+// Внутрішній роут Next для не знайдених сторінок — віддає HTTP 404.
+const NOT_FOUND_PATH = "/_not-found";
 
 // Environment-specific origins grouped together for clarity
 const DEV_ORIGINS = ["http://localhost:*", "http://127.0.0.1:*"];
@@ -112,11 +116,28 @@ export async function proxy(request: NextRequest) {
 		contentSecurityPolicyHeaderValue,
 	);
 
-	const response = NextResponse.next({
-		request: {
-			headers: requestHeaders,
-		},
-	});
+	// Справжній 404 для неіснуючого контенту. Під `cacheComponents` shell
+	// пререндериться і флашиться до того, як сторінка викличе notFound(),
+	// тож статус уже зафіксовано як 200 — виправити його можна лише до
+	// рендера, тобто тут. `rewrite(..., { status: 404 })` не працює: Next
+	// бере статус із того, що відрендерилось, а не з init. Тому переписуємо
+	// на внутрішній `/_not-found` — цей роут сам віддає 404.
+	// HEAD теж перевіряємо: ним ходять краулери й монітори, і 200 на
+	// неіснуючий URL збрехав би їм так само, як і на GET.
+	const isMissingContent =
+		(request.method === "GET" || request.method === "HEAD") &&
+		isContentPath(request.nextUrl.pathname) &&
+		!(await contentPathExists(request.nextUrl.pathname));
+
+	const response = isMissingContent
+		? NextResponse.rewrite(new URL(NOT_FOUND_PATH, request.url), {
+				request: { headers: requestHeaders },
+			})
+		: NextResponse.next({
+				request: {
+					headers: requestHeaders,
+				},
+			});
 
 	response.headers.set(
 		"Content-Security-Policy",

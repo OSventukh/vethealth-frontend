@@ -1,32 +1,14 @@
 import { PenSquare } from "lucide-react";
-import { api } from "@/api";
+import { Suspense } from "react";
 import CreateButton from "@/components/ui/create-button";
-import { DataTable } from "@/components/ui/DataTable";
-import { postQuerySchema } from "@/utils/validators/query.validator";
-import { postColumns } from "./columns";
+import { DataTableSkeleton } from "@/components/ui/DataTable/TableSkeleton";
+import { type PostsSearchParams, PostsTable } from "./posts-table";
 
 type Props = {
-	searchParams: Promise<{
-		page?: string;
-		size?: string;
-		sort?: string;
-		orderBy?: string;
-		title?: string;
-		status?: string;
-	}>;
+	searchParams: Promise<PostsSearchParams>;
 };
 
-export default async function PostsPage(props: Props) {
-	const searchParams = await props.searchParams;
-	const postQueryValidation = postQuerySchema.safeParse(searchParams);
-	const posts = await api.posts.getMany({
-		query: {
-			status: "all",
-			...(postQueryValidation.success ? postQueryValidation.data : undefined),
-		},
-		tags: ["posts"],
-	});
-
+export default function PostsPage(props: Props) {
 	return (
 		<>
 			<CreateButton
@@ -35,12 +17,9 @@ export default async function PostsPage(props: Props) {
 				text="Нова стаття"
 			/>
 
-			<DataTable
-				columns={postColumns}
-				data={posts?.items || []}
-				pageCount={posts?.totalPages || 0}
-				searchField="title"
-			/>
+			<Suspense fallback={<DataTableSkeleton columnCount={5} />}>
+				<PostsTable searchParams={props.searchParams} />
+			</Suspense>
 		</>
 	);
 }

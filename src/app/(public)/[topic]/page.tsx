@@ -125,7 +125,15 @@ async function FilteredPostList({
 	return <PostList topic={topic} category={category} page={parsePage(page)} />;
 }
 
-export default async function TopicPage(props: Props) {
+export default function TopicPage(props: Props) {
+	return (
+		<Suspense fallback={<PostListSkeleton />}>
+			<TopicPageBody {...props} />
+		</Suspense>
+	);
+}
+
+async function TopicPageBody(props: Props) {
 	const params = await props.params;
 	const topic = await getTopicBySlug(params.topic);
 

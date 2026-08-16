@@ -1,31 +1,14 @@
 import { UserPlus } from "lucide-react";
-import { api } from "@/api";
+import { Suspense } from "react";
 import CreateButton from "@/components/ui/create-button";
-import { DataTable } from "@/components/ui/DataTable";
-import { auth } from "@/lib/session/auth";
-import { userQuerySchema } from "@/utils/validators/query.validator";
-import { userColumns } from "./columns";
+import { DataTableSkeleton } from "@/components/ui/DataTable/TableSkeleton";
+import { type UsersSearchParams, UsersTable } from "./users-table";
 
 type Props = {
-	searchParams: Promise<{
-		page?: string;
-		size?: string;
-		sort?: string;
-		orderBy?: string;
-		title?: string;
-	}>;
+	searchParams: Promise<UsersSearchParams>;
 };
 
-export default async function UsersPage(props: Props) {
-	const searchParams = await props.searchParams;
-	const userQueryValidation = userQuerySchema.safeParse(searchParams);
-	const session = await auth();
-
-	const users = await api.users.getMany({
-		query: userQueryValidation.success ? userQueryValidation.data : undefined,
-		token: session?.token,
-		tags: ["users"],
-	});
+export default function UsersPage(props: Props) {
 	return (
 		<>
 			<CreateButton
@@ -34,12 +17,9 @@ export default async function UsersPage(props: Props) {
 				text="Новий користувач"
 			/>
 
-			<DataTable
-				columns={userColumns}
-				data={users?.items || []}
-				pageCount={users?.totalPages || 1}
-				searchField="firstname"
-			/>
+			<Suspense fallback={<DataTableSkeleton columnCount={6} />}>
+				<UsersTable searchParams={props.searchParams} />
+			</Suspense>
 		</>
 	);
 }

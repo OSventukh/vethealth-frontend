@@ -23,7 +23,10 @@ export default function Home() {
 		query: { size: 100 },
 		tags: [TAGS.TOPICS],
 	});
-	
+
+	// Абсолютні URL у JSON-LD — schema.org не приймає відносні.
+	const base = getBaseUrl();
+
 	return (
 		<>
 			<JsonLd
