@@ -139,8 +139,14 @@ export const get = async <Response>({
 	const result = (await parseResponse(response)) as Response;
 
 	if (!response.ok) {
-		if (response.status >= 500) {
-			await logServerError(`GET ${target} responded ${response.status}`);
+		const responseType = response.headers.get("content-type") || "";
+		// 4xx від нашого бекенда — завжди JSON (Nest). HTML у відповіді означає,
+		// що відповів не бекенд (проксі/CDN/чужий хост): це збій інфраструктури,
+		// а не «контенту немає» — null тут означав би сайт, що масово 404-ить.
+		if (response.status >= 500 || !responseType.includes("application/json")) {
+			await logServerError(
+				`GET ${target} responded ${response.status} (${responseType || "no content-type"})`,
+			);
 			throw new Error(`API responded ${response.status}`);
 		}
 		// 4xx — семантична відсутність контенту, каллери маплять на notFound()
