@@ -9,23 +9,7 @@ const TooltipProvider = TooltipPrimitive.Provider;
 
 const Tooltip = TooltipPrimitive.Root;
 
-const TooltipTrigger = React.forwardRef<
-	HTMLButtonElement,
-	TooltipPrimitive.Trigger.Props & { asChild?: boolean }
->(({ asChild, children, ...props }, ref) =>
-	asChild && React.isValidElement(children) ? (
-		<TooltipPrimitive.Trigger
-			ref={ref}
-			render={children as React.ReactElement}
-			{...props}
-		/>
-	) : (
-		<TooltipPrimitive.Trigger ref={ref} {...props}>
-			{children}
-		</TooltipPrimitive.Trigger>
-	),
-);
-TooltipTrigger.displayName = "TooltipTrigger";
+const TooltipTrigger = TooltipPrimitive.Trigger;
 
 const TooltipContent = React.forwardRef<
 	HTMLDivElement,

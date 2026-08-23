@@ -7,31 +7,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
-
-const DropdownMenuTrigger = React.forwardRef<
-	HTMLButtonElement,
-	DropdownMenuPrimitive.Trigger.Props & {
-		asChild?: boolean;
-	}
->(({ asChild, children, ...props }, ref) =>
-	asChild && React.isValidElement(children) ? (
-		<DropdownMenuPrimitive.Trigger
-			ref={ref}
-			render={children as React.ReactElement}
-			nativeButton={
-				typeof children.type === "string" && children.type !== "button"
-					? false
-					: undefined
-			}
-			{...props}
-		/>
-	) : (
-		<DropdownMenuPrimitive.Trigger ref={ref} {...props}>
-			{children}
-		</DropdownMenuPrimitive.Trigger>
-	),
-);
-DropdownMenuTrigger.displayName = "DropdownMenuTrigger";
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 
 const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 

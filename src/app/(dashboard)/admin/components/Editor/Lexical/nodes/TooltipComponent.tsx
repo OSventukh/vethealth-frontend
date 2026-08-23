@@ -31,11 +31,13 @@ export default function TooltipComponent({
 		return (
 			<TooltipProvider>
 				<Tooltip>
-					<TooltipTrigger asChild>
-						<span className="inline cursor-help border-b border-dotted border-gray-400">
-							{text}
-						</span>
-					</TooltipTrigger>
+					<TooltipTrigger
+						render={
+							<span className="inline cursor-help border-b border-dotted border-gray-400">
+								{text}
+							</span>
+						}
+					/>
 					<TooltipContent>
 						<span>{tooltipText}</span>
 					</TooltipContent>
@@ -50,11 +52,13 @@ export default function TooltipComponent({
 			<span className="inline-flex items-center">
 				{text}
 				<Tooltip>
-					<TooltipTrigger asChild>
-						<span className="ml-1 inline-flex cursor-help items-center">
-							<Info className="h-4 w-4 text-blue-600" />
-						</span>
-					</TooltipTrigger>
+					<TooltipTrigger
+						render={
+							<span className="ml-1 inline-flex cursor-help items-center">
+								<Info className="h-4 w-4 text-blue-600" />
+							</span>
+						}
+					/>
 					<TooltipContent>
 						<span>{tooltipText}</span>
 					</TooltipContent>

@@ -6,29 +6,7 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { cn } from "@/lib/utils";
 
 const Popover = PopoverPrimitive.Root;
-
-const PopoverTrigger = React.forwardRef<
-	HTMLButtonElement,
-	PopoverPrimitive.Trigger.Props & { asChild?: boolean }
->(({ asChild, children, ...props }, ref) =>
-	asChild && React.isValidElement(children) ? (
-		<PopoverPrimitive.Trigger
-			ref={ref}
-			render={children as React.ReactElement}
-			nativeButton={
-				typeof children.type === "string" && children.type !== "button"
-					? false
-					: undefined
-			}
-			{...props}
-		/>
-	) : (
-		<PopoverPrimitive.Trigger ref={ref} {...props}>
-			{children}
-		</PopoverPrimitive.Trigger>
-	),
-);
-PopoverTrigger.displayName = "PopoverTrigger";
+const PopoverTrigger = PopoverPrimitive.Trigger;
 
 const PopoverContent = React.forwardRef<
 	HTMLDivElement,

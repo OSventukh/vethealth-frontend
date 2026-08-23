@@ -8,48 +8,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Sheet = SheetPrimitive.Root;
+const SheetTrigger = SheetPrimitive.Trigger;
 
-const SheetTrigger = React.forwardRef<
-	HTMLButtonElement,
-	SheetPrimitive.Trigger.Props & { asChild?: boolean }
->(({ asChild, children, ...props }, ref) =>
-	asChild && React.isValidElement(children) ? (
-		<SheetPrimitive.Trigger
-			ref={ref}
-			render={children as React.ReactElement}
-			nativeButton={
-				typeof children.type === "string" && children.type !== "button"
-					? false
-					: undefined
-			}
-			{...props}
-		/>
-	) : (
-		<SheetPrimitive.Trigger ref={ref} {...props}>
-			{children}
-		</SheetPrimitive.Trigger>
-	),
-);
-SheetTrigger.displayName = "SheetTrigger";
-
-const SheetClose = React.forwardRef<
-	HTMLButtonElement,
-	SheetPrimitive.Close.Props & { asChild?: boolean }
->(({ asChild, children, ...props }, ref) =>
-	asChild && React.isValidElement(children) ? (
-		<SheetPrimitive.Close
-			ref={ref}
-			render={children as React.ReactElement}
-			nativeButton={false}
-			{...props}
-		/>
-	) : (
-		<SheetPrimitive.Close ref={ref} {...props}>
-			{children}
-		</SheetPrimitive.Close>
-	),
-);
-SheetClose.displayName = "SheetClose";
+const SheetClose = SheetPrimitive.Close;
 
 const SheetPortal = SheetPrimitive.Portal;
 

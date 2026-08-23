@@ -7,46 +7,11 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Dialog = DialogPrimitive.Root;
-
-const DialogTrigger = React.forwardRef<
-	HTMLButtonElement,
-	DialogPrimitive.Trigger.Props & { asChild?: boolean }
->(({ asChild, children, ...props }, ref) =>
-	asChild && React.isValidElement(children) ? (
-		<DialogPrimitive.Trigger
-			ref={ref}
-			render={children as React.ReactElement}
-			nativeButton={false}
-			{...props}
-		/>
-	) : (
-		<DialogPrimitive.Trigger ref={ref} {...props}>
-			{children}
-		</DialogPrimitive.Trigger>
-	),
-);
-DialogTrigger.displayName = "DialogTrigger";
+const DialogTrigger = DialogPrimitive.Trigger;
 
 const DialogPortal = DialogPrimitive.Portal;
 
-const DialogClose = React.forwardRef<
-	HTMLButtonElement,
-	DialogPrimitive.Close.Props & { asChild?: boolean }
->(({ asChild, children, ...props }, ref) =>
-	asChild && React.isValidElement(children) ? (
-		<DialogPrimitive.Close
-			ref={ref}
-			render={children as React.ReactElement}
-			nativeButton={false}
-			{...props}
-		/>
-	) : (
-		<DialogPrimitive.Close ref={ref} {...props}>
-			{children}
-		</DialogPrimitive.Close>
-	),
-);
-DialogClose.displayName = "DialogClose";
+const DialogClose = DialogPrimitive.Close;
 
 const DialogOverlay = React.forwardRef<
 	React.ElementRef<typeof DialogPrimitive.Backdrop>,

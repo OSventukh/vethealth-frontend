@@ -81,14 +81,16 @@ export function PublishCard({ status, user, isPending, onSave }: Props) {
 				)}
 				{isPublished ? (
 					<Dialog>
-						<DialogTrigger asChild>
-							<Button
-								variant="outline"
-								className="text-destructive hover:text-destructive gap-2"
-								disabled={isPending}
-							>
-								<EyeOffIcon size={16} /> Зняти з публікації
-							</Button>
+						<DialogTrigger
+							render={
+								<Button
+									variant="outline"
+									className="text-destructive hover:text-destructive gap-2"
+									disabled={isPending}
+								/>
+							}
+						>
+							<EyeOffIcon size={16} /> Зняти з публікації
 						</DialogTrigger>
 						<DialogContent>
 							<DialogHeader>
@@ -99,16 +101,18 @@ export function PublishCard({ status, user, isPending, onSave }: Props) {
 								Повернути її в чернетку?
 							</DialogDescription>
 							<DialogFooter>
-								<DialogClose asChild>
-									<Button
-										variant="destructive"
-										onClick={() => onSave(PostStatusEnum.Draft)}
-									>
-										Зняти з публікації
-									</Button>
+								<DialogClose
+									render={
+										<Button
+											variant="destructive"
+											onClick={() => onSave(PostStatusEnum.Draft)}
+										/>
+									}
+								>
+									Зняти з публікації
 								</DialogClose>
-								<DialogClose asChild>
-									<Button variant="outline">Скасувати</Button>
+								<DialogClose render={<Button variant="outline" />}>
+									Скасувати
 								</DialogClose>
 							</DialogFooter>
 						</DialogContent>

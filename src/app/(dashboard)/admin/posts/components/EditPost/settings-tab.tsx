@@ -89,11 +89,11 @@ export function SettingsTab({ editMode, postId, postTitle }: Props) {
 					</CardHeader>
 					<CardContent>
 						<Dialog>
-							<DialogTrigger asChild>
-								<Button variant="destructive" className="gap-2">
-									<Trash2Icon size={15} />
-									Видалити пост
-								</Button>
+							<DialogTrigger
+								render={<Button variant="destructive" className="gap-2" />}
+							>
+								<Trash2Icon size={15} />
+								Видалити пост
 							</DialogTrigger>
 							<DialogContent>
 								<DialogHeader>
@@ -121,9 +121,7 @@ export function SettingsTab({ editMode, postId, postTitle }: Props) {
 									>
 										Видалити
 									</Button>
-									<DialogClose asChild>
-										<Button>Скасувати</Button>
-									</DialogClose>
+									<DialogClose render={<Button />}>Скасувати</DialogClose>
 								</DialogFooter>
 							</DialogContent>
 						</Dialog>

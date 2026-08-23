@@ -1,35 +1,10 @@
 "use client";
 import type { ColumnDef } from "@tanstack/react-table";
-import {
-	ChevronDownCircleIcon,
-	ChevronRightCircle,
-	Copy,
-	FileEdit,
-	MoreHorizontal,
-	Trash2,
-} from "lucide-react";
+import { ChevronDownCircleIcon, ChevronRightCircle } from "lucide-react";
 import Link from "next/link";
 import type { CategoryResponse } from "@/api/types/categories.type";
-import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { IconButton } from "@/components/ui/icon-button";
-import { toast } from "@/components/ui/use-toast";
+import { RowActions } from "@/app/(dashboard)/admin/components/row-actions";
 import { deleteCategoryAction } from "./actions/delete-category.action";
 
 export const categoryColumns: ColumnDef<CategoryResponse>[] = [
@@ -74,69 +49,15 @@ export const categoryColumns: ColumnDef<CategoryResponse>[] = [
 		id: "actions",
 		cell: ({ row }) => {
 			const category = row.original as CategoryResponse;
-
 			return (
-				<Dialog>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<div className="flex h-full w-full justify-end">
-								<IconButton icon={<MoreHorizontal size={15} />}>
-									<span className="sr-only">Open menu</span>
-								</IconButton>
-							</div>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem
-								className="gap-2"
-								onClick={() => navigator.clipboard.writeText(category.id)}
-							>
-								<Copy size={16} /> Копіювати адресу
-							</DropdownMenuItem>
-							<Link href={"categories/edit/" + category.slug}>
-								<DropdownMenuItem className="gap-2">
-									<FileEdit size={16} />
-									Редагувати
-								</DropdownMenuItem>
-							</Link>
-							<DropdownMenuSeparator />
-							<DialogTrigger asChild>
-								<DropdownMenuItem className="gap-2 text-red-700 focus:text-red-700">
-									<Trash2 size={16} />
-									Видалити
-								</DropdownMenuItem>
-							</DialogTrigger>
-						</DropdownMenuContent>
-					</DropdownMenu>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>Видалити категорію</DialogTitle>
-						</DialogHeader>
-						<DialogDescription>
-							Ви впевненні що хочете видалити категорію &quot;{category.name}
-							&quot;?
-						</DialogDescription>
-						<DialogFooter>
-							<Button
-								variant="destructive"
-								onClick={async () => {
-									const res = await deleteCategoryAction(category.id);
-									toast({
-										variant: res.error ? "destructive" : "success",
-										description: res.success
-											? "Категорія видалена"
-											: res.message,
-									});
-								}}
-							>
-								Видалити
-							</Button>
-
-							<DialogClose asChild>
-								<Button>Скасувати</Button>
-							</DialogClose>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
+				<RowActions
+					id={category.id}
+					name={category.name}
+					entityName="категорію"
+					editHref={"categories/edit/" + category.slug}
+					successMessage="Категорія видалена"
+					deleteAction={deleteCategoryAction}
+				/>
 			);
 		},
 	},

@@ -11,7 +11,6 @@ import { LoadingSpinner } from "@/components/ui/custom/loading";
 import { Input } from "@/components/ui/input";
 import {
 	Sheet,
-	SheetClose,
 	SheetContent,
 	SheetTitle,
 	SheetTrigger,
@@ -30,15 +29,16 @@ const ParsedContent = dynamic(
 );
 
 export default function SearchBar() {
+	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState("");
 	const [debouncedQuery, setDebouncedQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<PostResponse[]>([]);
 	const [loading, setLoading] = useState(false);
 	const abortControllerRef = useRef<AbortController | null>(null);
 
-	const getSearchResults = async (query: string) => {
+	const getSearchResults = async (searchQuery: string) => {
 		try {
-			const normalizedQuery = query.trim();
+			const normalizedQuery = searchQuery.trim();
 
 			if (normalizedQuery.length < MIN_QUERY_LENGTH) return;
 
@@ -105,12 +105,12 @@ export default function SearchBar() {
 
 	return (
 		<>
-			<Sheet>
+			<Sheet open={open} onOpenChange={setOpen}>
 				<SheetTrigger className="cursor-pointer p-2 md:p-4" title="Пошук">
 					<Search />
 				</SheetTrigger>
-				<SheetTitle className="sr-only">Пошук</SheetTitle>
 				<SheetContent side="top" className="bg-[rgb(180,239,232)] px-0">
+					<SheetTitle className="sr-only">Пошук</SheetTitle>
 					<div className="container">
 						{/* next/form builds `/search?query=…` from the input's `name`
 						    and navigates (prefetch + works without JS). We only block
@@ -120,7 +120,9 @@ export default function SearchBar() {
 							onSubmit={(event) => {
 								if (query.trim().length < MIN_QUERY_LENGTH) {
 									event.preventDefault();
+									return;
 								}
+								setOpen(false);
 							}}
 							className="flex flex-col gap-2 sm:gap-4"
 						>
@@ -166,23 +168,24 @@ export default function SearchBar() {
 								<ul className="mt-4 max-h-[calc(100vh-9rem)] w-full space-y-2 overflow-y-auto">
 									{searchResults.map((item) => (
 										<li key={item.id}>
-											<SheetClose asChild>
-												<Link href={`/${item.topics![0].slug}/${item.slug}`}>
-													<Card className="overflow-hidden border-none">
-														<div className="flex">
-															<div className="p-2">
-																<h2 className="text-lg">{item.title}</h2>
-																<div>
-																	<ParsedContent
-																		content={JSON.parse(item.content)}
-																		excerpt
-																	/>
-																</div>
+											<Link
+												href={`/${item.topics![0].slug}/${item.slug}`}
+												onClick={() => setOpen(false)}
+											>
+												<Card className="overflow-hidden border-none">
+													<div className="flex">
+														<div className="p-2">
+															<h2 className="text-lg">{item.title}</h2>
+															<div>
+																<ParsedContent
+																	content={JSON.parse(item.content)}
+																	excerpt
+																/>
 															</div>
 														</div>
-													</Card>
-												</Link>
-											</SheetClose>
+													</div>
+												</Card>
+											</Link>
 										</li>
 									))}
 								</ul>

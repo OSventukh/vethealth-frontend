@@ -142,11 +142,13 @@ const HandleTextNodeChildren = ({
 				return (
 					<React.Fragment key={childKey}>
 						<Tooltip>
-							<TooltipTrigger asChild>
-								<span className="cursor-help border-b border-dotted border-gray-400">
-									{formattedText}
-								</span>
-							</TooltipTrigger>
+							<TooltipTrigger
+								render={
+									<span className="cursor-help border-b border-dotted border-gray-400">
+										{formattedText}
+									</span>
+								}
+							/>
 							<TooltipContent>
 								<span>{child.tooltipText}</span>
 							</TooltipContent>
@@ -163,11 +165,13 @@ const HandleTextNodeChildren = ({
 						<span className="inline-flex items-center">
 							{formattedText}
 							<Tooltip>
-								<TooltipTrigger asChild>
-									<span className="ml-1 inline-flex cursor-help items-center">
-										<Info className="h-4 w-4 text-blue-600" />
-									</span>
-								</TooltipTrigger>
+								<TooltipTrigger
+									render={
+										<span className="ml-1 inline-flex cursor-help items-center">
+											<Info className="h-4 w-4 text-blue-600" />
+										</span>
+									}
+								/>
 								<TooltipContent>
 									<span>{child.tooltipText}</span>
 								</TooltipContent>

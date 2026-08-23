@@ -1,35 +1,10 @@
 "use client";
 import type { ColumnDef } from "@tanstack/react-table";
-import {
-	ChevronDownCircleIcon,
-	ChevronRightCircle,
-	Copy,
-	FileEdit,
-	MoreHorizontal,
-	Trash2,
-} from "lucide-react";
+import { ChevronDownCircleIcon, ChevronRightCircle } from "lucide-react";
 import Link from "next/link";
 import type { UserResponse } from "@/api/types/user.type";
-import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { IconButton } from "@/components/ui/icon-button";
-import { toast } from "@/components/ui/use-toast";
+import { RowActions } from "@/app/(dashboard)/admin/components/row-actions";
 import { deleteUserAction } from "./actions/delete-user.action";
 
 export const userColumns: ColumnDef<UserResponse>[] = [
@@ -92,73 +67,16 @@ export const userColumns: ColumnDef<UserResponse>[] = [
 		id: "actions",
 		cell: ({ row }) => {
 			const user = row.original as UserResponse;
-
+			const isAdmin = user.role.id === "1";
 			return (
-				<Dialog>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<div className="flex h-full w-full justify-end">
-								<IconButton icon={<MoreHorizontal size={15} />}>
-									<span className="sr-only">Open menu</span>
-								</IconButton>
-							</div>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem
-								className="gap-2"
-								onClick={() => navigator.clipboard.writeText(user.id)}
-							>
-								<Copy size={16} /> Копіювати адресу
-							</DropdownMenuItem>
-							<Link href={"users/edit/" + user.id}>
-								<DropdownMenuItem className="gap-2">
-									<FileEdit size={16} />
-									Редагувати
-								</DropdownMenuItem>
-							</Link>
-							{user.role.id !== "1" && (
-								<>
-									<DropdownMenuSeparator />
-									<DialogTrigger asChild>
-										<DropdownMenuItem className="gap-2 text-red-700 focus:text-red-700">
-											<Trash2 size={16} />
-											Видалити
-										</DropdownMenuItem>
-									</DialogTrigger>
-								</>
-							)}
-						</DropdownMenuContent>
-					</DropdownMenu>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>Видалити користувача</DialogTitle>
-						</DialogHeader>
-						<DialogDescription>
-							Ви впевненні що хочете видалити користувача &quot;{user.firstname}
-							&quot;?
-						</DialogDescription>
-						<DialogFooter>
-							<Button
-								variant="destructive"
-								onClick={async () => {
-									const res = await deleteUserAction(user.id);
-									toast({
-										variant: res.error ? "destructive" : "success",
-										description: res.success
-											? "Користувач видалений"
-											: res.message,
-									});
-								}}
-							>
-								Видалити
-							</Button>
-
-							<DialogClose asChild>
-								<Button>Скасувати</Button>
-							</DialogClose>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
+				<RowActions
+					id={user.id}
+					name={user.firstname}
+					entityName="користувача"
+					editHref={"users/edit/" + user.id}
+					successMessage="Користувач видалений"
+					deleteAction={isAdmin ? undefined : deleteUserAction}
+				/>
 			);
 		},
 	},
