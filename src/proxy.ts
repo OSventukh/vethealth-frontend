@@ -57,11 +57,11 @@ export async function proxy(request: NextRequest) {
 
 	const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://optimize.vethealth.com.ua;
+  script-src 'self' 'unsafe-eval' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://optimizer.oskh.com.ua;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' data: ${allowedOrigins};
   font-src 'self' https://fonts.gstatic.com;
-  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimize.vethealth.com.ua https://crsoptimizer.conversionrate.store;
+  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimizer.oskh.com.ua https://crsoptimizer.conversionrate.store;
   frame-src 'self';
   object-src 'none';
   base-uri 'self';
