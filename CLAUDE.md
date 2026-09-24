@@ -265,8 +265,10 @@ replaced the old `NEXTAUTH_SECRET`/`NEXTAUTH_URL`), `CLIENT_URL` (`metadataBase`
 auth redirects), and the Google integration keys (`GOOGLE_ANALYTICS_ID`, `GA_CLIENT_EMAIL`,
 `GA_PRIVATE_KEY`, `GA_PROPERTY_ID`, `ADSENSE_PUBLISHER_ID`). Third-party scripts are env-gated:
 AdSense renders only when `ADSENSE_PUBLISHER_ID` is set (ads are currently OFF — the var is unset
-everywhere), and the CRO optimizer script (the owner's local copy, served from
-`optimize.vethealth.com.ua`) renders only when `OPTIMIZER_ENABLED=true` (**staging only** — it's a
+everywhere), and the CRO optimizer script (the owner's build, loaded from
+`optimizer.oskh.com.ua/comp/XoQrlB9WgF.js`; it reports to
+`crsoptimizer.conversionrate.store` — both hosts are in the CSP allowlists in `src/proxy.ts`)
+renders only when `OPTIMIZER_ENABLED=true` (**staging only** — it's a
 work-project testbed; never enable in production).
 `next.config.js` restricts remote images
 to `vethealth.com.ua` + `*.vethealth.com.ua` (the old `hostname: "*"` open image-proxy was removed —
