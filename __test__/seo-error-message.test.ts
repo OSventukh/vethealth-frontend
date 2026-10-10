@@ -1,5 +1,6 @@
 import {
 	getErrorCode,
+	SESSION_EXPIRED_MESSAGE,
 	seoErrorMessage,
 } from "@/app/(dashboard)/admin/actions/seo-error-message";
 
@@ -44,13 +45,27 @@ describe("seoErrorMessage", () => {
 		).not.toMatch(/через/);
 	});
 
-	it("falls back to the status, then to a generic message", () => {
-		expect(seoErrorMessage({ status: 504 })).toMatch(/не встиг відповісти/);
-		expect(seoErrorMessage({ status: 502, body: "<html>" })).toMatch(
-			/не відповів/,
-		);
+	it("does not blame the AI for code-less 5xx from a proxy", () => {
+		// Збої AI-сервісу бекенд завжди позначає кодом; 503 без коду — це,
+		// напр., Traefik під час редеплою, а не відсутній API-ключ.
+		for (const status of [502, 503, 504]) {
+			expect(seoErrorMessage({ status, body: "<html>" })).toBe(
+				"Сервер тимчасово недоступний. Спробуйте за хвилину",
+			);
+		}
+	});
+
+	it("asks to log in again on 401", () => {
+		expect(seoErrorMessage({ status: 401 })).toBe(SESSION_EXPIRED_MESSAGE);
+	});
+
+	it("falls back to a generic message for unknown codes and statuses", () => {
 		expect(
 			seoErrorMessage({ status: 500, body: { errorCode: "AI_UNKNOWN_NEW" } }),
+		).toBe("Не вдалося згенерувати мета-поля. Спробуйте ще раз");
+		// Ключ прототипу не має повертати метод Object.
+		expect(
+			seoErrorMessage({ status: 500, body: { errorCode: "constructor" } }),
 		).toBe("Не вдалося згенерувати мета-поля. Спробуйте ще раз");
 	});
 });

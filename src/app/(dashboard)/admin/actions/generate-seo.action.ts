@@ -1,7 +1,11 @@
 "use server";
 import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
-import { getErrorCode, seoErrorMessage } from "./seo-error-message";
+import {
+	getErrorCode,
+	SESSION_EXPIRED_MESSAGE,
+	seoErrorMessage,
+} from "./seo-error-message";
 
 export interface GeneratedSeoMetadata {
 	metaTitle: string;
@@ -32,12 +36,16 @@ export async function generateSeoAction(
 	input: GenerateSeoInput,
 ): Promise<GenerateSeoResult> {
 	const session = await auth();
+	// Без токена бекенд гарантовано відповість 401 — не шлемо `Bearer undefined`.
+	if (!session?.token) {
+		return { success: false, message: SESSION_EXPIRED_MESSAGE };
+	}
 	try {
 		const response = await fetch(`${process.env.API_SERVER}/ai/seo-metadata`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: `Bearer ${session?.token}`,
+				Authorization: `Bearer ${session.token}`,
 			},
 			body: JSON.stringify(input),
 			cache: "no-store",
