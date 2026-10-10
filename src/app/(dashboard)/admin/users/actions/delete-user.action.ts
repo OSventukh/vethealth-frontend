@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { TAGS } from "@/api/constants/tags";
 import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
@@ -26,7 +26,7 @@ export async function deleteUserAction(id: string): Promise<ReturnedData> {
 			throw new Error("Щось пішло не так");
 		}
 
-		revalidateTag(TAGS.USERS, "max");
+		updateTag(TAGS.USERS);
 
 		return {
 			success: true,

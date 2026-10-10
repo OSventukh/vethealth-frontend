@@ -5,7 +5,7 @@ import type { TopicResponse } from "@/api/types/topics.type";
 
 // Повний перелік опублікованого контенту для sitemap.xml і llms.txt.
 // Усі фетчі йдуть через Data Cache (force-cache + tags) — оновлюється
-// одразу після revalidateTag з адмінки.
+// одразу після updateTag з адмінки.
 
 const PAGE_SIZE = 100;
 const MAX_TOPIC_DEPTH = 5;

@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { TAGS } from "@/api/constants/tags";
 import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
@@ -26,8 +26,8 @@ export async function deletePostAction(id: string): Promise<ReturnedData> {
 			throw new Error("Щось пішло не так");
 		}
 
-		revalidateTag(TAGS.POSTS, "max");
-		revalidateTag(TAGS.TOPICS, "max");
+		updateTag(TAGS.POSTS);
+		updateTag(TAGS.TOPICS);
 
 		return {
 			success: true,

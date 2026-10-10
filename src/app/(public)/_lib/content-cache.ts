@@ -5,7 +5,7 @@ import { TAGS } from "@/api/constants/tags";
 // Однаковий include у всіх викликах = один запит на рендер (кеш дедуплікує
 // лише ідентичні аргументи). parent потрібен для валідації ланцюжка тем,
 // metadata — для SEO-полів з адмінки.
-// `cacheTag` обовʼязковий: без нього `revalidateTag` з адмінки не діставав
+// `cacheTag` обовʼязковий: без нього `updateTag` з адмінки не діставав
 // би до цих записів і публікація не зʼявлялася б на сайті.
 export async function getTopicBySlug(
 	slug: string,

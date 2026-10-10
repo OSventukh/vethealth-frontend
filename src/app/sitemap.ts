@@ -9,7 +9,7 @@ import {
 
 // Сам роут рендериться на кожен запит, але всі фетчі всередині йдуть
 // через Data Cache (force-cache + tags), тож sitemap дешевий і
-// оновлюється одразу після revalidateTag з адмінки.
+// оновлюється одразу після updateTag з адмінки.
 // `export const dynamic = "force-dynamic"` тут НЕ потрібен (і заборонений
 // при cacheComponents): без "use cache" роут і так рендериться на запит.
 

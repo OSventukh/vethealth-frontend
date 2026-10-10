@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { routes } from "@/api/routes";
 import type { ForgotData } from "@/api/types/auth.type";
 import { auth } from "@/lib/session/auth";
@@ -41,7 +41,7 @@ export async function forgotAction(
 			throw new Error(result.message);
 		}
 
-		revalidateTag("admin_users", "max");
+		updateTag("admin_users");
 
 		return {
 			success: true,

@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { TAGS } from "@/api/constants/tags";
 import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
@@ -61,8 +61,8 @@ export async function savePostAction(
 			throw new Error(result.message);
 		}
 
-		revalidateTag(TAGS.POSTS, "max");
-		revalidateTag(TAGS.TOPICS, "max");
+		updateTag(TAGS.POSTS);
+		updateTag(TAGS.TOPICS);
 
 		return {
 			success: true,
