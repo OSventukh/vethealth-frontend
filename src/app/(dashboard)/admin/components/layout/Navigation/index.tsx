@@ -5,6 +5,7 @@ import {
 	Layout,
 	LayoutGrid,
 	ListTree,
+	SearchCheck,
 	Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -49,6 +50,11 @@ const navs: Nav[] = [
 		title: "Сторінки",
 		route: "/admin/pages",
 		icon: <Layout size={20} />,
+	},
+	{
+		title: "SEO",
+		route: "/admin/seo",
+		icon: <SearchCheck size={20} />,
 	},
 	{
 		title: "Користувачі",
