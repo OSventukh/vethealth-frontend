@@ -1,6 +1,7 @@
 "use server";
 import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
+import { getErrorCode, seoErrorMessage } from "./seo-error-message";
 
 export interface GeneratedSeoMetadata {
 	metaTitle: string;
@@ -23,17 +24,6 @@ interface GenerateSeoResult {
 	data?: GeneratedSeoMetadata;
 }
 
-// Дзеркало маппінгу статусів бекенда (`AiService` → `classify`, див.
-// backend/CLAUDE.md → "AI: генерація SEO-мета"). 429 приходить і від нашого
-// тротлера (10/хв), і від ліміту провайдера — порада редактору однакова;
-// 503 означає САМЕ проблему конфігурації, тимчасові збої бекенд віддає 502.
-const STATUS_MESSAGES: Record<number, string> = {
-	429: "Забагато запитів — зачекайте хвилину і спробуйте ще раз",
-	502: "ШІ-провайдер не відповів. Спробуйте ще раз",
-	503: "ШІ не налаштовано: додайте API-ключ провайдера в env бекенда",
-	504: "ШІ-провайдер не встиг відповісти вчасно. Спробуйте ще раз",
-};
-
 // Трохи довше за 30-секундний таймаут генерації на бекенді, щоб штатно
 // отримати від нього 504, а не обірвати з'єднання першими.
 const REQUEST_TIMEOUT_MS = 45000;
@@ -55,14 +45,20 @@ export async function generateSeoAction(
 		});
 
 		if (!response.ok) {
+			// Тіло помилки може бути не-JSON (проксі, 502 від балансера) —
+			// тоді лишаємося зі статусом.
+			const body: unknown = await response.json().catch(() => undefined);
+			const errorCode = getErrorCode(body);
 			logger.error(
-				`generateSeoAction: backend responded ${response.status} for "${input.title}"`,
+				`generateSeoAction: backend responded ${response.status}${errorCode ? ` ${errorCode}` : ""} for "${input.title}"`,
 			);
 			return {
 				success: false,
-				message:
-					STATUS_MESSAGES[response.status] ||
-					"Не вдалося згенерувати мета-поля. Спробуйте ще раз",
+				message: seoErrorMessage({
+					status: response.status,
+					body,
+					retryAfter: response.headers.get("Retry-After"),
+				}),
 			};
 		}
 
