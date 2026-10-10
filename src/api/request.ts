@@ -2,7 +2,7 @@ import type { routes } from "./routes";
 
 type Url = (typeof routes)[keyof typeof routes];
 
-// Time-based safety-net for tag-based ISR: even if a `revalidateTag` call is
+// Time-based safety-net for tag-based ISR: even if an `updateTag` call is
 // missed on the admin side, public reads can't stay stale longer than this.
 // Explicit `revalidate` (incl. `false` for no-store) always wins.
 const DEFAULT_REVALIDATE = 3600;

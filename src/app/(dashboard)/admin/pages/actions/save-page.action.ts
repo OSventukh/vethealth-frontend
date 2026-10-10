@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { TAGS } from "@/api/constants/tags";
 import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
@@ -54,8 +54,8 @@ export async function savePageAction(
 		if (!response.ok) {
 			throw new Error(result.message);
 		}
-		revalidateTag(TAGS.PAGES, "max");
-		revalidateTag(TAGS.TOPICS, "max");
+		updateTag(TAGS.PAGES);
+		updateTag(TAGS.TOPICS);
 
 		return {
 			success: true,

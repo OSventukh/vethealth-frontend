@@ -117,13 +117,13 @@ Pages (адмінка `admin/pages` + публічний рендеринг) п�
 - **`content-cache.ts`**: include-параметри зафіксовані (`children,parent,metadata` для тем,
   `topics,metadata` для постів) — однакові аргументи в усіх викликах = один запит на рендер.
   Не міняти include в одному місці без інших. З 2026-08-16 це не `React.cache`, а **`"use cache"`
-  + обовʼязковий `cacheTag(TAGS.*)`**: без тега `revalidateTag` з адмінки не дістав би до цих
+  + обовʼязковий `cacheTag(TAGS.*)`**: без тега `updateTag` з адмінки не дістав би до цих
   записів і публікація не зʼявлялася б на сайті. Саме ці кеш-межі дозволяють публічним роутам
   пререндеритись під `cacheComponents` (те саме зроблено для `privacy-policy`).
   У jest `next/cache` підмінено стабом (`__mocks__/next-cache.js` через `moduleNameMapper`) —
   інакше серверні модулі Next тягнуть у jsdom `Request`/`TextEncoder`, яких там немає.
 - **`app/sitemap.ts`** — `force-dynamic`, але всі фетчі йдуть через Data Cache (force-cache + tags),
-  тож оновлюється одразу після `revalidateTag` з адмінки. Hub-пости не дублюють слаг у URL.
+  тож оновлюється одразу після `updateTag` з адмінки. Hub-пости не дублюють слаг у URL.
   `app/robots.ts` віддає `Sitemap:` лише в production.
 - Canonical на сторінках тем ігнорує `?category=` (metadata генерується в layout, який не бачить
   searchParams — це навмисно). `/search` — `noindex, follow`.
@@ -213,8 +213,11 @@ the frontend just transports its JWTs in an encrypted, stateless cookie).
 Mutations live in `*.action.ts` files marked `"use server"`, colocated under each route
 (e.g. `admin/posts/actions/save-post.action.ts`, `auth/actions/login.action.ts`). Conventions:
 - Shaped for `useActionState`: `(state, formData) => { error, success, message, redirect? }`.
-- Read the session via `auth()`, send the bearer token, then `revalidateTag(...)` to invalidate the
-  ISR cache for the affected resource.
+- Read the session via `auth()`, send the bearer token, then `updateTag(...)` to invalidate the
+  cache for the affected resource. **Not `revalidateTag(tag, "max")`** (changed 2026-10-10): that is
+  stale-while-revalidate — the first visitor after a publish still got the old version, and with
+  two cache layers (`"use cache"` over a tagged `force-cache` fetch) the background regen could
+  re-cache stale data. `updateTag` expires immediately; it's Server-Action-only, which all of ours are.
 - Backend error strings are matched against `utils/constants/server-error-responses` and remapped to
   user-facing Ukrainian messages in `utils/constants/messages`.
 - The one shared, non-route-specific action lives in `src/actions/` (`image-upload.action.ts`,

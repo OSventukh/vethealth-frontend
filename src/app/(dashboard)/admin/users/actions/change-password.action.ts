@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { TAGS } from "@/api/constants/tags";
 import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
@@ -41,7 +41,7 @@ export async function changePasswordAction(
 			throw new Error(result.message);
 		}
 
-		revalidateTag(TAGS.USERS, "max");
+		updateTag(TAGS.USERS);
 
 		return {
 			success: true,
