@@ -138,7 +138,7 @@ export function MetaTagsCard() {
 					render={({ field }) => (
 						<FormItem>
 							<div className="flex items-center justify-between">
-								<FormLabel>Ключові слова</FormLabel>
+								<FormLabel>Ключові слова (необовʼязково)</FormLabel>
 								<span className="text-muted-foreground text-[11px]">
 									{field.value
 										? field.value.split(",").filter((keyword) => keyword.trim())
@@ -153,6 +153,10 @@ export function MetaTagsCard() {
 									onChange={field.onChange}
 								/>
 							</FormControl>
+							<FormDescription>
+								Google не використовує meta keywords для ранжування. Це поле не
+								впливає на оцінку SEO-готовності.
+							</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}

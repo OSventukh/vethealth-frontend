@@ -18,6 +18,7 @@ import {
 	effectiveValues,
 	filledCount,
 	SEO_FIELDS,
+	DEFAULT_SEO_FIELDS,
 	type SeoDraft,
 	type SeoEntry,
 	type SeoField,
@@ -37,6 +38,9 @@ interface Props {
 	busyFields: Set<SeoField>;
 	error?: string;
 	hint: string;
+	primaryKeyword: string;
+	warnings?: string[];
+	onPrimaryKeywordChange: (value: string) => void;
 	/** Іде масовий прогін — ручні дії вимкнені. */
 	locked: boolean;
 	onToggle: () => void;
@@ -58,6 +62,9 @@ export function SeoEntryCard({
 	busyFields,
 	error,
 	hint,
+	primaryKeyword,
+	warnings,
+	onPrimaryKeywordChange,
 	locked,
 	onToggle,
 	onSelect,
@@ -158,12 +165,25 @@ export function SeoEntryCard({
 				</p>
 			)}
 
+			{warnings && warnings.length > 0 && (
+				<p role="status" className="px-10 pb-2 text-sm text-amber-700">
+					Перевірте перед збереженням: {warnings.join(" ")}
+				</p>
+			)}
 			{expanded && (
 				<div
 					id={bodyId}
 					className="grid gap-6 px-4 pt-2 pb-5 md:pl-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]"
 				>
 					<div className="flex min-w-0 flex-col gap-4">
+						<Input
+							aria-label={`Головний пошуковий запит для «${entry.title}»`}
+							placeholder="Головний пошуковий запит (необовʼязково)"
+							value={primaryKeyword}
+							onChange={(event) => onPrimaryKeywordChange(event.target.value)}
+							maxLength={150}
+							disabled={disabled}
+						/>
 						<div className="flex flex-col gap-2 md:flex-row md:items-center">
 							<Input
 								value={hint}
@@ -180,7 +200,7 @@ export function SeoEntryCard({
 								disabled={entryDisabled}
 							>
 								<SparklesIcon className="mr-2 h-4 w-4" />
-								Згенерувати всі поля
+								Згенерувати основні поля
 							</Button>
 						</div>
 
@@ -239,20 +259,20 @@ interface PipsProps {
 
 /** По мітці на поле, у порядку форми: видно, якого саме поля бракує. */
 function FieldPips({ values, dirty, filled }: PipsProps) {
-	const missing = SEO_FIELDS.filter((field) => !values[field].trim()).map(
-		(field) => FIELD_CONFIG[field].label,
-	);
+	const missing = DEFAULT_SEO_FIELDS.filter(
+		(field) => !values[field].trim(),
+	).map((field) => FIELD_CONFIG[field].label);
 
 	return (
 		<span
 			role="img"
 			className="flex items-center gap-0.5"
-			aria-label={`SEO-полів заповнено: ${filled} з ${SEO_FIELDS.length}${missing.length ? `. Бракує: ${missing.join(", ")}` : ""}`}
+			aria-label={`SEO-полів заповнено: ${filled} з ${DEFAULT_SEO_FIELDS.length}${missing.length ? `. Бракує: ${missing.join(", ")}` : ""}`}
 			title={
 				missing.length ? `Бракує: ${missing.join(", ")}` : "Усі поля заповнені"
 			}
 		>
-			{SEO_FIELDS.map((field) => (
+			{DEFAULT_SEO_FIELDS.map((field) => (
 				<span
 					key={field}
 					className={cn(

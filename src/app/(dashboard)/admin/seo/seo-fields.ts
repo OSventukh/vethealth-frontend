@@ -9,6 +9,10 @@ export const SEO_FIELDS = [
 	"ogDescription",
 ] as const;
 
+export const DEFAULT_SEO_FIELDS = SEO_FIELDS.filter(
+	(field) => field !== "metaKeywords",
+);
+
 export type SeoField = (typeof SEO_FIELDS)[number];
 
 export type SeoValues = Record<SeoField, string | null>;
@@ -68,7 +72,7 @@ export const FIELD_CONFIG: Record<SeoField, FieldConfig> = {
 	},
 	metaKeywords: {
 		label: "Ключові слова",
-		hint: "4–8 фраз через кому",
+		hint: "Необовʼязково. Google не використовує цей тег для ранжування",
 		multiline: false,
 	},
 	ogTitle: {
@@ -139,20 +143,20 @@ export function dirtyFields(
 }
 
 export function filledCount(values: Record<SeoField, string | null>): number {
-	return SEO_FIELDS.filter((field) => values[field]?.trim()).length;
+	return DEFAULT_SEO_FIELDS.filter((field) => values[field]?.trim()).length;
 }
 
 /**
  * Що генерувати при масовому прогоні: без перезапису — лише порожні поля
- * (заповнене вручну не чіпаємо), з перезаписом — усі.
+ * (заповнене вручну не чіпаємо), з перезаписом — основні. Keywords генеруються окремо за запитом.
  */
 export function fieldsToGenerate(
 	values: Record<SeoField, string>,
 	overwrite: boolean,
 ): SeoField[] {
 	return overwrite
-		? [...SEO_FIELDS]
-		: SEO_FIELDS.filter((field) => !values[field].trim());
+		? [...DEFAULT_SEO_FIELDS]
+		: DEFAULT_SEO_FIELDS.filter((field) => !values[field].trim());
 }
 
 const EDIT_ROUTES: Record<SeoEntityType, string> = {

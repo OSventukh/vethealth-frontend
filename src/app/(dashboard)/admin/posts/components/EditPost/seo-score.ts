@@ -31,25 +31,17 @@ export function computeSeoScore({
 	else if (titleLen > 0) score += 7;
 
 	const metaTitleLen = metadata.metaTitle?.trim().length ?? 0;
-	if (metaTitleLen >= 40 && metaTitleLen <= 60) score += 15;
+	if (metaTitleLen >= 40 && metaTitleLen <= 60) score += 20;
 	else if (metaTitleLen > 0) score += 7;
 
 	const metaDescLen = metadata.metaDescription?.trim().length ?? 0;
-	if (metaDescLen >= 120 && metaDescLen <= 160) score += 15;
+	if (metaDescLen >= 120 && metaDescLen <= 160) score += 20;
 	else if (metaDescLen > 0) score += 7;
 
 	const cleanSlug = slug.trim();
 	if (cleanSlug && /^[a-z0-9-]+$/.test(cleanSlug) && cleanSlug.length <= 60)
 		score += 10;
 	else if (cleanSlug) score += 5;
-
-	const keywords =
-		metadata.metaKeywords
-			?.split(",")
-			.map((keyword) => keyword.trim())
-			.filter(Boolean) ?? [];
-	if (keywords.length >= 3) score += 10;
-	else if (keywords.length > 0) score += 5;
 
 	if (metadata.ogImage?.trim()) score += 6;
 	if (metadata.ogTitle?.trim() || metadata.ogDescription?.trim()) score += 4;
