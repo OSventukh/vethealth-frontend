@@ -205,7 +205,7 @@ export function buildSeoEntries(items: SeoEntryResponse[]): SeoEntry[] {
 		return `/${(item.slug === topic ? path : [...path, item.slug]).join("/")}`;
 	};
 
-	return items.map((item) => ({
+	const entries = items.map((item) => ({
 		key: `${item.type}:${item.id}`,
 		type: item.type,
 		id: item.id,
@@ -216,4 +216,13 @@ export function buildSeoEntries(items: SeoEntryResponse[]): SeoEntry[] {
 		editHref: `${EDIT_ROUTES[item.type]}/${item.slug}`,
 		metadata: item.metadata,
 	}));
+
+	// Hub-пост займає URL однойменної теми: resolvePath віддає за нею пост,
+	// тож мета теми на сайті не використовується — редагувати її тут марно.
+	const postPaths = new Set(
+		entries.filter((entry) => entry.type === "post").map((entry) => entry.path),
+	);
+	return entries.filter(
+		(entry) => entry.type !== "topic" || !postPaths.has(entry.path),
+	);
 }

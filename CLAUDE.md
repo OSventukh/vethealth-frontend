@@ -188,7 +188,8 @@ metaKeywords/ogTitle/ogDescription з тексту контенту:
 - Дані — бекендовий модуль `seo` (`GET /seo/entries`, `POST /seo/:type/:id/generate`,
   `PATCH /seo/:type/:id`; див. `backend/CLAUDE.md`). Текст для промту бекенд бере з БД сам,
   тож фронтенд контент не тягне. Сторінки, привʼязані до теми, у списку відсутні — їхня
-  URL = URL теми, і мета береться з теми.
+  URL = URL теми, і мета береться з теми. Так само (на фронтенді, у `buildSeoEntries`) відсіюються
+  теми, чию URL займає **hub-пост**: `resolvePath` віддає за нею пост, тож мета теми там не діє.
 - Файли: `admin/seo/seo-fields.ts` (модель, рекомендовані довжини, `buildSeoEntries` — публічні
   URL за правилами sitemap), `run-bulk-generation.ts` (чистий послідовний раннер: на 429 чекає
   `Retry-After`/30 с і повторює той самий матеріал до 3 разів; 401/403 та

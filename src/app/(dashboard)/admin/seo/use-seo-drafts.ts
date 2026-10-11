@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	SEO_FIELDS,
 	type SeoDraft,
@@ -47,7 +47,11 @@ export function sanitizeDrafts(raw: unknown, entries: SeoEntry[]): Drafts {
 export function useSeoDrafts(entries: SeoEntry[]) {
 	const [drafts, setDrafts] = useState<Drafts>({});
 	const [restoredCount, setRestoredCount] = useState(0);
-	const loaded = useRef(false);
+	// Стан, а не ref: ефект запису має побачити `loaded` лише разом з
+	// відновленими чернетками. З ref він спрацьовував у тому ж коміті з
+	// порожнім `drafts` і стирав сховище до відновлення (а в StrictMode
+	// повторне читання вже знаходило порожнечу).
+	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
 		try {
@@ -60,13 +64,13 @@ export function useSeoDrafts(entries: SeoEntry[]) {
 		} catch {
 			localStorage.removeItem(STORAGE_KEY);
 		}
-		loaded.current = true;
+		setLoaded(true);
 		// Лише при монтуванні: далі джерело правди — стан, а не сховище.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		if (!loaded.current) {
+		if (!loaded) {
 			return;
 		}
 		if (Object.keys(drafts).length) {
@@ -74,7 +78,7 @@ export function useSeoDrafts(entries: SeoEntry[]) {
 		} else {
 			localStorage.removeItem(STORAGE_KEY);
 		}
-	}, [drafts]);
+	}, [drafts, loaded]);
 
 	/** Ставить значення полів; збіг зі збереженим прибирає поле з чернетки. */
 	const setFields = useCallback((entry: SeoEntry, values: SeoDraft) => {

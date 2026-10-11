@@ -40,6 +40,7 @@ describe("buildSeoEntries", () => {
 	const entries = buildSeoEntries([
 		response({ type: "topic", slug: "drugs", parentSlug: null }),
 		response({ type: "topic", slug: "antiparasitic", parentSlug: "drugs" }),
+		response({ type: "topic", slug: "vaccines", parentSlug: "drugs" }),
 		response({ type: "post", slug: "amidines", topicSlugs: ["antiparasitic"] }),
 		response({
 			type: "post",
@@ -54,7 +55,7 @@ describe("buildSeoEntries", () => {
 		entries.find((entry) => entry.key === key)?.path;
 
 	it("builds public URLs like the sitemap does", () => {
-		expect(path("topic:antiparasitic")).toBe("/drugs/antiparasitic");
+		expect(path("topic:vaccines")).toBe("/drugs/vaccines");
 		expect(path("post:amidines")).toBe("/drugs/antiparasitic/amidines");
 		// hub-пост зі слагом теми не дублює слаг
 		expect(path("post:antiparasitic")).toBe("/drugs/antiparasitic");
@@ -63,9 +64,17 @@ describe("buildSeoEntries", () => {
 		expect(path("page:draft-page")).toBeNull();
 	});
 
+	it("drops a topic whose URL is taken by its hub post", () => {
+		// resolvePath віддає за /drugs/antiparasitic пост, мета теми там не діє.
+		expect(path("topic:antiparasitic")).toBeUndefined();
+		expect(path("topic:drugs")).toBe("/drugs");
+	});
+
 	it("links each entry to its editor", () => {
-		expect(entries[2].editHref).toBe("/admin/posts/edit/amidines");
-		expect(entries[0].editHref).toBe("/admin/topics/edit/drugs");
+		const editHref = (key: string) =>
+			entries.find((entry) => entry.key === key)?.editHref;
+		expect(editHref("post:amidines")).toBe("/admin/posts/edit/amidines");
+		expect(editHref("topic:drugs")).toBe("/admin/topics/edit/drugs");
 	});
 });
 

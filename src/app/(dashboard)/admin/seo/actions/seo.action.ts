@@ -75,7 +75,11 @@ export async function generateEntrySeoAction({
 		if (!response.ok) {
 			const body: unknown = await response.json().catch(() => undefined);
 			const errorCode = getErrorCode(body);
-			const retryAfter = response.headers.get("Retry-After");
+			// Ліміт провайдера бекенд пересилає як `Retry-After`, а власний
+			// тротлер Nest (іменований `api`) пише суфіксований `Retry-After-api`.
+			const retryAfter =
+				response.headers.get("Retry-After") ??
+				response.headers.get("Retry-After-api");
 			logger.error(
 				`generateEntrySeoAction: backend responded ${response.status}${errorCode ? ` ${errorCode}` : ""} for ${type} ${id}`,
 			);
