@@ -153,7 +153,10 @@ export function SeoWorkspace({ initialEntries }: Props) {
 	const generateEntry = async (entry: SeoEntry, fields?: SeoField[]) => {
 		const targets = new Set(fields ?? SEO_FIELDS);
 		if (fields) {
-			setBusyFields((current) => ({ ...current, [entry.key]: targets }));
+			setBusyFields((current) => ({
+				...current,
+				[entry.key]: new Set([...(current[entry.key] ?? []), ...targets]),
+			}));
 		} else {
 			setEntryBusy(entry.key, "generating");
 		}
@@ -168,7 +171,15 @@ export function SeoWorkspace({ initialEntries }: Props) {
 		});
 
 		if (fields) {
-			setBusyFields((current) => ({ ...current, [entry.key]: new Set() }));
+			// Знімаємо лише свої поля — паралельна генерація іншого поля триває.
+			setBusyFields((current) => ({
+				...current,
+				[entry.key]: new Set(
+					[...(current[entry.key] ?? [])].filter(
+						(field) => !targets.has(field),
+					),
+				),
+			}));
 		} else {
 			setEntryBusy(entry.key, undefined);
 		}
@@ -321,15 +332,12 @@ export function SeoWorkspace({ initialEntries }: Props) {
 
 	return (
 		<div className="flex w-full max-w-6xl flex-col gap-4">
-			<div className="flex flex-wrap items-end justify-between gap-2">
-				<div>
+			<div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+				<div className="flex min-w-0 flex-1 flex-col gap-3">
 					<h1 className="text-2xl font-semibold">SEO</h1>
-					<p className="text-muted-foreground text-sm">
-						Матеріалів: {stats.total} · повністю заповнено: {stats.complete} ·
-						без SEO: {stats.empty}
-					</p>
+					<CoverageBar {...stats} />
 				</div>
-				<div className="flex gap-2">
+				<div className="flex flex-wrap gap-2">
 					<Button
 						variant="ghost"
 						onClick={handleRevertAll}
@@ -452,10 +460,11 @@ export function SeoWorkspace({ initialEntries }: Props) {
 				)}
 			</div>
 
-			<div className="flex flex-col gap-2">
+			<div className="bg-background divide-y overflow-hidden rounded-xl border">
 				{visible.length === 0 && (
 					<p className="text-muted-foreground p-6 text-center">
-						Немає матеріалів за цими фільтрами
+						Немає матеріалів за цими фільтрами. Змініть тип або вимкніть
+						перемикачі вгорі.
 					</p>
 				)}
 				{visible.map((entry) => (
@@ -505,6 +514,64 @@ export function SeoWorkspace({ initialEntries }: Props) {
 }
 
 const EMPTY_FIELDS = new Set<SeoField>();
+
+interface CoverageProps {
+	total: number;
+	complete: number;
+	empty: number;
+}
+
+/** Скільки матеріалів мають повне SEO, часткове і жодного — однією смугою. */
+function CoverageBar({ total, complete, empty }: CoverageProps) {
+	const partial = total - complete - empty;
+	const share = (count: number) => `${(count / Math.max(total, 1)) * 100}%`;
+	const parts = [
+		{ label: "Заповнено повністю", count: complete, color: "bg-primary" },
+		{ label: "Частково", count: partial, color: "bg-primary/35" },
+		{ label: "Без SEO", count: empty, color: "bg-destructive/70" },
+	];
+
+	return (
+		<div className="flex max-w-xl flex-col gap-2">
+			<div
+				role="img"
+				aria-label={`Матеріалів: ${total}. ${parts.map((part) => `${part.label}: ${part.count}`).join(". ")}`}
+				className="bg-muted flex h-2 gap-px overflow-hidden rounded-full"
+			>
+				{parts.map(
+					(part) =>
+						part.count > 0 && (
+							<div
+								key={part.label}
+								className={part.color}
+								style={{ width: share(part.count) }}
+							/>
+						),
+				)}
+			</div>
+			<ul
+				className="text-muted-foreground flex flex-wrap gap-x-5 gap-y-1 text-sm"
+				aria-hidden
+			>
+				<li>
+					Усього{" "}
+					<span className="text-foreground font-medium tabular-nums">
+						{total}
+					</span>
+				</li>
+				{parts.map((part) => (
+					<li key={part.label} className="flex items-center gap-1.5">
+						<span className={cn("h-2 w-2 rounded-full", part.color)} />
+						{part.label}
+						<span className="text-foreground font-medium tabular-nums">
+							{part.count}
+						</span>
+					</li>
+				))}
+			</ul>
+		</div>
+	);
+}
 
 function toggle(set: Set<string>, key: string, on: boolean): Set<string> {
 	const next = new Set(set);

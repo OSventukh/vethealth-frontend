@@ -18,6 +18,58 @@ const COUNTER_COLORS: Record<LengthState, string> = {
 	long: "text-destructive",
 };
 
+const METER_COLORS: Record<LengthState, string> = {
+	empty: "bg-transparent",
+	short: "bg-amber-500",
+	ok: "bg-green-600",
+	long: "bg-destructive",
+};
+
+// Шкала трохи довша за максимум, щоб перевищення було видно, а не впиралось у край.
+const METER_OVERFLOW = 1.25;
+
+interface MeterProps {
+	length: number;
+	min?: number;
+	max: number;
+	state: LengthState;
+}
+
+/** Довжина відносно рекомендованої: світла зона — ціль, риска — максимум, смуга — поточний текст. */
+function LengthMeter({ length, min = 0, max, state }: MeterProps) {
+	const scale = max * METER_OVERFLOW;
+	const percent = (value: number) =>
+		`${(Math.min(value, scale) / scale) * 100}%`;
+
+	return (
+		<div
+			className="bg-muted relative h-1.5 overflow-hidden rounded-full"
+			aria-hidden
+		>
+			{min > 0 && (
+				<div
+					className="absolute inset-y-0 bg-green-600/15"
+					style={{
+						left: percent(min),
+						width: `calc(${percent(max)} - ${percent(min)})`,
+					}}
+				/>
+			)}
+			<div
+				className={cn(
+					"absolute inset-y-0 left-0 rounded-full transition-[width]",
+					METER_COLORS[state],
+				)}
+				style={{ width: percent(length) }}
+			/>
+			<div
+				className="bg-foreground/30 absolute inset-y-0 w-px"
+				style={{ left: percent(max) }}
+			/>
+		</div>
+	);
+}
+
 interface Props {
 	entryKey: string;
 	field: SeoField;
@@ -97,6 +149,14 @@ export function SeoFieldEditor({
 				disabled={disabled || busy}
 				{...(config.multiline ? { rows: 3 } : {})}
 			/>
+			{config.max && (
+				<LengthMeter
+					length={value.trim().length}
+					min={config.min}
+					max={config.max}
+					state={state}
+				/>
+			)}
 			<p className="text-muted-foreground text-xs">
 				{dirty ? (
 					<>
