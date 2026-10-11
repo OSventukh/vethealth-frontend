@@ -18,6 +18,9 @@ const ERROR_CODE_MESSAGES: Record<string, string> = {
 	AI_INVALID_OUTPUT: "ШІ повернув некоректну відповідь. Спробуйте ще раз",
 	AI_GENERATION_FAILED: "Не вдалося згенерувати мета-поля. Спробуйте ще раз",
 	AI_TIMEOUT: "ШІ-провайдер не встиг відповісти вчасно. Спробуйте ще раз",
+	// Масове SEO (`POST /seo/:type/:id/generate`): у матеріалі немає тексту.
+	SEO_NO_CONTENT:
+		"У матеріалі немає тексту — ШІ нема з чого генерувати. Заповніть вручну",
 };
 
 export const SESSION_EXPIRED_MESSAGE =
