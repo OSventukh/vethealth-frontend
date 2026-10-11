@@ -10,8 +10,10 @@ import {
 	buildSeoEntries,
 	dirtyFields,
 	fieldsToGenerate,
+	filledCount,
 	lengthState,
 	SEO_FIELDS,
+	DEFAULT_SEO_FIELDS,
 	type SeoEntryResponse,
 	type SeoValues,
 } from "@/app/(dashboard)/admin/seo/seo-fields";
@@ -94,8 +96,21 @@ describe("field helpers", () => {
 		} as Record<(typeof SEO_FIELDS)[number], string>;
 
 		expect(fieldsToGenerate(values, false)).not.toContain("metaTitle");
-		expect(fieldsToGenerate(values, false)).toHaveLength(4);
-		expect(fieldsToGenerate(values, true)).toEqual([...SEO_FIELDS]);
+		expect(fieldsToGenerate(values, false)).toHaveLength(3);
+		expect(fieldsToGenerate(values, true)).toEqual([...DEFAULT_SEO_FIELDS]);
+	});
+
+	it("does not count optional keywords as missing or generate them by default", () => {
+		const values = {
+			metaTitle: "Титул",
+			metaDescription: "Опис",
+			ogTitle: "Титул",
+			ogDescription: "Опис",
+			metaKeywords: "",
+		};
+		expect(filledCount(values)).toBe(DEFAULT_SEO_FIELDS.length);
+		expect(fieldsToGenerate(values, false)).toEqual([]);
+		expect(fieldsToGenerate(values, true)).not.toContain("metaKeywords");
 	});
 
 	it("treats a draft equal to the saved value as clean", () => {

@@ -20,6 +20,7 @@ import {
 	fieldsToGenerate,
 	filledCount,
 	SEO_FIELDS,
+	DEFAULT_SEO_FIELDS,
 	type SeoDraft,
 	type SeoEntityType,
 	type SeoEntry,
@@ -60,6 +61,10 @@ export function SeoWorkspace({ initialEntries }: Props) {
 		{},
 	);
 	const [errors, setErrors] = useState<Record<string, string>>({});
+	const [warnings, setWarnings] = useState<Record<string, string[]>>({});
+	const [primaryKeywords, setPrimaryKeywords] = useState<
+		Record<string, string>
+	>({});
 	const [hints, setHints] = useState<Record<string, string>>({});
 	const [progress, setProgress] = useState<BulkProgress | null>(null);
 	const [savingAll, setSavingAll] = useState(false);
@@ -108,7 +113,7 @@ export function SeoWorkspace({ initialEntries }: Props) {
 				}
 				return (
 					!onlyIncomplete ||
-					filledCount(effectiveValues(entry, draft)) < SEO_FIELDS.length
+					filledCount(effectiveValues(entry, draft)) < DEFAULT_SEO_FIELDS.length
 				);
 			}),
 		[entries, drafts, typeFilter, onlyIncomplete, onlyChanged],
@@ -118,7 +123,8 @@ export function SeoWorkspace({ initialEntries }: Props) {
 		const counts = entries.map((entry) => filledCount(entry.metadata));
 		return {
 			total: entries.length,
-			complete: counts.filter((count) => count === SEO_FIELDS.length).length,
+			complete: counts.filter((count) => count === DEFAULT_SEO_FIELDS.length)
+				.length,
 			empty: counts.filter((count) => count === 0).length,
 		};
 	}, [entries]);
@@ -131,6 +137,32 @@ export function SeoWorkspace({ initialEntries }: Props) {
 			const next = { ...current };
 			if (message) {
 				next[key] = message;
+			} else {
+				delete next[key];
+			}
+			return next;
+		});
+
+	/**
+	 * Попередження бекенда мають префікс `field:`. Замінюємо лише ті, що стосуються
+	 * `fields` (решта полів не змінювалась), без `fields` — усі попередження матеріалу.
+	 */
+	const replaceWarnings = (
+		key: string,
+		fields?: Iterable<SeoField>,
+		added: string[] = [],
+	) =>
+		setWarnings((current) => {
+			const dropped = fields ? [...fields] : undefined;
+			const kept = dropped
+				? (current[key] ?? []).filter(
+						(warning) =>
+							!dropped.some((field) => warning.startsWith(`${field}:`)),
+					)
+				: [];
+			const next = { ...current };
+			if (kept.length || added.length) {
+				next[key] = [...kept, ...added];
 			} else {
 				delete next[key];
 			}
@@ -151,7 +183,7 @@ export function SeoWorkspace({ initialEntries }: Props) {
 	);
 
 	const generateEntry = async (entry: SeoEntry, fields?: SeoField[]) => {
-		const targets = new Set(fields ?? SEO_FIELDS);
+		const targets = new Set(fields ?? DEFAULT_SEO_FIELDS);
 		if (fields) {
 			setBusyFields((current) => ({
 				...current,
@@ -168,6 +200,7 @@ export function SeoWorkspace({ initialEntries }: Props) {
 			fields,
 			current: effectiveValues(entry, drafts[entry.key]),
 			hint: hints[entry.key]?.trim() || undefined,
+			primaryKeyword: primaryKeywords[entry.key]?.trim() || undefined,
 		});
 
 		if (fields) {
@@ -187,6 +220,7 @@ export function SeoWorkspace({ initialEntries }: Props) {
 			setEntryError(entry.key, result.message);
 			return;
 		}
+		replaceWarnings(entry.key, targets, result.warnings);
 		applyGenerated(entry, result.data);
 	};
 
@@ -217,6 +251,7 @@ export function SeoWorkspace({ initialEntries }: Props) {
 			),
 		);
 		clearEntry(entry.key);
+		replaceWarnings(entry.key);
 		return true;
 	};
 
@@ -252,6 +287,7 @@ export function SeoWorkspace({ initialEntries }: Props) {
 	const handleRevertAll = () => {
 		clearAll();
 		setErrors({});
+		setWarnings({});
 	};
 
 	const handleBulkGenerate = async () => {
@@ -271,9 +307,10 @@ export function SeoWorkspace({ initialEntries }: Props) {
 				input: {
 					type: entry.type,
 					id: entry.id,
-					fields: fields.length < SEO_FIELDS.length ? fields : undefined,
+					fields,
 					current,
 					hint: hints[entry.key]?.trim() || undefined,
+					primaryKeyword: primaryKeywords[entry.key]?.trim() || undefined,
 				},
 			});
 		}
@@ -292,7 +329,8 @@ export function SeoWorkspace({ initialEntries }: Props) {
 
 		const summary = await runBulkGeneration(tasks, {
 			generate: generateEntrySeoAction,
-			onSuccess: (task, data) => {
+			onSuccess: (task, data, generationWarnings) => {
+				replaceWarnings(task.key, task.input.fields, generationWarnings);
 				setEntryError(task.key);
 				const entry = byKey.get(task.key);
 				if (entry) {
@@ -477,6 +515,14 @@ export function SeoWorkspace({ initialEntries }: Props) {
 						busy={busy[entry.key]}
 						busyFields={busyFields[entry.key] ?? EMPTY_FIELDS}
 						error={errors[entry.key]}
+						warnings={warnings[entry.key]}
+						primaryKeyword={primaryKeywords[entry.key] ?? ""}
+						onPrimaryKeywordChange={(value) =>
+							setPrimaryKeywords((current) => ({
+								...current,
+								[entry.key]: value,
+							}))
+						}
 						hint={hints[entry.key] ?? ""}
 						locked={locked}
 						onToggle={() =>
@@ -490,15 +536,20 @@ export function SeoWorkspace({ initialEntries }: Props) {
 						onHintChange={(hint) =>
 							setHints((current) => ({ ...current, [entry.key]: hint }))
 						}
-						onFieldChange={(field, value) =>
-							setFields(entry, { [field]: value })
-						}
-						onFieldRevert={(field) => revertField(entry, field)}
+						onFieldChange={(field, value) => {
+							setFields(entry, { [field]: value });
+							replaceWarnings(entry.key, [field]);
+						}}
+						onFieldRevert={(field) => {
+							revertField(entry, field);
+							replaceWarnings(entry.key, [field]);
+						}}
 						onGenerate={(fields) => generateEntry(entry, fields)}
 						onSave={() => handleSaveOne(entry)}
 						onRevertAll={() => {
 							clearEntry(entry.key);
 							setEntryError(entry.key);
+							replaceWarnings(entry.key);
 						}}
 					/>
 				))}

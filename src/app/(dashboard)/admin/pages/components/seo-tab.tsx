@@ -4,6 +4,7 @@ import { GenerateSeoButton } from "@/app/(dashboard)/admin/components/generate-s
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { prepareSeoContext } from "@/lib/seo-content-context";
 import { extractPageBlocksText } from "@/lib/content-text";
 import type { PageBlock } from "@/lib/page-builder/types";
 import { Field } from "./fields";
@@ -55,10 +56,23 @@ export function SeoTab({
 				<GenerateSeoButton
 					getInput={() => ({
 						title: pageTitle,
-						text: extractPageBlocksText(blocks),
+						...prepareSeoContext(
+							extractPageBlocksText(blocks, undefined, true),
+						),
+						current: {
+							metaTitle: metadata.metaTitle,
+							metaDescription: metadata.metaDescription,
+						},
+						fields: (["metaTitle", "metaDescription"] as const).filter(
+							(field) => !metadata[field].trim(),
+						),
 						entityType: "page" as const,
 					})}
 					onGenerated={onApplyGenerated}
+					values={{
+						metaTitle: metadata.metaTitle,
+						metaDescription: metadata.metaDescription,
+					}}
 				/>
 			</div>
 

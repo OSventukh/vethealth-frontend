@@ -1,34 +1,15 @@
 import type { PageBlock } from "@/lib/page-builder/types";
 
-type LexicalNode = {
-	text?: unknown;
-	children?: LexicalNode[];
-};
+import { lexicalText } from "./seo-content-context";
 
-/**
- * Повний plain-text із серіалізованого Lexical editor-state — вхід для
- * ШІ-генерації мета-полів (на відміну від extractDescription у (public),
- * який обрізає до 160 символів під meta description).
- */
-export function extractLexicalText(content: string, maxChars = 12000): string {
+/** No implicit truncation: the SEO context sampler needs the whole document. */
+export function extractLexicalText(
+	content: string,
+	maxChars = Number.MAX_SAFE_INTEGER,
+	structured = false,
+): string {
 	try {
-		const parsed = JSON.parse(content) as { root?: LexicalNode };
-		const chunks: string[] = [];
-		let length = 0;
-
-		const walk = (node: LexicalNode | undefined) => {
-			if (!node || length >= maxChars) {
-				return;
-			}
-			if (typeof node.text === "string" && node.text.trim()) {
-				chunks.push(node.text.trim());
-				length += node.text.length;
-			}
-			node.children?.forEach(walk);
-		};
-		walk(parsed?.root);
-
-		return chunks.join(" ").replaceAll(/\s+/g, " ").trim().slice(0, maxChars);
+		return lexicalText(JSON.parse(content), structured).slice(0, maxChars);
 	} catch {
 		return "";
 	}
@@ -44,7 +25,8 @@ const URLISH_KEYS = /url|href|image|photo|src/i;
  */
 export function extractPageBlocksText(
 	blocks: PageBlock[],
-	maxChars = 12000,
+	maxChars = Number.MAX_SAFE_INTEGER,
+	structured = false,
 ): string {
 	const chunks: string[] = [];
 
@@ -54,7 +36,9 @@ export function extractPageBlocksText(
 				return;
 			}
 			const text =
-				key === "content" ? extractLexicalText(value, maxChars) : value.trim();
+				key === "content"
+					? extractLexicalText(value, maxChars, structured)
+					: value.trim();
 			if (text) {
 				chunks.push(text);
 			}
@@ -77,9 +61,9 @@ export function extractPageBlocksText(
 		collect(block.data);
 	}
 
-	return chunks
-		.join("\n")
-		.replaceAll(/[ \t]+/g, " ")
-		.trim()
-		.slice(0, maxChars);
+	// Mirrors the backend pageBlocksText: blank line between blocks when structured.
+	const text = structured
+		? chunks.join("\n\n")
+		: chunks.join(" ").replaceAll(/\s+/g, " ");
+	return text.trim().slice(0, maxChars);
 }

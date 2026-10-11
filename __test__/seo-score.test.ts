@@ -65,7 +65,7 @@ describe("computeSeoScore", () => {
 		expect(invalid).toBeGreaterThan(0);
 	});
 
-	it("3+ ключових слова дають більше, ніж одне", () => {
+	it("ключові слова не впливають на оцінку", () => {
 		const one = computeSeoScore({
 			...emptyInput,
 			metadata: { metaKeywords: "коти" },
@@ -74,7 +74,8 @@ describe("computeSeoScore", () => {
 			...emptyInput,
 			metadata: { metaKeywords: "коти, собаки, гризуни" },
 		});
-		expect(three).toBeGreaterThan(one);
+		expect(three).toBe(one);
+		expect(three).toBe(0);
 	});
 
 	it("indexable=false знижує бал", () => {

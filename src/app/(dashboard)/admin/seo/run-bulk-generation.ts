@@ -32,7 +32,7 @@ export interface BulkSummary {
 
 export interface BulkDeps {
 	generate: (input: GenerateEntrySeoInput) => Promise<GenerateEntrySeoResult>;
-	onSuccess: (task: BulkTask, data: SeoDraft) => void;
+	onSuccess: (task: BulkTask, data: SeoDraft, warnings?: string[]) => void;
 	onError: (task: BulkTask, message: string) => void;
 	onProgress: (progress: BulkProgress) => void;
 	isCancelled: () => boolean;
@@ -77,7 +77,7 @@ export async function runBulkGeneration(
 			const result = await generate(task.input);
 
 			if (result.success && result.data) {
-				onSuccess(task, result.data);
+				onSuccess(task, result.data, result.warnings);
 				summary.succeeded++;
 				break;
 			}
