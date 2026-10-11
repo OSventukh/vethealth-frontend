@@ -36,11 +36,13 @@ export interface GenerateEntrySeoInput extends EntryRef {
 	fields?: SeoField[];
 	current?: SeoDraft;
 	hint?: string;
+	primaryKeyword?: string;
 }
 
 export interface GenerateEntrySeoResult {
 	success: boolean;
 	data?: SeoDraft;
+	warnings?: string[];
 	message?: string;
 	/** Для масового прогону: на 429 він чекає і повторює, а не здається. */
 	status?: number;
@@ -98,7 +100,10 @@ export async function generateEntrySeoAction({
 			};
 		}
 
-		return { success: true, data: (await response.json()) as SeoDraft };
+		const { warnings, ...data } = (await response.json()) as SeoDraft & {
+			warnings?: string[];
+		};
+		return { success: true, data, ...(warnings?.length ? { warnings } : {}) };
 	} catch (error: unknown) {
 		logger.error(
 			error instanceof Error ? error.message : JSON.stringify(error),

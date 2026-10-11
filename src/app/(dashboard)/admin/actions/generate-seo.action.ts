@@ -1,4 +1,5 @@
 "use server";
+import type { SeoDraft, SeoField } from "../seo/seo-fields";
 import { auth } from "@/lib/session/auth";
 import logger from "@/logger";
 import {
@@ -7,25 +8,25 @@ import {
 	seoErrorMessage,
 } from "./seo-error-message";
 
-export interface GeneratedSeoMetadata {
-	metaTitle: string;
-	metaDescription: string;
-	metaKeywords: string;
-	ogTitle: string;
-	ogDescription: string;
-}
+export type GeneratedSeoMetadata = SeoDraft;
 
-interface GenerateSeoInput {
+export interface GenerateSeoInput {
 	title: string;
 	text: string;
 	topics?: string[];
 	entityType: "post" | "page";
+	fields: SeoField[];
+	current?: SeoDraft;
+	hint?: string;
+	primaryKeyword?: string;
+	sourceTruncated?: boolean;
 }
 
 interface GenerateSeoResult {
 	success: boolean;
 	message?: string;
 	data?: GeneratedSeoMetadata;
+	warnings?: string[];
 }
 
 // Трохи довше за 30-секундний таймаут генерації на бекенді, щоб штатно
@@ -40,6 +41,7 @@ export async function generateSeoAction(
 	if (!session?.token) {
 		return { success: false, message: SESSION_EXPIRED_MESSAGE };
 	}
+	if (!input.fields.length) return { success: true, data: {} };
 	try {
 		const response = await fetch(`${process.env.API_SERVER}/ai/seo-metadata`, {
 			method: "POST",
@@ -70,8 +72,9 @@ export async function generateSeoAction(
 			};
 		}
 
-		const data = (await response.json()) as GeneratedSeoMetadata;
-		return { success: true, data };
+		const { warnings, ...data } =
+			(await response.json()) as GeneratedSeoMetadata & { warnings?: string[] };
+		return { success: true, data, ...(warnings?.length ? { warnings } : {}) };
 	} catch (error: unknown) {
 		logger.error(
 			error instanceof Error ? error.message : JSON.stringify(error),

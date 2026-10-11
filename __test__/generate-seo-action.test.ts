@@ -12,7 +12,12 @@ jest.mock("../src/logger", () => ({
 }));
 
 const authMock = auth as jest.Mock;
-const input = { title: "Титул", text: "Текст", entityType: "post" as const };
+const input = {
+	title: "Титул",
+	text: "Текст",
+	entityType: "post" as const,
+	fields: ["metaTitle" as const],
+};
 
 describe("generateSeoAction", () => {
 	const fetchMock = jest.fn();
@@ -46,5 +51,34 @@ describe("generateSeoAction", () => {
 		expect(result.success).toBe(false);
 		expect(result.message).toMatch(/через 7 с/);
 		expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe("Bearer t");
+	});
+	it("skips generation when nothing is missing", async () => {
+		authMock.mockResolvedValue({ token: "t" });
+		expect(await generateSeoAction({ ...input, fields: [] })).toEqual({
+			success: true,
+			data: {},
+		});
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it("forwards context and returns advisory warnings separately from metadata", async () => {
+		authMock.mockResolvedValue({ token: "t" });
+		fetchMock.mockResolvedValue(
+			new Response(
+				JSON.stringify({ metaTitle: "Коти", warnings: ["Короткий заголовок"] }),
+			),
+		);
+		const request = {
+			...input,
+			current: { ogTitle: "Догляд за котами" },
+			primaryKeyword: "коти",
+			sourceTruncated: true,
+		};
+		expect(await generateSeoAction(request)).toEqual({
+			success: true,
+			data: { metaTitle: "Коти" },
+			warnings: ["Короткий заголовок"],
+		});
+		expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual(request);
 	});
 });

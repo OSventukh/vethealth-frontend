@@ -62,6 +62,10 @@ describe("SeoWorkspace", () => {
 		generateMock.mockResolvedValue({
 			success: true,
 			data: { metaDescription: "Новий опис від ШІ" },
+			warnings: ["Перевірте довжину опису"],
+		});
+		fireEvent.change(screen.getByLabelText(/Головний пошуковий запит/), {
+			target: { value: "бабезіоз у собак" },
 		});
 		fireEvent.change(screen.getByPlaceholderText(/Побажання для ШІ/), {
 			target: { value: "згадай кліщів" },
@@ -83,8 +87,12 @@ describe("SeoWorkspace", () => {
 				id: "p1",
 				fields: ["metaDescription"],
 				hint: "згадай кліщів",
+				primaryKeyword: "бабезіоз у собак",
 				current: expect.objectContaining({ metaTitle: SAVED.metaTitle }),
 			}),
+		);
+		expect(screen.getByRole("status")).toHaveTextContent(
+			"Перевірте довжину опису",
 		);
 		// інші поля не зачеплені
 		expect(field("Meta title")).toHaveValue(SAVED.metaTitle);
