@@ -1,17 +1,27 @@
-import type {
-	GenerateEntrySeoInput,
-	GenerateEntrySeoResult,
-} from "./actions/seo.action";
+import type { GenerateEntrySeoInput } from "./actions/seo.action";
 import type { SeoDraft } from "./seo-fields";
 
 // Масовий прогін: матеріали по черзі, по одному запиту. Паралелити нема
 // сенсу — і бекенд (30 генерацій/хв), і провайдер однаково обмежують
 // частоту, а послідовно простіше показати прогрес і зупинитися.
+// Узагальнений за типом входу/результату: ним же користується масова
+// генерація alt у медіатеці.
 
-export interface BulkTask {
+export interface BulkTask<Input = GenerateEntrySeoInput> {
 	key: string;
 	title: string;
-	input: GenerateEntrySeoInput;
+	input: Input;
+}
+
+/** Що має повернути `generate`: успіх із даними або помилку з причиною. */
+export interface BulkResult<Data> {
+	success: boolean;
+	data?: Data;
+	warnings?: string[];
+	message?: string;
+	status?: number;
+	errorCode?: string;
+	retryAfterSeconds?: number;
 }
 
 export interface BulkProgress {
@@ -30,10 +40,10 @@ export interface BulkSummary {
 	abortedWith?: string;
 }
 
-export interface BulkDeps {
-	generate: (input: GenerateEntrySeoInput) => Promise<GenerateEntrySeoResult>;
-	onSuccess: (task: BulkTask, data: SeoDraft, warnings?: string[]) => void;
-	onError: (task: BulkTask, message: string) => void;
+export interface BulkDeps<Input = GenerateEntrySeoInput, Data = SeoDraft> {
+	generate: (input: Input) => Promise<BulkResult<Data>>;
+	onSuccess: (task: BulkTask<Input>, data: Data, warnings?: string[]) => void;
+	onError: (task: BulkTask<Input>, message: string) => void;
 	onProgress: (progress: BulkProgress) => void;
 	isCancelled: () => boolean;
 	sleep?: (ms: number) => Promise<void>;
@@ -50,8 +60,11 @@ const FATAL_CODES = new Set(["AI_NOT_CONFIGURED", "AI_KEY_REJECTED"]);
 const defaultSleep = (ms: number) =>
 	new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-export async function runBulkGeneration(
-	tasks: BulkTask[],
+export async function runBulkGeneration<
+	Input = GenerateEntrySeoInput,
+	Data = SeoDraft,
+>(
+	tasks: BulkTask<Input>[],
 	{
 		generate,
 		onSuccess,
@@ -59,7 +72,7 @@ export async function runBulkGeneration(
 		onProgress,
 		isCancelled,
 		sleep = defaultSleep,
-	}: BulkDeps,
+	}: BulkDeps<Input, Data>,
 ): Promise<BulkSummary> {
 	const summary: BulkSummary = { succeeded: 0, failed: 0, cancelled: false };
 

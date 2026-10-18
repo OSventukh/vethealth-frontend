@@ -2,6 +2,7 @@
 import {
 	FileText,
 	Home,
+	Images,
 	Layout,
 	LayoutGrid,
 	ListTree,
@@ -50,6 +51,11 @@ const navs: Nav[] = [
 		title: "Сторінки",
 		route: "/admin/pages",
 		icon: <Layout size={20} />,
+	},
+	{
+		title: "Медіа",
+		route: "/admin/media",
+		icon: <Images size={20} />,
 	},
 	{
 		title: "SEO",

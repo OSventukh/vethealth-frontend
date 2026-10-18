@@ -35,6 +35,7 @@ import {
 	type TopicValues,
 } from "@/utils/validators/form.validator";
 import { saveTopicAction } from "../../actions/save-topic.action";
+import { topicImageConflict } from "./topic-image-conflict";
 
 type Props = {
 	initialData?: TopicResponse | null;
@@ -67,7 +68,7 @@ export default function EditTopic({
 			parent: initialData?.parent ?? null,
 			page: initialData?.page,
 			contentType: initialData?.contentType || "post",
-			image: initialData?.image,
+			image: initialData?.image ?? undefined,
 		},
 		mode: "onChange",
 	});
@@ -310,6 +311,9 @@ export default function EditTopic({
 										<ImageUpload
 											field="topic"
 											uploadAction={imageUploadAction}
+											validatePick={(media) =>
+												topicImageConflict(media.id, initialData?.id)
+											}
 											width={500}
 											height={500}
 											onImage={(value) =>

@@ -1,13 +1,22 @@
+import { Suspense } from "react";
 import { api } from "@/api";
 import { auth } from "@/lib/session/auth";
 import EditPost from "../../components/EditPost";
+import { PostEditorSkeleton } from "../../components/EditPost/post-editor-skeleton";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export default async function EditPostPage(props: Props) {
-	const [params, session] = await Promise.all([props.params, auth()]);
+export default function EditPostPage({ params }: Props) {
+	return (
+		<Suspense fallback={<PostEditorSkeleton />}>
+			<PostEditorLoader params={params} />
+		</Suspense>
+	);
+}
 
-	const { slug } = params;
+async function PostEditorLoader({ params }: Props) {
+	const [{ slug }, session] = await Promise.all([params, auth()]);
+
 	const [post, topics, categories] = await Promise.all([
 		api.posts.getOne({
 			slug,

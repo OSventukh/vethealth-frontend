@@ -1,13 +1,23 @@
+import { Suspense } from "react";
 import { api } from "@/api";
 import { auth } from "@/lib/session/auth";
 import EditTopic from "../../components/EditTopic";
+import { TopicEditorSkeleton } from "../../components/EditTopic/topic-editor-skeleton";
 
 type Props = {
 	params: Promise<{ slug: string }>;
 };
-export default async function EditTopicPage(props: Props) {
-	const [params, session] = await Promise.all([props.params, auth()]);
-	const { slug } = params;
+
+export default function EditTopicPage({ params }: Props) {
+	return (
+		<Suspense fallback={<TopicEditorSkeleton />}>
+			<TopicEditorLoader params={params} />
+		</Suspense>
+	);
+}
+
+async function TopicEditorLoader({ params }: Props) {
+	const [{ slug }, session] = await Promise.all([params, auth()]);
 	const [topic, categories, topics, pages] = await Promise.all([
 		api.topics.getOne({
 			slug,

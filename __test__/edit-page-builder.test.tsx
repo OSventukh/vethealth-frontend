@@ -8,6 +8,15 @@ import "@testing-library/jest-dom";
 import EditPage from "@/app/(dashboard)/admin/pages/components";
 import type { PageResponse } from "@/api/types/pages.type";
 
+// Пікер медіатеки тягне media.action → auth() → iron-session (ESM, jest не парсить).
+jest.mock("../src/actions/media.action", () => ({
+	listMediaAction: jest.fn().mockResolvedValue({
+		success: true,
+		data: { items: [], count: 0, currentPage: 1, totalPages: 0 },
+	}),
+	updateMediaAltAction: jest.fn(),
+	generateMediaAltAction: jest.fn(),
+}));
 jest.mock("../src/actions/image-upload.action", () => ({
 	imageUploadAction: jest.fn(),
 }));
@@ -73,7 +82,9 @@ describe("EditPage (конструктор сторінок)", () => {
 		render(<EditPage initialData={page} editMode />);
 		// кнопка є і в тулбарі, і в постійному інсерт-барі внизу канвасу
 		fireEvent.click(screen.getAllByText("Додати секцію")[0]);
-		expect(screen.getByText("Оберіть тип блоку для вашої сторінки")).toBeInTheDocument();
+		expect(
+			screen.getByText("Оберіть тип блоку для вашої сторінки"),
+		).toBeInTheDocument();
 		fireEvent.click(screen.getByText("Показники"));
 		// блок з'явився в структурі, пікер закрився
 		expect(screen.getAllByText("Показники").length).toBeGreaterThan(0);

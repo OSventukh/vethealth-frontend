@@ -10,6 +10,15 @@ import type { PostResponse } from "@/api/types/posts.type";
 import { UserRoleEnum, UserStatusEnum } from "@/utils/enums/user.enum";
 import "@testing-library/jest-dom";
 
+// Пікер медіатеки тягне media.action → auth() → iron-session (ESM, jest не парсить).
+jest.mock("../src/actions/media.action", () => ({
+	listMediaAction: jest.fn().mockResolvedValue({
+		success: true,
+		data: { items: [], count: 0, currentPage: 1, totalPages: 0 },
+	}),
+	updateMediaAltAction: jest.fn(),
+	generateMediaAltAction: jest.fn(),
+}));
 jest.mock("../src/actions/image-upload.action", () => ({
 	imageUploadAction: jest.fn(),
 }));
@@ -78,9 +87,7 @@ describe("EditPost (tabbed redesign)", () => {
 
 		// Lexical is dynamically imported — wait for the editor to appear.
 		await waitFor(() => {
-			expect(
-				document.querySelector('[contenteditable="true"]'),
-			).not.toBeNull();
+			expect(document.querySelector('[contenteditable="true"]')).not.toBeNull();
 		});
 	});
 

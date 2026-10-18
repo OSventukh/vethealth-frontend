@@ -17,8 +17,8 @@ export default function TopicItem({
 		<div>
 			<Link href={parentSlug ? `/${parentSlug}/${item.slug}` : `/${item.slug}`}>
 				<TopicImage
-					src={item.image.path}
-					alt={item.title}
+					src={item.image?.path}
+					alt={item.image?.alt || item.title}
 					priority={imagePriority}
 				/>
 			</Link>
