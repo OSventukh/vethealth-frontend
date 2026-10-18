@@ -33,6 +33,8 @@ export type PostResponse = {
 	featuredImageFile?: {
 		id: string;
 		path: string;
+		/** Alt-текст із медіатеки. */
+		alt?: string | null;
 	} | null;
 	featuredImageUrl?: string | null;
 	createdAt: string;

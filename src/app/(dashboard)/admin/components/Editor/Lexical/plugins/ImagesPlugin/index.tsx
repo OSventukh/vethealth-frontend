@@ -21,6 +21,7 @@ import {
 import type * as React from "react";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { imageUploadAction } from "@/actions/image-upload.action";
+import { MediaPickerPanel } from "@/components/media-library/media-picker";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -177,7 +178,7 @@ export function InsertImageDialog({
 	activeEditor: LexicalEditor;
 	onClose: () => void;
 }): React.ReactElement {
-	const [mode, setMode] = useState<null | "url" | "file">(null);
+	const [mode, setMode] = useState<null | "url" | "file" | "library">(null);
 	const hasModifier = useRef(false);
 
 	useEffect(() => {
@@ -199,7 +200,7 @@ export function InsertImageDialog({
 	return (
 		<>
 			{!mode && (
-				<div className="grid grid-cols-2 gap-2 py-2">
+				<div className="grid grid-cols-3 gap-2 py-2">
 					<Button
 						variant="outline"
 						data-test-id="image-modal-option-url"
@@ -214,10 +215,24 @@ export function InsertImageDialog({
 					>
 						Завантажити файл
 					</Button>
+					<Button
+						variant="outline"
+						data-test-id="image-modal-option-library"
+						onClick={() => setMode("library")}
+					>
+						З медіатеки
+					</Button>
 				</div>
 			)}
 			{mode === "url" && <InsertImageUriDialogBody onClick={onClick} />}
 			{mode === "file" && <InsertImageUploadedDialogBody onClick={onClick} />}
+			{mode === "library" && (
+				<MediaPickerPanel
+					uploadField="post"
+					confirmLabel="Вставити"
+					onPick={({ path, alt }) => onClick({ src: path, altText: alt })}
+				/>
+			)}
 		</>
 	);
 }

@@ -205,6 +205,53 @@ metaKeywords/ogTitle/ogDescription з тексту контенту:
   «побажання для ШІ» картки) і «повернути збережене».
 - Помилки — той самий `seo-error-message.ts` (+ код `SEO_NO_CONTENT`: у матеріалі немає тексту).
 
+### Медіатека — `/admin/media` + пікер у формах (2026-10)
+
+Пункт «Медіа» в сайдбарі: усі завантажені зображення (рядки `files` бекенда, модуль `media` —
+див. `backend/CLAUDE.md`), пошук, фільтр «Лише без alt», масове завантаження, панель деталей
+(alt + «Згенерувати ШІ», де використовується з посиланнями на редактори, видалення — лише
+Admin+; якщо файл використовується, діалог показує список і просить підтвердити).
+- **Права**: alt, ШІ-генерація, масові дії й видалення — лише Admin+ (бекенд дає 403).
+  Роль відома лише на сервері, тож admin-layout кладе її в `MediaPermissionsProvider`
+  (`media-library/media-permissions.tsx`, `useCanManageMedia()`, дефолт — false). Автори
+  бачать і завантажують файли, а в пікері пишуть alt лише для поточного матеріалу (у
+  медіатеку він не зберігається, кнопки ШІ немає). Тести пікера з адмінськими діями
+  обгортають його в провайдер.
+- Спільні клієнтські частини — `src/components/media-library/`: `use-media-list` (пагінація,
+  дебаунс пошуку, локальні prepend/replace/remove), `media-grid`, `media-upload-button`
+  (файли по одному — ліміт `bodySizeLimit` server action), `alt-text-editor` (ШІ лише
+  підставляє текст), `media-picker` (`MediaPickerPanel` + `MediaPickerButton` з діалогом).
+  Server actions — `src/actions/media.action.ts`; помилки ШІ — той самий
+  `seo-error-message.ts` (+ коди `MEDIA_*`, параметр `fallback` для не-SEO задач).
+- Пікер «З медіатеки» вбудовано в `ImageUpload` (картинка теми, обкладинка й OG поста),
+  `pages/components/image-field.tsx` (блоки сторінок: збережений alt підставляється в alt
+  блоку) і в діалог вставки картинки Lexical (режим «З медіатеки» рендерить панель інлайново —
+  без вкладеного діалогу). Alt, змінений у пікері, **зберігається і в медіатеку**.
+- Публічно alt із медіатеки бачать обкладинки (`featuredImageFile.alt`) і картинки тем
+  (`image.alt`); у вже вставлених у текст картинках alt — той, що був при вставці.
+- **Hotlink Protection у Cloudflare** на `dev-cdn.vethealth.com.ua` віддає **403** на
+  jpg/jpeg/png (не svg/avif) з чужим Referer — з адмінки на localhost/staging превʼю порожні.
+  Тому `<img>` медіатеки мають `referrerPolicy="no-referrer"` (`ADMIN_IMAGE_REFERRER_POLICY`).
+  Старі превʼю форм (обкладинка поста через CSS `background-image`, `ImageUpload`) локально
+  так само порожні — це не баг коду.
+- **Масові дії** (`admin/media/`): «Згенерувати alt для всіх без alt» і «Вибрати кілька» →
+  згенерувати alt / видалити. Генерація йде **тим самим раннером, що масове SEO**
+  (`seo/run-bulk-generation.ts`, тепер generic за входом/результатом: 429 → чекає
+  `Retry-After`, 401/`AI_NOT_CONFIGURED`/`AI_KEY_REJECTED` → зупиняє прогін); стан чернеток —
+  `use-bulk-alt.ts` у workspace (діалог можна закрити й відкрити — чернетки лишаються,
+  `beforeunload` попереджає). Зберігаються лише переглянуті й відмічені. Фільтри
+  «Невикористані» і «Вужчі за N px» — бекендові (`unused`, `narrowerThan`).
+- Довантаження списку йде за **`offset` = скільки вже показано**, а не `page + 1`: після
+  локальних prepend/remove межі серверних сторінок зсуваються (дублі/пропуски).
+- У теми картинка one-to-one: пікер у формі теми отримує `validatePick`
+  (`EditTopic/topic-image-conflict.ts`) і не дає обрати картинку іншої теми; бекенд на це
+  відповідає 409 `TOPIC_IMAGE_TAKEN`. Вибір картинки в блоці сторінки **замінює** alt блоку
+  alt-ом із медіатеки (або очищає), а не лишає alt попереднього зображення.
+- `topic.image` тепер може бути `null` (примусове видалення обнуляє FK) — `TopicImage`
+  рендерить порожню плитку.
+- **Тести, що монтують редактори/форми з картинками, мають мокати `media.action`** (як і
+  `generate-seo.action`): інакше ланцюжок пікер → action → `auth()` тягне ESM iron-session.
+
 ### API client (`src/api`) — the most important subsystem
 - `routes.ts` builds endpoint URLs from `NEXT_PUBLIC_API_SERVER` || `API_SERVER`, and **throws at
   import time if neither is set**.

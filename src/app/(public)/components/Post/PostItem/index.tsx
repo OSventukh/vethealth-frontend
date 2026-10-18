@@ -21,7 +21,7 @@ export default function PostItem({
 				{post.featuredImage && (
 					<Image
 						src={post.featuredImage}
-						alt={post.title}
+						alt={post.featuredImageFile?.alt || post.title}
 						width={500}
 						height={500}
 						sizes="(max-width: 768px) 100vw, 50vw"

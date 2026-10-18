@@ -9,7 +9,8 @@ import type { PostMetadataResponse, PostResponse } from "./posts.type";
 export type TopicResponse = {
 	id: string;
 	title: string;
-	image: Image;
+	/** null — картинку видалили з медіатеки (FK обнулено). */
+	image: Image | null;
 	description?: string;
 	slug: string;
 	contentType: "post" | "page";

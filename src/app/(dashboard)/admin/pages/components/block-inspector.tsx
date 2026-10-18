@@ -110,7 +110,9 @@ function BlockFields({
 					<Field label="Зображення">
 						<ImageField
 							value={data.imageUrl}
-							onChange={(imageUrl) => patch({ imageUrl })}
+							onChange={(imageUrl, imageAlt) =>
+								patch({ imageUrl, imageAlt: imageAlt ?? "" })
+							}
 						/>
 					</Field>
 					<Field label="Alt зображення">
@@ -259,7 +261,7 @@ function BlockFields({
 							<div className="flex flex-col gap-2">
 								<ImageField
 									value={image.url}
-									onChange={(url) => update({ url })}
+									onChange={(url, alt) => update({ url, alt: alt ?? "" })}
 								/>
 								<Input
 									value={image.alt}
@@ -277,7 +279,7 @@ function BlockFields({
 					<Field label="Зображення">
 						<ImageField
 							value={block.data.url}
-							onChange={(url) => patch({ url })}
+							onChange={(url, alt) => patch({ url, alt: alt ?? "" })}
 						/>
 					</Field>
 					<Field label="Alt-текст">

@@ -20,7 +20,11 @@ const ERROR_CODE_MESSAGES: Record<string, string> = {
 	AI_TIMEOUT: "ШІ-провайдер не встиг відповісти вчасно. Спробуйте ще раз",
 	// Масове SEO (`POST /seo/:type/:id/generate`): у матеріалі немає тексту.
 	SEO_NO_CONTENT:
-		"У матеріалі немає тексту — ШІ нема з чого генерувати. Заповніть вручну",
+		"У матеріалі немає тексту — ШІ нема з чого генерувати. Заповніть вручну", // Медіатека (`POST /media/:id/alt/generate`).
+	MEDIA_UNSUPPORTED_FOR_AI:
+		"Файл не вдалося розпізнати як зображення — напишіть alt вручну",
+	MEDIA_NOT_READABLE:
+		"Не вдалося прочитати файл зі сховища — можливо, його вже немає",
 };
 
 export const SESSION_EXPIRED_MESSAGE =
@@ -49,6 +53,8 @@ interface SeoErrorResponse {
 	body?: unknown;
 	/** Значення заголовка `Retry-After`, якщо бекенд його передав. */
 	retryAfter?: string | null;
+	/** Загальне повідомлення замість «мета-поля» — для інших AI-задач. */
+	fallback?: string;
 }
 
 export function getErrorCode(body: unknown): string | undefined {
@@ -63,6 +69,7 @@ export function seoErrorMessage({
 	status,
 	body,
 	retryAfter,
+	fallback = FALLBACK_MESSAGE,
 }: SeoErrorResponse): string {
 	const errorCode = getErrorCode(body);
 
@@ -82,6 +89,6 @@ export function seoErrorMessage({
 			? ERROR_CODE_MESSAGES[errorCode]
 			: undefined) ||
 		STATUS_MESSAGES[status] ||
-		FALLBACK_MESSAGE
+		fallback
 	);
 }

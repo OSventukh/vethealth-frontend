@@ -12,6 +12,15 @@ import {
 import "@testing-library/jest-dom";
 
 const uploadMock = jest.fn();
+// Пікер медіатеки тягне media.action → auth() → iron-session (ESM, jest не парсить).
+jest.mock("../src/actions/media.action", () => ({
+	listMediaAction: jest.fn().mockResolvedValue({
+		success: true,
+		data: { items: [], count: 0, currentPage: 1, totalPages: 0 },
+	}),
+	updateMediaAltAction: jest.fn(),
+	generateMediaAltAction: jest.fn(),
+}));
 jest.mock("../src/actions/image-upload.action", () => ({
 	imageUploadAction: (...args: unknown[]) => uploadMock(...args),
 }));

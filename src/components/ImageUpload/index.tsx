@@ -2,16 +2,20 @@ import { Image as ImageIcon, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import type { imageUploadAction } from "@/actions/image-upload.action";
+import type { MediaItem } from "@/api/types/media.type";
+import { MediaPickerButton } from "@/components/media-library/media-picker";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 
 interface ImageUploadProps {
 	width?: string | number;
 	height?: string | number;
-	onImage: (image: { id: string; path: string } | null) => void;
+	onImage: (image: { id: string; path: string; alt?: string } | null) => void;
 	value: File | null | string;
 	uploadAction: typeof imageUploadAction;
 	field: "topic" | "post-featured";
+	/** Перевірка картинки з медіатеки перед вибором (див. MediaPickerPanel). */
+	validatePick?: (media: MediaItem) => Promise<string | null>;
 }
 
 export default function ImageUpload({
@@ -19,6 +23,7 @@ export default function ImageUpload({
 	value,
 	uploadAction,
 	field,
+	validatePick,
 }: ImageUploadProps) {
 	const [imageURL, setImageURL] = useState<string | null>(null);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -98,6 +103,15 @@ export default function ImageUpload({
 					onChange={imageChangeHandler}
 				/>
 			</label>
+			<MediaPickerButton
+				uploadField={field}
+				validatePick={validatePick}
+				triggerLabel={imageURL ? "Обрати іншу з медіатеки" : "З медіатеки"}
+				onPick={(media) => {
+					setImageURL(media.path);
+					onImage(media);
+				}}
+			/>
 			{imageURL && (
 				<Button
 					type="button"
