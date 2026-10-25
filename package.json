@@ -77,13 +77,5 @@
   "overrides": {
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp",
-      "protobufjs",
-      "msw",
-      "unrs-resolver"
-    ]
   }
 }
