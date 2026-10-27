@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { connection } from "next/server";
 import Script from "next/script";
 
 // GA is loaded with strategy="lazyOnload" (after the load event) instead of
@@ -6,7 +6,8 @@ import Script from "next/script";
 // during page startup and competes with the LCP image for bandwidth on mobile.
 export default async function Analytics() {
 	const { GOOGLE_ANALYTICS_ID } = process.env;
-	const nonce = (await headers()).get("x-nonce");
+	// Читаємо env у рантаймі (Coolify), а не запікаємо значення з білда.
+	await connection();
 	if (!GOOGLE_ANALYTICS_ID || GOOGLE_ANALYTICS_ID.trim() === "") return null;
 
 	return (
@@ -14,9 +15,8 @@ export default async function Analytics() {
 			<Script
 				src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
 				strategy="lazyOnload"
-				nonce={nonce || ""}
 			/>
-			<Script id="ga-init" strategy="lazyOnload" nonce={nonce || ""}>
+			<Script id="ga-init" strategy="lazyOnload">
 				{`
 					window.dataLayer = window.dataLayer || [];
 					function gtag(){dataLayer.push(arguments);}
