@@ -4,6 +4,7 @@ import {
 	SITE_NAME,
 	SITE_TITLE,
 } from "@/utils/constants/generals";
+import Mida from "@/components/external-scripts/mida";
 import Optimizer from "@/components/external-scripts/optimizer";
 import AdSense from "@/components/google/AdSense";
 import Analytics from "@/components/google/Analytics";
@@ -48,8 +49,9 @@ export default function RootLayout({
 				)}
 				{children}
 				<Optimizer />
-				{/* Analytics/AdSense read the per-request CSP nonce from headers(),
-				    which can never be part of a prerendered shell. */}
+				<Mida />
+				{/* Analytics/AdSense read runtime env behind connection(), which
+				    can never be part of a prerendered shell. */}
 				<Suspense fallback={null}>
 					<Analytics />
 					<AdSense />

@@ -347,7 +347,9 @@ everywhere), and the CRO optimizer script (the owner's build, loaded from
 `optimizer.oskh.com.ua/comp/XoQrlB9WgF.js`; it reports to
 `crsoptimizer.conversionrate.store` — both hosts are in the CSP allowlists in `src/proxy.ts`)
 renders only when `OPTIMIZER_ENABLED=true` (**staging only** — it's a
-work-project testbed; never enable in production).
+work-project testbed; never enable in production). The Mida.so A/B script
+(`cdn.mida.so/js/optimize.js`, `src/components/external-scripts/mida.tsx`; `https://*.mida.so` is in
+script-src/connect-src/img-src) follows the same rule behind its own `MIDA_ENABLED=true` (staging only).
 `next.config.js` restricts remote images
 to `vethealth.com.ua` + `*.vethealth.com.ua` (the old `hostname: "*"` open image-proxy was removed —
 don't re-add it; add the specific prod image host instead). Ships a `Dockerfile`; deployed via Coolify.

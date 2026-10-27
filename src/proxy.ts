@@ -49,19 +49,21 @@ function getAllowedOrigins(request: NextRequest) {
 	return PROD_ORIGINS.join(" ");
 }
 export async function proxy(request: NextRequest) {
-	const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 	const allowedOrigins = getAllowedOrigins(request);
-	// Check if we're in development mode
-	const host = request.headers.get("host");
-	const isDev = host?.includes("localhost") || host?.startsWith("127.");
 
+	// Без nonce: під `cacheComponents` статичний shell пререндериться на білді,
+	// і React/Turbopack вписують у нього inline-скрипти ($RT, bootstrap `_R_`)
+	// без nonce — Next прямо пише, що PPR несумісний з nonce-CSP. А якщо nonce
+	// є в політиці, браузер ігнорує 'unsafe-inline' і блокує ці скрипти
+	// (ламається гідратація). Хеші не підходять: вміст `_R_` змінюється з
+	// кожним білдом. Тому 'unsafe-inline' + allowlist хостів.
 	const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://optimizer.oskh.com.ua;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://optimizer.oskh.com.ua https://*.mida.so;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  img-src 'self' data: ${allowedOrigins};
+  img-src 'self' data: ${allowedOrigins} https://*.mida.so;
   font-src 'self' https://fonts.gstatic.com;
-  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimizer.oskh.com.ua https://crsoptimizer.conversionrate.store;
+  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimizer.oskh.com.ua https://crsoptimizer.conversionrate.store https://*.mida.so;
   frame-src 'self';
   object-src 'none';
   base-uri 'self';
@@ -109,8 +111,6 @@ export async function proxy(request: NextRequest) {
 		.trim();
 
 	const requestHeaders = new Headers(request.headers);
-	requestHeaders.set("x-nonce", nonce);
-
 	requestHeaders.set(
 		"Content-Security-Policy",
 		contentSecurityPolicyHeaderValue,
