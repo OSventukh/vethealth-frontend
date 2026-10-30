@@ -1,9 +1,10 @@
 import Script from "next/script";
 
 // Mida.so A/B-testing script — a second testbed next to the CRS optimizer.
-// It loads its experiment code from cdn.mida.so and talks to *.mida.so APIs,
-// so https://*.mida.so must stay in script-src/connect-src/img-src in
-// src/proxy.ts.
+// It loads its experiment code from cdn.mida.so, talks to *.mida.so APIs and
+// pulls a bot detector from openfpcdn.io, so https://*.mida.so
+// (script-src/connect-src/img-src) and https://openfpcdn.io (script-src) must
+// stay in src/proxy.ts.
 // Enabled per environment (staging) via MIDA_ENABLED=true — keep it off in
 // production: it's extra JS + potential CLS on every page.
 const MIDA_ORIGIN = "https://cdn.mida.so";
