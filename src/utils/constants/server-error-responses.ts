@@ -15,6 +15,8 @@ export const SERVER_ERROR = {
 	INCLUDE_IS_NOT_VALID: "includeIsNotValid",
 	COLUMN_IS_NOT_VALID: "columnIsNotValid",
 	TITLE_MUST_BE_UNIQUE: "titleMustBeUnique",
+	// 409 TOPIC_IMAGE_TAKEN (backend TopicsService.assertImageFree).
+	TOPIC_IMAGE_TAKEN: "Image is already used by topic",
 	TITLE_SHOULD_BE_NOT_EMPTY: "title should not be empty",
 	SLUG_MUST_BE_UNIQUE: "slugMustBeUnique",
 	RELATION_IS_NOT_SET: "relationIsNotSet",

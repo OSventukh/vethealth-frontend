@@ -2,13 +2,19 @@
 import { Trash2, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { imageUploadAction } from "@/actions/image-upload.action";
+import { MediaPickerButton } from "@/components/media-library/media-picker";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Props {
 	value: string;
-	onChange: (url: string) => void;
+	/**
+	 * `alt` — збережений у медіатеці alt (при виборі з неї). Без нього (нове
+	 * завантаження, очищення, alt у медіатеці порожній) поле alt блоку треба
+	 * очистити: alt попередньої картинки описував би не те зображення.
+	 */
+	onChange: (url: string, alt?: string) => void;
 	label?: string;
 }
 
@@ -47,7 +53,7 @@ export function ImageField({ value, onChange, label }: Props) {
 					Немає зображення
 				</div>
 			)}
-			<div className="flex gap-2">
+			<div className="flex flex-wrap gap-2">
 				<Button
 					type="button"
 					variant="outline"
@@ -59,6 +65,12 @@ export function ImageField({ value, onChange, label }: Props) {
 					{uploading ? <Spinner /> : <Upload className="h-4 w-4" />}
 					{value ? "Замінити" : "Завантажити"}
 				</Button>
+				<MediaPickerButton
+					uploadField="post"
+					triggerLabel="Медіатека"
+					triggerClassName="flex-1 gap-2"
+					onPick={(media) => onChange(media.path, media.alt || undefined)}
+				/>
 				{value && (
 					<Button
 						type="button"

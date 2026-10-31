@@ -21,9 +21,9 @@ const nextConfig = {
 	},
 	images: {
 		formats: ["image/avif", "image/webp"],
-		// Post/content uploads get unique filenames, but topic images reuse the
-		// slugified original name — a replaced topic image can stay stale for
-		// up to this TTL, so keep it at days, not months.
+		// All uploads get unique filenames now (topic images used to reuse the
+		// slugified original name, so a replaced one could stay stale for this
+		// TTL). Legacy topic files still have suffix-less names — keep days.
 		minimumCacheTTL: 604800,
 		remotePatterns: [
 			{

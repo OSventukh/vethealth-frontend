@@ -858,12 +858,17 @@ export default function ToolbarPlugin({
 							<ItemButton
 								icon={<ImageIcon />}
 								onClick={() => {
-									showModal("Вставити картинку", (onClose) => (
-										<InsertImageDialog
-											activeEditor={activeEditor}
-											onClose={onClose}
-										/>
-									));
+									showModal(
+										"Вставити картинку",
+										(onClose) => (
+											<InsertImageDialog
+												activeEditor={activeEditor}
+												onClose={onClose}
+											/>
+										),
+										// Ширше за типові 32rem — у режимі медіатеки там сітка зображень.
+										"max-h-[90dvh] overflow-y-auto sm:max-w-3xl",
+									);
 								}}
 							>
 								Вставити картинку

@@ -55,6 +55,9 @@ export async function saveTopicAction(
 			if (error.message.includes(SERVER_ERROR.TITLE_SHOULD_BE_NOT_EMPTY)) {
 				message = ERROR_MESSAGE.TITLE_SHOULD_BE_NOT_EMPTY;
 			}
+			if (error.message.includes(SERVER_ERROR.TOPIC_IMAGE_TAKEN)) {
+				message = ERROR_MESSAGE.TOPIC_IMAGE_TAKEN;
+			}
 		}
 
 		return {

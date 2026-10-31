@@ -15,4 +15,6 @@ export type Status = {
 export type Image = {
 	id: string;
 	path: string;
+	/** Alt-текст із медіатеки. */
+	alt?: string | null;
 };

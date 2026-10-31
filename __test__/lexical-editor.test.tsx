@@ -10,6 +10,15 @@ import "@testing-library/jest-dom";
 
 // The ImagesPlugin pulls in the image-upload server action, which imports the
 // API client (throws at import time without env). Not needed for this smoke.
+// Пікер медіатеки тягне media.action → auth() → iron-session (ESM, jest не парсить).
+jest.mock("../src/actions/media.action", () => ({
+	listMediaAction: jest.fn().mockResolvedValue({
+		success: true,
+		data: { items: [], count: 0, currentPage: 1, totalPages: 0 },
+	}),
+	updateMediaAltAction: jest.fn(),
+	generateMediaAltAction: jest.fn(),
+}));
 jest.mock("../src/actions/image-upload.action", () => ({
 	imageUploadAction: jest.fn(),
 }));
@@ -48,7 +57,10 @@ describe("Lexical editor (extension architecture)", () => {
 	it("mounts a contenteditable root and loads initial content", async () => {
 		const onChangeContent = jest.fn();
 		const { container } = render(
-			<Lexical initialContent={HELLO_STATE} onChangeContent={onChangeContent} />,
+			<Lexical
+				initialContent={HELLO_STATE}
+				onChangeContent={onChangeContent}
+			/>,
 		);
 
 		const root = container.querySelector('[contenteditable="true"]');

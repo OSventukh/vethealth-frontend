@@ -10,6 +10,15 @@ import type { PostResponse } from "@/api/types/posts.type";
 import { UserRoleEnum, UserStatusEnum } from "@/utils/enums/user.enum";
 import "@testing-library/jest-dom";
 
+// Пікер медіатеки тягне media.action → auth() → iron-session (ESM, jest не парсить).
+jest.mock("../src/actions/media.action", () => ({
+	listMediaAction: jest.fn().mockResolvedValue({
+		success: true,
+		data: { items: [], count: 0, currentPage: 1, totalPages: 0 },
+	}),
+	updateMediaAltAction: jest.fn(),
+	generateMediaAltAction: jest.fn(),
+}));
 jest.mock("../src/actions/image-upload.action", () => ({
 	imageUploadAction: jest.fn(),
 }));
@@ -29,11 +38,23 @@ jest.mock(
 		deletePostAction: jest.fn(),
 	}),
 );
+jest.mock(
+	"../src/app/(dashboard)/admin/posts/actions/post-revisions.action",
+	() => ({
+		listPostRevisionsAction: jest.fn(),
+		getPostRevisionAction: jest.fn(),
+		restorePostRevisionAction: jest.fn(),
+	}),
+);
 jest.mock("../src/app/(dashboard)/admin/actions/generate-seo.action", () => ({
 	generateSeoAction: jest.fn().mockResolvedValue({ success: true }),
 }));
 jest.mock("next/navigation", () => ({
-	useRouter: () => ({ replace: jest.fn(), push: jest.fn() }),
+	useRouter: () => ({
+		replace: jest.fn(),
+		push: jest.fn(),
+		refresh: jest.fn(),
+	}),
 }));
 
 const post: PostResponse = {
@@ -78,9 +99,7 @@ describe("EditPost (tabbed redesign)", () => {
 
 		// Lexical is dynamically imported — wait for the editor to appear.
 		await waitFor(() => {
-			expect(
-				document.querySelector('[contenteditable="true"]'),
-			).not.toBeNull();
+			expect(document.querySelector('[contenteditable="true"]')).not.toBeNull();
 		});
 	});
 
@@ -132,5 +151,20 @@ describe("EditPost (tabbed redesign)", () => {
 
 		expect(screen.getByText("На перегляд")).toBeInTheDocument();
 		expect(screen.queryByText("Опублікувати")).not.toBeInTheDocument();
+	});
+
+	it("offers the revision history only for saved posts", () => {
+		const { unmount } = render(
+			<EditPost initialData={post} editMode user={admin} />,
+		);
+		expect(
+			screen.getByRole("button", { name: /Історія змін/ }),
+		).toBeInTheDocument();
+		unmount();
+
+		render(<EditPost user={admin} />);
+		expect(
+			screen.queryByRole("button", { name: /Історія змін/ }),
+		).not.toBeInTheDocument();
 	});
 });
