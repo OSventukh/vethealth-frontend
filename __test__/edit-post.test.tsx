@@ -38,11 +38,23 @@ jest.mock(
 		deletePostAction: jest.fn(),
 	}),
 );
+jest.mock(
+	"../src/app/(dashboard)/admin/posts/actions/post-revisions.action",
+	() => ({
+		listPostRevisionsAction: jest.fn(),
+		getPostRevisionAction: jest.fn(),
+		restorePostRevisionAction: jest.fn(),
+	}),
+);
 jest.mock("../src/app/(dashboard)/admin/actions/generate-seo.action", () => ({
 	generateSeoAction: jest.fn().mockResolvedValue({ success: true }),
 }));
 jest.mock("next/navigation", () => ({
-	useRouter: () => ({ replace: jest.fn(), push: jest.fn() }),
+	useRouter: () => ({
+		replace: jest.fn(),
+		push: jest.fn(),
+		refresh: jest.fn(),
+	}),
 }));
 
 const post: PostResponse = {
@@ -139,5 +151,20 @@ describe("EditPost (tabbed redesign)", () => {
 
 		expect(screen.getByText("На перегляд")).toBeInTheDocument();
 		expect(screen.queryByText("Опублікувати")).not.toBeInTheDocument();
+	});
+
+	it("offers the revision history only for saved posts", () => {
+		const { unmount } = render(
+			<EditPost initialData={post} editMode user={admin} />,
+		);
+		expect(
+			screen.getByRole("button", { name: /Історія змін/ }),
+		).toBeInTheDocument();
+		unmount();
+
+		render(<EditPost user={admin} />);
+		expect(
+			screen.queryByRole("button", { name: /Історія змін/ }),
+		).not.toBeInTheDocument();
 	});
 });
