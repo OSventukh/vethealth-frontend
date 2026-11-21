@@ -1,5 +1,11 @@
 allowBuilds:
+  # jest-haste-map watcher ships prebuilt binaries as optional deps
+  '@parcel/watcher': false
   msw: true
   protobufjs: true
   sharp: true
   unrs-resolver: true
+
+# Security pins for transitive deps whose parents haven't released a fix yet.
+overrides:
+  'fast-uri@<3.1.4': ^3.1.9
