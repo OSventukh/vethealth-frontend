@@ -21,6 +21,7 @@ import { ContentTab } from "./content-tab";
 import { CoverCard } from "./cover-card";
 import { PostEditorHeader } from "./post-editor-header";
 import { PublishCard } from "./publish-card";
+import { RevisionHistoryButton } from "./revisions/revision-history-sheet";
 import { SeoTab } from "./seo-tab";
 import { SettingsTab } from "./settings-tab";
 
@@ -54,13 +55,66 @@ const cleanMetadata = (metadata: PostValues["metadata"]) => ({
 	followable: metadata.followable,
 });
 
-export default function EditPost({
+/** Поля, які повертає відновлення версії (решта — статус, теми, категорії — не змінюється). */
+const pickRestored = (post: PostResponse): Partial<PostResponse> => ({
+	title: post.title,
+	slug: post.slug,
+	content: post.content,
+	featuredImage: post.featuredImage,
+	featuredImageFile: post.featuredImageFile,
+	featuredImageUrl: post.featuredImageUrl,
+	metadata: post.metadata,
+	updatedAt: post.updatedAt,
+});
+
+/**
+ * Обгортка над формою: після відновлення версії форму (react-hook-form +
+ * Lexical) треба перемонтувати з новими даними — `defaultValues` і
+ * `initialContent` читаються лише при монтуванні. Звичайне збереження форму
+ * не перемонтовує (не скидає undo-історію Lexical і прокрутку).
+ */
+export default function EditPost(props: Props) {
+	const router = useRouter();
+	const [restored, setRestored] = useState<{
+		post: Partial<PostResponse>;
+		version: number;
+	} | null>(null);
+
+	const initialData = props.initialData
+		? { ...props.initialData, ...restored?.post }
+		: props.initialData;
+
+	const handleRestored = (post: PostResponse) => {
+		setRestored((prev) => ({
+			post: pickRestored(post),
+			version: (prev?.version ?? 0) + 1,
+		}));
+		if (post.slug !== props.initialData?.slug) {
+			router.replace(`/admin/posts/edit/${post.slug}`, { scroll: false });
+		} else {
+			// Свіжі статус/теми з сервера (updateTag уже скинув кеш).
+			router.refresh();
+		}
+	};
+
+	return (
+		<PostEditorForm
+			key={restored?.version ?? 0}
+			{...props}
+			initialData={initialData}
+			onRestored={handleRestored}
+		/>
+	);
+}
+
+function PostEditorForm({
 	initialData,
 	topics: topicsOptions,
 	categories: categoriesOptions,
 	editMode,
 	user,
-}: Props) {
+	onRestored,
+}: Props & { onRestored: (post: PostResponse) => void }) {
 	const router = useRouter();
 	const { toast } = useToast();
 	const [isPending, startTransition] = useTransition();
@@ -98,6 +152,10 @@ export default function EditPost({
 		mode: "onChange",
 	});
 
+	// Читаємо під час рендера: formState — проксі з підпискою, і без цього
+	// читання react-hook-form не рахує isDirty.
+	const { isDirty } = form.formState;
+
 	const onInvalid = (errors: FieldErrors<PostValues>) => {
 		const contentTabErrors = errors.title || errors.content || errors.slug;
 		setActiveTab(contentTabErrors ? "content" : "seo");
@@ -131,6 +189,12 @@ export default function EditPost({
 					variant: res.error ? "destructive" : "success",
 					description: res.success ? "Стаття збережена" : res.message,
 				});
+				if (res.success) {
+					// Збережене стає новою базою для isDirty (інакше форма вважалась би
+					// «зміненою» до перезавантаження). keepValues — не чіпати те, що
+					// редактор устиг ввести, поки йшов запит.
+					form.reset(values, { keepValues: true });
+				}
 				if (res.success && res.redirect && res.redirect !== initialData?.slug) {
 					router.replace(`/admin/posts/edit/${res.redirect}`, {
 						scroll: false,
@@ -147,7 +211,31 @@ export default function EditPost({
 				onValueChange={(value) => setActiveTab(value as EditorTab)}
 				className="w-full max-w-[1400px]"
 			>
-				<PostEditorHeader editMode={editMode} />
+				<PostEditorHeader
+					editMode={editMode}
+					actions={
+						editMode &&
+						initialData?.id && (
+							<RevisionHistoryButton
+								postId={initialData.id}
+								getCurrent={() => {
+									const values = form.getValues();
+									return {
+										title: values.title,
+										slug: values.slug || "",
+										content: values.content || "",
+										featuredImageFileId: values.featuredImageFile?.id ?? null,
+										featuredImageUrl: values.featuredImageUrl || null,
+										metaTitle: values.metadata.metaTitle || "",
+										metaDescription: values.metadata.metaDescription || "",
+									};
+								}}
+								isDirty={isDirty}
+								onRestored={onRestored}
+							/>
+						)
+					}
+				/>
 
 				<div className="flex w-full flex-col items-start gap-5 lg:flex-row">
 					<div className="w-full min-w-0 flex-1">

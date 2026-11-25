@@ -252,6 +252,31 @@ Admin+; якщо файл використовується, діалог пок�
 - **Тести, що монтують редактори/форми з картинками, мають мокати `media.action`** (як і
   `generate-seo.action`): інакше ланцюжок пікер → action → `auth()` тягне ESM iron-session.
 
+### Історія змін постів (2026-10)
+
+Кнопка **«Історія змін»** у шапці редактора поста (лише для збережених постів) відкриває
+бічну панель: список версій → перегляд версії (що відрізняється від форми, превʼю через
+`ParsedContent`) → «Відновити» з підтвердженням. Бекенд — `posts/:id/revisions`
+(див. `backend/CLAUDE.md`, «Історія змін постів»).
+- Файли: `admin/posts/actions/post-revisions.action.ts` (list/get/restore; restore робить
+  `updateTag(POSTS, TOPICS)` і мапить 409 `POST_REVISION_CONFLICT`),
+  `EditPost/revisions/revision-diff.ts` (чиста логіка порівняння: контент — **за текстом**,
+  бо серіалізація Lexical у формі не побайтово дорівнює збереженій; той самий текст з іншим
+  JSON → «Оформлення статті»), `revision-history-sheet.tsx`, типи — `api/types/post-revisions.type.ts`.
+- **Після відновлення форму перемонтовуємо**: `EditPost` — обгортка над `PostEditorForm` з
+  `key={version}`, бо `defaultValues` react-hook-form і `initialContent` Lexical читаються лише
+  при монтуванні. Звичайне збереження не перемонтовує (не скидає undo Lexical). Поля з
+  відповіді restore накладаються на `initialData`; статус/теми/категорії лишаються з пропсів.
+- Після успішного збереження — `form.reset(values, { keepValues: true })`: інакше `isDirty`
+  лишався `true` до перезавантаження і діалог відновлення хибно попереджав про незбережені
+  зміни. `isDirty` читається **під час рендера** форми (formState — проксі з підпискою).
+- **Діалог підтвердження — всередині `SheetContent`**. Поза деревом панелі модальний `Sheet`
+  (Base UI) робить його `inert`/`aria-hidden` — кнопки в діалозі не клікаються.
+- Для прапорців завантаження — звичайний `useState`, не `isPending` транзиції: стан, виставлений
+  після `await` у транзиції React 19, рендериться раніше, ніж `isPending` стане false, і щойно
+  показані рядки ще мить disabled (клік губився; ловилось флакі-тестами).
+- Тести, що монтують `EditPost`, мають мокати `post-revisions.action` (ланцюжок до `auth()`).
+
 ### API client (`src/api`) — the most important subsystem
 - `routes.ts` builds endpoint URLs from `NEXT_PUBLIC_API_SERVER` || `API_SERVER`, and **throws at
   import time if neither is set**.

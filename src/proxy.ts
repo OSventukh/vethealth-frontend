@@ -61,9 +61,9 @@ export async function proxy(request: NextRequest) {
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://optimizer.oskh.com.ua https://*.mida.so https://openfpcdn.io https://static.cloudflareinsights.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  img-src 'self' data: ${allowedOrigins} https://*.mida.so;
+  img-src 'self' data: ${allowedOrigins} https://*.google-analytics.com https://*.googletagmanager.com https://*.mida.so;
   font-src 'self' https://fonts.gstatic.com;
-  connect-src 'self' ${allowedOrigins} https://www.google-analytics.com https://*.googleapis.com https://optimizer.oskh.com.ua https://crsoptimizer.conversionrate.store https://*.mida.so https://cloudflareinsights.com;
+  connect-src 'self' ${allowedOrigins} https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.googleapis.com https://optimizer.oskh.com.ua https://crsoptimizer.conversionrate.store https://*.mida.so https://cloudflareinsights.com;
   frame-src 'self';
   object-src 'none';
   base-uri 'self';
